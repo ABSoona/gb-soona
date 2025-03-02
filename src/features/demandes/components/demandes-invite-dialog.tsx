@@ -24,7 +24,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { situationTypes } from '../data/data'
+import { situationTypes } from '@/features/contacts/data/data'
 
 const formSchema = z.object({
   email: z

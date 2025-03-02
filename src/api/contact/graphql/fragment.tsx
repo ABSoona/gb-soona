@@ -6,23 +6,7 @@ export const CONTACT_FIELDS = gql`
     nom
     prenom
     age
-    agesEnfants
-    autresAides
-    createdAt
-    dettes
-    natureDettes
-    autresCharges
-    apl
-    facturesEnergie
-    loyer
-    numBeneficiaire
-    nombreEnfants
-    remarques
-    resteAVivre
-    revenus
-    revenusConjoint
-    situationFamiliale
-    situationProfessionnelle
+    remarques    
     status
     updatedAt
     createdAt
@@ -31,5 +15,8 @@ export const CONTACT_FIELDS = gql`
     adresse
     codePostal
     ville
+    numBeneficiaire
+
+    
   }
 `;

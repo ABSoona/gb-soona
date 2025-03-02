@@ -54,8 +54,7 @@ export function DemandesTable({ columns, data, hideTools = false }: DataTablePro
                   loyer: false,
                   contactNom: false,
                   contactPrenom: false,
-                  remarques: false,
-                  resteAVivre: false,
+                  remarques: false,                
                   revenusConjoint: false,
                   id: false,
               }
@@ -123,7 +122,7 @@ export function DemandesTable({ columns, data, hideTools = false }: DataTablePro
     return (
         <div className="space-y-4">
             {/* 🔥 Passer `setDateRange` à `DataTableToolbar` */}
-            {!hideTools && <DataTableToolbar table={table} setDateRange={setDateRange} />}
+            {!hideTools && <DataTableToolbar table={table}  />}
 
             <div className="rounded-md border">
                 <Table>

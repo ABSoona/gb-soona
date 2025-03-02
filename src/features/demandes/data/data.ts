@@ -1,10 +1,3 @@
-import {
-
-  IconExternalLink,
-  IconShield,
-  IconUsersGroup,
-
-} from '@tabler/icons-react'
 import { DemandeStatus } from '@/model/demande/Demande'
 
 export const demandeStatusColor = new Map<DemandeStatus, string>([
@@ -20,54 +13,6 @@ export const demandeStatusColor = new Map<DemandeStatus, string>([
     'bg-destructive/10 dark:bg-destructive/50 text-destructive dark:text-primary border-destructive/10',
   ],
 ])
- //A deplacer plus tard dans Contact/data
- 
-export const situationTypes = [
-  {
-    label: 'Sans emploi',
-    value: 'sans_emploi',
-    icon: IconShield,
-  },
-  {
-    label: 'Employé',
-    value: 'employé',
-    icon: IconUsersGroup,
-  },
-  {
-    label: 'Indépendant',
-    value: 'indépendant',
-    icon: IconExternalLink,
-  },
-  {
-    label: 'Retraité',
-    value: 'retraité',
-    icon: IconExternalLink,
-  },
-] as const
-
-export const situationFamilleTypes = [
-  {
-    label: 'Marié(e)',
-    value: 'marié',
-    icon: IconShield,
-  },
-  {
-    label: 'Divorcé(e)',
-    value: 'divorcé',
-    icon: IconUsersGroup,
-  },
-  {
-    label: 'Célibataire',
-    value: 'célibataire',
-    icon: IconExternalLink,
-  },
-  {
-    label: 'Veuf(ve)',
-    value: 'veuf',
-    icon: IconExternalLink,
-  },
-] as const
-
 export const demandeStatusTypes =
 [
   { label: 'Reçue', value: 'recue' },
@@ -80,4 +25,4 @@ export const demandeStatusTypes =
 
 
 
- 
+

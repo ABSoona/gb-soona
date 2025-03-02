@@ -6,8 +6,10 @@ import LongText from '@/components/long-text';
 import { Demande, DemandeStatus } from '@/model/demande/Demande';
 import { DataTableColumnHeader } from './data-table-column-header';
 import { DataTableRowActions } from './data-table-row-actions';
-import { demandeStatusColor, demandeStatusTypes, situationFamilleTypes, situationTypes } from '../data/data';
-import { SituationPro } from '@/model/contact/Contact';
+import { demandeStatusColor, demandeStatusTypes } from '../data/data';
+import { situationTypes } from '@/features/contacts/data/data';
+import { situationFamilleTypes } from '@/features/contacts/data/data';
+import { SituationPro } from "@/model/demande/Demande";
 import { DateRange } from 'react-day-picker';
 
 const dateRangeFilter: ColumnDef<Demande>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
@@ -21,6 +23,8 @@ const dateRangeFilter: ColumnDef<Demande>['filterFn'] = (row, columnId, filterVa
         (!filterValue.to || rowDate <= filterValue.to)
     );
 };
+
+
 export const columns: ColumnDef<Demande>[] = [
     // Sélection des lignes
    /* {
@@ -102,28 +106,28 @@ export const columns: ColumnDef<Demande>[] = [
         cell: ({ row }) => row.original.contact?.age ?? 'N/A',
     },
     {
-        accessorFn: (row) => row.contact?.agesEnfants,
+        accessorFn: (row) => row?.agesEnfants,
         id: 'agesEnfants',
         header: 'Âges des Enfants',
-        cell: ({ row }) => row.original.contact?.agesEnfants ?? 'N/A',
+        cell: ({ row }) => row.original?.agesEnfants ?? 'N/A',
     },
     {
-        accessorFn: (row) => row.contact?.nombreEnfants,
+        accessorFn: (row) => row?.nombreEnfants,
         id: 'nombreEnfants',
         header: 'Enfants',
-        cell: ({ row }) => row.original.contact?.nombreEnfants ?? 0,
+        cell: ({ row }) => row.original?.nombreEnfants ?? 0,
     },
     {
-        accessorFn: (row) => row.contact?.situationFamiliale,
+        accessorFn: (row) => row?.situationFamiliale,
         id: 'situationFamiliale',
         header: 'Situation Familiale',
         cell: ({ row }) => {
-            const situationF =  row.original.contact?.situationFamiliale ?? 'N/A';
+            const situationF =  row.original?.situationFamiliale ?? 'N/A';
             return situationFamilleTypes.find(s => s.value === situationF)?.label ?? 'N/A';
         }
     },
     {
-        accessorFn: (row) => row.contact?.situationProfessionnelle,
+        accessorFn: (row) => row?.situationProfessionnelle,
         id: 'situationProfessionnelle',
         header: 'Situation Pro',
         cell: ({ row }) => {
@@ -135,56 +139,63 @@ export const columns: ColumnDef<Demande>[] = [
           },
     },
     {
-        accessorFn: (row) => row.contact?.revenus,
+        accessorFn: (row) => row?.revenus,
         id: 'revenus',
         header: 'Revenus',
-        cell: ({ row }) => row.original.contact?.revenus?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
+        cell: ({ row }) => row.original?.revenus?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
     },
     {
        // accessorFn: (row) => row.contact?.revenus,
         id: 'charges',
         header: 'Charges',
         cell: ({ row }) =>  
-        ((row.original.contact?.facturesEnergie ?? 0) +
-        (row.original.contact?.loyer ?? 0)).toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ,
+        ((row.original?.facturesEnergie ?? 0) +
+        (row.original?.loyer ?? 0)).toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ,
         enableHiding: true,
     },
     {
-        accessorFn: (row) => row.contact?.revenusConjoint,
+        accessorFn: (row) => row?.revenusConjoint,
         id: 'revenusConjoint',
         header: 'Revenus Conjoint',
-        cell: ({ row }) => row.original.contact?.revenusConjoint?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
+        cell: ({ row }) => row.original?.revenusConjoint?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
         enableHiding: true,
     },
     {
-        accessorFn: (row) => row.contact?.autresAides,
+        accessorFn: (row) => row?.autresAides,
         id: 'autresAides',
         header: 'Autres Aides',
-        cell: ({ row }) => row.original.contact?.autresAides ?? '0',
+        cell: ({ row }) => row.original?.autresAides ?? '',
     },
     {
-        accessorFn: (row) => row.contact?.dettes,
+        accessorFn: (row) => row?.dettes,
         id: 'dettes',
         header: 'Dettes',
-        cell: ({ row }) => row.original.contact?.dettes?.toLocaleString() ?? '0',
+        cell: ({ row }) => row.original?.dettes?.toLocaleString() ?? '0',
     },
     {
-        accessorFn: (row) => row.contact?.facturesEnergie,
+        accessorFn: (row) => row?.facturesEnergie,
         id: 'facturesEnergie',
         header: 'Factures Énergie',
-        cell: ({ row }) => row.original.contact?.facturesEnergie?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? '0',
+        cell: ({ row }) => row.original?.facturesEnergie?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? '0',
     },
     {
-        accessorFn: (row) => row.contact?.loyer,
+        accessorFn: (row) => row?.loyer,
         id: 'loyer',
         header: 'Loyer',
-        cell: ({ row }) => row.original.contact?.loyer?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
+        cell: ({ row }) => row.original?.loyer?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
     },
     {
-        accessorFn: (row) => row.contact?.resteAVivre,
+     //   accessorFn: (row) => row?.resteAVivre,
         id: 'resteAVivre',
         header: 'Reste à Vivre',
-        cell: ({ row }) => row.original.contact?.resteAVivre?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
+        cell: ({ row }) => (
+        (row.original?.revenusConjoint ?? 0) +
+        (row.original?.apl ?? 0) +
+        (row.original?.revenus ?? 0) -
+        (row.original?.facturesEnergie ?? 0) -
+        (row.original?.autresCharges ?? 0) -
+        (row.original?.loyer ?? 0)) 
+        .toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ,
     },
    
 

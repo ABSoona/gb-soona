@@ -13,7 +13,9 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Demande } from '@/model/demande/Demande'
-import { demandeStatusColor, demandeStatusTypes, situationFamilleTypes, situationTypes } from '../data/data'
+import { demandeStatusColor, demandeStatusTypes } from '../data/data'
+import { situationTypes } from '@/features/contacts/data/data'
+import { situationFamilleTypes } from '@/features/contacts/data/data'
 import { cn } from '@/lib/utils'
 import { Url } from 'url'
 
@@ -30,11 +32,11 @@ export function DemandeViewDialog({ currentRow, open, onOpenChange }: Props) {
 
   const { contact, status, remarques,id,createdAt } = currentRow
 
-  const totalRevenus = (contact?.revenus ?? 0) + (contact?.revenusConjoint ?? 0) +  (contact?.apl ?? 0)
-  const totalCharges = (contact?.loyer ?? 0) + (contact?.facturesEnergie ?? 0) + (contact.autresCharges ??0)
-  const totalDettes = contact?.dettes ?? 0
+  const totalRevenus = (currentRow?.revenus ?? 0) + (currentRow?.revenusConjoint ?? 0) +  (currentRow?.apl ?? 0)
+  const totalCharges = (currentRow?.loyer ?? 0) + (currentRow?.facturesEnergie ?? 0) + (currentRow.autresCharges ??0)
+  const totalDettes = currentRow?.dettes ?? 0
   const totalAides = contact?.aides?.reduce((acc, aide) => acc + (aide.montant ?? 0), 0) ?? 0
-  const resteAVivre = contact?.resteAVivre ?? 0
+  const resteAVivre = totalRevenus - totalCharges
 
   return (
     <Sheet open={open} onOpenChange={(state) => onOpenChange(state)}>
@@ -47,7 +49,7 @@ export function DemandeViewDialog({ currentRow, open, onOpenChange }: Props) {
                   {demandeStatusTypes.find(s => s.value === status)?.label ?? 'Inconnu'}
                 </Badge>  
               </SheetTitle>
-              <SheetDescription>Reçue le {new Date(createdAt).toLocaleString('fr-FR')}</SheetDescription>
+              <SheetDescription>Reçue le {new Date(createdAt)?.toLocaleString('fr-FR')}</SheetDescription>
             </SheetHeader>
           </div>
          
@@ -63,10 +65,10 @@ export function DemandeViewDialog({ currentRow, open, onOpenChange }: Props) {
                 <CardContent className="space-y-2">
                 <DetailRow label="Nom et Prénom" value={`${contact?.nom} ${contact?.prenom}`} link='/users' /> 
                   <DetailRow label="Âge" value={contact?.age + ' ans' ?? 'N/A'} />
-                  <DetailRow label="Situation Pro." value={situationTypes.find(s => s.value === contact.situationProfessionnelle)?.label ?? 'N/A'} /> 
-                  <DetailRow label="Situation F." value={situationFamilleTypes.find(s => s.value === contact.situationFamiliale)?.label ?? 'N/A'} />
-                  <DetailRow label="Nombre d'enfants" value={contact?.nombreEnfants ?? '0'} />
-                  <DetailRow label="Ages Enfants" value={contact.agesEnfants ?? 'N/A'} />
+                  <DetailRow label="Situation Pro." value={situationTypes.find(s => s.value === currentRow.situationProfessionnelle)?.label ?? 'N/A'} /> 
+                  <DetailRow label="Situation F." value={situationFamilleTypes.find(s => s.value === currentRow.situationFamiliale)?.label ?? 'N/A'} />
+                  <DetailRow label="Nombre d'enfants" value={currentRow?.nombreEnfants ?? '0'} />
+                  <DetailRow label="Ages Enfants" value={currentRow.agesEnfants ?? 'N/A'} />
                   <DetailRow label="Email" value={contact.email ?? 'N/A'} />
                   <DetailRow label="Tél" value={contact.telephone ?? 'N/A'} />
                   <DetailRow label="Ville" value={contact.ville ?? 'N/A'} />
@@ -77,11 +79,11 @@ export function DemandeViewDialog({ currentRow, open, onOpenChange }: Props) {
 
             <div className="col-span-2 space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-5 gap-2">
-                <InfoCard title="Revenus" value={`${totalRevenus.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
-                <InfoCard title="Charges" value={`${totalCharges.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
-                <InfoCard title="Dettes" value={`${totalDettes.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
-                <InfoCard title="Aides Reçues" value={`${totalAides.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
-                <InfoCard title="Reste à Vivre" value={`${resteAVivre.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
+                <InfoCard title="Revenus" value={`${totalRevenus?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
+                <InfoCard title="Charges" value={`${totalCharges?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
+                <InfoCard title="Dettes" value={`${totalDettes?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
+                <InfoCard title="Aides Reçues" value={`${totalAides?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
+                <InfoCard title="Reste à Vivre" value={`${resteAVivre?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -90,9 +92,10 @@ export function DemandeViewDialog({ currentRow, open, onOpenChange }: Props) {
                     <CardTitle>Revenus</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <DetailRow label="Revenus Personnels" value={`${contact.revenus?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
-                    <DetailRow label="Revenus du Conjoint" value={`${contact.revenusConjoint?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? '0'}`} />
-                    <DetailRow label="APL" value={`${contact.apl?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})?? '0'}`} />
+                    <DetailRow label="Revenus Personnels" value={`${currentRow.revenus?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
+                    <DetailRow label="Revenus du Conjoint" value={`${currentRow.revenusConjoint?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? '0'}`} />
+                    <DetailRow label="APL" value={`${currentRow.apl?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})?? '0'}`} />
+                    <DetailMultiLineRow label="Aides diverses" value={currentRow.autresAides?? 'N/A'} />
                   </CardContent>
                 </Card>
 
@@ -101,11 +104,11 @@ export function DemandeViewDialog({ currentRow, open, onOpenChange }: Props) {
                     <CardTitle>Charges et Dettes</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <DetailRow label="Loyer" value={`${contact.loyer?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})} `} />
-                    <DetailRow label="Factures Énergie" value={`${contact.facturesEnergie?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
-                    <DetailRow label="Dettes" value={`${contact?.dettes.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR'})}`} />
-                   < DetailRow label="Autres charges" value={`${contact.autresCharges?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})??0} `} />
-                    <DetailMultiLineRow label="Nature dettes" value={contact?.natureDettes ?? 'N/A'} />
+                    <DetailRow label="Loyer" value={`${currentRow.loyer?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})} `} />
+                    <DetailRow label="Factures Énergie" value={`${currentRow.facturesEnergie?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}`} />
+                    <DetailRow label="Dettes" value={`${currentRow?.dettes?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR'})}`} />
+                   < DetailRow label="Autres charges" value={`${currentRow.autresCharges?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})??0} `} />
+                    <DetailMultiLineRow label="Nature dettes" value={currentRow?.natureDettes ?? 'N/A'} />
                   </CardContent>
                 </Card>
               </div>
@@ -133,10 +136,10 @@ export function DemandeViewDialog({ currentRow, open, onOpenChange }: Props) {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Reste à Vivre</CardTitle>
+                    <CardTitle>Documents</CardTitle>
                   </CardHeader>
                   <CardContent className="text-2xl font-bold">
-                    {resteAVivre.toLocaleString()} €
+                 
                   </CardContent>
                 </Card>
               </div>
