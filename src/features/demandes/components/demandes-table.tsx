@@ -27,24 +27,28 @@ import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
 import { useDemandes } from '../context/demandes-context';
 import { DateRange } from 'react-day-picker';
+import {  useNavigate } from '@tanstack/react-router'
 
 declare module '@tanstack/react-table' {
     interface ColumnMeta<TData extends RowData, TValue> {
         className: string; 
     }
 }
-
+export enum detailOpenOption  {'sheet', 'page'} ;
 interface DataTableProps {
     columns: ColumnDef<Demande>[]; 
     data: Demande[]; 
     hideTools?: boolean;
+    showDetailIn?: detailOpenOption ;
+    hideActions?:boolean
 }
 
-export function DemandesTable({ columns, data, hideTools = false }: DataTableProps) {
+export function DemandesTable({ columns, data, hideTools = false, hideActions = false, showDetailIn =  detailOpenOption.page }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({});
+    const navigate = useNavigate();
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-        !hideTools
-            ? {
+
+             {
                   contactId: false,
                   contactAge: false,
                   agesEnfants: false,
@@ -57,32 +61,10 @@ export function DemandesTable({ columns, data, hideTools = false }: DataTablePro
                   remarques: false,                
                   revenusConjoint: false,
                   id: false,
+                  status : true
+                 
               }
-            : {
-                  contactId: false,
-                  contactAge: false,
-                  agesEnfants: false,
-                  nombreEnfants: false,
-                  autresAides: false,
-                  facturesEnergie: false,
-                  loyer: false,
-                  contactNom: false,
-                  contactPrenom: false,
-                  remarques: false,
-                  resteAVivre: false,
-                  revenusConjoint: false,
-                  id: false,
-                  age: false,
-                  dettes: false,
-                  numBeneficiaire: false,
-                  revenus: false,
-                  situationFamiliale: false,
-                  situationProfessionnelle: false,
-                  updatedAt: false,
-                  numeroDemande: false,
-                  charges: false,
-                  aides: false,
-              }
+            
     );
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -113,11 +95,10 @@ export function DemandesTable({ columns, data, hideTools = false }: DataTablePro
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
     });
-
     // 🔥 Appliquer le filtre `createdAt` dès que `dateRange` change
    
 
-    const { setOpen, setCurrentRow } = useDemandes();
+   const { setOpenDemande: setOpen, setCurrentRow } = useDemandes();
 
     return (
         <div className="space-y-4">
@@ -143,7 +124,6 @@ export function DemandesTable({ columns, data, hideTools = false }: DataTablePro
                             </TableRow>
                         ))}
                     </TableHeader>
-
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
@@ -156,11 +136,25 @@ export function DemandesTable({ columns, data, hideTools = false }: DataTablePro
                                         <TableCell
                                             key={cell.id}
                                             className={cell.column.columnDef.meta?.className ?? ''}
+                                          
                                             onClick={(e) => {
                                                 if (cell.column.id !== 'actions') {
-                                                    setCurrentRow(row.original);
-                                                    setOpen('view');  
-                                                }      
+                                                    if (showDetailIn == detailOpenOption.page) {
+
+                                                        navigate({
+                                                            to: `/demandes/${row.original.id.toString()}`,
+                                                            params: { id: row.original.id.toString() },
+                                                            search: { from: location.pathname } // Ajout du paramètre de recherche
+                                                        });
+
+
+
+                                                    }
+                                                    else {
+                                                        setCurrentRow(row.original)
+                                                        setOpen('view')
+                                                    }
+                                                }
                                             }}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -171,14 +165,13 @@ export function DemandesTable({ columns, data, hideTools = false }: DataTablePro
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
+                                    Aucune demande
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </div>
-
             {/* Afficher la Pagination seulement si hideTools est false */}
             {!hideTools && <DataTablePagination table={table} />}
         </div>

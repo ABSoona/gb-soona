@@ -2,11 +2,12 @@ import { Aide, aideSchema } from "../aide/Aide";
 
 
 import { z } from 'zod';
+import { demandeSchema } from "../demande/Demande";
+import { visiteSchema } from "../visite/Visite";
 export const contactStatusSchema = z.union([
   z.literal('active'),
-  z.literal('en_attente'),
-  z.literal('clôturée'),
-  z.literal('refusée'),
+  z.literal('blacklisté'),
+
 ]);
 export type ContactStatus = z.infer<typeof contactStatusSchema>;
 // Schéma pour la situation professionnelle
@@ -23,22 +24,23 @@ export type Dette = z.infer<typeof detteSchema>;
 export const contactSchema = z.object({
   //inforamtion fixe
   id: z.number(),
-  numBeneficiaire:z.string(),
+  numBeneficiaire:z.string().optional(),
   nom: z.string(),
   prenom: z.string(),
-  age: z.number(),
+  age: z.coerce.number(),
   email:z.string(),
   telephone:z.string(),
-  adresse:z.string(),
-  codePostal:z.number(),
+  adresse:z.string().optional(),
+  codePostal:z.coerce.number(),
   ville:z.string(),
   //le reste a mettre dans demande  
-  aides: z.array(aideSchema),
+  aides: z.array(z.any()),
+  demandes :  z.array(z.any()).optional(),// z.array(demandeSchema.omit({contact:true})),
+  visites :  z.array( z.any()).optional(),
+document :  z.array(z.any()).optional(),
   status: contactStatusSchema,
   remarques: z.string().optional(),
   createdAt :z.coerce.date(),
-  updatedAt:z.coerce.date(),
-  
-
+  updatedAt:z.coerce.date(),  
 });
 export type Contact = z.infer<typeof contactSchema>;

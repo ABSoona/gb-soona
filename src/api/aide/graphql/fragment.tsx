@@ -6,9 +6,17 @@ export const AIDE_FIELDS = gql`
     typeField
     montant
     dateAide
+    frequence
     dateExpiration
-    paiementRecurrent
+    nombreVersements
     createdAt
     updatedAt
+    suspendue
+    crediteur
+    infosCrediteur
+    remarque
+    contact {  
+      id}
+ 
   }
 `;

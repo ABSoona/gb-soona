@@ -49,6 +49,12 @@ const AuthenticatedHelpCenterIndexLazyImport = createFileRoute(
 const AuthenticatedDemandesIndexLazyImport = createFileRoute(
   '/_authenticated/demandes/',
 )()
+const AuthenticatedContactsIndexLazyImport = createFileRoute(
+  '/_authenticated/contacts/',
+)()
+const AuthenticatedAidesIndexLazyImport = createFileRoute(
+  '/_authenticated/aides/',
+)()
 const AuthenticatedSettingsNotificationsLazyImport = createFileRoute(
   '/_authenticated/settings/notifications',
 )()
@@ -60,6 +66,12 @@ const AuthenticatedSettingsAppearanceLazyImport = createFileRoute(
 )()
 const AuthenticatedSettingsAccountLazyImport = createFileRoute(
   '/_authenticated/settings/account',
+)()
+const AuthenticatedDemandesIdLazyImport = createFileRoute(
+  '/_authenticated/demandes/$id',
+)()
+const AuthenticatedContactsIdLazyImport = createFileRoute(
+  '/_authenticated/contacts/$id',
 )()
 
 // Create/Update Routes
@@ -215,6 +227,24 @@ const AuthenticatedDemandesIndexLazyRoute =
     import('./routes/_authenticated/demandes/index.lazy').then((d) => d.Route),
   )
 
+const AuthenticatedContactsIndexLazyRoute =
+  AuthenticatedContactsIndexLazyImport.update({
+    id: '/contacts/',
+    path: '/contacts/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/contacts/index.lazy').then((d) => d.Route),
+  )
+
+const AuthenticatedAidesIndexLazyRoute =
+  AuthenticatedAidesIndexLazyImport.update({
+    id: '/aides/',
+    path: '/aides/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/aides/index.lazy').then((d) => d.Route),
+  )
+
 const AuthenticatedSettingsNotificationsLazyRoute =
   AuthenticatedSettingsNotificationsLazyImport.update({
     id: '/notifications',
@@ -257,6 +287,24 @@ const AuthenticatedSettingsAccountLazyRoute =
     import('./routes/_authenticated/settings/account.lazy').then(
       (d) => d.Route,
     ),
+  )
+
+const AuthenticatedDemandesIdLazyRoute =
+  AuthenticatedDemandesIdLazyImport.update({
+    id: '/demandes/$id',
+    path: '/demandes/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/demandes/$id.lazy').then((d) => d.Route),
+  )
+
+const AuthenticatedContactsIdLazyRoute =
+  AuthenticatedContactsIdLazyImport.update({
+    id: '/contacts/$id',
+    path: '/contacts/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/contacts/$id.lazy').then((d) => d.Route),
   )
 
 // Populate the FileRoutesByPath interface
@@ -361,6 +409,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/contacts/$id': {
+      id: '/_authenticated/contacts/$id'
+      path: '/contacts/$id'
+      fullPath: '/contacts/$id'
+      preLoaderRoute: typeof AuthenticatedContactsIdLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/demandes/$id': {
+      id: '/_authenticated/demandes/$id'
+      path: '/demandes/$id'
+      fullPath: '/demandes/$id'
+      preLoaderRoute: typeof AuthenticatedDemandesIdLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/settings/account': {
       id: '/_authenticated/settings/account'
       path: '/account'
@@ -388,6 +450,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/notifications'
       preLoaderRoute: typeof AuthenticatedSettingsNotificationsLazyImport
       parentRoute: typeof AuthenticatedSettingsRouteLazyImport
+    }
+    '/_authenticated/aides/': {
+      id: '/_authenticated/aides/'
+      path: '/aides'
+      fullPath: '/aides'
+      preLoaderRoute: typeof AuthenticatedAidesIndexLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/contacts/': {
+      id: '/_authenticated/contacts/'
+      path: '/contacts'
+      fullPath: '/contacts'
+      preLoaderRoute: typeof AuthenticatedContactsIndexLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
     }
     '/_authenticated/demandes/': {
       id: '/_authenticated/demandes/'
@@ -458,6 +534,10 @@ const AuthenticatedSettingsRouteLazyRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteLazyRoute: typeof AuthenticatedSettingsRouteLazyRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedContactsIdLazyRoute: typeof AuthenticatedContactsIdLazyRoute
+  AuthenticatedDemandesIdLazyRoute: typeof AuthenticatedDemandesIdLazyRoute
+  AuthenticatedAidesIndexLazyRoute: typeof AuthenticatedAidesIndexLazyRoute
+  AuthenticatedContactsIndexLazyRoute: typeof AuthenticatedContactsIndexLazyRoute
   AuthenticatedDemandesIndexLazyRoute: typeof AuthenticatedDemandesIndexLazyRoute
   AuthenticatedHelpCenterIndexLazyRoute: typeof AuthenticatedHelpCenterIndexLazyRoute
   AuthenticatedTasksIndexLazyRoute: typeof AuthenticatedTasksIndexLazyRoute
@@ -468,6 +548,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteLazyRoute:
     AuthenticatedSettingsRouteLazyRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedContactsIdLazyRoute: AuthenticatedContactsIdLazyRoute,
+  AuthenticatedDemandesIdLazyRoute: AuthenticatedDemandesIdLazyRoute,
+  AuthenticatedAidesIndexLazyRoute: AuthenticatedAidesIndexLazyRoute,
+  AuthenticatedContactsIndexLazyRoute: AuthenticatedContactsIndexLazyRoute,
   AuthenticatedDemandesIndexLazyRoute: AuthenticatedDemandesIndexLazyRoute,
   AuthenticatedHelpCenterIndexLazyRoute: AuthenticatedHelpCenterIndexLazyRoute,
   AuthenticatedTasksIndexLazyRoute: AuthenticatedTasksIndexLazyRoute,
@@ -491,10 +575,14 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404LazyRoute
   '/503': typeof errors503LazyRoute
   '/': typeof AuthenticatedIndexRoute
+  '/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
+  '/demandes/$id': typeof AuthenticatedDemandesIdLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsLazyRoute
+  '/aides': typeof AuthenticatedAidesIndexLazyRoute
+  '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
   '/settings/': typeof AuthenticatedSettingsIndexLazyRoute
@@ -514,10 +602,14 @@ export interface FileRoutesByTo {
   '/404': typeof errors404LazyRoute
   '/503': typeof errors503LazyRoute
   '/': typeof AuthenticatedIndexRoute
+  '/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
+  '/demandes/$id': typeof AuthenticatedDemandesIdLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsLazyRoute
+  '/aides': typeof AuthenticatedAidesIndexLazyRoute
+  '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
   '/settings': typeof AuthenticatedSettingsIndexLazyRoute
@@ -541,10 +633,14 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500LazyRoute
   '/(errors)/503': typeof errors503LazyRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
+  '/_authenticated/demandes/$id': typeof AuthenticatedDemandesIdLazyRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsLazyRoute
+  '/_authenticated/aides/': typeof AuthenticatedAidesIndexLazyRoute
+  '/_authenticated/contacts/': typeof AuthenticatedContactsIndexLazyRoute
   '/_authenticated/demandes/': typeof AuthenticatedDemandesIndexLazyRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexLazyRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexLazyRoute
@@ -568,10 +664,14 @@ export interface FileRouteTypes {
     | '/404'
     | '/503'
     | '/'
+    | '/contacts/$id'
+    | '/demandes/$id'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/aides'
+    | '/contacts'
     | '/demandes'
     | '/help-center'
     | '/settings/'
@@ -590,10 +690,14 @@ export interface FileRouteTypes {
     | '/404'
     | '/503'
     | '/'
+    | '/contacts/$id'
+    | '/demandes/$id'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/aides'
+    | '/contacts'
     | '/demandes'
     | '/help-center'
     | '/settings'
@@ -615,10 +719,14 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(errors)/503'
     | '/_authenticated/'
+    | '/_authenticated/contacts/$id'
+    | '/_authenticated/demandes/$id'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
+    | '/_authenticated/aides/'
+    | '/_authenticated/contacts/'
     | '/_authenticated/demandes/'
     | '/_authenticated/help-center/'
     | '/_authenticated/settings/'
@@ -686,6 +794,10 @@ export const routeTree = rootRoute
       "children": [
         "/_authenticated/settings",
         "/_authenticated/",
+        "/_authenticated/contacts/$id",
+        "/_authenticated/demandes/$id",
+        "/_authenticated/aides/",
+        "/_authenticated/contacts/",
         "/_authenticated/demandes/",
         "/_authenticated/help-center/",
         "/_authenticated/tasks/",
@@ -740,6 +852,14 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/index.tsx",
       "parent": "/_authenticated"
     },
+    "/_authenticated/contacts/$id": {
+      "filePath": "_authenticated/contacts/$id.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/demandes/$id": {
+      "filePath": "_authenticated/demandes/$id.lazy.tsx",
+      "parent": "/_authenticated"
+    },
     "/_authenticated/settings/account": {
       "filePath": "_authenticated/settings/account.lazy.tsx",
       "parent": "/_authenticated/settings"
@@ -755,6 +875,14 @@ export const routeTree = rootRoute
     "/_authenticated/settings/notifications": {
       "filePath": "_authenticated/settings/notifications.lazy.tsx",
       "parent": "/_authenticated/settings"
+    },
+    "/_authenticated/aides/": {
+      "filePath": "_authenticated/aides/index.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/contacts/": {
+      "filePath": "_authenticated/contacts/index.lazy.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/demandes/": {
       "filePath": "_authenticated/demandes/index.lazy.tsx",

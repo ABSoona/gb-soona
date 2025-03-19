@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Demande } from '@/model/demande/Demande'
 
 type DemandesDialogType = 'invite' | 'add' | 'edit' | 'delete' | 'view'
 
 interface DemandesContextType {
-  open: DemandesDialogType | null
-  setOpen: (str: DemandesDialogType | null) => void
+  openDemande: DemandesDialogType | null
+  setOpenDemande: (str: DemandesDialogType | null) => void
   currentRow: Demande | null
   setCurrentRow: React.Dispatch<React.SetStateAction<Demande | null>>
+  setRefetchDemandes: (fn: () => void) => void
+  triggerRefetchDemandes: () => void
 }
 
 const DemandesContext = React.createContext<DemandesContextType | null>(null)
@@ -18,11 +20,29 @@ interface Props {
 }
 
 export default function DemandesProvider({ children }: Props) {
-  const [open, setOpen] = useDialogState<DemandesDialogType>(null)
+  const [openDemande, setOpenDemande] = useDialogState<DemandesDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Demande | null>(null)
+  const [refetchFn, setRefetchFn] = useState<(() => void) | null>(null)
+
+  const setRefetchDemandes = useCallback((fn: () => void) => {
+    setRefetchFn(() => fn)
+  }, [])
+
+  const triggerRefetchDemandes = useCallback(() => {
+    if (refetchFn) {
+      refetchFn()
+    }
+  }, [refetchFn])
 
   return (
-    <DemandesContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <DemandesContext value={{
+      openDemande,
+      setOpenDemande,
+      currentRow,
+      setCurrentRow,
+      setRefetchDemandes,
+      triggerRefetchDemandes
+    }}>
       {children}
     </DemandesContext>
   )
@@ -33,7 +53,7 @@ export const useDemandes = () => {
   const demandesContext = React.useContext(DemandesContext)
 
   if (!demandesContext) {
-    throw new Error('useDemandes has to be used within <DemandesContext>')
+    throw new Error('useDemandes has to be used within <DemandesProvider>')
   }
 
   return demandesContext

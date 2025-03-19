@@ -7,8 +7,8 @@ import { Demande, DemandeStatus } from '@/model/demande/Demande';
 import { DataTableColumnHeader } from './data-table-column-header';
 import { DataTableRowActions } from './data-table-row-actions';
 import { demandeStatusColor, demandeStatusTypes } from '../data/data';
-import { situationTypes } from '@/features/contacts/data/data';
-import { situationFamilleTypes } from '@/features/contacts/data/data';
+import { situationTypes } from '@/model/demande/Demande';
+import { situationFamilleTypes } from '@/model/demande/Demande';
 import { SituationPro } from "@/model/demande/Demande";
 import { DateRange } from 'react-day-picker';
 
@@ -51,18 +51,20 @@ export const columns: ColumnDef<Demande>[] = [
 
     // 📄 Informations de la Demande
     {
+        
         accessorFn: (row) => row.id,
         id: 'numeroDemande',
         header: 'Numéro de demande',
         cell: ({ row }) => row.original.id ?? 'N/A',
     },
     {
+        
         accessorKey: 'id',
         header: 'ID Demande',
         cell: ({ row }) => <LongText className="max-w-36">{row.getValue('id')}</LongText>,
         enableHiding: false,
     },
-    {
+    {   id: 'createdAt',
         accessorKey: 'createdAt',
         header: 'Créée le',
         cell: ({ row }) => {
@@ -212,6 +214,7 @@ export const columns: ColumnDef<Demande>[] = [
 
     // 🟡 Statut de la Demande
     {
+        id : 'status',
         accessorKey: 'status',
         header: 'Statut',
         cell: ({ row }) => {

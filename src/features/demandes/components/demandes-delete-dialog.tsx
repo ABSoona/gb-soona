@@ -8,6 +8,7 @@ import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Demande } from '@/model/demande/Demande';
 import { useDemandeService } from '@/api/demande/demandeService';
 import { useQueryClient } from '@tanstack/react-query';
+import { useDemandes } from '../context/demandes-context';
 
 interface Props {
   open: boolean;
@@ -19,7 +20,7 @@ export function DemandesDeleteDialog({ open, onOpenChange, currentRow }: Props) 
   const queryClient = useQueryClient();
   const { deleteDemande, deleting } = useDemandeService(); // ✅ Utilisation du service
   const [value, setValue] = useState<number | ''>('');
-
+  const { triggerRefetchDemandes } = useDemandes();
   const handleDelete = async () => {
     if (value !== currentRow.id) {
       toast({ title: 'ID incorrect !', variant: 'destructive' });
@@ -28,6 +29,7 @@ export function DemandesDeleteDialog({ open, onOpenChange, currentRow }: Props) 
 
     try {
       await deleteDemande(currentRow.id);
+      triggerRefetchDemandes();
       queryClient.invalidateQueries({ queryKey: ['demandes'] });
       onOpenChange(false);
     } catch (error) {

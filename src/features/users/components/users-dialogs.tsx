@@ -4,7 +4,7 @@ import { UsersDeleteDialog } from './users-delete-dialog'
 import { UsersInviteDialog } from './users-invite-dialog'
 
 export function UsersDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useUsers()
+  const { openUser: open, setOpenUser: setOpen, currentRow, setCurrentRow } = useUsers()
   return (
     <>
       <UsersActionDialog

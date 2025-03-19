@@ -18,7 +18,7 @@ interface DataTableRowActionsProps {
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-  const { setOpen, setCurrentRow } = useDemandes()
+  const { setOpenDemande: setOpen, setCurrentRow } = useDemandes()
   return (
     <>
       <DropdownMenu modal={false}>

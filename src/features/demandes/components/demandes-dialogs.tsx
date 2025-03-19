@@ -5,7 +5,7 @@ import { DemandesDeleteDialog } from './demandes-delete-dialog'
 import { DemandesInviteDialog } from './demandes-invite-dialog'
 
 export function DemandesDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useDemandes()
+  const { openDemande: open, setOpenDemande: setOpen, currentRow, setCurrentRow } = useDemandes()
   return (
     <>
       <DemandesActionDialog

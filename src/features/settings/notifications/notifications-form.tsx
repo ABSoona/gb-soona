@@ -108,7 +108,7 @@ export function NotificationsForm() {
                 <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
                   <div className='space-y-0.5'>
                     <FormLabel className='text-base'>
-                      Communication emails
+                     Nouvelle demandes
                     </FormLabel>
                     <FormDescription>
                       Receive emails about your account activity.
@@ -130,7 +130,7 @@ export function NotificationsForm() {
                 <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
                   <div className='space-y-0.5'>
                     <FormLabel className='text-base'>
-                      Marketing emails
+                      Demandes en visite
                     </FormLabel>
                     <FormDescription>
                       Receive emails about new products, features, and more.
@@ -151,7 +151,7 @@ export function NotificationsForm() {
               render={({ field }) => (
                 <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
                   <div className='space-y-0.5'>
-                    <FormLabel className='text-base'>Social emails</FormLabel>
+                    <FormLabel className='text-base'>Demandes en commission</FormLabel>
                     <FormDescription>
                       Receive emails for friend requests, follows, and more.
                     </FormDescription>
@@ -171,7 +171,7 @@ export function NotificationsForm() {
               render={({ field }) => (
                 <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
                   <div className='space-y-0.5'>
-                    <FormLabel className='text-base'>Security emails</FormLabel>
+                    <FormLabel className='text-base'>contact Blacklisté</FormLabel>
                     <FormDescription>
                       Receive emails about your account activity and security.
                     </FormDescription>

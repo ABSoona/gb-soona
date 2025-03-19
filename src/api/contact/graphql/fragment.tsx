@@ -17,6 +17,6 @@ export const CONTACT_FIELDS = gql`
     ville
     numBeneficiaire
 
-    
+
   }
 `;

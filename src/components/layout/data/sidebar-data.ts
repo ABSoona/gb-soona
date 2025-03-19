@@ -2,18 +2,21 @@ import {
 
   IconBrowserCheck,
   IconChecklist,
+  IconCoinEuro,
   IconHelp,
   IconLayoutDashboard,
   IconLockAccess,
   IconNotification,
   IconPalette,
   IconSettings,
+  IconTaxEuro,
   IconTool,
   IconUserCog,
   IconUsers,
 } from '@tabler/icons-react'
 
 import { type SidebarData } from '../types'
+import { UserIcon } from 'lucide-react'
 
 export const sidebarData: SidebarData = {
   user: {
@@ -30,16 +33,26 @@ export const sidebarData: SidebarData = {
           url: '/',
           icon: IconLayoutDashboard,
         },
-        {
+     /*   {
           title: 'Tasks',
           url: '/tasks',
           icon: IconChecklist,
-        },     
+        },     */
         {
           title: 'Demandes',
           url: '/demandes',
           icon: IconChecklist,
-        },         
+        },   
+        {
+          title: 'Contacts',
+          url: '/contacts',
+          icon: UserIcon,
+        },      
+        {
+          title: 'Aides',
+          url: '/Aides',
+          icon: IconCoinEuro,
+        },      
       
       ],
     },
@@ -76,10 +89,10 @@ export const sidebarData: SidebarData = {
       ],
     },*/
     {
-      title: 'Other',
+      title: 'Autres',
       items: [
         {
-          title: 'Settings',
+          title: 'Réglages',
           icon: IconSettings,
           items: [
             {
@@ -96,7 +109,7 @@ export const sidebarData: SidebarData = {
           ],
         },
         {
-          title: 'Help Center',
+          title: 'Documentation',
           url: '/help-center',
           icon: IconHelp,
         },

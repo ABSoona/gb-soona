@@ -155,7 +155,7 @@
 
 /* Style pour les valeurs */
 .value-style {
-  @apply text-base font-medium text-gray-800 truncate capitalize;
+  @apply text-base font-medium text-gray-800 truncate ;
 }
 
 .multiline-value-style {

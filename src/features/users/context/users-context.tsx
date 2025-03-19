@@ -5,8 +5,8 @@ import { User } from '@/model/user/User'
 type UsersDialogType = 'invite' | 'add' | 'edit' | 'delete'
 
 interface UsersContextType {
-  open: UsersDialogType | null
-  setOpen: (str: UsersDialogType | null) => void
+  openUser: UsersDialogType | null
+  setOpenUser: (str: UsersDialogType | null) => void
   currentRow: User | null
   setCurrentRow: React.Dispatch<React.SetStateAction<User | null>>
 }
@@ -22,7 +22,7 @@ export default function UsersProvider({ children }: Props) {
   const [currentRow, setCurrentRow] = useState<User | null>(null)
 
   return (
-    <UsersContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <UsersContext value={{ openUser: open, setOpenUser: setOpen, currentRow, setCurrentRow }}>
       {children}
     </UsersContext>
   )

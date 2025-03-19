@@ -2,6 +2,7 @@
 
 import { z } from 'zod';
 import { contactSchema } from '../contact/Contact';
+import { IconExternalLink, IconShield, IconUsersGroup } from "@tabler/icons-react";
 
 // Schéma pour le statut de la demande
 export const demandeStatusSchema = z.union([
@@ -31,12 +32,12 @@ export type SituationPro = z.infer<typeof situationProSchema>;
 // Schéma principal pour les demandes
 export const demandeSchema = z.object({
   id: z.number(),
-  contact: contactSchema,
+  contact: contactSchema.omit({demandes: true}),
   status: demandeStatusSchema,
   remarques: z.string().optional(),
   createdAt :z.coerce.date(),
   situationFamiliale: situationFamSchema,
-  nombreEnfants: z.coerce.number(),
+  nombreEnfants: z.coerce.number().min(-1).max(10),
   agesEnfants: z.string().optional().or(z.literal('')),
   situationProfessionnelle: situationProSchema,
   situationProConjoint: situationProSchema.optional(),
@@ -52,5 +53,51 @@ export const demandeSchema = z.object({
   
 });
 export type Demande = z.infer<typeof demandeSchema>;// Schéma pour le statut de la contact
+//A deplacer plus tard dans Contact/data
+export const situationFamilleTypes = [
+  {
+    label: 'Marié(e)',
+    value: 'marié',
+    icon: IconShield,
+  },
+  {
+    label: 'Divorcé(e)',
+    value: 'divorcé',
+    icon: IconUsersGroup,
+  },
+  {
+    label: 'Célibataire',
+    value: 'célibataire',
+    icon: IconExternalLink,
+  },
+  {
+    label: 'Veuf(ve)',
+    value: 'veuf',
+    icon: IconExternalLink,
+  },
+] as const;
+//A deplacer plus tard dans Contact/data
+export const situationTypes = [
+  {
+    label: 'Sans emploi',
+    value: 'sans_emploi',
+    icon: IconShield,
+  },
+  {
+    label: 'Employé',
+    value: 'employé',
+    icon: IconUsersGroup,
+  },
+  {
+    label: 'Indépendant',
+    value: 'indépendant',
+    icon: IconExternalLink,
+  },
+  {
+    label: 'Retraité',
+    value: 'retraité',
+    icon: IconExternalLink,
+  },
+] as const
 
 

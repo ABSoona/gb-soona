@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { demandeStatusTypes } from '../data/data';
-import { situationTypes } from '@/features/contacts/data/data';
+import { situationTypes } from '@/model/demande/Demande';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { DataTableViewOptions } from './data-table-view-options';
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
+import { DataTableExport } from './data-table-export';
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -16,43 +17,102 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
+
+    // ✅ État pour gérer les filtres sauvegardés
+    const [dateRange, setDateRange] = useState<DateRange | undefined>();
+    const [filterName, setFilterName] = useState<string>('');
+
+    // ✅ Restaurer les filtres depuis localStorage au chargement
+    useEffect(() => {
+        // 🔹 Restaurer le filtre "Nom"
+        const savedName = localStorage.getItem('filter-name');
+        if (savedName) {
+            setFilterName(savedName);
+            table.getColumn('contactNomPrenom')?.setFilterValue(savedName);
+        }
     
-    // ✅ État pour gérer la plage de dates
-    const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+        // 🔹 Restaurer le filtre "Période" (et éviter qu'il soit écrasé)
+        const savedDateRange = localStorage.getItem('filter-date-range');
+        if (savedDateRange && savedDateRange !== "undefined") {
+            try {
+                const stroredDateRange = JSON.parse(savedDateRange);
+                if (stroredDateRange) {
+                    const parsedDateRange = {
+                        from: new Date(stroredDateRange.from),
+                        to: new Date(stroredDateRange.to),
+                      };
+                    setDateRange(parsedDateRange);
+                    table.getColumn('createdAt')?.setFilterValue(parsedDateRange);
+                }
+            } catch (error) {
+                console.error("Erreur lors de la récupération du filtre date-range :", error);
+                localStorage.removeItem('filter-date-range'); // 🔥 Supprime les données corrompues
+            }
+        } else {
+            // 🔥 Si aucun filtre de date n'est sauvegardé, éviter de l’écraser avec undefined
+            setDateRange(undefined);
+        }
+    }, []);
+    // ✅ Mise à jour du filtre "Nom"
+    const handleNameFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newName = event.target.value;
+        setFilterName(newName);
+        table.getColumn('contactNomPrenom')?.setFilterValue(newName);
+        
+        // 🔥 Sauvegarde dans localStorage
+        localStorage.setItem('filter-name', newName);
+    };
 
     // ✅ Mise à jour du filtre "Période"
     const handleDateRangeChange = (newDateRange: DateRange | undefined) => {
-        setDateRange(newDateRange); // 🔥 Met à jour l'affichage du DatePicker
-        table.getColumn("createdAt")?.setFilterValue(newDateRange);
+      if(newDateRange?.from != null && newDateRange?.to != null){
+        
+            setDateRange(newDateRange);
+            table.getColumn('createdAt')?.setFilterValue(newDateRange);
+            localStorage.setItem('filter-date-range', JSON.stringify(newDateRange));
+       
+      }
+    
+        // 🔥 Sauvegarde dans localStorage
+       
     };
 
-    // ✅ Réinitialisation des filtres
+    // ✅ Réinitialisation complète des filtres
     const handleResetFilters = () => {
         table.resetColumnFilters(); // 🔥 Réinitialise tous les filtres
-        setDateRange(undefined); // 🔥 Vide le `DatePickerWithRange`
+        setDateRange(undefined);
+        setFilterName('');
+
+        // 🔥 Supprime les filtres de `localStorage`
+        localStorage.removeItem('filter-name');
+        localStorage.removeItem('filter-date-range');
+
+        table.getAllColumns().forEach(column => {
+            if (column.getCanFilter()) {
+                localStorage.removeItem(`filters-${column.id}`);
+            }
+        });
     };
 
     return (
         <div className="flex items-center justify-between">
             <div className="flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
                 
-                {/* 🔍 Filtre par nom */}
+                {/* 🔍 Filtre par nom (avec sauvegarde) */}
                 <Input
                     placeholder="Filtrer les noms..."
-                    value={(table.getColumn('contactNomPrenom')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) =>
-                        table.getColumn('contactNomPrenom')?.setFilterValue(event.target.value)
-                    }
+                    value={filterName}
+                    onChange={handleNameFilterChange} // ✅ Mise à jour avec `localStorage`
                     className="h-8 w-[150px] lg:w-[250px]"
                 />
 
                 <div className="flex gap-x-2">
                     
-                    {/* 📅 Filtre par Période */}
+                    {/* 📅 Filtre par Période (avec sauvegarde) */}
                     {table.getColumn('createdAt') && (
                         <DatePickerWithRange 
-                            value={dateRange} // ✅ Garde l'état du datepicker synchronisé
-                            onChange={handleDateRangeChange} 
+                            value={dateRange} 
+                            onChange={handleDateRangeChange} // ✅ Mise à jour avec `localStorage`
                         />
                     )}
 
@@ -90,7 +150,10 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             </div>
 
             {/* ⚙️ Options d'affichage des colonnes */}
-            <DataTableViewOptions table={table} />
+            <div className='mx-2'><DataTableViewOptions table={table} /></div>
+            <div><DataTableExport table={table}/></div>
+            
+           
         </div>
     );
 }

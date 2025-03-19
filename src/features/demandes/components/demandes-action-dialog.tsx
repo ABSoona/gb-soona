@@ -29,8 +29,10 @@ import { handleServerError } from '@/utils/handle-server-error';
 import { Textarea } from '@/components/ui/textarea';
 import { ContactSearchCombobox } from './contact-search';
 import { Input } from '@/components/ui/input';
-import { situationFamilleTypes, situationTypes } from '@/features/contacts/data/data';
+import { situationTypes } from '@/model/demande/Demande';
+import { situationFamilleTypes } from '@/model/demande/Demande';
 import { demandeStatusTypes } from '../data/data';
+import { useDemandes } from '../context/demandes-context';
 
 // 📌 Schéma de validation du formulaire avec Zod
 const formSchema = demandeSchema
@@ -50,7 +52,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
   
 
   const { createDemande, updateDemande, refetch, creating, updating } = useDemandeService();
-
+  const { triggerRefetchDemandes } = useDemandes();
   const isEdit = !!currentRow;
   
   const form = useForm<DemandeForm>({
@@ -64,7 +66,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
           agesEnfants :currentRow?.agesEnfants || '',
           situationFamiliale:currentRow?.situationFamiliale,
           situationProfessionnelle:currentRow?.situationProfessionnelle,
-          situationProConjoint : currentRow?.situationProConjoint,
+          situationProConjoint : currentRow?.situationProConjoint ?currentRow?.situationProConjoint : undefined,
           revenus:Number(currentRow?.revenus),
           revenusConjoint:Number(currentRow?.revenusConjoint),
           loyer:Number(currentRow?.loyer),
@@ -92,6 +94,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
         },
   });
   const situationFamiliale = form.watch("situationFamiliale");
+  const dettes = form.watch("dettes");
   const onSubmit = async (values: DemandeForm) => {
     console.log("erreur de validation: ");
     const demandePayload = {
@@ -125,7 +128,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
         toast({ title: 'Nouvelle demande créée avec succès !' });
       }
 
-    //  refetch?.();
+      triggerRefetchDemandes();
       form.reset();
       onOpenChange(false);
     } catch (error) {
@@ -450,7 +453,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                 )}
                 
               />  
-               <FormField
+             { dettes > 0 && <FormField
                 control={form.control}
                 name='natureDettes' 
                 render={({ field }) => (
@@ -470,7 +473,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                   </FormItem>
                 )}
                 
-              />  
+              />  }
 
               {/* 📌 Sélecteur de statut */}
               <FormField
