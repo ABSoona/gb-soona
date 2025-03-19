@@ -1,0 +1,373 @@
+'use client';
+
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { SelectDropdown } from '@/components/select-dropdown';
+import { Contact, contactSchema } from '@/model/contact/Contact';
+import { useContactService } from '@/api/contact/contact-service';
+import { toast } from '@/hooks/use-toast';
+import { handleServerError } from '@/utils/handle-server-error';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { contactStatusTypes } from '../data/data';
+import { useDemandes } from '@/features/demandes/context/demandes-context';
+
+
+// 📌 Schéma de validation du formulaire avec Zod
+const formSchema = contactSchema
+  .omit({id:true, aides: true, demandes : true,createdAt:true , updatedAt : true  }); // Supprime les champs "id" et "contact"  // Ajoute "contactId"
+
+type ContactForm = z.infer<typeof formSchema>;
+
+interface Props {
+  currentRow?: Contact;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) {
+
+  
+
+  const { createContact, updateContact, refetch, creating, updating } = useContactService();
+
+  const isEdit = !!currentRow;
+  
+  const form = useForm<ContactForm>({
+    resolver: zodResolver(formSchema),
+    defaultValues: isEdit
+      ? {
+          nom: currentRow?.nom || '',
+          prenom: currentRow?.prenom || '',
+          status: currentRow?.status || {value:'active'},
+          remarques: currentRow?.remarques || '',
+          age : Number(currentRow?.age),
+          telephone : currentRow?.telephone,
+          email :currentRow?.email || '',
+          ville : currentRow?.ville,
+          codePostal : currentRow?.codePostal,
+          adresse : currentRow?.adresse,
+          
+          
+        }
+      : {
+        nom: '',
+        prenom:  '',
+        status: 'active',
+        remarques: '',
+        telephone : '',
+        email :'',
+        ville:'',
+        codePostal : 78000,
+        adresse: '',
+        age : 0 ,
+
+        },
+  });
+ 
+  const onSubmit = async (values: ContactForm) => {
+    console.log("erreur de validation: ");
+    const contactPayload = {
+     
+     status: values.status,
+     remarques: values.remarques,
+     nom : values.nom ,
+     prenom : values.prenom,
+     email: values.email,
+     telephone:values.telephone,
+     ville : values.ville,
+     adresse : values.adresse,
+     codePostal : Number(values.codePostal),
+     age : Number(values.age),
+    
+
+
+    };
+  
+    try {
+      if (isEdit && currentRow?.id) {
+        await updateContact(currentRow.id, contactPayload);
+        toast({ title: 'Contact mise à jour avec succès !' });
+      } else {
+        console.log(contactPayload);
+        await createContact(contactPayload);
+        toast({ title: 'Nouveau contact créée avec succès !' });
+      }
+
+      form.reset();
+      onOpenChange(false);
+    } catch (error) {
+      console.error('❌ Erreur lors de la soumission :', error);
+      handleServerError(error);
+    }
+  };
+
+  return (
+    
+    <Sheet
+      open={open}
+      onOpenChange={(state) => {
+        form.reset();
+        onOpenChange(state);
+      }}
+    >
+      <SheetContent className="flex flex-col">
+        <SheetHeader className="text-left">
+          <SheetTitle>{isEdit ? 'Modifier le Contact N° ' + currentRow?.id : 'Ajouter une Contact'}</SheetTitle>
+          <SheetDescription>
+            {isEdit ? 'Mettez à jour la contact ici.' : 'Créez une nouvelle contact ici.'} Cliquez sur "Enregistrer" lorsque vous avez terminé.
+          </SheetDescription>
+        </SheetHeader>
+        <ScrollArea className="h-full w-full py-1 pr-4">
+          <Form {...form}>
+            <form id="contact-form" onSubmit={(e) => {
+  console.log(form.formState.errors);
+  form.handleSubmit(onSubmit)(e);
+  console.log("✅ handleSubmit exécuté !");
+}}className="space-y-4 p-0.5">
+               
+           
+               <FormField
+                control={form.control}
+                name='nom'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                   Nom
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Nom du contact'
+                        className='col-span-4'
+                        autoComplete='off'
+                        {...field}
+
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+                
+              />
+               <FormField
+                control={form.control}
+                name='prenom'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                    Prenom
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Prénom du contact'
+                        className='col-span-4'
+                        autoComplete='off'
+                        {...field}
+                        
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+                
+              />
+               <FormField
+                control={form.control}
+                name='age'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                    Age
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Age du contact'
+                        className='col-span-4'
+                        autoComplete='off'
+                        {...field}
+                        
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+                
+              />
+               <FormField
+                control={form.control}
+                name='email'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                    Email
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Email du contact'
+                        className='col-span-4'
+                        autoComplete='off'
+                        {...field}
+                        type= 'email'
+                        
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+                
+              />
+               <FormField
+                control={form.control}
+                name='telephone'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                    Téléphone
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Ex: +33608744378'
+                        className='col-span-4'
+                        autoComplete='off'
+                        {...field}
+                        type= 'phone'
+                        
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+                
+              />
+              <FormField
+                control={form.control}
+                name='adresse'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                    Adresse
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Numéro et rue'
+                        className='col-span-4'
+                        autoComplete='off'
+                        {...field}
+                        
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+                
+              />
+               <FormField
+                control={form.control}
+                name='ville'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                    Ville
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Ville'
+                        className='col-span-4'
+                        autoComplete='off'
+                        {...field}
+                        
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+                
+              />
+                <FormField
+                control={form.control}
+                name='codePostal'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                    Code Postal
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Ex : 78180'
+                        className='col-span-4'
+                        autoComplete='off'
+                        {...field}
+                        
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+                
+              />
+
+              {/* 📌 Sélecteur de statut */}
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel>Statut</FormLabel>
+                    <SelectDropdown
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Choisissez un statut"
+                      className="col-span-4"
+                      items={[...contactStatusTypes]}        
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* 📌 Champ Remarques */}
+              <FormField
+                control={form.control}
+                name="remarques"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel>Remarques</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Ajoutez une remarque" className="col-span-4 min-h-[150px]" autoComplete="off" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </ScrollArea>
+        <SheetFooter>
+        
+          <Button type="submit" form="contact-form" disabled={creating || updating}>
+            {creating || updating ? 'En cours...' : 'Enregistrer'}
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+}
