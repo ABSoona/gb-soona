@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { ChevronDownIcon } from '@radix-ui/react-icons'
@@ -19,13 +20,15 @@ import {
 } from '@/components/ui/form'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
+const LOCAL_STORAGE_KEY = 'appearance-preferences'
+
 const appearanceFormSchema = z.object({
   theme: z.enum(['light', 'dark'], {
-    required_error: 'Please select a theme.',
+    required_error: 'Veuillez sélectionner un thème.',
   }),
   font: z.enum(fonts, {
-    invalid_type_error: 'Select a font',
-    required_error: 'Please select a font.',
+    invalid_type_error: 'Veuillez sélectionner une police',
+    required_error: 'Veuillez sélectionner une police.',
   }),
 })
 
@@ -35,28 +38,38 @@ export function AppearanceForm() {
   const { font, setFont } = useFont()
   const { theme, setTheme } = useTheme()
 
-  // This can come from your database or API.
-  const defaultValues: Partial<AppearanceFormValues> = {
-    theme: theme as 'light' | 'dark',
-    font,
-  }
-
   const form = useForm<AppearanceFormValues>({
     resolver: zodResolver(appearanceFormSchema),
-    defaultValues,
+    defaultValues: {
+      theme: theme as 'light' | 'dark',
+      font,
+    },
   })
 
+  // Charger depuis le localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem(LOCAL_STORAGE_KEY)
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as AppearanceFormValues
+        form.reset(parsed)
+        setFont(parsed.font)
+        setTheme(parsed.theme)
+      } catch (e) {
+        console.error('Erreur lors du chargement des préférences :', e)
+      }
+    }
+  }, [form, setFont, setTheme])
+
   function onSubmit(data: AppearanceFormValues) {
-    if (data.font != font) setFont(data.font)
-    if (data.theme != theme) setTheme(data.theme)
+    if (data.font !== font) setFont(data.font)
+    if (data.theme !== theme) setTheme(data.theme)
+
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))
 
     toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+      title: 'Préférences mises à jour',
+      description: 'Vos préférences ont été sauvegardées.',
     })
   }
 
@@ -68,7 +81,7 @@ export function AppearanceForm() {
           name='font'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Font</FormLabel>
+              <FormLabel>Police</FormLabel>
               <div className='relative w-max'>
                 <FormControl>
                   <select
@@ -88,20 +101,21 @@ export function AppearanceForm() {
                 <ChevronDownIcon className='absolute right-3 top-2.5 h-4 w-4 opacity-50' />
               </div>
               <FormDescription className='font-manrope'>
-                Set the font you want to use in the dashboard.
+                Choisissez la police utilisée dans le tableau de bord.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name='theme'
           render={({ field }) => (
             <FormItem className='space-y-1'>
-              <FormLabel>Theme</FormLabel>
+              <FormLabel>Thème</FormLabel>
               <FormDescription>
-                Select the theme for the dashboard.
+                Sélectionnez le thème de l’interface.
               </FormDescription>
               <FormMessage />
               <RadioGroup
@@ -124,14 +138,10 @@ export function AppearanceForm() {
                           <div className='h-4 w-4 rounded-full bg-[#ecedef]' />
                           <div className='h-2 w-[100px] rounded-lg bg-[#ecedef]' />
                         </div>
-                        <div className='flex items-center space-x-2 rounded-md bg-white p-2 shadow-sm'>
-                          <div className='h-4 w-4 rounded-full bg-[#ecedef]' />
-                          <div className='h-2 w-[100px] rounded-lg bg-[#ecedef]' />
-                        </div>
                       </div>
                     </div>
                     <span className='block w-full p-2 text-center font-normal'>
-                      Light
+                      Clair
                     </span>
                   </FormLabel>
                 </FormItem>
@@ -150,14 +160,10 @@ export function AppearanceForm() {
                           <div className='h-4 w-4 rounded-full bg-slate-400' />
                           <div className='h-2 w-[100px] rounded-lg bg-slate-400' />
                         </div>
-                        <div className='flex items-center space-x-2 rounded-md bg-slate-800 p-2 shadow-sm'>
-                          <div className='h-4 w-4 rounded-full bg-slate-400' />
-                          <div className='h-2 w-[100px] rounded-lg bg-slate-400' />
-                        </div>
                       </div>
                     </div>
                     <span className='block w-full p-2 text-center font-normal'>
-                      Dark
+                      Sombre
                     </span>
                   </FormLabel>
                 </FormItem>
@@ -166,7 +172,7 @@ export function AppearanceForm() {
           )}
         />
 
-        <Button type='submit'>Update preferences</Button>
+        <Button type='submit'>Sauvegarder les préférences</Button>
       </form>
     </Form>
   )

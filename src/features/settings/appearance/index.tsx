@@ -4,9 +4,8 @@ import { AppearanceForm } from './appearance-form'
 export default function SettingsAppearance() {
   return (
     <ContentSection
-      title='Appearance'
-      desc='Customize the appearance of the app. Automatically switch between day
-          and night themes.'
+      title='Apparence'
+      desc='Personnalisez l’apparence de l’application. Basculez automatiquement entre les thèmes clair et sombre.'
     >
       <AppearanceForm />
     </ContentSection>

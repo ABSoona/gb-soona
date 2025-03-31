@@ -1,3 +1,5 @@
+'use client'
+
 import { HTMLAttributes, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -13,6 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { resetPasswordRequest} from '@/api/user/userService'
 
 type ForgotFormProps = HTMLAttributes<HTMLDivElement>
 
@@ -25,20 +28,29 @@ const formSchema = z.object({
 
 export function ForgotForm({ className, ...props }: ForgotFormProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: '' },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    // eslint-disable-next-line no-console
-    console.log(data)
+    setSuccess(null)
+    setError(null)
 
-    setTimeout(() => {
+    try {
+      await resetPasswordRequest(data.email)
+      setSuccess('Un lien de réinitialisation a été envoyé si l’email existe.')
+      form.reset({ email: '' }) // <- ici on vide le champ
+    } catch (err: any) {
+      setError('Une erreur est survenue. Veuillez réessayer.')
+      console.error(err)
+    } finally {
       setIsLoading(false)
-    }, 3000)
+    }
   }
 
   return (
@@ -53,14 +65,20 @@ export function ForgotForm({ className, ...props }: ForgotFormProps) {
                 <FormItem className='space-y-1'>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder='name@example.com' {...field} />
+                    <Input placeholder='nom@exemple.com' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            {success && (
+              <p className="text-sm text-green-600">{success}</p>
+            )}
+            {error && (
+              <p className="text-sm text-red-600">{error}</p>
+            )}
             <Button className='mt-2' disabled={isLoading}>
-              Continue
+              {isLoading ? 'Envoi en cours...' : 'Envoyer le lien'}
             </Button>
           </div>
         </form>

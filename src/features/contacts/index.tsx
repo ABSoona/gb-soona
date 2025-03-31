@@ -13,6 +13,8 @@ import { handleServerError } from '@/utils/handle-server-error';
 import { useContactService } from '@/api/contact/contact-service';
 import { ContactsDialogs } from './components/contacts-dialogs';
 import { Skeleton } from '@/components/ui/skeleton';
+import AppLayout from '@/components/layout/app-layout';
+import { TableSkeleton } from '@/components/ui/skeleton-table';
 
 export default function Contacts() {
     // ✅ Utilisation du service pour récupérer les contacts
@@ -25,15 +27,9 @@ export default function Contacts() {
 
     return (
         <ContactsProvider>
-            <Header fixed>
-                <Search />
-                <div className="ml-auto flex items-center space-x-4">
-                    <ThemeSwitch />
-                    <ProfileDropdown />
-                </div>
-            </Header>
+             
 
-            <Main>
+             <AppLayout>
                 <div className="mb-2 flex flex-wrap items-center justify-between space-y-2">
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight">Liste des Contacts</h2>
@@ -45,13 +41,8 @@ export default function Contacts() {
                 </div>
 
                 <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
-                    {isLoading ? (
-                        <div className="flex items-center justify-center py-4">
-                       <div className="space-y-2">
-                             <Skeleton className="h-4 w-full" />
-                             <Skeleton className="h-4 w-full" />
-                        </div>
-                        </div>
+                {isLoading ? (
+                          <TableSkeleton rows={10} columns={8}/>
                     ) : error ? (
                         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
                             <p>❌ Erreur lors du chargement des contacts.</p>
@@ -65,7 +56,7 @@ export default function Contacts() {
                         <ContactsTable data={contacts ?? []} columns={aidesColumns} hideTools={false} />
                     )}
                 </div>
-            </Main>
+            </AppLayout>
 
           <ContactsDialogs /> 
         </ContactsProvider>

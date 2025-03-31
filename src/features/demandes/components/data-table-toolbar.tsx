@@ -4,7 +4,7 @@ import { Table } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { demandeStatusTypes } from '../data/data';
-import { situationTypes } from '@/model/demande/Demande';
+import { situationFamilleTypes, situationTypes } from '@/model/demande/Demande';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { DataTableViewOptions } from './data-table-view-options';
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
@@ -131,6 +131,14 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                             column={table.getColumn('situationProfessionnelle')}
                             title="Situation Pro."
                             options={situationTypes.map((t) => ({ ...t }))}
+                        />
+                    )}
+                      {/* 📌 Filtre par Situation Professionnelle */}
+                      {table.getColumn('situationFamiliale') && (
+                        <DataTableFacetedFilter
+                            column={table.getColumn('situationFamiliale')}
+                            title="Situation Famil."
+                            options={situationFamilleTypes.map((t) => ({ ...t }))}
                         />
                     )}
                     

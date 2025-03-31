@@ -25,6 +25,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { userTypes } from '../data/data'
+import { useInvitationService } from '@/api/invitation/invitationService' // ✅ ajout du hook
 
 const formSchema = z.object({
   email: z
@@ -33,7 +34,9 @@ const formSchema = z.object({
     .email({ message: 'Email is invalid.' }),
   role: z.string().min(1, { message: 'Role is required.' }),
   desc: z.string().optional(),
+  
 })
+
 type UserInviteForm = z.infer<typeof formSchema>
 
 interface Props {
@@ -47,17 +50,22 @@ export function UsersInviteDialog({ open, onOpenChange }: Props) {
     defaultValues: { email: '', role: '', desc: '' },
   })
 
-  const onSubmit = (values: UserInviteForm) => {
-    form.reset()
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      ),
-    })
-    onOpenChange(false)
+  const { createInvitation, isSubmitting } = useInvitationService()
+
+  const onSubmit = async (values: UserInviteForm) => {
+    const payload = {
+      email: values.email,
+      role: values.role,
+      message: values.desc,
+      token :'',
+      used :false
+    }
+
+    const success = await createInvitation(payload)
+    if (success) {
+      form.reset()
+      onOpenChange(false)
+    }
   }
 
   return (
@@ -71,13 +79,14 @@ export function UsersInviteDialog({ open, onOpenChange }: Props) {
       <SheetContent className='flex flex-col'>
         <SheetHeader className='text-left'>
           <SheetTitle className='flex items-center gap-2'>
-            <IconMailPlus /> Invite User
+            <IconMailPlus /> Inviter
           </SheetTitle>
           <SheetDescription>
-            Invite new user to join your team by sending them an email
-            invitation. Assign a role to define their access level.
+            Invitez un nouvel utilisateur à rejoindre votre équipe en lui envoyant
+            une invitation par e-mail. Attribuez-lui un rôle pour définir son niveau d’accès.
           </SheetDescription>
         </SheetHeader>
+
         <Form {...form}>
           <form
             id='user-invite-form'
@@ -101,16 +110,17 @@ export function UsersInviteDialog({ open, onOpenChange }: Props) {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name='role'
               render={({ field }) => (
                 <FormItem className='space-y-1'>
-                  <FormLabel>Role</FormLabel>
+                  <FormLabel>Rôle</FormLabel>
                   <SelectDropdown
                     defaultValue={field.value}
                     onValueChange={field.onChange}
-                    placeholder='Select a role'
+                    placeholder='Choisir un rôle'
                     items={userTypes.map(({ label, value }) => ({
                       label,
                       value,
@@ -120,16 +130,17 @@ export function UsersInviteDialog({ open, onOpenChange }: Props) {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name='desc'
               render={({ field }) => (
-                <FormItem className=''>
-                  <FormLabel>Description (optional)</FormLabel>
+                <FormItem>
+                  <FormLabel>Description (optionnel)</FormLabel>
                   <FormControl>
                     <Textarea
                       className='resize-none'
-                      placeholder='Add a personal note to your invitation (optional)'
+                      placeholder='Ajouter un message à destination de la personne invitée (optionnel)'
                       {...field}
                     />
                   </FormControl>
@@ -139,12 +150,13 @@ export function UsersInviteDialog({ open, onOpenChange }: Props) {
             />
           </form>
         </Form>
+
         <SheetFooter className='gap-y-2'>
           <SheetClose asChild>
-            <Button variant='outline'>Cancel</Button>
+            <Button variant='outline'>Annuler</Button>
           </SheetClose>
-          <Button type='submit' form='user-invite-form'>
-            Invite <IconSend />
+          <Button type='submit' form='user-invite-form' disabled={isSubmitting}>
+            {isSubmitting ? 'Envoi...' : <>Inviter <IconSend /></>}
           </Button>
         </SheetFooter>
       </SheetContent>

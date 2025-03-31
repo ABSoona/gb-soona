@@ -11,6 +11,9 @@ import AidesProvider from './context/aides-context';
 
 import { useAideService } from '@/api/aide/aideService';
 import { handleServerError } from '@/utils/handle-server-error';
+import AppLayout from '@/components/layout/app-layout';
+import { Skeleton } from '@/components/ui/skeleton';
+import { TableSkeleton } from '@/components/ui/skeleton-table';
 
 export default function Aides() {
     // ✅ Utilisation du service pour récupérer les aides
@@ -23,15 +26,8 @@ export default function Aides() {
 
     return (
         <AidesProvider>
-            <Header fixed>
-                <Search />
-                <div className="ml-auto flex items-center space-x-4">
-                    <ThemeSwitch />
-                    <ProfileDropdown />
-                </div>
-            </Header>
-
-            <Main>
+          
+            <AppLayout>
                 <div className="mb-2 flex flex-wrap items-center justify-between space-y-2">
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight">Liste des Aides</h2>
@@ -44,9 +40,7 @@ export default function Aides() {
 
                 <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
                     {isLoading ? (
-                        <div className="flex items-center justify-center py-4">
-                            <p>⏳ Chargement des aides en cours...</p>
-                        </div>
+                       <TableSkeleton rows={10} columns={8}/>
                     ) : error ? (
                         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
                             <p>❌ Erreur lors du chargement des aides.</p>
@@ -60,7 +54,7 @@ export default function Aides() {
                         <AidesTable data={aides ?? []} columns={columns} hideTools={false} />
                     )}
                 </div>
-            </Main>
+            </AppLayout>
 
             <AidesDialogs />
         </AidesProvider>

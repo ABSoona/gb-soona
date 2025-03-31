@@ -13,6 +13,9 @@ import { Button } from '@/components/ui/button';
 import { useDemandes } from './context/demandes-context'; // ✅ Import du contexte
 import { DemandesDialogs } from './components/demandes-dialogs';
 import AidesProvider from '../aides/context/aides-context';
+import { Badge } from '@/components/ui/badge';
+import { demandeStatusColor, demandeStatusTypes } from './data/data';
+import { cn } from '@/lib/utils';
 
 interface Props {
   showContact?: boolean
@@ -25,14 +28,14 @@ export default function DemandeDetail({showContact=true }: Props) {
   });
 
   const navigate = useNavigate();
-  const { demandes, loading: isLoading, error } = useDemandeService({ where: { id: { equals: Number(id) } } });
+  const { demandes, loading: isLoading, error } = useDemandeService({ where: { id: { equals: Number(id) } }});
   const demande: Demande = demandes.length > 0 ? demandes[0] : undefined;
   const searchParams = new URLSearchParams(location.search);
   const from = searchParams.get('from');
 
 
   // Récupération du contexte pour gérer les actions sur les demandes
-  const { setOpenDemande: setOpen, setCurrentRow } = useDemandes(); // ✅ Fonctionne car le provider est défini dans un composant parent
+ //const { setOpenDemande: setOpen, setCurrentRow } = useDemandes(); // ✅ Fonctionne car le provider est défini dans un composant parent
 
   const handleRetour = () => {
     if (from) {
@@ -60,19 +63,12 @@ export default function DemandeDetail({showContact=true }: Props) {
               <ChevronLeft />
             </Button>
             <h2 className="text-2xl font-bold tracking-tight">Demande N° {id}</h2>
+             <Badge variant="outline" className={`${cn('capitalize', demandeStatusColor.get(demande?.status))} text-sm`}>
+                  {demandeStatusTypes.find(s => s.value === demande?.status)?.label ?? 'Inconnu'}                
+              </Badge>
+              
           </div>
-          {demande && (
-            <div className="flex gap-2">
-              <Button
-                onClick={() => {
-                  setCurrentRow(demande);
-                  setOpen('edit');
-                }}
-              >
-                Modifier la Demande
-              </Button>
-            </div>
-          )}
+         
         </div>
 
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">

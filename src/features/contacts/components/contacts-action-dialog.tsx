@@ -48,7 +48,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
 
   
 
-  const { createContact, updateContact, refetch, creating, updating } = useContactService();
+  const { createContact, updateContact, refetch,  isSubmitting } = useContactService();
 
   const isEdit = !!currentRow;
   
@@ -363,8 +363,8 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
         </ScrollArea>
         <SheetFooter>
         
-          <Button type="submit" form="contact-form" disabled={creating || updating}>
-            {creating || updating ? 'En cours...' : 'Enregistrer'}
+          <Button type="submit" form="contact-form" disabled={isSubmitting }>
+            {isSubmitting  ? 'En cours...' : 'Enregistrer'}
           </Button>
         </SheetFooter>
       </SheetContent>

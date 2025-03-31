@@ -132,7 +132,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange  }: Props) {
       username: values.email,
       email: values.email,
       role: role,
-      roles: [values.role],
+      roles: [role],
       status: status  ,
       ...(values.password ? { password: values.password } : {}),
     }
@@ -153,7 +153,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange  }: Props) {
       onOpenChange(false)
     } catch (error) {
       console.error('Erreur lors de la soumission :', error)
-      toast({ title: 'Erreur', description: 'Une erreur est survenue.', variant: 'destructive' })
+     
     }
   }
   
@@ -254,7 +254,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange  }: Props) {
                     <SelectDropdown
                       defaultValue={field.value}
                       onValueChange={field.onChange}
-                      placeholder='Select a role'
+                      placeholder='Choisir un rôle'
                       className='col-span-4'
                       items={userTypes.map(({ label, value }) => ({
                         label,
@@ -271,7 +271,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange  }: Props) {
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel >
-                      Password
+                      Mot de passe
                     </FormLabel>
                     <FormControl>
                       <PasswordInput
@@ -290,7 +290,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange  }: Props) {
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel >
-                      Confirm Password
+                      Confirmer le mot de passe
                     </FormLabel>
                     <FormControl>
                       <PasswordInput

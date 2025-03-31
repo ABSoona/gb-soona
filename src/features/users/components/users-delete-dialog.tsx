@@ -35,7 +35,7 @@ export function UsersDeleteDialog({
     setIsDeleting(true)
     try {
       await deleteUser(currentRow.id) // Appel API
-      toast({ title: 'User deleted successfully!' })
+      toast({ title: 'Utilisateur supprimé!' })
       queryClient.invalidateQueries({ queryKey: ['users'] })
       onOpenChange(false)
     } catch (error) {

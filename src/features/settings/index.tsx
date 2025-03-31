@@ -13,26 +13,21 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import SidebarNav from './components/sidebar-nav'
+import AppLayout from '@/components/layout/app-layout'
 
 export default function Settings() {
   return (
     <>
       {/* ===== Top Heading ===== */}
-      <Header>
-        <Search />
-        <div className='ml-auto flex items-center space-x-4'>
-          <ThemeSwitch />
-          <ProfileDropdown />
-        </div>
-      </Header>
+    
 
-      <Main fixed>
+      <AppLayout>
         <div className='space-y-0.5'>
           <h1 className='text-2xl font-bold tracking-tight md:text-3xl'>
             Settings
           </h1>
           <p className='text-muted-foreground'>
-            Manage your account settings and set e-mail preferences.
+          Gérez les paramètres de votre compte et définissez vos préférences e-mail.
           </p>
         </div>
         <Separator className='my-4 lg:my-6' />
@@ -44,24 +39,20 @@ export default function Settings() {
             <Outlet />
           </div>
         </div>
-      </Main>
+      </AppLayout>
     </>
   )
 }
 
 const sidebarNavItems = [
+ 
   {
-    title: 'Profile',
-    icon: <IconUser size={18} />,
-    href: '/settings',
-  },
-  {
-    title: 'Account',
+    title: 'Mon compte',
     icon: <IconTool size={18} />,
     href: '/settings/account',
   },
   {
-    title: 'Appearance',
+    title: 'Apparence',
     icon: <IconPalette size={18} />,
     href: '/settings/appearance',
   },
@@ -70,9 +61,9 @@ const sidebarNavItems = [
     icon: <IconNotification size={18} />,
     href: '/settings/notifications',
   },
-  {
+/*  {
     title: 'Display',
     icon: <IconBrowserCheck size={18} />,
     href: '/settings/display',
-  },
+  },*/
 ]

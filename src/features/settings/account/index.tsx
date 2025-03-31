@@ -1,14 +1,13 @@
 import ContentSection from '../components/content-section'
-import { AccountForm } from './account-form'
+import { UserForm } from './account-form'
 
 export default function SettingsAccount() {
   return (
     <ContentSection
-      title='Account'
-      desc='Update your account settings. Set your preferred language and
-          timezone.'
+      title='Mon compte'
+      desc='Mettez à jour les paramètres de votre compte. Définissez votre langue et votre mot de passe.'
     >
-      <AccountForm />
+      <UserForm />
     </ContentSection>
   )
 }

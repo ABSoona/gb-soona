@@ -13,7 +13,7 @@ export type UserStatus = z.infer<typeof userStatusSchema>
 const userRoleSchema = z.union([
   z.literal('admin'),
   z.literal('externe'),
-  z.literal('standard'),
+  z.literal('user'),
 
 ])
 
@@ -26,10 +26,12 @@ export type UserRole = z.infer<typeof userRoleSchema>
   id: z.string() ,
   lastName:  z.string() ,
   role: userRoleSchema,
+  roles: z.array(userRoleSchema),
   updatedAt: z.coerce.date(),
   username:  z.string() ,
   status : userStatusSchema,
-  password : z.string() 
+  password : z.string(),
+  token : z.string().optional()
 });
 export type User = z.infer<typeof userSchema>
 

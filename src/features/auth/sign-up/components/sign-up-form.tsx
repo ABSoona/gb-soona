@@ -1,66 +1,108 @@
-import { HTMLAttributes, useState } from 'react'
+'use client'
+
+import { HTMLAttributes, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+  Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { useInvitationService } from '@/api/invitation/invitationService'
+import { createUserWithUnvitation } from '@/api/user/userService'
+import { toast } from '@/hooks/use-toast'
+import { UserRole } from '@/model/user/User'
+import { userTypes } from '@/features/users/data/data'
 
 type SignUpFormProps = HTMLAttributes<HTMLDivElement>
 
-const formSchema = z
-  .object({
-    email: z
-      .string()
-      .min(1, { message: 'Please enter your email' })
-      .email({ message: 'Invalid email address' }),
-    password: z
-      .string()
-      .min(1, {
-        message: 'Please enter your password',
-      })
-      .min(7, {
-        message: 'Password must be at least 7 characters long',
-      }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match.",
-    path: ['confirmPassword'],
-  })
+const formSchema = z.object({
+  firstName: z.string().min(1, { message: 'Le prénom est requis' }),
+  lastName: z.string().min(1, { message: 'Le nom est requis' }),
+  email: z.string().email({ message: 'Email invalide' }),
+  password: z.string().min(7, { message: 'Minimum 7 caractères' }),
+  confirmPassword: z.string(),
+  role: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Les mots de passe ne correspondent pas',
+  path: ['confirmPassword'],
+  
+})
 
 export function SignUpForm({ className, ...props }: SignUpFormProps) {
   const [isLoading, setIsLoading] = useState(false)
 
+  const searchParams: { token: string } = useSearch({ from: '/(auth)/sign-up' })
+  const token = searchParams.token
+
+  const { invitations } = useInvitationService({
+    where: { token: { equals: token } },
+  })
+  const navigate = useNavigate()
+  const invitation = invitations[0]
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
       confirmPassword: '',
+      role:''
     },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  useEffect(() => {
+    if (invitation?.email) {
+      form.setValue('email', invitation.email)
+    }
+    if (invitation?.role) {
+      form.setValue('role', invitation.role)
+    }
+  }, [invitation, form])
+
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    if (!invitation) {
+      toast({ title: 'Invitation invalide', variant: 'destructive' })
+      return
+    }
+
     setIsLoading(true)
-    // eslint-disable-next-line no-console
-    console.log(data)
 
-    setTimeout(() => {
+    try {
+      const role  = data.role as UserRole
+      await createUserWithUnvitation({
+        email: data.email,
+        password: data.password,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        token: token, // essentiel pour valider le lien
+        username : data.email,
+        roles:[role],
+        role: role
+      })
+      toast({ title: '🎉 Compte créé avec succès !' })
+      form.reset()
+      await new Promise((resolve) => setTimeout(resolve, 1000)) // petite pause visuelle
+navigate({ to: '/sign-in' })
+    } catch (error) {
+      console.error(error)
+   
+    } finally {
       setIsLoading(false)
-    }, 3000)
+    }
   }
-
+  const getRoleLabel = (value: string) => {
+    const match = userTypes.find((item) => item.value === value);
+    return match?.label || value;
+  };
+  
   return (
     <div className={cn('grid gap-6', className)} {...props}>
       <Form {...form}>
@@ -68,12 +110,51 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
           <div className='grid gap-2'>
             <FormField
               control={form.control}
+              name='firstName'
+              render={({ field }) => (
+                <FormItem className='space-y-1'>
+                  <FormLabel>Prénom</FormLabel>
+                  <FormControl>
+                    <Input placeholder='Jean' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='lastName'
+              render={({ field }) => (
+                <FormItem className='space-y-1'>
+                  <FormLabel>Nom</FormLabel>
+                  <FormControl>
+                    <Input placeholder='Dupont' {...field}  />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name='email'
               render={({ field }) => (
                 <FormItem className='space-y-1'>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder='name@example.com' {...field} />
+                    <Input placeholder='nom@exemple.com' {...field} disabled />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+              <FormField
+              control={form.control}
+              name='role'
+              render={({ field }) => (
+                <FormItem className='space-y-1'>
+                  <FormLabel>Rôle</FormLabel>
+                  <FormControl>
+                    <Input  placeholder='' value={getRoleLabel(field.value)} disabled />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -84,7 +165,7 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
               name='password'
               render={({ field }) => (
                 <FormItem className='space-y-1'>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Mot de passe</FormLabel>
                   <FormControl>
                     <PasswordInput placeholder='********' {...field} />
                   </FormControl>
@@ -97,7 +178,7 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
               name='confirmPassword'
               render={({ field }) => (
                 <FormItem className='space-y-1'>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel>Confirmer</FormLabel>
                   <FormControl>
                     <PasswordInput placeholder='********' {...field} />
                   </FormControl>
@@ -105,39 +186,10 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
                 </FormItem>
               )}
             />
-            <Button className='mt-2' disabled={isLoading}>
-              Create Account
+
+            <Button className='mt-2 w-full' disabled={isLoading}>
+              {isLoading ? 'Création en cours...' : 'Créer un compte'}
             </Button>
-
-            <div className='relative my-2'>
-              <div className='absolute inset-0 flex items-center'>
-                <span className='w-full border-t' />
-              </div>
-              <div className='relative flex justify-center text-xs uppercase'>
-                <span className='bg-background px-2 text-muted-foreground'>
-                  Or continue with
-                </span>
-              </div>
-            </div>
-
-            <div className='flex items-center gap-2'>
-              <Button
-                variant='outline'
-                className='w-full'
-                type='button'
-                disabled={isLoading}
-              >
-                <IconBrandGithub className='h-4 w-4' /> GitHub
-              </Button>
-              <Button
-                variant='outline'
-                className='w-full'
-                type='button'
-                disabled={isLoading}
-              >
-                <IconBrandFacebook className='h-4 w-4' /> Facebook
-              </Button>
-            </div>
           </div>
         </form>
       </Form>

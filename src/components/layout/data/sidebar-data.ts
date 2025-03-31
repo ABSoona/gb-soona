@@ -3,9 +3,11 @@ import {
   IconBrowserCheck,
   IconChecklist,
   IconCoinEuro,
+  IconHeartHandshake,
   IconHelp,
   IconLayoutDashboard,
   IconLockAccess,
+  IconMailDown,
   IconNotification,
   IconPalette,
   IconSettings,
@@ -33,15 +35,10 @@ export const sidebarData: SidebarData = {
           url: '/',
           icon: IconLayoutDashboard,
         },
-     /*   {
-          title: 'Tasks',
-          url: '/tasks',
-          icon: IconChecklist,
-        },     */
         {
           title: 'Demandes',
           url: '/demandes',
-          icon: IconChecklist,
+          icon: IconMailDown ,
         },   
         {
           title: 'Contacts',
@@ -50,13 +47,13 @@ export const sidebarData: SidebarData = {
         },      
         {
           title: 'Aides',
-          url: '/Aides',
-          icon: IconCoinEuro,
+          url: '/aides',
+          icon: IconHeartHandshake ,
         },      
       
       ],
     },
-  /*  {
+ /*    {
       title: 'Pages',
       items: [
         {
@@ -87,7 +84,7 @@ export const sidebarData: SidebarData = {
         },
         
       ],
-    },*/
+    }, */
     {
       title: 'Autres',
       items: [
@@ -101,7 +98,7 @@ export const sidebarData: SidebarData = {
               icon: IconUsers,
             },
             {
-              title: 'Profile',
+              title: 'Mon compte',
               url: '/settings',
               icon: IconUserCog,
             },

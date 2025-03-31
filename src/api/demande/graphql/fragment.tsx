@@ -20,7 +20,7 @@ export const DEMANDE_FIELDS = gql`
     situationProConjoint
     status
     remarques
-    createdAt
+    
     updatedAt
     contact {  
       id}

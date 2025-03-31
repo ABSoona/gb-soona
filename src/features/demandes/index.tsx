@@ -11,10 +11,13 @@ import DemandesProvider from './context/demandes-context';
 
 import { useDemandeService } from '@/api/demande/demandeService';
 import { handleServerError } from '@/utils/handle-server-error';
+import AppLayout from '@/components/layout/app-layout';
+import { Skeleton } from '@/components/ui/skeleton';
+import { TableSkeleton } from '@/components/ui/skeleton-table';
 
 export default function Demandes() {
     // ✅ Utilisation du service pour récupérer les demandes
-    const { demandes, loading: isLoading, error } = useDemandeService();
+    const { demandes, loading: isLoading, error } = useDemandeService( {order:10} );
 
     // Gestion des erreurs via la fonction centralisée
     if (error) {
@@ -23,15 +26,8 @@ export default function Demandes() {
 
     return (
         <DemandesProvider>
-            <Header fixed>
-                <Search />
-                <div className="ml-auto flex items-center space-x-4">
-                    <ThemeSwitch />
-                    <ProfileDropdown />
-                </div>
-            </Header>
+            <AppLayout>
 
-            <Main>
                 <div className="mb-2 flex flex-wrap items-center justify-between space-y-2">
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight">Liste des Demandes</h2>
@@ -39,14 +35,12 @@ export default function Demandes() {
                             Gérez vos demandes et leurs statuts ici.
                         </p>
                     </div>
-                     <DemandesPrimaryButtons /> 
+                    <DemandesPrimaryButtons />
                 </div>
 
                 <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
                     {isLoading ? (
-                        <div className="flex items-center justify-center py-4">
-                            <p>⏳ Chargement des demandes en cours...</p>
-                        </div>
+                          <TableSkeleton rows={10} columns={8}/>
                     ) : error ? (
                         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
                             <p>❌ Erreur lors du chargement des demandes.</p>
@@ -59,10 +53,12 @@ export default function Demandes() {
                     ) : (
                         <DemandesTable data={demandes ?? []} columns={columns} hideTools={false} />
                     )}
-                </div>
-            </Main>
 
-            <DemandesDialogs />
+                </div>
+
+                <DemandesDialogs />
+            </AppLayout>
         </DemandesProvider>
+
     );
 }

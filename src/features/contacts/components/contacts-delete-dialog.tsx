@@ -17,7 +17,7 @@ interface Props {
 
 export function ContactsDeleteDialog({ open, onOpenChange, currentRow }: Props) {
   const queryClient = useQueryClient();
-  const { deleteContact, deleting } = useContactService(); // ✅ Utilisation du service
+  const { deleteContact,  isSubmitting } = useContactService(); // ✅ Utilisation du service
   const [value, setValue] = useState<number | ''>('');
 
   const handleDelete = async () => {
@@ -40,7 +40,7 @@ export function ContactsDeleteDialog({ open, onOpenChange, currentRow }: Props) 
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value !== currentRow.id || deleting}
+      disabled={value !== currentRow.id || isSubmitting}
       title={
         <span className='text-destructive'>
           <IconAlertTriangle className='mr-1 inline-block' size={18} />
@@ -72,7 +72,7 @@ export function ContactsDeleteDialog({ open, onOpenChange, currentRow }: Props) 
           </Alert>
         </div>
       }
-      confirmText={deleting ? 'Suppression...' : 'Supprimer'}
+      confirmText={isSubmitting ? 'Suppression...' : 'Supprimer'}
       destructive
     />
   );

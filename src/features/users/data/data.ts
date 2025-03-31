@@ -25,12 +25,12 @@ export const userTypes = [
   },
   {
     label: 'Standard',
-    value: 'standard',
+    value: 'user',
     icon: IconUsersGroup,
   },
   {
     label: 'Externe',
-    value: 'externe',
+    value: 'external',
     icon: IconExternalLink,
   },
 ] as const

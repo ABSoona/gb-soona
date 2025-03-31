@@ -99,7 +99,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                 
                 {/* 🔍 Filtre par nom (avec sauvegarde) */}
                 <Input
-                    placeholder="Filtrer les noms..."
+                    placeholder="Filtrer par noms..."
                     value={filterName}
                     onChange={handleNameFilterChange} // ✅ Mise à jour avec `localStorage`
                     className="h-8 w-[150px] lg:w-[250px]"

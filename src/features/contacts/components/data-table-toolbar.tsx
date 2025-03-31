@@ -38,7 +38,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                 
                 {/* 🔍 Filtre par nom */}
                 <Input
-                    placeholder="Filtrer les noms..."
+                    placeholder="Filtrer par noms..."
                     value={(table.getColumn('nom')?.getFilterValue() as string) ?? ''}
                     onChange={(event) =>
                         table.getColumn('nom')?.setFilterValue(event.target.value)

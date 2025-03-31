@@ -53,7 +53,7 @@ interface Props {
 
 
 export function AidesActionDialog({ currentRow, open, onOpenChange, showContactSearch = true,forContactId }: Props) {
-  const { createAide, updateAide, refetch, creating, updating } = useAideService();
+  const { createAide, updateAide, refetch,  isSubmitting } = useAideService();
 
   const isEdit = !!currentRow;
   const { triggerRefetchAides } = useAides();
@@ -337,7 +337,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
           </Form>
         </ScrollArea>
         <SheetFooter>
-          <Button type="submit" form="aide-form" disabled={creating || updating}>{creating || updating ? 'En cours...' : 'Enregistrer'}</Button>
+          <Button type="submit" form="aide-form" disabled={isSubmitting }>{isSubmitting  ? 'En cours...' : 'Enregistrer'}</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

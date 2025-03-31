@@ -74,8 +74,8 @@ export function DemandesInviteDialog({ open, onOpenChange }: Props) {
             <IconMailPlus /> Invite Demande
           </SheetTitle>
           <SheetDescription>
-            Invite new demande to join your team by sending them an email
-            invitation. Assign a role to define their access level.
+          Invitez un nouvel utilisateur à rejoindre votre équipe en lui envoyant une 
+          invitation par e-mail. Attribuez-lui un rôle pour définir son niveau d’accès..
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
@@ -110,7 +110,7 @@ export function DemandesInviteDialog({ open, onOpenChange }: Props) {
                   <SelectDropdown
                     defaultValue={field.value}
                     onValueChange={field.onChange}
-                    placeholder='Select a role'
+                    placeholder='Choisir un rôle'
                     items={situationTypes.map(({ label, value }) => ({
                       label,
                       value,
@@ -141,7 +141,7 @@ export function DemandesInviteDialog({ open, onOpenChange }: Props) {
         </Form>
         <SheetFooter className='gap-y-2'>
           <SheetClose asChild>
-            <Button variant='outline'>Cancel</Button>
+            <Button variant='outline'>Annuler</Button>
           </SheetClose>
           <Button type='submit' form='demande-invite-form'>
             Invite <IconSend />

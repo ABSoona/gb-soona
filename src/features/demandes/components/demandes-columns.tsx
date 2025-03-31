@@ -54,7 +54,7 @@ export const columns: ColumnDef<Demande>[] = [
         
         accessorFn: (row) => row.id,
         id: 'numeroDemande',
-        header: 'Numéro de demande',
+        header: 'N°',
         cell: ({ row }) => row.original.id ?? 'N/A',
     },
     {
@@ -66,7 +66,7 @@ export const columns: ColumnDef<Demande>[] = [
     },
     {   id: 'createdAt',
         accessorKey: 'createdAt',
-        header: 'Créée le',
+        header: 'Reçue le',
         cell: ({ row }) => {
             const date = row.getValue('createdAt') as string;
             return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';

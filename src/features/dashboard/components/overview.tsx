@@ -1,126 +1,102 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { TrendingUp } from "lucide-react"
-import { Label, Pie, PieChart } from "recharts"
+
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { useAideService } from "@/api/aide/aideService";
+import { calculateDailyAmounts } from "../data-service";
+import { format } from "date-fns";
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 190, fill: "var(--color-other)" },
-]
+} from "@/components/ui/chart";
+import { useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  chrome: {
-    label: "Chrome",
+  restants: {
+    label: "Cumul Reste à verser",
     color: "hsl(var(--chart-1))",
   },
-  safari: {
-    label: "Safari",
-    color: "hsl(var(--chart-2))",
-  },
-  firefox: {
-    label: "Firefox",
-    color: "hsl(var(--chart-3))",
-  },
-  edge: {
-    label: "Edge",
-    color: "hsl(var(--chart-4))",
-  },
-  other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))",
-  },
-} satisfies ChartConfig
+};
 
-export function Overview() {
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
-  }, [])
+export function Overview({ 
+  startDate = startOfMonth(new Date()), 
+  endDate = endOfMonth(new Date()) 
+}: { startDate?: Date, endDate?: Date }) {
+  
+  const { aides, loading } = useAideService({
+    where: {
+      dateAide: {
+        gte: startDate.toISOString(),
+        lte: endDate.toISOString(),
+      },
+    },
+  });
+
+  const chartData = useMemo(() => {
+    if (loading || !aides.length) return [];
+    return calculateDailyAmounts(aides, startDate, endDate);
+  }, [aides, loading, startDate, endDate]);
 
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Donut with Text</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+    <Card>
+      <CardHeader>
+        <CardTitle>Cumul Reste à verser (€)</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              dataKey="visitors"
-              nameKey="browser"
-              innerRadius={60}
-              strokeWidth={5}
-            >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
-                        >
-                          {totalVisitors.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          Visitors
-                        </tspan>
-                      </text>
-                    )
-                  }
-                }}
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+        {loading ? (
+          <Skeleton className="h-[250px] w-full rounded-md" />
+        ) : (
+          <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+            <AreaChart data={chartData}>
+              <defs>
+                <linearGradient id="fillRestants" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--color-restants)" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="var(--color-restants)" stopOpacity={0.1} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                minTickGap={32}
+                tickFormatter={(value) => format(new Date(value), "dd/MM")}
               />
-            </Pie>
-          </PieChart>
-        </ChartContainer>
+              <ChartTooltip
+                cursor={true}
+                content={
+                  <ChartTooltipContent
+                    labelFormatter={(value) =>
+                      new Date(value).toLocaleDateString("fr-FR", {
+                        month: "short",
+                        day: "numeric",
+                      })
+                    }
+                    indicator="dot"
+                  />
+                }
+              />
+              <Area
+                dataKey="restantsCumul"
+                type="natural"
+                fill="url(#fillRestants)"
+                stroke="var(--color-restants)"
+              />
+            </AreaChart>
+          </ChartContainer>
+        )}
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
     </Card>
-  )
+  );
 }

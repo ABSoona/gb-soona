@@ -18,7 +18,7 @@ interface Props {
 
 export function AidesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
   const queryClient = useQueryClient();
-  const { deleteAide, deleting } = useAideService(); // ✅ Utilisation du service
+  const { deleteAide,  isSubmitting } = useAideService(); // ✅ Utilisation du service
   const [value, setValue] = useState<number | ''>('');
   const { triggerRefetchAides } = useAides();
 
@@ -43,7 +43,7 @@ export function AidesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value !== currentRow.montant || deleting}
+      disabled={value !== currentRow.montant || isSubmitting}
       title={
         <span className='text-destructive'>
           <IconAlertTriangle className='mr-1 inline-block' size={18} />
@@ -75,7 +75,7 @@ export function AidesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
           </Alert>
         </div>
       }
-      confirmText={deleting ? 'Suppression...' : 'Supprimer'}
+      confirmText={isSubmitting ? 'Suppression...' : 'Supprimer'}
       destructive
     />
   );

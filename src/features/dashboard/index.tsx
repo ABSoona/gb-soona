@@ -2,26 +2,70 @@ import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
-import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { Overview } from './components/overview'
-import { RecentSales } from './components/recent-sales'
+import { DernieresDemandes } from './components/derniere-demande'
+import { IconHeartHandshake, IconMailDown, IconPercentage20, IconUserHeart, IconUsers } from '@tabler/icons-react'
+import { StatusDemandes } from './components/status-demandes'
+import { DatePickerWithRange } from '@/components/ui/date-range-picker'
+import { useState } from 'react'
+import { startOfMonth, endOfMonth, startOfYear, endOfYear, subMonths, subYears } from 'date-fns'
+import { DateRange } from 'react-day-picker'
+import { useDashboardStats } from './data-service'
+import { formatMontant } from '@/utils/misc'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function Dashboard() {
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: startOfMonth(new Date()),
+    to: endOfMonth(new Date())
+  });
+
+  const [activePeriod, setActivePeriod] = useState<'mois' | 'moisPrecedent' | 'annee' | 'anneePrecedente' | 'custom'>('mois');
+  const [showCustomPicker, setShowCustomPicker] = useState(false);
+
+  const handlePeriodChange = (period: typeof activePeriod) => {
+    setActivePeriod(period);
+
+    switch (period) {
+      case 'mois':
+        setShowCustomPicker(false);
+        setDateRange({ from: startOfMonth(new Date()), to: endOfMonth(new Date()) });
+        break;
+      case 'moisPrecedent':
+        setShowCustomPicker(false);
+        const prevMonth = subMonths(new Date(), 1);
+        setDateRange({ from: startOfMonth(prevMonth), to: endOfMonth(prevMonth) });
+        break;
+      case 'annee':
+        setShowCustomPicker(false);
+        setDateRange({ from: startOfYear(new Date()), to: endOfYear(new Date()) });
+        break;
+      case 'anneePrecedente':
+        setShowCustomPicker(false);
+        const prevYear = subYears(new Date(), 1);
+        setDateRange({ from: startOfYear(prevYear), to: endOfYear(prevYear) });
+        break;
+      case 'custom':
+        setShowCustomPicker(true);
+        break;
+    }
+  };
+
+  const stats = dateRange.from && dateRange.to
+    ? useDashboardStats({ from: dateRange.from, to: dateRange.to })
+    : null;
+
   return (
     <>
-      {/* ===== Top Heading ===== */}
       <Header>
-        <TopNav links={topNav} />
         <div className='ml-auto flex items-center space-x-4'>
           <Search />
           <ThemeSwitch />
@@ -29,186 +73,107 @@ export default function Dashboard() {
         </div>
       </Header>
 
-      {/* ===== Main ===== */}
       <Main>
+     
         <div className='mb-2 flex items-center justify-between space-y-2'>
-          <h1 className='text-2xl font-bold tracking-tight'>Dashboard</h1>
-          <div className='flex items-center space-x-2'>
-            <Button>Download</Button>
+          <h1 className='text-2xl font-bold tracking-tight'>Tableau de bord</h1>
+        </div>
+
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex gap-2 flex-wrap">
+            <Button size="sm" variant={activePeriod === 'mois' ? 'default' : 'outline'} onClick={() => handlePeriodChange('mois')}>Mois</Button>
+            <Button size="sm" variant={activePeriod === 'moisPrecedent' ? 'default' : 'outline'} onClick={() => handlePeriodChange('moisPrecedent')}>Mois Précédent</Button>
+            <Button size="sm" variant={activePeriod === 'annee' ? 'default' : 'outline'} onClick={() => handlePeriodChange('annee')}>Année</Button>
+            <Button size="sm" variant={activePeriod === 'anneePrecedente' ? 'default' : 'outline'} onClick={() => handlePeriodChange('anneePrecedente')}>Année précédente</Button>
+            <Button size="sm" variant={activePeriod === 'custom' ? 'default' : 'outline'} onClick={() => handlePeriodChange('custom')}>Personnalisé</Button>
+          </div>
+
+          {showCustomPicker && (
+            <DatePickerWithRange
+              value={dateRange}
+              onChange={(newRange) => {
+                if (newRange?.from && newRange?.to) {
+                  setDateRange(newRange);
+                }
+              }}
+            />
+          )}
+        </div>
+
+        <div className='space-y-4'>
+          <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-5'>
+            {[{
+              title: 'Aides versés',
+              icon: <IconHeartHandshake className='h-7 w-7 text-muted-foreground' />,
+              value: stats ? formatMontant(stats.totalVerse) : null
+            }, {
+              title: 'Reste à verser',
+              icon: <IconPercentage20 className='h-7 w-7 text-muted-foreground' />,
+              value: stats ? formatMontant(stats.totalReste) : null
+            }, {
+              title: 'Demandes',
+              icon: <IconMailDown className='h-7 w-7 text-muted-foreground' />,
+              value: stats ? stats.totalDemandes : null
+            }, {
+              title: 'Montant Moyen',
+              icon: <IconUserHeart className='h-7 w-7 text-muted-foreground' />,
+              value: stats ? formatMontant(stats.montantMoyenParPersonne) : null
+            }, {
+              title: 'Personnes aidées',
+              icon: <IconUsers className='h-7 w-7 text-muted-foreground' />,
+              value: stats ? stats.totalContacts : null
+            }].map(({ title, icon, value }, index) => (
+              <Card key={index}>
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                  <CardTitle className='text-sm font-medium'>{title}</CardTitle>
+                  {icon}
+                </CardHeader>
+                <CardContent>
+                  <div className='text-2xl font-bold'>
+                    {!stats?.loading ? value :   <div className="space-y-2 w-full">
+                           
+                          
+
+                            {/* Simule 6 lignes */}
+                            {[...Array(1)].map((_, index) => (
+                                <Skeleton key={index} className="h-6 w-[100px] rounded-md" />
+                            ))}
+                        </div>}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div>
+        
+              <Overview startDate={dateRange.from!} endDate={dateRange.to!} />
+           
+          </div>
+          <div className='grid grid-cols-1 gap-4 lg:grid-cols-7'>
+            <Card className='col-span-1 lg:col-span-3'>
+              <CardHeader>
+                <CardTitle>Status des demandes</CardTitle>
+              </CardHeader>
+              <CardContent className='pl-2'>
+                              
+                  <StatusDemandes dateRange={{ from: dateRange.from!, to: dateRange.to! }} />
+              
+              </CardContent>
+            </Card>
+            <Card className='col-span-1 lg:col-span-4'>
+                  
+              <CardHeader>
+                <CardTitle>Dernière demandes</CardTitle>
+              </CardHeader>
+              <CardContent>
+             
+                  <DernieresDemandes />
+              
+              </CardContent>
+            </Card>
           </div>
         </div>
-        <Tabs
-          orientation='vertical'
-          defaultValue='overview'
-          className='space-y-4'
-        >
-          <div className='w-full overflow-x-auto pb-2'>
-            <TabsList>
-              <TabsTrigger value='overview'>Overview</TabsTrigger>
-              <TabsTrigger value='analytics' disabled>
-                Analytics
-              </TabsTrigger>
-              <TabsTrigger value='reports' disabled>
-                Reports
-              </TabsTrigger>
-              <TabsTrigger value='notifications' disabled>
-                Notifications
-              </TabsTrigger>
-            </TabsList>
-          </div>
-          <TabsContent value='overview' className='space-y-4'>
-            <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-              <Card className='bg-cyan-500'>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2 '>
-                  <CardTitle className='text-sm font-medium'>
-                    Total des Aides 
-                  </CardTitle>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    className='h-4 w-4 text-muted-foreground'
-                  >
-                    <path d='M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6' />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>€4 231.89</div>
-                  <p className='text-xs text-muted-foreground'>
-                    +20.1% from last month
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>
-                    Demandes
-                  </CardTitle>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    className='h-4 w-4 text-muted-foreground'
-                  >
-                    <path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2' />
-                    <circle cx='9' cy='7' r='4' />
-                    <path d='M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75' />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>+2350</div>
-                  <p className='text-xs text-muted-foreground'>
-                    +180.1% from last month
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>Sales</CardTitle>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    className='h-4 w-4 text-muted-foreground'
-                  >
-                    <rect width='20' height='14' x='2' y='5' rx='2' />
-                    <path d='M2 10h20' />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>+12,234</div>
-                  <p className='text-xs text-muted-foreground'>
-                    +19% from last month
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>
-                    Personnes aidées
-                  </CardTitle>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    className='h-4 w-4 text-muted-foreground'
-                  >
-                    <path d='M22 12h-4l-3 9L9 3l-3 9H2' />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>+573</div>
-                  <p className='text-xs text-muted-foreground'>
-                    +201 since last hour
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-            <div className='grid grid-cols-1 gap-4 lg:grid-cols-7'>
-              <Card className='col-span-1 lg:col-span-4'>
-                <CardHeader>
-                  <CardTitle>Overview</CardTitle>
-                </CardHeader>
-                <CardContent className='pl-2'>
-                  <Overview />
-                </CardContent>
-              </Card>
-              <Card className='col-span-1 lg:col-span-3'>
-                <CardHeader>
-                  <CardTitle>Dernière demandes</CardTitle>
-                  
-                </CardHeader>
-                <CardContent>
-                  <RecentSales />
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
       </Main>
     </>
   )
 }
-
-const topNav = [
-  {
-    title: 'Overview',
-    href: 'dashboard/overview',
-    isActive: true,
-    disabled: false,
-  },
-  {
-    title: 'Customers',
-    href: 'dashboard/customers',
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: 'Products',
-    href: 'dashboard/products',
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: 'Settings',
-    href: 'dashboard/settings',
-    isActive: false,
-    disabled: true,
-  },
-]

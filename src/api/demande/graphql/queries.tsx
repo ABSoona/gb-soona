@@ -2,22 +2,25 @@ import { gql } from '@apollo/client';
 import { DEMANDE_FIELDS } from './fragment';
 import { CONTACT_FIELDS } from '@/api/contact/graphql/fragment';
 import { AIDE_FIELDS } from '@/api/aide/graphql/fragment';
+import { DOCUMENT_FIELDS } from '@/api/document/fragment';
 
 export const GET_DEMANDES= gql`
   query GetDemandesWithContactAides($skip: Float, $take: Float, $where : DemandeWhereInput) {
-    demandes(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Asc }]) {
+    demandes(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Desc }]) {
       ...DemandeFields
       contact {
         ...ContactFields
         aides {
           ...AideFields
         }
+       
       }
     }
   }
   ${DEMANDE_FIELDS}
   ${CONTACT_FIELDS}
   ${AIDE_FIELDS}
+
 `;
 
 // 🔥 Ajout des mutations

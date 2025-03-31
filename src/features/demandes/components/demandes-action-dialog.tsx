@@ -33,6 +33,7 @@ import { situationTypes } from '@/model/demande/Demande';
 import { situationFamilleTypes } from '@/model/demande/Demande';
 import { demandeStatusTypes } from '../data/data';
 import { useDemandes } from '../context/demandes-context';
+import { Edit } from 'lucide-react';
 
 // 📌 Schéma de validation du formulaire avec Zod
 const formSchema = demandeSchema
@@ -51,7 +52,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
 
   
 
-  const { createDemande, updateDemande, refetch, creating, updating } = useDemandeService();
+  const { createDemande, updateDemande, refetch, isSubmitting } = useDemandeService();
   const { triggerRefetchDemandes } = useDemandes();
   const isEdit = !!currentRow;
   
@@ -60,7 +61,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
     defaultValues: isEdit
       ? {
           contactId: currentRow?.contact?.nom || '',
-          status: currentRow?.status || {value:'en_visite'},
+          status: currentRow?.status || {value:'recue'},
           remarques: currentRow?.remarques || '',
           nombreEnfants : Number(currentRow?.nombreEnfants),
           agesEnfants :currentRow?.agesEnfants || '',
@@ -80,7 +81,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
         }
       : {
           contactId: '',
-         //status: "1"
+          status: 'recue',
           remarques: '',
           nombreEnfants : 0,
           autresAides : '',
@@ -95,6 +96,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
   });
   const situationFamiliale = form.watch("situationFamiliale");
   const dettes = form.watch("dettes");
+  const nombreEnfants = form.watch("nombreEnfants");
   const onSubmit = async (values: DemandeForm) => {
     console.log("erreur de validation: ");
     const demandePayload = {
@@ -127,10 +129,10 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
         await createDemande(demandePayload);
         toast({ title: 'Nouvelle demande créée avec succès !' });
       }
-
-      triggerRefetchDemandes();
-      form.reset();
       onOpenChange(false);
+     triggerRefetchDemandes();
+      form.reset();
+      
     } catch (error) {
       console.error('❌ Erreur lors de la soumission :', error);
       handleServerError(error);
@@ -199,6 +201,10 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                         autoComplete='off'
                         {...field}
                         type='number'
+                        onChange={(e) => {
+                          const inputValue = parseInt(e.target.value, 10);
+                          field.onChange(inputValue < 0 ? 0 : inputValue);
+                        }}
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
@@ -206,28 +212,30 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                 )}
                 
               />
-               <FormField
-                control={form.control}
-                name='agesEnfants'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel>
-                    Ages des enfants
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Ex : 9, 13 et 17 '
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-                        
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-                
-              />
+             {
+              nombreEnfants > 0 && <FormField
+              control={form.control}
+              name='agesEnfants'
+              render={({ field }) => (
+                <FormItem className='space-y-1'>
+                  <FormLabel>
+                  Ages des enfants
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Ex : 9, 13 et 17 '
+                      className='col-span-4'
+                      autoComplete='off'
+                      {...field}
+                      
+                    />
+                  </FormControl>
+                  <FormMessage className='col-span-4 col-start-3' />
+                </FormItem>
+              )}
+              
+            />
+             }  
                <FormField
                 control={form.control}
                 name="situationFamiliale"
@@ -476,7 +484,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
               />  }
 
               {/* 📌 Sélecteur de statut */}
-              <FormField
+             {isEdit && <FormField
                 control={form.control}
                 name="status"
                 render={({ field }) => (
@@ -492,7 +500,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              />} 
 
               {/* 📌 Champ Remarques */}
               <FormField
@@ -513,8 +521,8 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
         </ScrollArea>
         <SheetFooter>
         
-          <Button type="submit" form="demande-form" disabled={creating || updating}>
-            {creating || updating ? 'En cours...' : 'Enregistrer'}
+          <Button type="submit" form="demande-form" disabled={isSubmitting}>
+            {isSubmitting ? 'En cours...' : 'Enregistrer'}
           </Button>
         </SheetFooter>
       </SheetContent>

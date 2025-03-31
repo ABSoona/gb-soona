@@ -1,17 +1,18 @@
-// src/lib/apollo-client.ts
-import { ApolloClient, InMemoryCache, createHttpLink, ApolloLink } from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
+import { logout } from './session';
+import { getToken } from './session';
+import { ApolloClient, InMemoryCache, ApolloLink, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
-// 1. Lien HTTP pour la connexion à l'API GraphQL
+// Lien HTTP
 const httpLink = createHttpLink({
-  uri:  import.meta.env.VITE_GQL_BASE_URL ,
-  credentials: 'omit', // Gère les cookies si nécessaire
+  uri: import.meta.env.VITE_GQL_BASE_URL,
+  credentials: 'omit',
 });
 
-// 2. Lien d'authentification pour ajouter le token dans les en-têtes
+// Auth link
 const authLink = setContext((_, { headers }) => {
   const token = getToken();
-
   return {
     headers: {
       ...headers,
@@ -20,26 +21,33 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// 3. Combinaison des liens
-const link = ApolloLink.from([authLink, httpLink]);
+// ✅ Error link amélioré pour capter les 401 via "networkError.response"
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  // 1️⃣ Gestion via graphQLErrors
+  if (graphQLErrors) {
+    for (const err of graphQLErrors) {
+      if (err.extensions?.code === 'UNAUTHENTICATED') {
+        console.warn('GraphQL: UNAUTHENTICATED detected');
+        logout();
+        return;
+      }
+    }
+  }
 
-// 4. Configuration d'Apollo Client
+  // 2️⃣ En cas de fallback réseau (optionnel mais bien de le garder)
+  if (networkError) {
+    if ('status' in networkError && networkError.status === 401) {
+      console.warn('Network: 401 Unauthorized');
+      logout();
+    }
+  }
+});
+
+// Combine les links dans l'ordre
+const link = ApolloLink.from([authLink, errorLink, httpLink]);
+
+// Client Apollo
 export const client = new ApolloClient({
   link,
   cache: new InMemoryCache(),
 });
-// Fonction pour stocker les informations utilisateur
-export function setSession(token: string, userId: string, username: string, roles: string[]) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('userId', userId);
-    localStorage.setItem('username', username);
-    localStorage.setItem('roles', JSON.stringify(roles));
-  }
-  
-  // Fonction pour nettoyer la session lors de la déconnexion
-  export function logout() {
-    localStorage.clear();
-  }
-  export const getToken = () => {
-    return localStorage.getItem('token');
-  };

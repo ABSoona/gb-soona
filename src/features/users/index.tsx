@@ -13,6 +13,7 @@ import UsersProvider from './context/users-context'
 import { getUsers } from '@/api/user/userService'
 import { useQuery } from '@tanstack/react-query'
 import { User } from '@/model/user/User'
+import AppLayout from '@/components/layout/app-layout'
 
 export default function Users() {
 
@@ -25,20 +26,13 @@ export default function Users() {
 
   return (
     <UsersProvider>
-      <Header fixed>
-        <Search />
-        <div className='ml-auto flex items-center space-x-4'>
-          <ThemeSwitch />
-          <ProfileDropdown />
-        </div>
-      </Header>
-
-      <Main>
+     
+      <AppLayout>
         <div className='mb-2 flex flex-wrap items-center justify-between space-y-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>User List</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>Utilisateurs</h2>
             <p className='text-muted-foreground'>
-              Manage your users and their roles here.
+              Vous pouvez gérer ici les accès à GBSoona
             </p>
           </div>
           <UsersPrimaryButtons />
@@ -46,7 +40,7 @@ export default function Users() {
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0'>
           <UsersTable data={users ?? []} columns={columns} />
         </div>
-      </Main>
+      </AppLayout>
 
       <UsersDialogs/>
     </UsersProvider>

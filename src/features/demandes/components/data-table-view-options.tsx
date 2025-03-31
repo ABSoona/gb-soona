@@ -9,15 +9,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
-import { columns } from './demandes-columns'
-const defaulthiddenColumns = [
- 
-  'contactNom',
-  'status',
-  'revenus',
-  'remarques',
-  'createdAt',
-];
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>
@@ -26,8 +17,6 @@ interface DataTableViewOptionsProps<TData> {
 export function DataTableViewOptions<TData>({
   table,
 }: DataTableViewOptionsProps<TData>) {
-
-
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -40,8 +29,8 @@ export function DataTableViewOptions<TData>({
           Colonnes
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className='w-[150px]'>
-        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+      <DropdownMenuContent align='end' className='w-[210px]'>
+        <DropdownMenuLabel>Visiblités</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
@@ -49,8 +38,7 @@ export function DataTableViewOptions<TData>({
             (column) =>
               typeof column.accessorFn !== 'undefined' && column.getCanHide()
           )
-          .map((column) => {    
-                
+          .map((column) => {
             return (
               <DropdownMenuCheckboxItem
                 key={column.id}

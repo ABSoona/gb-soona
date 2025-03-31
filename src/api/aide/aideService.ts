@@ -1,13 +1,11 @@
+import { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_AIDES, CREATE_AIDE, UPDATE_AIDE, DELETE_AIDE } from './graphql/queries';
 import { toast } from '@/hooks/use-toast';
 import { handleServerError } from '@/utils/handle-server-error';
 
-export function useAideService(contactId?: number) {
-  // 👉 Variables dynamiques : toutes les aides ou aides d’un contact
-  const variables = contactId
-    ? { where: { contact: { id:  contactId } }  }
-    : {};
+export function useAideService(variables?: any) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data, loading, error, refetch } = useQuery(GET_AIDES, {
     variables,
@@ -17,11 +15,13 @@ export function useAideService(contactId?: number) {
     }
   });
 
-  // 🟢 CREATE
-  const [createAideMutation, { loading: creating, error: createError }] = useMutation(CREATE_AIDE);
+  const [createAideMutation] = useMutation(CREATE_AIDE);
+  const [updateAideMutation] = useMutation(UPDATE_AIDE);
+  const [deleteAideMutation] = useMutation(DELETE_AIDE);
 
   const createAide = async (data: any) => {
     try {
+      setIsSubmitting(true);
       await createAideMutation({ variables: { data } });
       await refetch();
       toast({ title: 'Aide créée avec succès.' });
@@ -29,11 +29,10 @@ export function useAideService(contactId?: number) {
     } catch (err) {
       handleServerError(err);
       return false;
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
-  // 🟢 UPDATE
-  const [updateAideMutation, { loading: updating, error: updateError }] = useMutation(UPDATE_AIDE);
 
   const updateAide = async (id: number, data: any) => {
     if (!id) {
@@ -41,6 +40,7 @@ export function useAideService(contactId?: number) {
       return false;
     }
     try {
+      setIsSubmitting(true);
       await updateAideMutation({ variables: { id, data } });
       await refetch();
       toast({ title: 'Aide mise à jour.' });
@@ -48,11 +48,10 @@ export function useAideService(contactId?: number) {
     } catch (err) {
       handleServerError(err);
       return false;
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
-  // 🟢 DELETE
-  const [deleteAideMutation, { loading: deleting, error: deleteError }] = useMutation(DELETE_AIDE);
 
   const deleteAide = async (id: number) => {
     if (!id) {
@@ -60,6 +59,7 @@ export function useAideService(contactId?: number) {
       return false;
     }
     try {
+      setIsSubmitting(true);
       await deleteAideMutation({ variables: { id } });
       await refetch();
       toast({ title: 'Aide supprimée.' });
@@ -67,6 +67,8 @@ export function useAideService(contactId?: number) {
     } catch (err) {
       handleServerError(err);
       return false;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -78,11 +80,6 @@ export function useAideService(contactId?: number) {
     createAide,
     updateAide,
     deleteAide,
-    creating,
-    updating,
-    deleting,
-    createError,
-    updateError,
-    deleteError,
+    isSubmitting, // ✅ centralisé
   };
 }

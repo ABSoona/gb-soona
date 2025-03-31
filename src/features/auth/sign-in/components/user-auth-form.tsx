@@ -85,7 +85,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                 <FormItem className='space-y-1'>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder='name@example.com' {...field} />
+                    <Input placeholder='nom@exemple.com' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -97,12 +97,12 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               render={({ field }) => (
                 <FormItem className='space-y-1'>
                   <div className='flex items-center justify-between'>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Mot de passe</FormLabel>
                     <Link
                       to='/forgot-password'
                       className='text-sm font-medium text-muted-foreground hover:opacity-75'
                     >
-                      Forgot password?
+                      Mot de passe oublié?
                     </Link>
                   </div>
                   <FormControl>
@@ -113,7 +113,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               )}
             />
             <Button className='mt-2' disabled={isLoading}>
-              Login
+              Se connecter
             </Button>
           </div>
         </form>

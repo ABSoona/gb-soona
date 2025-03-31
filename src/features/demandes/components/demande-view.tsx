@@ -7,6 +7,8 @@ import { columns as aidecolumns } from '@/features/aides/components/aides-column
 import { Demande } from '@/model/demande/Demande'
 import { situationTypes } from '@/model/demande/Demande'
 import { situationFamilleTypes } from '@/model/demande/Demande'
+import { DocumentsManager } from '@/features/documents/documents-manager'
+import { useDocumentService } from '@/api/document/documentService'
 
 interface Props {
   currentRow: Demande,
@@ -21,7 +23,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   if (!currentRow) {
     return null
   }
-
+  const { createAndUploadDocument, deleteDocument, documents } = useDocumentService(currentRow.contact.id);
   /*const { demandes, loading: isLoading, error } = useDemandeService({where : {id :{equals:demandeId} }});
   //const { setOpen, setCurrentRow } = useDemandes()
   const currentRow: Demande | undefined = demandes.length > 0 ? demandes[0] : undefined;*/
@@ -126,14 +128,18 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
           }
           
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
         {showDocuements &&
             <Card>
               <CardHeader>
                 <CardTitle>Documents</CardTitle>
               </CardHeader>
               <CardContent className="text-2xl font-bold">
-
+              <DocumentsManager documents={documents} contactId={currentRow?.contact.id} onUpload={function (file: File): Promise<void> {
+                  throw new Error('Function not implemented.')
+                } } onDelete={function (docId: string): Promise<void> {
+                  throw new Error('Function not implemented.')
+                } }/>
               </CardContent>
             </Card>
           }

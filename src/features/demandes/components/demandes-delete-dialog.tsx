@@ -18,7 +18,7 @@ interface Props {
 
 export function DemandesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
   const queryClient = useQueryClient();
-  const { deleteDemande, deleting } = useDemandeService(); // ✅ Utilisation du service
+  const { deleteDemande,  isSubmitting } = useDemandeService(); // ✅ Utilisation du service
   const [value, setValue] = useState<number | ''>('');
   const { triggerRefetchDemandes } = useDemandes();
   const handleDelete = async () => {
@@ -42,7 +42,7 @@ export function DemandesDeleteDialog({ open, onOpenChange, currentRow }: Props) 
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value !== currentRow.id || deleting}
+      disabled={value !== currentRow.id || isSubmitting}
       title={
         <span className='text-destructive'>
           <IconAlertTriangle className='mr-1 inline-block' size={18} />
@@ -74,7 +74,7 @@ export function DemandesDeleteDialog({ open, onOpenChange, currentRow }: Props) 
           </Alert>
         </div>
       }
-      confirmText={deleting ? 'Suppression...' : 'Supprimer'}
+      confirmText={isSubmitting ? 'Suppression...' : 'Supprimer'}
       destructive
     />
   );
