@@ -1,6 +1,6 @@
 
 
-import { z } from 'zod';
+import { array, z } from 'zod';
 import { contactSchema } from '../contact/Contact';
 import { IconExternalLink, IconShield, IconUsersGroup } from "@tabler/icons-react";
 
@@ -11,6 +11,9 @@ export const demandeStatusSchema = z.union([
   z.literal('en_commision'),
   z.literal('clôturée'),
   z.literal('refusée'),
+  z.literal('EnCours'),
+  z.literal('Abandonée'),
+  z.literal('EnAttente'),
 ]);
 export type DemandeStatus = z.infer<typeof demandeStatusSchema>;
 const situationProSchema = z.union([
@@ -26,8 +29,44 @@ const situationFamSchema = z.union([
   z.literal('veuf'),
   z.literal('célibataire'),
 ]);
+const categorieSchema = z.union([
+  z.literal('LourdementEndett'),
+  z.literal('NCessiteux'),
+  z.literal('Pauvre')
+]);
+const activityTypeSchema = z.union([
+  z.literal('priseContactEchec'),
+  z.literal('priseContactReussie'),
+  z.literal('visite'),
+  z.literal('statusUpdate'),
+  z.literal('note'),
+  z.literal('docAjout'), 
+  z.literal('abandon'), 
+  z.literal('accept'),
+  z.literal('refuse'),
+  z.literal('expiration'),
+  
+]);
 
+export type ActivityType = z.infer<typeof activityTypeSchema>;
 
+export const DemandeActivitySchema = z.object({
+  id: z.number(),
+  createdAt :z.coerce.date(),
+  updatedAt :z.coerce.date(),
+  message :  z.string(),
+  titre : z.string(),
+  typeField : activityTypeSchema,
+  aideId : z.coerce.number().optional(),
+  user: z.object({
+    id: z.number(),
+    firstName: z.string(),
+    lastName: z.string(),
+  }).optional(),
+});
+export type DemandeActivity = z.infer<typeof DemandeActivitySchema>;
+
+export type categorieDemandeur = z.infer<typeof categorieSchema>;
 export type SituationPro = z.infer<typeof situationProSchema>;
 // Schéma principal pour les demandes
 export const demandeSchema = z.object({
@@ -50,8 +89,15 @@ export const demandeSchema = z.object({
   dettes:  z.coerce.number(),
   natureDettes:z.string().optional(),
   autresAides: z.string().optional(),
+  categorieDemandeur: categorieSchema.optional().nullable(),
+  demandeActivities : z.array(DemandeActivitySchema)
   
 });
+
+
+
+
+
 export type Demande = z.infer<typeof demandeSchema>;// Schéma pour le statut de la contact
 //A deplacer plus tard dans Contact/data
 export const situationFamilleTypes = [

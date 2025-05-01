@@ -5,6 +5,8 @@ import {
   CREATE_DEMANDE,
   UPDATE_DEMANDE,
   DELETE_DEMANDE,
+  CREATE_DEMANDE_ACTIVITY,
+  DELETE_DEMANDE_ACTIVITY,
 } from './graphql/queries';
 import { toast } from '@/hooks/use-toast';
 import { handleServerError } from '@/utils/handle-server-error';
@@ -22,7 +24,8 @@ export function useDemandeService(variables?: any) {
 
   // CREATE
   const [createDemandeMutation] = useMutation(CREATE_DEMANDE);
-
+  const [createDemandeActivityMutation] = useMutation(CREATE_DEMANDE_ACTIVITY);
+  const [deleteDemandeActivityMutation] = useMutation(DELETE_DEMANDE_ACTIVITY);
   const createDemande = async (data: any) => {
     try {
       setIsSubmitting(true);
@@ -90,6 +93,59 @@ export function useDemandeService(variables?: any) {
     }
   };
 
+  const createDemandeActivity = async ({
+    titre,
+    message,
+    typeField,
+    demandeId,
+    userId,
+  }: {
+    titre: string;
+    message: string;
+    typeField: string;
+    demandeId: number;
+    userId?: string;
+  }) => {
+    try {
+      setIsSubmitting(true);
+      await createDemandeActivityMutation({
+        variables: {
+          data: {
+            titre,
+            message,
+            typeField,
+            demande: { id: demandeId },
+            user: userId ? { id: userId } : undefined, // ✅ ici
+          },
+        },
+      });
+      await refetch();
+      toast({ title: 'Activité créée avec succès.' });
+      return true;
+    } catch (err) {
+      handleServerError(err);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const deleteDemandeActivity = async (id: number) => {
+    try {
+      setIsSubmitting(true);
+      await deleteDemandeActivityMutation({ variables: { id } });
+      await refetch();
+      toast({ title: 'Activité supprimée.' });
+      return true;
+    } catch (err) {
+      handleServerError(err);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  
+
   return {
     demandes: data?.demandes || [],
     loading,
@@ -98,6 +154,8 @@ export function useDemandeService(variables?: any) {
     createDemande,
     updateDemande,
     deleteDemande,
+    createDemandeActivity,
+    deleteDemandeActivity,
     isSubmitting, // 🔥 centralisé ici
   };
 }

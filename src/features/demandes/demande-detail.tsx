@@ -57,19 +57,21 @@ export default function DemandeDetail({showContact=true }: Props) {
         </div>
       </Header>
       <Main>
-        <div className="mb-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleRetour} size="icon">
-              <ChevronLeft />
-            </Button>
-            <h2 className="text-2xl font-bold tracking-tight">Demande N° {id}</h2>
-             <Badge variant="outline" className={`${cn('capitalize', demandeStatusColor.get(demande?.status))} text-sm`}>
-                  {demandeStatusTypes.find(s => s.value === demande?.status)?.label ?? 'Inconnu'}                
-              </Badge>
-              
-          </div>
-         
-        </div>
+      <div className="mb-2 flex items-center justify-between">
+  <div className="flex items-center gap-2">
+    <Button variant="outline" onClick={handleRetour} size="sm">
+      <ChevronLeft   />
+    </Button>
+    <h2 className="text-2xl font-bold tracking-tight">Demande N° {id}</h2>
+  </div>
+
+  <Badge
+    variant="outline"
+    className={`${cn( demandeStatusColor.get(demande?.status))} text-sm`}
+  >
+    {demandeStatusTypes.find(s => s.value === demande?.status)?.label ?? 'Inconnu'}
+  </Badge>
+</div>
 
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {isLoading ? (

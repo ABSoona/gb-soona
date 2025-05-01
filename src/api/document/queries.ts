@@ -35,6 +35,11 @@ export const GET_DOCUMENTS = gql`
       createdAt
       updatedAt
       contenu
+      typeDocument {  
+        id
+        label
+        rattachement
+       }
     }
   }
 `;

@@ -8,11 +8,11 @@ type TableSkeletonProps = {
 export function TableSkeleton({ rows = 3, columns = 4 }: TableSkeletonProps) {
   // Définir dynamiquement la largeur en fonction du nombre de colonnes
   const columnWidthClass = () => {
-    if (columns >= 6) return "w-20";
-    if (columns === 5) return "w-24";
-    if (columns === 4) return "w-32";
-    if (columns === 3) return "w-40";
-    return "w-48";
+    if (columns >= 6) return "w-full";
+    if (columns === 5) return "w-60";
+    if (columns === 4) return "w-80";
+    if (columns === 3) return "w-100";
+    return "w-150";
   };
 
   const widthClass = columnWidthClass();
@@ -24,7 +24,7 @@ export function TableSkeleton({ rows = 3, columns = 4 }: TableSkeletonProps) {
         {[...Array(columns)].map((_, index) => (
           <Skeleton
             key={`header-${index}`}
-            className={`h-6 ${widthClass} rounded-md`}
+            className={`h-8 ${widthClass} rounded-md`}
           />
         ))}
       </div>

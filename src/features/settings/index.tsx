@@ -1,5 +1,6 @@
 import { Outlet } from '@tanstack/react-router'
 import {
+  IconBell,
   IconBrowserCheck,
   IconNotification,
   IconPalette,
@@ -24,7 +25,7 @@ export default function Settings() {
       <AppLayout>
         <div className='space-y-0.5'>
           <h1 className='text-2xl font-bold tracking-tight md:text-3xl'>
-            Settings
+            Mon compte
           </h1>
           <p className='text-muted-foreground'>
           Gérez les paramètres de votre compte et définissez vos préférences e-mail.
@@ -58,7 +59,7 @@ const sidebarNavItems = [
   },
   {
     title: 'Notifications',
-    icon: <IconNotification size={18} />,
+    icon: <IconBell size={18} />,
     href: '/settings/notifications',
   },
 /*  {

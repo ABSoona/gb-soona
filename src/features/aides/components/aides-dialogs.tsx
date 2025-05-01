@@ -7,9 +7,11 @@ import { AidesDeleteDialog } from './aides-delete-dialog'
 interface Props {
 
   showContactSearch?: boolean;
-  forContactId? :number
+  forContactId? :number;
+  forDemandeId?:number;
+  showDemandeSearch?:boolean
 }
-export function AidesDialogs({showContactSearch = true, forContactId} : Props) {
+export function AidesDialogs({showContactSearch = true, forContactId,forDemandeId,showDemandeSearch=true} : Props) {
   const { openAide: open, setOpenAide: setOpen, currentRow, setCurrentRow } = useAides()
   return (
     <>
@@ -19,6 +21,8 @@ export function AidesDialogs({showContactSearch = true, forContactId} : Props) {
         onOpenChange={() => setOpen('add')}
         showContactSearch = {showContactSearch}
         forContactId={forContactId}
+        forDemandeId = {forDemandeId}
+        showDemandeSearch = {showDemandeSearch}
       />
 
       

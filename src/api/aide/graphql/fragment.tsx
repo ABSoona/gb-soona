@@ -17,6 +17,8 @@ export const AIDE_FIELDS = gql`
     remarque
     contact {  
       id}
- 
+   demande {id}
+   status
+   reetudier 
   }
 `;

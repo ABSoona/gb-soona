@@ -21,18 +21,14 @@ import {
   SheetTitle,
   SheetClose
 } from '@/components/ui/sheet';
+import { Document } from "@/model/document/Document";
 
-interface Document {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  contenu: { filename: string; url: string };
-}
+
 
 interface Props {
   contactId: number;
   documents: Document[];
-  onUpload: (file: File) => Promise<void>;
+  onUpload: (contactId:number,file: File,typeId:number,demandeId:number) => Promise<void>;
   onDelete: (docId: string) => Promise<void>;
 }
 
@@ -41,6 +37,8 @@ export function DocumentsManager({ contactId, documents, onUpload, onDelete }: P
   const [docName, setDocName] = useState<string | null>(null);
   const [previewType, setPreviewType] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  
+  
 
   const handlePreview = async (doc: Document) => {
     try {
@@ -104,8 +102,8 @@ export function DocumentsManager({ contactId, documents, onUpload, onDelete }: P
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <p className="text-center text-sm font-medium truncate w-full cursor-default">
-                      {doc.contenu.filename}
+                    <p className="first-letter:uppercase text-center text-sm font-medium truncate w-full cursor-default">
+                      {doc.typeDocument?.label}
                     </p>
                   </TooltipTrigger>
                   <TooltipContent>

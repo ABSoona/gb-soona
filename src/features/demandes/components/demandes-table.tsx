@@ -50,7 +50,7 @@ export function DemandesTable({ columns, data, hideTools = false, hideActions = 
 
              {
                   contactId: false,
-                  contactAge: false,
+                  Age: false,
                   agesEnfants: false,
                   nombreEnfants: false,
                   autresAides: false,
@@ -61,7 +61,8 @@ export function DemandesTable({ columns, data, hideTools = false, hideActions = 
                   remarques: false,                
                   revenusConjoint: false,
                   id: false,
-                  status : true
+                  status : true,
+
                  
               }
             

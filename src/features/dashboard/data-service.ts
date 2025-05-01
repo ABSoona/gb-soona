@@ -5,6 +5,7 @@ import { useDemandeService } from '@/api/demande/demandeService';
 
 import { useMemo } from 'react';
 import { useContactService } from '@/api/contact/contact-service';
+import { Demande } from '@/model/demande/Demande';
 
 export function calculateDailyAmounts(aides: Aide[], startDate: Date, endDate: Date) {
     const days = eachDayOfInterval({ start: startDate, end: endDate });
@@ -63,7 +64,7 @@ interface DashboardStats {
   totalVerse: number;
   totalReste: number;
   totalDemandes: number;
-  montantMoyenParPersonne: number;
+  demandesEnAttente: number;
   totalContacts: number;
   loading: boolean;
 }
@@ -118,7 +119,7 @@ function calculateTotals(aides: Aide[], startDate: Date, endDate: Date) {
   return {
     totalVerse,
     totalReste,
-    montantMoyenParPersonne: nbContacts ? totalMontant / nbContacts : 0,
+   
     nbContacts,
   };
 }
@@ -151,7 +152,7 @@ export function useDashboardStats(dateRange: { from: Date; to: Date }): Dashboar
     },
   } );
 
-  const { totalVerse, totalReste, montantMoyenParPersonne, nbContacts } = useMemo(
+  const { totalVerse, totalReste,nbContacts } = useMemo(
     () => calculateTotals(aides, dateRange.from, dateRange.to),
     [aides, dateRange]
   );
@@ -160,7 +161,7 @@ export function useDashboardStats(dateRange: { from: Date; to: Date }): Dashboar
     totalVerse,
     totalReste,
     totalDemandes: demandes.length,
-    montantMoyenParPersonne,
+    demandesEnAttente: demandes.filter((n:Demande) => n.status==='recue').length ,
     totalContacts: contacts.length,
     loading: loadingAides || loadingDemandes || loadingContacts,
   };

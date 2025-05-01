@@ -31,13 +31,13 @@ import { ContactSearchCombobox } from './contact-search';
 import { Input } from '@/components/ui/input';
 import { situationTypes } from '@/model/demande/Demande';
 import { situationFamilleTypes } from '@/model/demande/Demande';
-import { demandeStatusTypes } from '../data/data';
+import { categorieTypes, demandeStatusTypes } from '../data/data';
 import { useDemandes } from '../context/demandes-context';
-import { Edit } from 'lucide-react';
+
 
 // 📌 Schéma de validation du formulaire avec Zod
 const formSchema = demandeSchema
-  .omit({ id: true, contact: true,createdAt:true  }) // Supprime les champs "id" et "contact"
+  .omit({ id: true, contact: true,createdAt:true,demandeActivities:true  }) // Supprime les champs "id" et "contact"
   .extend({ contactId: z.any() });  // Ajoute "contactId"
 
 type DemandeForm = z.infer<typeof formSchema>;
@@ -77,6 +77,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
           autresAides:currentRow?.autresAides || '',
           autresCharges:(currentRow?.autresCharges)|| 0,
           apl:Number(currentRow?.apl),
+          categorieDemandeur:(currentRow?.categorieDemandeur)
           
         }
       : {
@@ -117,6 +118,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
           autresAides:values.autresAides,
           autresCharges:Number(values.autresCharges),
           apl:Number(values.apl),
+          categorieDemandeur : values.categorieDemandeur
       
     };
   
@@ -182,6 +184,24 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                         }
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="categorieDemandeur"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel>Catégorie du demandeur</FormLabel>
+                    <SelectDropdown
+                      defaultValue={field.value?.toString()}
+                      onValueChange={field.onChange}
+                      placeholder="Choisissez une categorie"
+                      className="col-span-4"
+                      items={[...categorieTypes]}       
+                                   
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

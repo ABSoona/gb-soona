@@ -3,12 +3,8 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import LongText from '@/components/long-text';
-import { Demande, DemandeStatus } from '@/model/demande/Demande';
-import { DataTableColumnHeader } from './data-table-column-header';
 import { DataTableRowActions } from './data-table-row-actions';
-import { situationTypes } from '@/model/demande/Demande';
-import { situationFamilleTypes } from '@/model/demande/Demande'; 
-import { SituationPro } from "@/model/demande/Demande";
+
 import { DateRange } from 'react-day-picker';
 import { Contact, ContactStatus } from '@/model/contact/Contact';
 import { contactStatusTypes , contactStatusColor } from '../data/data';
@@ -49,7 +45,18 @@ export const aidesColumns: ColumnDef<Contact>[] = [
         enableSorting: false,
         enableHiding: false,
     },*/
+    {
+        id: 'search',
+        header: 'Recherche',
+        accessorFn: row => `${row.nom ?? ''} ${row.prenom ?? ''} ${row.email ?? ''} ${row.telephone?? ''}  ${row.codePostal ?? ''} ${row.numBeneficiaire ?? ''}`,
 
+       filterFn: (row, id, value) => {
+      const v = (value as string)?.toLowerCase?.() ?? '';
+      const data = row.getValue(id)?.toString()?.toLowerCase?.() ?? '';
+      return data.includes(v);
+    },
+        enableHiding: false,
+      },
     // 📄 Informations de la Demande
     {
         accessorFn: (row) => row.id,

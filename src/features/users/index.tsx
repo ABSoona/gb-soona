@@ -14,6 +14,7 @@ import { getUsers } from '@/api/user/userService'
 import { useQuery } from '@tanstack/react-query'
 import { User } from '@/model/user/User'
 import AppLayout from '@/components/layout/app-layout'
+import { IconUsers } from '@tabler/icons-react'
 
 export default function Users() {
 
@@ -30,7 +31,9 @@ export default function Users() {
       <AppLayout>
         <div className='mb-2 flex flex-wrap items-center justify-between space-y-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Utilisateurs</h2>
+          <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+  <IconUsers className="h-6 w-6 text-primary" />
+              Utilisateurs</h2>
             <p className='text-muted-foreground'>
               Vous pouvez gérer ici les accès à GBSoona
             </p>

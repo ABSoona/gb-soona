@@ -35,8 +35,14 @@ const authForgotPasswordLazyImport = createFileRoute(
 const AuthenticatedSettingsRouteLazyImport = createFileRoute(
   '/_authenticated/settings',
 )()
+const AuthenticatedWebsiteDemandesIndexLazyImport = createFileRoute(
+  '/_authenticated/website-demandes/',
+)()
 const AuthenticatedUsersIndexLazyImport = createFileRoute(
   '/_authenticated/users/',
+)()
+const AuthenticatedTypeDocumentsIndexLazyImport = createFileRoute(
+  '/_authenticated/typeDocuments/',
 )()
 const AuthenticatedTasksIndexLazyImport = createFileRoute(
   '/_authenticated/tasks/',
@@ -191,6 +197,17 @@ const auth500Route = auth500Import.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthenticatedWebsiteDemandesIndexLazyRoute =
+  AuthenticatedWebsiteDemandesIndexLazyImport.update({
+    id: '/website-demandes/',
+    path: '/website-demandes/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/website-demandes/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
 const AuthenticatedUsersIndexLazyRoute =
   AuthenticatedUsersIndexLazyImport.update({
     id: '/users/',
@@ -198,6 +215,17 @@ const AuthenticatedUsersIndexLazyRoute =
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any).lazy(() =>
     import('./routes/_authenticated/users/index.lazy').then((d) => d.Route),
+  )
+
+const AuthenticatedTypeDocumentsIndexLazyRoute =
+  AuthenticatedTypeDocumentsIndexLazyImport.update({
+    id: '/typeDocuments/',
+    path: '/typeDocuments/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/typeDocuments/index.lazy').then(
+      (d) => d.Route,
+    ),
   )
 
 const AuthenticatedTasksIndexLazyRoute =
@@ -511,11 +539,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksIndexLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/typeDocuments/': {
+      id: '/_authenticated/typeDocuments/'
+      path: '/typeDocuments'
+      fullPath: '/typeDocuments'
+      preLoaderRoute: typeof AuthenticatedTypeDocumentsIndexLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof AuthenticatedUsersIndexLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/website-demandes/': {
+      id: '/_authenticated/website-demandes/'
+      path: '/website-demandes'
+      fullPath: '/website-demandes'
+      preLoaderRoute: typeof AuthenticatedWebsiteDemandesIndexLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
   }
@@ -559,7 +601,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDemandesIndexLazyRoute: typeof AuthenticatedDemandesIndexLazyRoute
   AuthenticatedHelpCenterIndexLazyRoute: typeof AuthenticatedHelpCenterIndexLazyRoute
   AuthenticatedTasksIndexLazyRoute: typeof AuthenticatedTasksIndexLazyRoute
+  AuthenticatedTypeDocumentsIndexLazyRoute: typeof AuthenticatedTypeDocumentsIndexLazyRoute
   AuthenticatedUsersIndexLazyRoute: typeof AuthenticatedUsersIndexLazyRoute
+  AuthenticatedWebsiteDemandesIndexLazyRoute: typeof AuthenticatedWebsiteDemandesIndexLazyRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -573,7 +617,11 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDemandesIndexLazyRoute: AuthenticatedDemandesIndexLazyRoute,
   AuthenticatedHelpCenterIndexLazyRoute: AuthenticatedHelpCenterIndexLazyRoute,
   AuthenticatedTasksIndexLazyRoute: AuthenticatedTasksIndexLazyRoute,
+  AuthenticatedTypeDocumentsIndexLazyRoute:
+    AuthenticatedTypeDocumentsIndexLazyRoute,
   AuthenticatedUsersIndexLazyRoute: AuthenticatedUsersIndexLazyRoute,
+  AuthenticatedWebsiteDemandesIndexLazyRoute:
+    AuthenticatedWebsiteDemandesIndexLazyRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -606,7 +654,9 @@ export interface FileRoutesByFullPath {
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
   '/settings/': typeof AuthenticatedSettingsIndexLazyRoute
   '/tasks': typeof AuthenticatedTasksIndexLazyRoute
+  '/typeDocuments': typeof AuthenticatedTypeDocumentsIndexLazyRoute
   '/users': typeof AuthenticatedUsersIndexLazyRoute
+  '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
@@ -634,7 +684,9 @@ export interface FileRoutesByTo {
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
   '/settings': typeof AuthenticatedSettingsIndexLazyRoute
   '/tasks': typeof AuthenticatedTasksIndexLazyRoute
+  '/typeDocuments': typeof AuthenticatedTypeDocumentsIndexLazyRoute
   '/users': typeof AuthenticatedUsersIndexLazyRoute
+  '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
 }
 
 export interface FileRoutesById {
@@ -666,7 +718,9 @@ export interface FileRoutesById {
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexLazyRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexLazyRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexLazyRoute
+  '/_authenticated/typeDocuments/': typeof AuthenticatedTypeDocumentsIndexLazyRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexLazyRoute
+  '/_authenticated/website-demandes/': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
 }
 
 export interface FileRouteTypes {
@@ -698,7 +752,9 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/settings/'
     | '/tasks'
+    | '/typeDocuments'
     | '/users'
+    | '/website-demandes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/500'
@@ -725,7 +781,9 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/settings'
     | '/tasks'
+    | '/typeDocuments'
     | '/users'
+    | '/website-demandes'
   id:
     | '__root__'
     | '/_authenticated'
@@ -755,7 +813,9 @@ export interface FileRouteTypes {
     | '/_authenticated/help-center/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
+    | '/_authenticated/typeDocuments/'
     | '/_authenticated/users/'
+    | '/_authenticated/website-demandes/'
   fileRoutesById: FileRoutesById
 }
 
@@ -828,7 +888,9 @@ export const routeTree = rootRoute
         "/_authenticated/demandes/",
         "/_authenticated/help-center/",
         "/_authenticated/tasks/",
-        "/_authenticated/users/"
+        "/_authenticated/typeDocuments/",
+        "/_authenticated/users/",
+        "/_authenticated/website-demandes/"
       ]
     },
     "/(auth)/500": {
@@ -930,8 +992,16 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/tasks/index.lazy.tsx",
       "parent": "/_authenticated"
     },
+    "/_authenticated/typeDocuments/": {
+      "filePath": "_authenticated/typeDocuments/index.lazy.tsx",
+      "parent": "/_authenticated"
+    },
     "/_authenticated/users/": {
       "filePath": "_authenticated/users/index.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/website-demandes/": {
+      "filePath": "_authenticated/website-demandes/index.lazy.tsx",
       "parent": "/_authenticated"
     }
   }

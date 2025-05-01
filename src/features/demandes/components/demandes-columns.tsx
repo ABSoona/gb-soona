@@ -3,10 +3,10 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import LongText from '@/components/long-text';
-import { Demande, DemandeStatus } from '@/model/demande/Demande';
+import { Demande, DemandeStatus, categorieDemandeur } from '@/model/demande/Demande';
 import { DataTableColumnHeader } from './data-table-column-header';
 import { DataTableRowActions } from './data-table-row-actions';
-import { demandeStatusColor, demandeStatusTypes } from '../data/data';
+import { categorieTypes, demandeStatusColor, demandeStatusTypes } from '../data/data';
 import { situationTypes } from '@/model/demande/Demande';
 import { situationFamilleTypes } from '@/model/demande/Demande';
 import { SituationPro } from "@/model/demande/Demande";
@@ -141,6 +141,19 @@ export const columns: ColumnDef<Demande>[] = [
           },
     },
     {
+        accessorFn: (row) => row?.categorieDemandeur,
+        id: 'categorieDemandeur',
+        header: 'Catégorie',
+        cell: ({ row }) => {
+            const categorieDemandeur: categorieDemandeur = row.getValue('categorieDemandeur');
+            return categorieTypes.find(s => s.value === categorieDemandeur)?.label ?? 'N/A';
+        },
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+          },
+    },
+
+    {
         accessorFn: (row) => row?.revenus,
         id: 'revenus',
         header: 'Revenus',
@@ -149,6 +162,7 @@ export const columns: ColumnDef<Demande>[] = [
     {
        // accessorFn: (row) => row.contact?.revenus,
         id: 'charges',
+        accessorKey: 'charges',
         header: 'Charges',
         cell: ({ row }) =>  
         ((row.original?.facturesEnergie ?? 0) +
@@ -187,7 +201,8 @@ export const columns: ColumnDef<Demande>[] = [
         cell: ({ row }) => row.original?.loyer?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
     },
     {
-     //   accessorFn: (row) => row?.resteAVivre,
+        //accessorFn: (row) => row?.resteAVivre,
+        accessorKey: 'resteAVivre',
         id: 'resteAVivre',
         header: 'Reste à Vivre',
         cell: ({ row }) => (
@@ -222,7 +237,7 @@ export const columns: ColumnDef<Demande>[] = [
             const statusLabel = demandeStatusTypes.find(s => s.value === status)?.label ?? 'Inconnu';
 
             return (
-                <Badge variant="outline" className={cn('capitalize', demandeStatusColor.get(status))}>
+                <Badge variant="outline" className={cn('firt-letter:uppercase', demandeStatusColor.get(status))}>
                     {statusLabel}
                 </Badge>
             );
