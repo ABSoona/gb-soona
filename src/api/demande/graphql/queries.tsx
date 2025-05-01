@@ -1,10 +1,9 @@
 import { gql } from '@apollo/client';
-import { DEMANDE_FIELDS } from './fragment';
 import { CONTACT_FIELDS } from '@/api/contact/graphql/fragment';
 import { AIDE_FIELDS } from '@/api/aide/graphql/fragment';
-import { DOCUMENT_FIELDS } from '@/api/document/fragment';
+import { DEMANDE_FIELDS, DEMANDE_ACTIVITY_FIELDS } from './fragment';
 
-export const GET_DEMANDES= gql`
+export const GET_DEMANDES = gql`
   query GetDemandesWithContactAides($skip: Float, $take: Float, $where : DemandeWhereInput) {
     demandes(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Desc }]) {
       ...DemandeFields
@@ -13,17 +12,18 @@ export const GET_DEMANDES= gql`
         aides {
           ...AideFields
         }
-       
+      }
+      demandeActivities(orderBy: { createdAt: Desc }) {
+        ...DemandeActivityFields
       }
     }
   }
   ${DEMANDE_FIELDS}
   ${CONTACT_FIELDS}
   ${AIDE_FIELDS}
-
+  ${DEMANDE_ACTIVITY_FIELDS}
 `;
 
-// 🔥 Ajout des mutations
 export const CREATE_DEMANDE = gql`
   mutation CreateDemande($data: DemandeCreateInput!) {
     createDemande(data: $data) {
@@ -31,21 +31,20 @@ export const CREATE_DEMANDE = gql`
     }
   }
   ${DEMANDE_FIELDS}
-
 `;
 
 export const UPDATE_DEMANDE = gql`
-  mutation UpdateDemande($id: Float! , $data: DemandeUpdateInput!) {
-    updateDemande(where: {id : $id}, data: $data) {
+  mutation UpdateDemande($id: Float!, $data: DemandeUpdateInput!) {
+    updateDemande(where: { id: $id }, data: $data) {
       ...DemandeFields
+      demandeActivities(orderBy: { createdAt: Desc }) {
+        ...DemandeActivityFields
+      }
     }
   }
   ${DEMANDE_FIELDS}
-
+  ${DEMANDE_ACTIVITY_FIELDS}
 `;
-
-
-
 
 export const DELETE_DEMANDE = gql`
   mutation DeleteDemande($id: Float!) {
@@ -53,12 +52,31 @@ export const DELETE_DEMANDE = gql`
       __typename
     }
   }
- 
 `;
 
 
+export const CREATE_DEMANDE_ACTIVITY = gql`
+  mutation CreateDemandeActivity($data: DemandeActivityCreateInput!) {
+    createDemandeActivity(data: $data) {
+      ...DemandeActivityFields
+    }
+  }
+  ${DEMANDE_ACTIVITY_FIELDS}
+`;
 
+export const UPDATE_DEMANDE_ACTIVITY = gql`
+  mutation UpdateDemandeActivity($id: Float!, $data: DemandeActivityUpdateInput!) {
+    updateDemandeActivity(where: { id: $id }, data: $data) {
+      id
+      message
+    }
+  }
+`;
 
-
-
-
+export const DELETE_DEMANDE_ACTIVITY = gql`
+  mutation DeleteDemandeActivity($id: Float!) {
+    deleteDemandeActivity(where: { id: $id }) {
+      id
+    }
+  }
+`;

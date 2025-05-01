@@ -13,6 +13,9 @@ import { ContactView } from './components/contact-view';
 import { detailOpenOption } from '../demandes/components/demandes-table';
 import DemandesProvider from '../demandes/context/demandes-context';
 import AidesProvider from '../aides/context/aides-context';
+import { IconLayoutSidebarRightExpand } from '@tabler/icons-react';
+import { useContacts } from './context/contacts-context';
+
 
 export default function ContactDetail() {
   const id = useParams({
@@ -25,7 +28,7 @@ export default function ContactDetail() {
   const contact: Contact = contacts.length > 0 ? contacts[0] : undefined;
 
   // Récupération du contexte pour gérer les actions sur les demandes
- // const { setOpen, setCurrentRow } = useContacts(); // ✅ Fonctionne car le provider est défini dans un composant parent
+  const { setOpen, setCurrentRow } = useContacts(); // ✅ Fonctionne car le provider est défini dans un composant parent
 
   // Gestion des erreurs
   if (error) {
@@ -49,9 +52,18 @@ export default function ContactDetail() {
             </Button>
             <h2 className="text-2xl font-bold tracking-tight">Contact N° {id}</h2>
           </div>
-         
+         <div>
+          <Button  variant="outline" onClick={() => {
+              setCurrentRow(contact)
+              setOpen('timeline')
+            }}>
+          <IconLayoutSidebarRightExpand size='42'/> Time line
+          </Button>
+          
+         </div>
         </div>
-
+       
+      
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {isLoading ? (
             <div className="flex items-center justify-center py-4">

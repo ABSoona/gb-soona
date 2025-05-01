@@ -12,7 +12,7 @@ import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { Overview } from './components/overview'
 import { DernieresDemandes } from './components/derniere-demande'
-import { IconHeartHandshake, IconMailDown, IconPercentage20, IconUserHeart, IconUsers } from '@tabler/icons-react'
+import { IconAlertSquare, IconHeartHandshake, IconMailDown, IconPercentage20, IconUsers } from '@tabler/icons-react'
 import { StatusDemandes } from './components/status-demandes'
 import { DatePickerWithRange } from '@/components/ui/date-range-picker'
 import { useState } from 'react'
@@ -82,9 +82,9 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex gap-2 flex-wrap">
             <Button size="sm" variant={activePeriod === 'mois' ? 'default' : 'outline'} onClick={() => handlePeriodChange('mois')}>Mois</Button>
-            <Button size="sm" variant={activePeriod === 'moisPrecedent' ? 'default' : 'outline'} onClick={() => handlePeriodChange('moisPrecedent')}>Mois Précédent</Button>
+            <Button size="sm" variant={activePeriod === 'moisPrecedent' ? 'default' : 'outline'} onClick={() => handlePeriodChange('moisPrecedent')}>Mois-1</Button>
             <Button size="sm" variant={activePeriod === 'annee' ? 'default' : 'outline'} onClick={() => handlePeriodChange('annee')}>Année</Button>
-            <Button size="sm" variant={activePeriod === 'anneePrecedente' ? 'default' : 'outline'} onClick={() => handlePeriodChange('anneePrecedente')}>Année précédente</Button>
+            <Button size="sm" variant={activePeriod === 'anneePrecedente' ? 'default' : 'outline'} onClick={() => handlePeriodChange('anneePrecedente')}>Année-1</Button>
             <Button size="sm" variant={activePeriod === 'custom' ? 'default' : 'outline'} onClick={() => handlePeriodChange('custom')}>Personnalisé</Button>
           </div>
 
@@ -102,7 +102,12 @@ export default function Dashboard() {
 
         <div className='space-y-4'>
           <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-5'>
-            {[{
+            {[ {
+              title: 'Nouvelles demandes',
+              icon: <IconAlertSquare  className='h-7 w-7 text-muted-foreground' />,
+              value: stats ? stats.demandesEnAttente : null
+            }, 
+              {
               title: 'Aides versés',
               icon: <IconHeartHandshake className='h-7 w-7 text-muted-foreground' />,
               value: stats ? formatMontant(stats.totalVerse) : null
@@ -114,11 +119,7 @@ export default function Dashboard() {
               title: 'Demandes',
               icon: <IconMailDown className='h-7 w-7 text-muted-foreground' />,
               value: stats ? stats.totalDemandes : null
-            }, {
-              title: 'Montant Moyen',
-              icon: <IconUserHeart className='h-7 w-7 text-muted-foreground' />,
-              value: stats ? formatMontant(stats.montantMoyenParPersonne) : null
-            }, {
+            },{
               title: 'Personnes aidées',
               icon: <IconUsers className='h-7 w-7 text-muted-foreground' />,
               value: stats ? stats.totalContacts : null
@@ -163,7 +164,7 @@ export default function Dashboard() {
             <Card className='col-span-1 lg:col-span-4'>
                   
               <CardHeader>
-                <CardTitle>Dernière demandes</CardTitle>
+                <CardTitle>Nouvelles demandes</CardTitle>
               </CardHeader>
               <CardContent>
              

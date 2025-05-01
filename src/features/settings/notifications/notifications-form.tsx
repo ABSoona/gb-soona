@@ -24,6 +24,7 @@ const notificationsFormSchema = z.object({
   demandeEnCommission: z.boolean().default(false),
   aideExpire: z.boolean().default(false),
   contactBlackL: z.boolean().default(false),
+  ErreursDemandes :  z.boolean().default(false),
 })
 
 type NotificationsFormValues = z.infer<typeof notificationsFormSchema>
@@ -34,6 +35,7 @@ const typeToFieldMap: Record<NotificationType, keyof NotificationsFormValues> = 
   DemandeEnCommission: 'demandeEnCommission',
   ContactBan: 'contactBlackL',
   AideExpir: 'aideExpire',
+  ErreursDemandes :'ErreursDemandes'
 }
 
 const fieldToTypeMap = Object.fromEntries(
@@ -101,6 +103,7 @@ export function NotificationsForm() {
           <PrefSwitch form={form} name='nouvelleDemande' label='Nouvelle demande' description='Quand une nouvelle demande est reçue.' />
           <PrefSwitch form={form} name='demandeEnVsite' label='Demande en visite' description='Quand une demande passe au statut "En visite".' />
           <PrefSwitch form={form} name='demandeEnCommission' label='Demande en commission' description='Quand une demande passe au statut "En commission".' />
+          <PrefSwitch form={form} name='ErreursDemandes' label='Erreur depuis sonna.com' description='Quand une demande est reçu de puis sonna.com mais ne peut pas être integré dans GBsoona.' />
         </Section>
 
         <Section title='Contact'>
@@ -110,6 +113,7 @@ export function NotificationsForm() {
         <Section title='Aides'>
           <PrefSwitch form={form} name='aideExpire' label='Aide expirée' description='Quand une aide récurrente arrive à expiration.' />
         </Section>
+        
 
         <Button type='submit'>Mettre à jour</Button>
       </form>

@@ -31,10 +31,6 @@ export function AideViewDialog({ currentRow, open, onOpenChange }: Props) {
   }
   const { setOpenAide: setOpen, setCurrentRow } = useAides()
 
-
-
-
-
   return (
     <Sheet open={open} onOpenChange={(state) => onOpenChange(state)}>
       <SheetContent side="rightfull" className="flex flex-col">

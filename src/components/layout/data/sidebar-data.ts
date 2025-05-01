@@ -3,10 +3,12 @@ import {
   IconBrowserCheck,
   IconChecklist,
   IconCoinEuro,
+  IconFile,
   IconHeartHandshake,
   IconHelp,
   IconLayoutDashboard,
   IconLockAccess,
+  IconLogs,
   IconMailDown,
   IconNotification,
   IconPalette,
@@ -89,14 +91,25 @@ export const sidebarData: SidebarData = {
       title: 'Autres',
       items: [
         {
+          title: 'Utilisateurs',
+          url: '/users',
+          icon: IconUsers,
+        },
+        {
+          title: 'Type de documents',
+          url: '/typeDocuments',
+          icon: IconFile,
+        },
+        {
+          title: 'Inscriptions sonna.com',
+          url: '/website-demandes',
+          icon: IconLogs,
+        },
+       /*  {
           title: 'Réglages',
           icon: IconSettings,
           items: [
-            {
-              title: 'Utilisateurs',
-              url: '/users',
-              icon: IconUsers,
-            },
+           
             {
               title: 'Mon compte',
               url: '/settings',
@@ -104,7 +117,7 @@ export const sidebarData: SidebarData = {
             },
            
           ],
-        },
+        }, */
         {
           title: 'Documentation',
           url: '/help-center',

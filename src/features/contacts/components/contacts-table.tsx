@@ -59,6 +59,7 @@ export function ContactsTable({ columns, data, hideTools = false }: DataTablePro
                   remarques: false,                
                   revenusConjoint: false,
                   id: false,
+                  search:false
               }
             : {
                   contactId: false,

@@ -15,6 +15,7 @@ import { ContactsDialogs } from './components/contacts-dialogs';
 import { Skeleton } from '@/components/ui/skeleton';
 import AppLayout from '@/components/layout/app-layout';
 import { TableSkeleton } from '@/components/ui/skeleton-table';
+import { IconUser } from '@tabler/icons-react';
 
 export default function Contacts() {
     // ✅ Utilisation du service pour récupérer les contacts
@@ -27,12 +28,13 @@ export default function Contacts() {
 
     return (
         <ContactsProvider>
-             
 
              <AppLayout>
                 <div className="mb-2 flex flex-wrap items-center justify-between space-y-2">
                     <div>
-                        <h2 className="text-2xl font-bold tracking-tight">Liste des Contacts</h2>
+                    <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                     <IconUser className="h-6 w-6 text-primary" />
+                            Liste des Contacts</h2>
                         <p className="text-muted-foreground">
                             Gérez vos contacts et leurs statuts ici.
                         </p>

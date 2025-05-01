@@ -6,7 +6,7 @@ import LongText from '@/components/long-text';
 import { Aide, AideFrequence } from '@/model/aide/Aide';
 import { DataTableColumnHeader } from './data-table-column-header';
 import { DataTableRowActions } from './data-table-row-actions';
-import { aideCredieteurTypes, aideFrquenceTypes} from '../data/data';
+import { aideCredieteurTypes, aideFrquenceTypes, typeAideTypes} from '../data/data';
 import { differenceInWeeks, differenceInMonths, isBefore, addWeeks, addMonths, isEqual } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { CheckCircleIcon, XCircleIcon } from 'lucide-react';
@@ -81,7 +81,13 @@ export const columns: ColumnDef<Aide>[] = [
     },
 
     // 👤 Informations du Contact 
-  
+    {
+        accessorFn: (row) => row.typeField,
+        id: 'typeField',
+        header: 'Type',
+        cell: ({ row }) => typeAideTypes.find(e=> e.value===row.original?.typeField)?.label ?? 'N/A',
+        enableHiding: true,
+    },
     {
         accessorFn: (row) => row.montant,
         id: 'montant',

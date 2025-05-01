@@ -3,7 +3,7 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { demandeStatusTypes } from '../data/data';
+import { categorieTypes, demandeStatusTypes } from '../data/data';
 import { situationFamilleTypes, situationTypes } from '@/model/demande/Demande';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { DataTableViewOptions } from './data-table-view-options';
@@ -139,6 +139,14 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                             column={table.getColumn('situationFamiliale')}
                             title="Situation Famil."
                             options={situationFamilleTypes.map((t) => ({ ...t }))}
+                        />
+                    )}
+                     {/* 📌 Filtre par categorie */}
+                     {table.getColumn('categorieDemandeur') && (
+                        <DataTableFacetedFilter
+                            column={table.getColumn('categorieDemandeur')}
+                            title="Catégorie"
+                            options={categorieTypes.map((t) => ({ ...t }))}
                         />
                     )}
                     

@@ -4,6 +4,7 @@ import { CREATE_DOCUMENT, UPLOAD_CONTENU, DELETE_DOCUMENT, GET_DOCUMENTS } from 
 import axiosInstance from '@/lib/axtios-instance';
 import { toast } from '@/hooks/use-toast';
 import { saveAs } from 'file-saver';
+import { Document } from '@/model/document/Document';
 
 export async function downloadDocument(docId: string, filename: string) {
   try {
@@ -22,7 +23,7 @@ export async function downloadDocument(docId: string, filename: string) {
   }
 }
 
-export async function previewDocument(doc: { id: string; contenu: { filename: string } }) {
+export async function previewDocument(doc: Document) {
   const response = await axiosInstance.get(`/documents/${doc.id}/contenu`, {
     responseType: 'blob',
   });
@@ -39,19 +40,21 @@ export async function previewDocument(doc: { id: string; contenu: { filename: st
 }
 
 
-export function useDocumentService(contactId?: number) {
+export function useDocumentService(variables?: any) {
   const [createDocument] = useMutation(CREATE_DOCUMENT);
   const [uploadContenu] = useMutation(UPLOAD_CONTENU, { client: uploadClient });
   const [deleteDocumentMutation] = useMutation(DELETE_DOCUMENT);
   
   const { data, refetch } = useQuery(GET_DOCUMENTS, {
-    skip: !contactId,
-    variables: {
-      where: { contact: { id:  contactId }  },
-    },
+   
+    variables: variables || {},
+    fetchPolicy: 'network-only',
+    onCompleted: (newData) => {
+      console.log("✅ DEMANDES chargées :", newData);
+    }
   });
 
-  const createAndUploadDocument = async (contactId: number, file: File) => {
+  const createAndUploadDocument = async (contactId: number, file: File,typeId: number, demandeId?:number) => {
     let documentId: string | null = null;
   
     try {
@@ -70,8 +73,10 @@ export function useDocumentService(contactId?: number) {
       const { data: createRes } = await createDocument({
         variables: {
           data: {
-            contact: { id: contactId },
+            contact:  !demandeId?{ id: contactId}:null,
             contenu: "{}",
+            demande :  demandeId?{id:demandeId}:null ,
+            typeDocument: { id: typeId }
           },
         },
       });

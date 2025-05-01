@@ -133,7 +133,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     }}
                     className='justify-center text-center'
                   >
-                    Clear filters
+                    Réinitialiser
                   </CommandItem>
                 </CommandGroup>
               </>

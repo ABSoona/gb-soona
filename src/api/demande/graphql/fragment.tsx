@@ -20,9 +20,26 @@ export const DEMANDE_FIELDS = gql`
     situationProConjoint
     status
     remarques
-    
+    categorieDemandeur
     updatedAt
-    contact {  
-      id}
-  } 
+    contact {
+      id
+    }
+  }
+`;
+
+export const DEMANDE_ACTIVITY_FIELDS = gql`
+  fragment DemandeActivityFields on DemandeActivity {
+    id
+    titre
+    message
+    typeField
+    createdAt
+    updatedAt
+    user {
+      id
+      firstName
+      lastName
+    }
+  }
 `;

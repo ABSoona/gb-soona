@@ -14,6 +14,7 @@ import { handleServerError } from '@/utils/handle-server-error';
 import AppLayout from '@/components/layout/app-layout';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TableSkeleton } from '@/components/ui/skeleton-table';
+import { IconMailDown } from '@tabler/icons-react';
 
 export default function Demandes() {
     // ✅ Utilisation du service pour récupérer les demandes
@@ -30,7 +31,9 @@ export default function Demandes() {
 
                 <div className="mb-2 flex flex-wrap items-center justify-between space-y-2">
                     <div>
-                        <h2 className="text-2xl font-bold tracking-tight">Liste des Demandes</h2>
+                    <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                    <IconMailDown className="h-6 w-6 text-primary" />
+                            Liste des Demandes</h2>
                         <p className="text-muted-foreground">
                             Gérez vos demandes et leurs statuts ici.
                         </p>

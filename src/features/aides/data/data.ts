@@ -14,8 +14,8 @@
 ])*/
 export const aideStatusTypes =
 [
-  { label: 'Suspendue', value: 'suspendue' },
-  { label: 'Active', value: 'active' },
+  { label: 'En cours', value: 'EnCours' },
+  { label: 'Expirée', value: 'Expir' },
 
  ] as const
 
@@ -41,3 +41,13 @@ export const aideStatusTypes =
     { label: 'Un Créancier', value: 'UnCrAncier' },
   
    ] as const
+
+
+
+   export const typeAideTypes =
+   [
+     { label: 'Financière', value: 'FinanciRe' },
+     { label: 'Assitance Administrative', value: 'AssistanceAdministrative' },
+   
+    ] as const
+ 

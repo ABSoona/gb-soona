@@ -1,11 +1,12 @@
 
 import { z } from 'zod';
 import { contactSchema } from '../contact/Contact';
+import { demandeSchema } from '../demande/Demande';
 
 // Schéma pour le statut de la aide
 const aideTypeSchema = z.union([
   z.literal('FinanciRe'),
-  z.literal('Alimentaire')
+  z.literal('AssistanceAdministrative')
 ]);
 export type AideType = z.infer<typeof aideTypeSchema>;
 
@@ -19,6 +20,12 @@ const aideFrequenceSchema = z.union([
 ]);
 export type AideFrequence = z.infer<typeof aideFrequenceSchema>;
 
+const aideSatusSchema = z.union([
+  z.literal('EnCours'),
+  z.literal('Expir'),
+
+]);
+export type AideStatus = z.infer<typeof aideSatusSchema>;
 /*const aideStatusSchema = z.union([
 
   z.literal('suspendue'),
@@ -50,6 +57,9 @@ export const aideSchema = z.object({
   crediteur : aideCrediteurSchema,
   infosCrediteur : z.coerce.string().optional() ,
   remarque : z.coerce.string().optional(),
+  demande : demandeSchema,
+  status : aideSatusSchema,
+  reetudier: z.boolean()
 
 });
 export type Aide = z.infer<typeof aideSchema>;

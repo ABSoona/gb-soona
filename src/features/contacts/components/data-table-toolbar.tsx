@@ -9,6 +9,7 @@ import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { DataTableViewOptions } from './data-table-view-options';
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
+import { DataTableExport } from './data-table-export';
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -38,10 +39,10 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                 
                 {/* 🔍 Filtre par nom */}
                 <Input
-                    placeholder="Filtrer par noms..."
-                    value={(table.getColumn('nom')?.getFilterValue() as string) ?? ''}
+                    placeholder="Filtrer par noms, prenom, email..."
+                    value={(table.getColumn('search')?.getFilterValue() as string) ?? ''}
                     onChange={(event) =>
-                        table.getColumn('nom')?.setFilterValue(event.target.value)
+                        table.getColumn('search')?.setFilterValue(event.target.value)
                     }
                     className="h-8 w-[150px] lg:w-[250px]"
                 />
@@ -83,7 +84,11 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             </div>
 
             {/* ⚙️ Options d'affichage des colonnes */}
-            <DataTableViewOptions table={table} />
+             {/* ⚙️ Options d'affichage des colonnes */}
+             <div className='mx-2'><DataTableViewOptions table={table} /></div>
+            <div><DataTableExport table={table}/></div>
+            
+            
         </div>
     );
 }

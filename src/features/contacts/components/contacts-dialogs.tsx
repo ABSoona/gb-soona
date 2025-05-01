@@ -1,4 +1,5 @@
 import { useContacts } from '../context/contacts-context'
+import { ContactTimelineDialog } from './contact-timeline-dialog '
 import { ContactViewDialog } from './contact-view-dialog'
 //import { ContactViewDialog } from './contact-view-dialog'
 import { ContactsActionDialog } from './contacts-action-dialog'
@@ -54,6 +55,17 @@ export function ContactsDialogs() {
             }}
             currentRow={currentRow}
 
+          />
+          <ContactTimelineDialog
+            key={`contact-timeline-${currentRow.id}`}
+            open={open === 'timeline'}
+            onOpenChange={() => {
+              setOpen('timeline')
+              setTimeout(() => {
+                setCurrentRow(null)
+              }, 500)
+            }}
+            currentRow={currentRow}
           />
           
         </>

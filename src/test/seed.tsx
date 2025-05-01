@@ -12,7 +12,7 @@ export function GenerateFakeData() {
 
   const [loading, setLoading] = useState(false);
 
-  const demandeStatusTypes = ['recue', 'en_visite', 'en_commision', 'clôturée', 'refusée'] as const;
+  const demandeStatusTypes = ['recue', 'en_visite', 'en_commision', 'clôturée', 'refusée','EnCours'] as const;
   const situationsPro = ['sans_emploi', 'employé', 'indépendant', 'retraité'] as const;
   const situationsFam = ['marié', 'divorcé', 'veuf', 'célibataire'] as const;
 
@@ -25,7 +25,7 @@ export function GenerateFakeData() {
     for (const contact of contacts) await deleteContact(contact.id);*/
 
     // ✨ Générer 20 contacts avec aides et demandes
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 20; i++) {
       const contactData = {
         nom: faker.person.lastName(),
         prenom: faker.person.firstName(),

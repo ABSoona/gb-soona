@@ -1,4 +1,4 @@
-import { IconFileExport, IconMailPlus, IconUserPlus } from '@tabler/icons-react'
+import { IconUserPlus } from '@tabler/icons-react'
 import { Button } from '@/components/ui/button'
 import { useContacts } from '../context/contacts-context'
 
@@ -10,9 +10,7 @@ export function ContactsPrimaryButtons() {
       <Button className='space-x-1' onClick={() => setOpen('add')}>
         <span>Nouveau contact</span> <IconUserPlus size={18} />
       </Button>
-      <Button className='space-x-1' onClick={() => setOpen('add')}>
-        <span>Exporter</span> <IconFileExport size={18} />
-      </Button>
+     
     </div>
   )
 }
