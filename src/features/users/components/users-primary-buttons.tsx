@@ -1,5 +1,5 @@
-import { IconMailPlus, IconUserPlus } from '@tabler/icons-react'
 import { Button } from '@/components/ui/button'
+import { IconMailPlus, IconUserPlus } from '@tabler/icons-react'
 import { useUsers } from '../context/users-context'
 
 export function UsersPrimaryButtons() {

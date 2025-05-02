@@ -1,17 +1,8 @@
 'use client';
 
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService';
+import { SelectDropdown } from '@/components/select-dropdown';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
 import {
   Form,
   FormControl,
@@ -21,14 +12,23 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { SelectDropdown } from '@/components/select-dropdown';
-import { typesDocuments } from '../data/data';
-import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { toast } from '@/hooks/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { typesDocuments } from '../data/data';
 
 const formSchema = z.object({
   label: z.string().min(2, { message: 'Le nom est requis' }),
-  rattachement: z.enum(['Contact', 'Demande','Suivi']),
+  rattachement: z.enum(['Contact', 'Demande', 'Suivi']),
 });
 
 type TypeDocumentForm = z.infer<typeof formSchema>;
@@ -82,7 +82,7 @@ export function TypeDocumentDialog({ open, onOpenChange }: Props) {
 
         <Form {...form}>
           <form
-           id="typedocument-form"
+            id="typedocument-form"
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-4 py-4 flex-1"
           >

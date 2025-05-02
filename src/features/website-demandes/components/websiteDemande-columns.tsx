@@ -1,13 +1,13 @@
-import { ColumnDef } from '@tanstack/react-table';
 import { WebsiteDemande, WsDemandeStatus } from '@/model/website-demandes/website-demandes';
+import { ColumnDef } from '@tanstack/react-table';
 
 import { Badge } from '@/components/ui/badge';
-import { DataTableRowActions } from './data-table-row-actions';
-import { WsDemandeStatusColor, wsDemandeStatusTypes } from '../data/data';
-import { cn } from '@/lib/utils';
-import { CheckCircle2, AlertTriangle, Clock4, XCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+import { AlertTriangle, CheckCircle2, Clock4, XCircle } from 'lucide-react';
 import { JSX } from 'react';
+import { WsDemandeStatusColor, wsDemandeStatusTypes } from '../data/data';
+import { DataTableRowActions } from './data-table-row-actions';
 
 export const websiteDemandeColumns: ColumnDef<WebsiteDemande>[] = [
   {
@@ -36,9 +36,9 @@ export const websiteDemandeColumns: ColumnDef<WebsiteDemande>[] = [
       );
     },
   },
-  
+
   {
-    id:'status',
+    id: 'status',
     accessorKey: 'status',
     header: 'Statut',
     cell: ({ row }) => {
@@ -46,16 +46,16 @@ export const websiteDemandeColumns: ColumnDef<WebsiteDemande>[] = [
       const statusLabel = wsDemandeStatusTypes.find(s => s.value === status)?.label ?? 'Inconnu';
 
       return (
-          <Badge variant="outline" className={cn('capitalize', WsDemandeStatusColor.get(status))}>
-              {statusLabel}
-          </Badge>
+        <Badge variant="outline" className={cn('capitalize', WsDemandeStatusColor.get(status))}>
+          {statusLabel}
+        </Badge>
       );
-  },
-  filterFn: (row, id, value) => {
-    return value.includes(row.getValue(id))
-  },
-  enableHiding: false,
-  enableSorting: true,
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+    enableHiding: false,
+    enableSorting: true,
   },
   {
     id: 'createdAt',
@@ -80,7 +80,7 @@ export const websiteDemandeColumns: ColumnDef<WebsiteDemande>[] = [
     header: 'Nom complet',
     cell: ({ row }) => <span className="capitalize">{row.original.nomDemandeur} {row.original.prenomDemandeur}</span>,
   },
-  
+
   {
     accessorKey: 'telephoneDemandeur',
     header: 'Téléphone',
@@ -194,13 +194,13 @@ export const websiteDemandeColumns: ColumnDef<WebsiteDemande>[] = [
     id: 'search',
     header: 'Recherche',
     accessorFn: row => `${row.nomDemandeur ?? ''} ${row.prenomDemandeur ?? ''} ${row.emailDemandeur ?? ''} ${row.telephoneDemandeur ?? ''}`,
-    cell:'',
-   filterFn: (row, id, value) => {
-  const v = (value as string)?.toLowerCase?.() ?? '';
-  const data = row.getValue(id)?.toString()?.toLowerCase?.() ?? '';
-  return data.includes(v);
-},
+    cell: '',
+    filterFn: (row, id, value) => {
+      const v = (value as string)?.toLowerCase?.() ?? '';
+      const data = row.getValue(id)?.toString()?.toLowerCase?.() ?? '';
+      return data.includes(v);
+    },
     enableHiding: false,
   }
-  
+
 ];

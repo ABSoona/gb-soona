@@ -1,23 +1,23 @@
+import { useAideService } from '@/api/aide/aideService';
 import { Header } from '@/components/layout/header';
 import { Main } from '@/components/layout/main';
 import { ProfileDropdown } from '@/components/profile-dropdown';
 import { Search } from '@/components/search';
 import { ThemeSwitch } from '@/components/theme-switch';
-import { useAideService } from '@/api/aide/aideService';
-import { handleServerError } from '@/utils/handle-server-error';
-import { AideView } from './components/aide-view';
-import { Aide } from '@/model/aide/Aide';
-import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAides } from './context/aides-context'; // ✅ Import du contexte
+import { Aide } from '@/model/aide/Aide';
+import { handleServerError } from '@/utils/handle-server-error';
+import { useNavigate, useParams } from '@tanstack/react-router';
+import { ChevronLeft } from 'lucide-react';
+import { AideView } from './components/aide-view';
 import { AidesDialogs } from './components/aides-dialogs';
+import { useAides } from './context/aides-context'; // ✅ Import du contexte
 
 interface Props {
   showContact?: boolean
 }
 
-export default function AideDetail({showContact=true }: Props) {
+export default function AideDetail({ showContact = true }: Props) {
   const id = useParams({
     from: '/_authenticated/aides/$id',
     select: (params) => params?.id,
@@ -36,7 +36,7 @@ export default function AideDetail({showContact=true }: Props) {
   const handleRetour = () => {
     if (from) {
       navigate({ to: from });
-    } 
+    }
   };
   // Gestion des erreurs
   if (error) {
@@ -89,7 +89,7 @@ export default function AideDetail({showContact=true }: Props) {
               <p>Aucune aide trouvée.</p>
             </div>
           ) : (
-            
+
             <AideView currentRow={aide} showContact={showContact} />
           )}
         </div>

@@ -84,28 +84,28 @@ export function StatusDemandes({ dateRange }: StatusDemandesProps) {
 
   return (
     <div>
-      
-        {loading ? (
-          <Skeleton className="mx-auto aspect-square max-h-[250px]  rounded-full" />
-        ) : (
-          <ChartContainer
-            config={chartConfig}
-            className="mx-auto aspect-square max-h-[300px]"
-          >
-            <PieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Pie data={chartData} dataKey="value" nameKey="status" />
-              <ChartLegend
-                content={<ChartLegendContent nameKey="status" />}
-                className="-translate-y-2 flex-wrap gap-4 [&>*]:basis-1/4 [&>*]:justify-center text-nowrap"
-              />
-            </PieChart>
-          </ChartContainer>
-        )}
-      
+
+      {loading ? (
+        <Skeleton className="mx-auto aspect-square max-h-[250px]  rounded-full" />
+      ) : (
+        <ChartContainer
+          config={chartConfig}
+          className="mx-auto aspect-square max-h-[300px]"
+        >
+          <PieChart>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Pie data={chartData} dataKey="value" nameKey="status" />
+            <ChartLegend
+              content={<ChartLegendContent nameKey="status" />}
+              className="-translate-y-2 flex-wrap gap-4 [&>*]:basis-1/4 [&>*]:justify-center text-nowrap"
+            />
+          </PieChart>
+        </ChartContainer>
+      )}
+
     </div>
   );
 }

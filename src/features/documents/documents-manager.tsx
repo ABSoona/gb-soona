@@ -1,5 +1,4 @@
-import { useState } from "react"; 
-import { File, Eye } from "lucide-react";
+import { downloadDocument, previewDocument } from '@/api/document/documentService';
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,27 +7,28 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle
+} from '@/components/ui/sheet';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { toast } from '@/hooks/use-toast';
+import { Document } from "@/model/document/Document";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { IconDownload, IconTrash } from "@tabler/icons-react";
 import { format } from "date-fns";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { downloadDocument, previewDocument } from '@/api/document/documentService';
-import { toast } from '@/hooks/use-toast';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetClose
-} from '@/components/ui/sheet';
-import { Document } from "@/model/document/Document";
+import { File } from "lucide-react";
+import { useState } from "react";
 
 
 
 interface Props {
   contactId: number;
   documents: Document[];
-  onUpload: (contactId:number,file: File,typeId:number,demandeId:number) => Promise<void>;
+  onUpload: (contactId: number, file: File, typeId: number, demandeId: number) => Promise<void>;
   onDelete: (docId: string) => Promise<void>;
 }
 
@@ -37,8 +37,8 @@ export function DocumentsManager({ contactId, documents, onUpload, onDelete }: P
   const [docName, setDocName] = useState<string | null>(null);
   const [previewType, setPreviewType] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
-  
-  
+
+
 
   const handlePreview = async (doc: Document) => {
     try {
@@ -48,7 +48,7 @@ export function DocumentsManager({ contactId, documents, onUpload, onDelete }: P
       } else {
         setPreviewUrl(url);
         setDocName(doc.contenu.filename)
-        setPreviewType(type ||'unsupported');
+        setPreviewType(type || 'unsupported');
         setOpen(true);
       }
     } catch (e) {

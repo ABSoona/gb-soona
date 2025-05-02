@@ -1,20 +1,19 @@
+import { NavGroup } from '@/components/layout/nav-group';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from '@/components/ui/sidebar'
-import { NavGroup } from '@/components/layout/nav-group'
-import { NavUser } from '@/components/layout/nav-user'
-import { sidebarData } from './data/sidebar-data'
+} from '@/components/ui/sidebar';
 import logo from '../../assets/logo.png';
+import { sidebarData } from './data/sidebar-data';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible='icon' variant='floating' {...props}>
       <SidebarHeader>
-      <img className="logo" src={logo} alt="Logo" />
+        <img className="logo" src={logo} alt="Logo" />
       </SidebarHeader>
       <SidebarContent>
         {sidebarData.navGroups.map((props) => (
@@ -22,7 +21,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ))}
       </SidebarContent>
       <SidebarFooter>
-      
+
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

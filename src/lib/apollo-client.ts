@@ -1,8 +1,7 @@
-import { onError } from '@apollo/client/link/error';
-import { logout } from './session';
-import { getToken } from './session';
-import { ApolloClient, InMemoryCache, ApolloLink, createHttpLink } from '@apollo/client';
+import { ApolloClient, ApolloLink, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import { onError } from '@apollo/client/link/error';
+import { getToken, logout } from './session';
 
 // Lien HTTP
 const httpLink = createHttpLink({

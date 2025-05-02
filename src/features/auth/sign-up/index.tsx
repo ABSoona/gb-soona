@@ -1,5 +1,5 @@
-import { Link } from '@tanstack/react-router'
 import { Card } from '@/components/ui/card'
+import { Link } from '@tanstack/react-router'
 import AuthLayout from '../auth-layout'
 import { SignUpForm } from './components/sign-up-form'
 
@@ -12,8 +12,8 @@ export default function SignUp() {
             Créer votre compte
           </h1>
           <p className='text-sm text-muted-foreground'>
-           Completer le formualaire pour créer un compte. <br />
-           Vous avez déja un compte?{' '}
+            Completer le formualaire pour créer un compte. <br />
+            Vous avez déja un compte?{' '}
             <Link
               to='/sign-in'
               className='underline underline-offset-4 hover:text-primary'
@@ -23,7 +23,7 @@ export default function SignUp() {
           </p>
         </div>
         <SignUpForm />
-        
+
       </Card>
     </AuthLayout>
   )

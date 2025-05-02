@@ -1,4 +1,3 @@
-import { ContactView } from '@/features/contacts/components/contact-view'
 import ContactDetail from '@/features/contacts/contact-detail'
 import ContactsProvider from '@/features/contacts/context/contacts-context'
 

@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Aide } from '@/model/aide/Aide'
+import React, { useCallback, useState } from 'react'
 
 type AidesDialogType = 'invite' | 'add' | 'edit' | 'delete' | 'view'
 

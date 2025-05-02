@@ -1,15 +1,14 @@
-import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { DatePickerWithRange } from '@/components/ui/date-range-picker';
+import { Input } from '@/components/ui/input';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+import { DateRange } from 'react-day-picker';
 import { contactStatusTypes } from '../data/data';
-import { situationTypes } from '@/model/demande/Demande';
+import { DataTableExport } from './data-table-export';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { DataTableViewOptions } from './data-table-view-options';
-import { DatePickerWithRange } from '@/components/ui/date-range-picker';
-import { DateRange } from 'react-day-picker';
-import { DataTableExport } from './data-table-export';
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -17,7 +16,7 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
-    
+
     // ✅ État pour gérer la plage de dates
     const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
 
@@ -36,7 +35,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
     return (
         <div className="flex items-center justify-between">
             <div className="flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
-                
+
                 {/* 🔍 Filtre par nom */}
                 <Input
                     placeholder="Filtrer par noms, prenom, email..."
@@ -48,12 +47,12 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                 />
 
                 <div className="flex gap-x-2">
-                    
+
                     {/* 📅 Filtre par Période */}
                     {table.getColumn('createdAt') && (
-                        <DatePickerWithRange 
+                        <DatePickerWithRange
                             value={dateRange} // ✅ Garde l'état du datepicker synchronisé
-                            onChange={handleDateRangeChange} 
+                            onChange={handleDateRangeChange}
                         />
                     )}
 
@@ -66,8 +65,8 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                         />
                     )}
 
-                 
-                    
+
+
                 </div>
 
                 {/* 🔄 Bouton de réinitialisation des filtres */}
@@ -84,11 +83,11 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             </div>
 
             {/* ⚙️ Options d'affichage des colonnes */}
-             {/* ⚙️ Options d'affichage des colonnes */}
-             <div className='mx-2'><DataTableViewOptions table={table} /></div>
-            <div><DataTableExport table={table}/></div>
-            
-            
+            {/* ⚙️ Options d'affichage des colonnes */}
+            <div className='mx-2'><DataTableViewOptions table={table} /></div>
+            <div><DataTableExport table={table} /></div>
+
+
         </div>
     );
 }

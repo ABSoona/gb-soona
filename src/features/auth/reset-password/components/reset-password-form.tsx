@@ -1,10 +1,5 @@
 'use client'
 
-import { HTMLAttributes, useState } from 'react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -14,10 +9,15 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { HTMLAttributes, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
+import { resetPassword } from '@/api/user/userService'
 import { PasswordInput } from '@/components/password-input'
 import { useSearch } from '@tanstack/react-router'
-import { resetPassword } from '@/api/user/userService'
 
 type ResetPasswordFormProps = HTMLAttributes<HTMLDivElement>
 
@@ -63,7 +63,7 @@ export function ResetPasswordForm({ className, ...props }: ResetPasswordFormProp
       await resetPassword(data.password, token)
       setSuccess('Mot de passe réinitialisé avec succès.')
       form.reset()
-      
+
     } catch (err: any) {
       console.error(err)
       setError("Une erreur est survenue. Le lien est peut-être invalide ou expiré.")

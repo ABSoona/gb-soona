@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { IconPlus } from '@tabler/icons-react'
+import { useState } from 'react'
 import { TypeDocumentDialog } from './type-document-dialog'
 
 export function TypeDocumentPrimaryButtons() {

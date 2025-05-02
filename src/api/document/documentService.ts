@@ -1,10 +1,9 @@
 import { uploadClient } from '@/lib/apollo-upload-client';
-import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_DOCUMENT, UPLOAD_CONTENU, DELETE_DOCUMENT, GET_DOCUMENTS } from './queries';
 import axiosInstance from '@/lib/axtios-instance';
-import { toast } from '@/hooks/use-toast';
-import { saveAs } from 'file-saver';
 import { Document } from '@/model/document/Document';
+import { useMutation, useQuery } from '@apollo/client';
+import { saveAs } from 'file-saver';
+import { CREATE_DOCUMENT, DELETE_DOCUMENT, GET_DOCUMENTS, UPLOAD_CONTENU } from './queries';
 
 export async function downloadDocument(docId: string, filename: string) {
   try {
@@ -44,9 +43,9 @@ export function useDocumentService(variables?: any) {
   const [createDocument] = useMutation(CREATE_DOCUMENT);
   const [uploadContenu] = useMutation(UPLOAD_CONTENU, { client: uploadClient });
   const [deleteDocumentMutation] = useMutation(DELETE_DOCUMENT);
-  
+
   const { data, refetch } = useQuery(GET_DOCUMENTS, {
-   
+
     variables: variables || {},
     fetchPolicy: 'network-only',
     onCompleted: (newData) => {
@@ -54,36 +53,36 @@ export function useDocumentService(variables?: any) {
     }
   });
 
-  const createAndUploadDocument = async (contactId: number, file: File,typeId: number, demandeId?:number) => {
+  const createAndUploadDocument = async (contactId: number, file: File, typeId: number, demandeId?: number) => {
     let documentId: string | null = null;
-  
+
     try {
       const extension = file.name.split('.').pop();
       const basename = file.name.split('.').slice(0, -1).join('.');
-  
+
       // Nettoyage du nom
       const safeName = basename
-        .replace(/[^a-zA-Z0-9.-]/g, '-') 
+        .replace(/[^a-zA-Z0-9.-]/g, '-')
         .replace(/-+/g, '-') + '.' + extension;
-  
+
       // On recrée le fichier avec le nom modifié
       const renamedFile = new File([file], safeName, { type: file.type });
-  
+
       // Crée le document vide (contenu JSON par défaut)
       const { data: createRes } = await createDocument({
         variables: {
           data: {
-            contact:  !demandeId?{ id: contactId}:null,
+            contact: !demandeId ? { id: contactId } : null,
             contenu: "{}",
-            demande :  demandeId?{id:demandeId}:null ,
+            demande: demandeId ? { id: demandeId } : null,
             typeDocument: { id: typeId }
           },
         },
       });
-  
+
       documentId = createRes?.createDocument?.id;
       if (!documentId) throw new Error("Document ID non récupéré");
-  
+
       // Upload du fichier renommé
       const { data: uploadRes } = await uploadContenu({
         variables: {
@@ -91,7 +90,7 @@ export function useDocumentService(variables?: any) {
           where: { id: documentId },
         },
       });
-  
+
       await refetch();
       return uploadRes?.uploadContenu;
     } catch (error) {
@@ -105,9 +104,9 @@ export function useDocumentService(variables?: any) {
       throw error;
     }
   };
-  
-  
-  
+
+
+
 
   const deleteDocument = async (documentId: string) => {
     try {

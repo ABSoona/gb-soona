@@ -1,13 +1,12 @@
-import { ColumnDef } from '@tanstack/react-table';
-import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import LongText from '@/components/long-text';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { ColumnDef } from '@tanstack/react-table';
 import { DataTableRowActions } from './data-table-row-actions';
 
-import { DateRange } from 'react-day-picker';
 import { Contact, ContactStatus } from '@/model/contact/Contact';
-import { contactStatusTypes , contactStatusColor } from '../data/data';
+import { DateRange } from 'react-day-picker';
+import { contactStatusColor, contactStatusTypes } from '../data/data';
 
 const dateRangeFilter: ColumnDef<Contact>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
     if (!filterValue || (!filterValue.from && !filterValue.to)) {
@@ -24,39 +23,39 @@ const dateRangeFilter: ColumnDef<Contact>['filterFn'] = (row, columnId, filterVa
 
 export const aidesColumns: ColumnDef<Contact>[] = [
     // Sélection des lignes
-   /* {
-        id: 'select',
-        header: ({ table }) => (
-            <Checkbox
-                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-                className="translate-y-[2px]"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-                className="translate-y-[2px]"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },*/
+    /* {
+         id: 'select',
+         header: ({ table }) => (
+             <Checkbox
+                 checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                 aria-label="Select all"
+                 className="translate-y-[2px]"
+             />
+         ),
+         cell: ({ row }) => (
+             <Checkbox
+                 checked={row.getIsSelected()}
+                 onCheckedChange={(value) => row.toggleSelected(!!value)}
+                 aria-label="Select row"
+                 className="translate-y-[2px]"
+             />
+         ),
+         enableSorting: false,
+         enableHiding: false,
+     },*/
     {
         id: 'search',
         header: 'Recherche',
-        accessorFn: row => `${row.nom ?? ''} ${row.prenom ?? ''} ${row.email ?? ''} ${row.telephone?? ''}  ${row.codePostal ?? ''} ${row.numBeneficiaire ?? ''}`,
+        accessorFn: row => `${row.nom ?? ''} ${row.prenom ?? ''} ${row.email ?? ''} ${row.telephone ?? ''}  ${row.codePostal ?? ''} ${row.numBeneficiaire ?? ''}`,
 
-       filterFn: (row, id, value) => {
-      const v = (value as string)?.toLowerCase?.() ?? '';
-      const data = row.getValue(id)?.toString()?.toLowerCase?.() ?? '';
-      return data.includes(v);
-    },
+        filterFn: (row, id, value) => {
+            const v = (value as string)?.toLowerCase?.() ?? '';
+            const data = row.getValue(id)?.toString()?.toLowerCase?.() ?? '';
+            return data.includes(v);
+        },
         enableHiding: false,
-      },
+    },
     // 📄 Informations de la Demande
     {
         accessorFn: (row) => row.id,
@@ -81,7 +80,7 @@ export const aidesColumns: ColumnDef<Contact>[] = [
     },
 
     // 👤 Informations du Contact 
-   
+
     {
         accessorFn: (row) => `${row.nom ?? 'N/A'} ${row.prenom ?? ''}`,
         id: 'nom',
@@ -132,14 +131,14 @@ export const aidesColumns: ColumnDef<Contact>[] = [
         },
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
-          },
+        },
     },
 
     // ⚙️ Actions
     {
         id: 'actions',
         cell: DataTableRowActions,
-           
-    
+
+
     },
 ];

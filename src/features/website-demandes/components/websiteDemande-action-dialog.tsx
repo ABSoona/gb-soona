@@ -1,17 +1,7 @@
 'use client';
 
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useWebsiteDemandeService } from '@/api/website-demande/websiteDemandeService';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
 import {
   Form,
   FormControl,
@@ -20,14 +10,24 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { toast } from '@/hooks/use-toast';
-import { handleServerError } from '@/utils/handle-server-error';
 import { WebsiteDemande, websiteDemandeSchema } from '@/model/website-demandes/website-demandes.ts';
-import { useWebsiteDemandeService } from '@/api/website-demande/websiteDemandeService';
+import { handleServerError } from '@/utils/handle-server-error';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-const formSchema = websiteDemandeSchema.omit({ id: true,updatedAt:true,createdAt:true });
+const formSchema = websiteDemandeSchema.omit({ id: true, updatedAt: true, createdAt: true });
 type WebsiteDemandeForm = z.infer<typeof formSchema>;
 
 interface Props {
@@ -43,36 +43,36 @@ export function WebsiteDemandeActionDialog({ currentRow, open, onOpenChange }: P
   const form = useForm<WebsiteDemandeForm>({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
-    ?(() => {
-      const { createdAt, updatedAt, ...rest } = currentRow;
-      return rest;
-    })()
+      ? (() => {
+        const { createdAt, updatedAt, ...rest } = currentRow;
+        return rest;
+      })()
       : {
-          nomDemandeur: '',
-          prenomDemandeur: '',
-          ageDemandeur: 0,
-          telephoneDemandeur: '',
-          emailDemandeur: '',
-          adresseDemandeur: '',
-          codePostalDemandeur: 0,
-          villeDemandeur: '',
-          situationProfessionnelle: '',
-          situationFamiliale: '',
-          revenus: 0,
-          revenusConjoint: 0,
-          nombreEnfants: 0,
-          agesEnfants: '',
-          situationProConjoint: '',
-          autresAides: '',
-          autresCharges: 0,
-          apl: 0,
-          dettes: 0,
-          natureDettes: '',
-          facturesEnergie: 0,
-          remarques: '',
-          status: 'EnCours',
+        nomDemandeur: '',
+        prenomDemandeur: '',
+        ageDemandeur: 0,
+        telephoneDemandeur: '',
+        emailDemandeur: '',
+        adresseDemandeur: '',
+        codePostalDemandeur: 0,
+        villeDemandeur: '',
+        situationProfessionnelle: '',
+        situationFamiliale: '',
+        revenus: 0,
+        revenusConjoint: 0,
+        nombreEnfants: 0,
+        agesEnfants: '',
+        situationProConjoint: '',
+        autresAides: '',
+        autresCharges: 0,
+        apl: 0,
+        dettes: 0,
+        natureDettes: '',
+        facturesEnergie: 0,
+        remarques: '',
+        status: 'EnCours',
 
-        },
+      },
   });
 
   const onSubmit = async (values: WebsiteDemandeForm) => {

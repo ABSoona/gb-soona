@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
-import {
-  GET_WEBSITE_DEMANDES,
-  CREATE_WEBSITE_DEMANDE,
-  UPDATE_WEBSITE_DEMANDE,
-  DELETE_WEBSITE_DEMANDE,
-} from './graphql/queries';
 import { toast } from '@/hooks/use-toast';
 import { handleServerError } from '@/utils/handle-server-error';
+import { useMutation, useQuery } from '@apollo/client';
+import { useState } from 'react';
+import {
+  CREATE_WEBSITE_DEMANDE,
+  DELETE_WEBSITE_DEMANDE,
+  GET_WEBSITE_DEMANDES,
+  UPDATE_WEBSITE_DEMANDE,
+} from './graphql/queries';
 
 export function useWebsiteDemandeService(variables?: any) {
   const [isSubmitting, setIsSubmitting] = useState(false);

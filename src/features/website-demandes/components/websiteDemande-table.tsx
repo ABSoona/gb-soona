@@ -1,19 +1,4 @@
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  RowSelectionState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getFacetedUniqueValues,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import {
   Table,
   TableBody,
   TableCell,
@@ -22,10 +7,24 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { WebsiteDemande } from '@/model/website-demandes/website-demandes.ts';
-import { useWebsiteDemandes } from '../context/website-demandes-context';
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  RowSelectionState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { useState } from 'react';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
-import { useState } from 'react';
 
 interface Props {
   columns: ColumnDef<WebsiteDemande>[];
@@ -37,27 +36,27 @@ interface Props {
 export function WebsiteDemandeTable({ columns, data, hideTools = false, hideActions = false }: Props) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([ { id: 'status', value: ['EnErreur']}]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([{ id: 'status', value: ['EnErreur'] }]);
 
-//  const { setOpenDemande: setOpen, setCurrentRow } = useWebsiteDemandes();
+  //  const { setOpenDemande: setOpen, setCurrentRow } = useWebsiteDemandes();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
 
     {
-                
-         id: false,
-         adresseDemandeur:false,
-         codePostalDemandeur:false,
-         villeDemandeur:false,
-         situationProfessionnelle:false,
-         situationFamiliale:false,
-         situationProConjoint:false,
-         updatedAt:false,
-         status:false
-       
-        
-     }
-   
-);
+
+      id: false,
+      adresseDemandeur: false,
+      codePostalDemandeur: false,
+      villeDemandeur: false,
+      situationProfessionnelle: false,
+      situationFamiliale: false,
+      situationProConjoint: false,
+      updatedAt: false,
+      status: false
+
+
+    }
+
+  );
   const table = useReactTable({
     data,
     columns,
@@ -87,7 +86,7 @@ export function WebsiteDemandeTable({ columns, data, hideTools = false, hideActi
     },
   });
 
- 
+
   return (
     <div className="space-y-4">
       {!hideTools && <DataTableToolbar table={table} />}
@@ -111,7 +110,7 @@ export function WebsiteDemandeTable({ columns, data, hideTools = false, hideActi
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  
+
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

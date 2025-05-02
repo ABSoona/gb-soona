@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { IconAlertTriangle } from '@tabler/icons-react';
-import { toast } from '@/hooks/use-toast';
+import { useContactService } from '@/api/contact/contact-service';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ConfirmDialog } from '@/components/confirm-dialog';
+import { toast } from '@/hooks/use-toast';
 import { Contact } from '@/model/contact/Contact';
-import { useContactService } from '@/api/contact/contact-service';
+import { IconAlertTriangle } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
 interface Props {
   open: boolean;
@@ -17,7 +17,7 @@ interface Props {
 
 export function ContactsDeleteDialog({ open, onOpenChange, currentRow }: Props) {
   const queryClient = useQueryClient();
-  const { deleteContact,  isSubmitting } = useContactService(); // ✅ Utilisation du service
+  const { deleteContact, isSubmitting } = useContactService(); // ✅ Utilisation du service
   const [value, setValue] = useState<number | ''>('');
 
   const handleDelete = async () => {

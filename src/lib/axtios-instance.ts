@@ -1,6 +1,6 @@
 // axiosInstance.ts
 import axios from 'axios';
-import { toast } from '@/hooks/use-toast' 
+import { toast } from '@/hooks/use-toast'
 // Crée une instance Axios avec l'URL de base
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,

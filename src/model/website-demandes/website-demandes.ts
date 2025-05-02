@@ -3,15 +3,15 @@ import { z } from "zod";
 //export const statusSchema = z.enum(["EnCours", "EnErreur", "Trait", "Recue"]);
 
 export const wsDemandeStatusSchema = z.union([
-    z.literal('EnCours'),
-    z.literal('EnErreur'),
-    z.literal('Trait'),
-    z.literal('Recue')
-  ]);
-  export type WsDemandeStatus = z.infer<typeof wsDemandeStatusSchema>;
+  z.literal('EnCours'),
+  z.literal('EnErreur'),
+  z.literal('Trait'),
+  z.literal('Recue')
+]);
+export type WsDemandeStatus = z.infer<typeof wsDemandeStatusSchema>;
 
 export const websiteDemandeSchema = z.object({
- id : z.string(),
+  id: z.string(),
   nomDemandeur: z.string(),
   prenomDemandeur: z.string(),
   ageDemandeur: z.number(),

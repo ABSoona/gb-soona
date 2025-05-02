@@ -1,17 +1,16 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Sheet,
   SheetContent,
   SheetFooter,
-
 } from '@/components/ui/sheet'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
+import { detailOpenOption } from '@/features/demandes/components/demandes-table'
 import { Contact } from '@/model/contact/Contact'
 import { useContacts } from '../context/contacts-context'
-import {  detailOpenOption } from '@/features/demandes/components/demandes-table'
 import { ContactView } from './contact-view'
 
 
@@ -27,14 +26,14 @@ export function ContactViewDialog({ currentRow, open, onOpenChange }: Props) {
   }
   const { setOpen, setCurrentRow } = useContacts()
 
-  
+
 
   return (
     <Sheet open={open} onOpenChange={(state) => onOpenChange(state)}>
       <SheetContent side="rightfull" className="flex flex-col">
-      
+
         <ScrollArea>
-         <ContactView currentRow={currentRow} showDetailIn={detailOpenOption.sheet}/>
+          <ContactView currentRow={currentRow} showDetailIn={detailOpenOption.sheet} />
         </ScrollArea>
 
         <SheetFooter className="flex justify-between mt-6">

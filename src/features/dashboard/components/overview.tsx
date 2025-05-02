@@ -1,11 +1,10 @@
 "use client";
 
 
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { useAideService } from "@/api/aide/aideService";
+import { endOfMonth, format, startOfMonth } from "date-fns";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { calculateDailyAmounts } from "../data-service";
-import { format } from "date-fns";
-import { startOfMonth, endOfMonth } from 'date-fns';
 
 import {
   Card,
@@ -18,8 +17,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMemo } from "react";
 
 const chartConfig = {
   restants: {
@@ -28,11 +27,11 @@ const chartConfig = {
   },
 };
 
-export function Overview({ 
-  startDate = startOfMonth(new Date()), 
-  endDate = endOfMonth(new Date()) 
+export function Overview({
+  startDate = startOfMonth(new Date()),
+  endDate = endOfMonth(new Date())
 }: { startDate?: Date, endDate?: Date }) {
-  
+
   const { aides, loading } = useAideService({
     where: {
       dateAide: {

@@ -1,6 +1,6 @@
 // useDocumentActions.ts
-import { toast } from '@/hooks/use-toast';
 import { useDocumentService } from '@/api/document/documentService';
+import { toast } from '@/hooks/use-toast';
 
 type WhereClause = {
   contact?: { id: number };

@@ -1,3 +1,8 @@
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -5,23 +10,18 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { Overview } from './components/overview'
-import { DernieresDemandes } from './components/derniere-demande'
-import { IconAlertSquare, IconHeartHandshake, IconMailDown, IconPercentage20, IconUsers } from '@tabler/icons-react'
-import { StatusDemandes } from './components/status-demandes'
 import { DatePickerWithRange } from '@/components/ui/date-range-picker'
-import { useState } from 'react'
-import { startOfMonth, endOfMonth, startOfYear, endOfYear, subMonths, subYears } from 'date-fns'
-import { DateRange } from 'react-day-picker'
-import { useDashboardStats } from './data-service'
-import { formatMontant } from '@/utils/misc'
 import { Skeleton } from '@/components/ui/skeleton'
+import { formatMontant } from '@/utils/misc'
+import { IconAlertSquare, IconPercentage20 } from '@tabler/icons-react'
+import { endOfMonth, endOfYear, startOfMonth, startOfYear, subMonths, subYears } from 'date-fns'
 import { ClockArrowUp, HandshakeIcon, ScanEye } from 'lucide-react'
+import { useState } from 'react'
+import { DateRange } from 'react-day-picker'
+import { DernieresDemandes } from './components/derniere-demande'
+import { Overview } from './components/overview'
+import { StatusDemandes } from './components/status-demandes'
+import { useDashboardStats } from './data-service'
 
 export default function Dashboard() {
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -75,7 +75,7 @@ export default function Dashboard() {
       </Header>
 
       <Main>
-     
+
         <div className='mb-2 flex items-center justify-between space-y-2'>
           <h1 className='text-2xl font-bold tracking-tight'>Tableau de bord</h1>
         </div>
@@ -103,27 +103,27 @@ export default function Dashboard() {
 
         <div className='space-y-4'>
           <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-5'>
-            {[ {
+            {[{
               title: 'Nouvelles demandes',
-              icon: <IconAlertSquare  className='h-7 w-7 text-muted-foreground' />,
+              icon: <IconAlertSquare className='h-7 w-7 text-muted-foreground' />,
               value: stats ? stats.nouvellesDemandes : null
-            }, 
+            },
             {
               title: 'Demandes en commmission',
-              icon: <ScanEye  className='h-7 w-7 text-muted-foreground' />,
+              icon: <ScanEye className='h-7 w-7 text-muted-foreground' />,
               value: stats ? stats.DemandesEncommission : null
             },
             {
               title: 'Demandes en attente',
-              icon: <ClockArrowUp  className='h-7 w-7 text-muted-foreground' />,
+              icon: <ClockArrowUp className='h-7 w-7 text-muted-foreground' />,
               value: stats ? stats.DemandesEnAttente : null
             },
             {
               title: 'Demandes en visite',
-              icon: <HandshakeIcon  className='h-7 w-7 text-muted-foreground' />,
+              icon: <HandshakeIcon className='h-7 w-7 text-muted-foreground' />,
               value: stats ? stats.DemandesEnVisite : null
             },
-            
+
              /*  {
               title: 'Aides versés',
               icon: <IconHeartHandshake className='h-7 w-7 text-muted-foreground' />,
@@ -132,7 +132,7 @@ export default function Dashboard() {
               title: 'Reste à verser',
               icon: <IconPercentage20 className='h-7 w-7 text-muted-foreground' />,
               value: stats ? formatMontant(stats.totalReste) : null
-            }, 
+            },
            /*  {
               title: 'Personnes aidées',
               icon: <IconUsers className='h-7 w-7 text-muted-foreground' />,
@@ -145,24 +145,24 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className='text-2xl font-bold'>
-                    {!stats?.loading ? value :   <div className="space-y-2 w-full">
-                           
-                          
+                    {!stats?.loading ? value : <div className="space-y-2 w-full">
 
-                            {/* Simule 6 lignes */}
-                            {[...Array(1)].map((_, index) => (
-                                <Skeleton key={index} className="h-6 w-[100px] rounded-md" />
-                            ))}
-                        </div>}
+
+
+                      {/* Simule 6 lignes */}
+                      {[...Array(1)].map((_, index) => (
+                        <Skeleton key={index} className="h-6 w-[100px] rounded-md" />
+                      ))}
+                    </div>}
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
           <div>
-        
-              <Overview startDate={dateRange.from!} endDate={dateRange.to!} />
-           
+
+            <Overview startDate={dateRange.from!} endDate={dateRange.to!} />
+
           </div>
           <div className='grid grid-cols-1 gap-4 lg:grid-cols-7'>
             <Card className='col-span-1 lg:col-span-3'>
@@ -170,20 +170,20 @@ export default function Dashboard() {
                 <CardTitle>Status des demandes</CardTitle>
               </CardHeader>
               <CardContent className='pl-2'>
-                              
-                  <StatusDemandes dateRange={{ from: dateRange.from!, to: dateRange.to! }} />
-              
+
+                <StatusDemandes dateRange={{ from: dateRange.from!, to: dateRange.to! }} />
+
               </CardContent>
             </Card>
             <Card className='col-span-1 lg:col-span-4'>
-                  
+
               <CardHeader>
                 <CardTitle>Nouvelles demandes</CardTitle>
               </CardHeader>
               <CardContent>
-             
-                  <DernieresDemandes />
-              
+
+                <DernieresDemandes />
+
               </CardContent>
             </Card>
           </div>

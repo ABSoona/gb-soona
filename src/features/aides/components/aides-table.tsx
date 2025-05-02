@@ -1,4 +1,13 @@
-import { useState, useEffect } from 'react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Aide } from '@/model/aide/Aide';
+import { useNavigate } from '@tanstack/react-router';
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -14,47 +23,38 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import { Aide } from '@/model/aide/Aide';
+import { useState } from 'react';
+import { DateRange } from 'react-day-picker';
+import { useAides } from '../context/aides-context';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
-import { useAides } from '../context/aides-context';
-import { DateRange } from 'react-day-picker';
-import {  useNavigate } from '@tanstack/react-router'
 
 declare module '@tanstack/react-table' {
     interface ColumnMeta<TData extends RowData, TValue> {
-        className: string; 
+        className: string;
     }
 }
-export enum detailOpenOption  {'sheet', 'page'} ;
+export enum detailOpenOption { 'sheet', 'page' };
 interface DataTableProps {
-    columns: ColumnDef<Aide>[]; 
-    data: Aide[]; 
+    columns: ColumnDef<Aide>[];
+    data: Aide[];
     hideTools?: boolean;
-    showDetailIn?: detailOpenOption ;
-    hideActions?:boolean
+    showDetailIn?: detailOpenOption;
+    hideActions?: boolean
 }
 
-export function AidesTable({ columns, data, hideTools = false, hideActions = false, showDetailIn =  detailOpenOption.sheet }: DataTableProps) {
+export function AidesTable({ columns, data, hideTools = false, hideActions = false, showDetailIn = detailOpenOption.sheet }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({});
     const navigate = useNavigate();
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
 
-             {
-                  createdAt: false,                 
-                  id: false,
-                
-                 
-              }
-            
+        {
+            createdAt: false,
+            id: false,
+
+
+        }
+
     );
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -86,14 +86,14 @@ export function AidesTable({ columns, data, hideTools = false, hideActions = fal
         getFacetedUniqueValues: getFacetedUniqueValues(),
     });
     // 🔥 Appliquer le filtre `createdAt` dès que `dateRange` change
-   
 
-   const { setOpenAide: setOpen, setCurrentRow } = useAides();
+
+    const { setOpenAide: setOpen, setCurrentRow } = useAides();
 
     return (
         <div className="space-y-4">
             {/* 🔥 Passer `setDateRange` à `DataTableToolbar` */}
-            {!hideTools && <DataTableToolbar table={table}  />}
+            {!hideTools && <DataTableToolbar table={table} />}
 
             <div className="rounded-md border">
                 <Table>
@@ -125,7 +125,7 @@ export function AidesTable({ columns, data, hideTools = false, hideActions = fal
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell
                                             key={cell.id}
-                                            className={cell.column.columnDef.meta?.className ?? ''}                                          
+                                            className={cell.column.columnDef.meta?.className ?? ''}
                                             onClick={(e) => {
                                                 if (cell.column.id !== 'actions') {
                                                     if (showDetailIn == detailOpenOption.page) {
@@ -138,7 +138,7 @@ export function AidesTable({ columns, data, hideTools = false, hideActions = fal
                                                     }
                                                     else {
                                                         setCurrentRow(row.original)
-                                                    
+
                                                         setOpen('edit')
                                                     }
                                                 }

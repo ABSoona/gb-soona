@@ -1,5 +1,5 @@
-import React from 'react'
 import { CommandMenu } from '@/components/command-menu'
+import React from 'react'
 
 interface SearchContextType {
   open: boolean

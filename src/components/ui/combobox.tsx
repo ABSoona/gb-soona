@@ -1,12 +1,11 @@
-import { useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useState } from 'react';
 
 interface ComboboxProps {
   value: string;
   onValueChange: (value: string) => void;
-  items: { value: string; label: string , label2: string, label3: string}[];
+  items: { value: string; label: string, label2: string, label3: string }[];
   placeholder?: string;
   isLoading?: boolean;
   onInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -42,7 +41,7 @@ export function Combobox({
               <p className="p-2 text-sm text-gray-500">Chargement...</p>
             ) : items.length > 0 ? (
               items.map((item) => (
-                <div 
+                <div
                   key={item.value}
                   className="w-full rounded-md justify-start bg-gray-100 text-black px-3 py-2 text-left hover:bg-gray-800 hover:bg-gray-400  hover:text-white hover:cursor-pointer"
                   onClick={() => {

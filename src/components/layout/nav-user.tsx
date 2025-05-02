@@ -1,12 +1,3 @@
-import { Link, useNavigate } from '@tanstack/react-router'
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -23,6 +14,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { Link, useNavigate } from '@tanstack/react-router'
+import {
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  Sparkles,
+} from 'lucide-react'
 
 
 export function NavUser({
@@ -40,7 +40,7 @@ export function NavUser({
     localStorage.clear(); // Supprime les données utilisateur
     navigate({ to: '/sign-in' }); // Redirige vers la page de connexion
   }
-  
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>

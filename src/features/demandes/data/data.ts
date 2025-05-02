@@ -13,30 +13,30 @@ export const demandeStatusColor = new Map<DemandeStatus, string>([
     'bg-destructive/10 dark:bg-destructive/50 text-destructive dark:text-primary border-destructive/10',
   ],
   ['EnCours', 'bg-teal-100/50 text-teal-900 dark:text-teal-200 border-teal-200'],
-  
+
 ])
 export const demandeStatusTypes =
-[
-  { label: 'Reçue', value: 'recue' },
-  { label: 'En commission', value: 'en_commision' },
-  { label: 'En visite', value: 'en_visite' },
-  { label: 'Clôturée', value: 'clôturée' },
-  { label: 'Refusée', value: 'refusée' },
-  { label: 'En cours', value: 'EnCours' },
-  { label: 'Abandonnée', value: 'Abandonnée' },
-  { label: 'En attente', value: 'EnAttente' },
-  
- ] as const
-
-
- export const categorieTypes =
- [
-   { label: 'Lourdement endetté', value: 'LourdementEndett' },
-   { label: 'Nécessiteux', value: 'NCessiteux' },
-   { label: 'Pauvre', value: 'Pauvre' },
+  [
+    { label: 'Reçue', value: 'recue' },
+    { label: 'En commission', value: 'en_commision' },
+    { label: 'En visite', value: 'en_visite' },
+    { label: 'Clôturée', value: 'clôturée' },
+    { label: 'Refusée', value: 'refusée' },
+    { label: 'En cours', value: 'EnCours' },
+    { label: 'Abandonnée', value: 'Abandonnée' },
+    { label: 'En attente', value: 'EnAttente' },
 
   ] as const
- 
+
+
+export const categorieTypes =
+  [
+    { label: 'Lourdement endetté', value: 'LourdementEndett' },
+    { label: 'Nécessiteux', value: 'NCessiteux' },
+    { label: 'Pauvre', value: 'Pauvre' },
+
+  ] as const
+
 
 
 

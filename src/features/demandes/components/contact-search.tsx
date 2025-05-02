@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
 import { useContactSearch } from '@/api/contact/contact-service';
+import { Badge } from '@/components/ui/badge'; // Badge stylisé
 import { Combobox } from '@/components/ui/combobox';
 import { X } from 'lucide-react'; // Icône pour supprimer la sélection
-import { Badge } from '@/components/ui/badge'; // Badge stylisé
+import { useEffect, useRef, useState } from 'react';
 
 interface ContactSearchComboboxProps {
   onSelect: (contactId: number | null) => void;
-  defaultContact?: { id: number; nom: string; prenom: string};
+  defaultContact?: { id: number; nom: string; prenom: string };
 }
 
 export function ContactSearchCombobox({ onSelect, defaultContact }: ContactSearchComboboxProps) {
@@ -47,7 +47,7 @@ export function ContactSearchCombobox({ onSelect, defaultContact }: ContactSearc
         </div>
       ) : (
         // ✅ Input de recherche si aucun contact n'est sélectionné
-        <Combobox 
+        <Combobox
           value={search}
           onValueChange={(contactId) => {
             const contact = contacts.find((c: { id: number; }) => c.id === Number(contactId));
@@ -59,11 +59,11 @@ export function ContactSearchCombobox({ onSelect, defaultContact }: ContactSearc
               onSelect(contact.id);
             }
           }}
-          items={contacts.map((contact: { id: { toString: () => any; }; nom: any; prenom: any;email:string;telephone:string }) => ({
+          items={contacts.map((contact: { id: { toString: () => any; }; nom: any; prenom: any; email: string; telephone: string }) => ({
             value: contact.id.toString(),
             label: `${contact.nom} ${contact.prenom} - N° ${contact.id}`,
-            label2 :` ${contact.telephone}`,
-            label3 :` ${contact.email}`
+            label2: ` ${contact.telephone}`,
+            label3: ` ${contact.email}`
           }))}
           placeholder="Rechercher un contact..."
           isLoading={loading}

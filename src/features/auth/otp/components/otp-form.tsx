@@ -1,10 +1,4 @@
-import { HTMLAttributes, useState } from 'react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useNavigate } from '@tanstack/react-router'
-import { cn } from '@/lib/utils'
-import { toast } from '@/hooks/use-toast'
+import { PinInput, PinInputField } from '@/components/pin-input'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -15,7 +9,13 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { PinInput, PinInputField } from '@/components/pin-input'
+import { toast } from '@/hooks/use-toast'
+import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from '@tanstack/react-router'
+import { HTMLAttributes, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 type OtpFormProps = HTMLAttributes<HTMLDivElement>
 

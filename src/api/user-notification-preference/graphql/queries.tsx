@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 import { USERNOTIFICATIONPREFERENCE_FIELDS } from './fragment';
 
-export const GET_USERNOTIFICATIONPREFERENCES= gql`
+export const GET_USERNOTIFICATIONPREFERENCES = gql`
   query GetUserNotificationPreferences($skip: Float, $take: Float, $where : UserNotificationPreferenceWhereInput) {
     userNotificationPreferences(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Asc }]) {
       ...UserNotificationPreferenceFields

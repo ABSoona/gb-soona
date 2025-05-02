@@ -1,4 +1,13 @@
-import { useState, useEffect } from 'react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Contact } from '@/model/contact/Contact';
+import { useNavigate } from '@tanstack/react-router';
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -14,30 +23,20 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import { Contact } from '@/model/contact/Contact';
+import { useState } from 'react';
+import { DateRange } from 'react-day-picker';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
-import { useContacts } from '../context/contacts-context';
-import { DateRange } from 'react-day-picker';
-import { useNavigate } from '@tanstack/react-router';
 
 declare module '@tanstack/react-table' {
     interface ColumnMeta<TData extends RowData, TValue> {
-        className: string; 
+        className: string;
     }
 }
 
 interface DataTableProps {
-    columns: ColumnDef<Contact>[]; 
-    data: Contact[]; 
+    columns: ColumnDef<Contact>[];
+    data: Contact[];
     hideTools?: boolean;
 }
 
@@ -47,45 +46,45 @@ export function ContactsTable({ columns, data, hideTools = false }: DataTablePro
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         !hideTools
             ? {
-                  contactId: false,
-                  contactAge: false,
-                  agesEnfants: false,
-                  nombreEnfants: false,
-                  autresAides: false,
-                  facturesEnergie: false,
-                  loyer: false,
-                  contactNom: false,
-                  contactPrenom: false,
-                  remarques: false,                
-                  revenusConjoint: false,
-                  id: false,
-                  search:false
-              }
+                contactId: false,
+                contactAge: false,
+                agesEnfants: false,
+                nombreEnfants: false,
+                autresAides: false,
+                facturesEnergie: false,
+                loyer: false,
+                contactNom: false,
+                contactPrenom: false,
+                remarques: false,
+                revenusConjoint: false,
+                id: false,
+                search: false
+            }
             : {
-                  contactId: false,
-                  contactAge: false,
-                  agesEnfants: false,
-                  nombreEnfants: false,
-                  autresAides: false,
-                  facturesEnergie: false,
-                  loyer: false,
-                  contactNom: false,
-                  contactPrenom: false,
-                  remarques: false,
-                  resteAVivre: false,
-                  revenusConjoint: false,
-                  id: false,
-                  age: false,
-                  dettes: false,
-                  numBeneficiaire: false,
-                  revenus: false,
-                  situationFamiliale: false,
-                  situationProfessionnelle: false,
-                  updatedAt: false,
-                  numeroContact: false,
-                  charges: false,
-                  aides: false,
-              }
+                contactId: false,
+                contactAge: false,
+                agesEnfants: false,
+                nombreEnfants: false,
+                autresAides: false,
+                facturesEnergie: false,
+                loyer: false,
+                contactNom: false,
+                contactPrenom: false,
+                remarques: false,
+                resteAVivre: false,
+                revenusConjoint: false,
+                id: false,
+                age: false,
+                dettes: false,
+                numBeneficiaire: false,
+                revenus: false,
+                situationFamiliale: false,
+                situationProfessionnelle: false,
+                updatedAt: false,
+                numeroContact: false,
+                charges: false,
+                aides: false,
+            }
     );
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -117,14 +116,14 @@ export function ContactsTable({ columns, data, hideTools = false }: DataTablePro
         getFacetedUniqueValues: getFacetedUniqueValues(),
     });
     // 🔥 Appliquer le filtre `createdAt` dès que `dateRange` change
-   
 
-  //  const { setOpen, setCurrentRow } = useContacts();
+
+    //  const { setOpen, setCurrentRow } = useContacts();
 
     return (
         <div className="space-y-4">
             {/* 🔥 Passer `setDateRange` à `DataTableToolbar` */}
-            <DataTableToolbar table={table}  />
+            <DataTableToolbar table={table} />
 
             <div className="rounded-md border">
                 <Table>
@@ -159,8 +158,8 @@ export function ContactsTable({ columns, data, hideTools = false }: DataTablePro
                                             className={cell.column.columnDef.meta?.className ?? ''}
                                             onClick={(e) => {
                                                 if (cell.column.id !== 'actions') {
-                                                   navigate({to : `/contacts/$id` , params: { id: row.original.id.toString() }})
-                                                }      
+                                                    navigate({ to: `/contacts/$id`, params: { id: row.original.id.toString() } })
+                                                }
                                             }}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -179,7 +178,7 @@ export function ContactsTable({ columns, data, hideTools = false }: DataTablePro
                 </Table>
             </div>
             {/* Afficher la Pagination seulement si hideTools est false */}
-          <DataTablePagination table={table} />
+            <DataTablePagination table={table} />
         </div>
     );
 }

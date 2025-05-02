@@ -1,13 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { type LegendProps } from "recharts"
-import { type TooltipProps } from "recharts"
 import {
   Legend,
   ResponsiveContainer,
-  Tooltip,
-  TooltipProps as RechartsTooltipProps,
+  Tooltip, type LegendProps, type TooltipProps
 } from "recharts"
 
 import { cn } from "@/lib/utils"
@@ -82,13 +79,13 @@ function ChartRoot({
   return (
     <ChartProvider config={config}>
       <div className={cn("h-full w-full", className)} {...props}>
-      <ResponsiveContainer width="100%" height="100%">
-  {React.isValidElement(children) ? (
-    children
-  ) : (
-    <div>{children}</div> // fallback qui "emballe" les enfants non valides
-  )}
-</ResponsiveContainer>
+        <ResponsiveContainer width="100%" height="100%">
+          {React.isValidElement(children) ? (
+            children
+          ) : (
+            <div>{children}</div> // fallback qui "emballe" les enfants non valides
+          )}
+        </ResponsiveContainer>
       </div>
     </ChartProvider>
   )
@@ -152,9 +149,9 @@ function ChartTooltipContent({
                 {itemConfig?.label || dataKey}:
               </span>
               <span>
-              {formatter
-  ? formatter(item.value, item.name, item, index, payload)
-  : item.value}
+                {formatter
+                  ? formatter(item.value, item.name, item, index, payload)
+                  : item.value}
               </span>
             </div>
           )
@@ -183,18 +180,18 @@ const ChartTooltip = React.forwardRef<
         customContent
           ? (customContent as any)
           : ((tooltipProps) => {
-              const { active, payload, label } = tooltipProps;
-              return (
-                <ChartTooltipContent
-                  active={active}
-                  payload={payload}
-                  label={label}
-                  formatter={formatter}
-                  labelFormatter={labelFormatter}
-                  hideLabel={hideLabel}
-                />
-              );
-            })
+            const { active, payload, label } = tooltipProps;
+            return (
+              <ChartTooltipContent
+                active={active}
+                payload={payload}
+                label={label}
+                formatter={formatter}
+                labelFormatter={labelFormatter}
+                hideLabel={hideLabel}
+              />
+            );
+          })
       }
     />
   );
@@ -249,9 +246,9 @@ function ChartLegendContent({
 }
 
 interface ChartLegendProps extends Omit<LegendProps, "content" | "ref"> {
-    content?: React.ReactNode;
-    nameKey?: string;
-  }
+  content?: React.ReactNode;
+  nameKey?: string;
+}
 
 const ChartLegend = React.forwardRef<
   HTMLDivElement,
@@ -264,14 +261,14 @@ const ChartLegend = React.forwardRef<
         customContent
           ? (customContent as any)
           : ((legendProps) => {
-              const { payload } = legendProps;
-              return (
-                <ChartLegendContent
-                  payload={payload}
-                  nameKey={rechartsProps.nameKey}
-                />
-              );
-            })
+            const { payload } = legendProps;
+            return (
+              <ChartLegendContent
+                payload={payload}
+                nameKey={rechartsProps.nameKey}
+              />
+            );
+          })
       }
     />
   );
@@ -283,5 +280,5 @@ export {
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
-  ChartTooltipContent,
+  ChartTooltipContent
 }

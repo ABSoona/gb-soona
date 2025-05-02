@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { DatePickerWithRange } from '@/components/ui/date-range-picker';
+import { Input } from '@/components/ui/input';
+import { situationFamilleTypes, situationTypes } from '@/model/demande/Demande';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useEffect, useState } from 'react';
+import { DateRange } from 'react-day-picker';
 import { categorieTypes, demandeStatusTypes } from '../data/data';
-import { situationFamilleTypes, situationTypes } from '@/model/demande/Demande';
+import { DataTableExport } from './data-table-export';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { DataTableViewOptions } from './data-table-view-options';
-import { DatePickerWithRange } from '@/components/ui/date-range-picker';
-import { DateRange } from 'react-day-picker';
-import { DataTableExport } from './data-table-export';
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -30,7 +30,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             setFilterName(savedName);
             table.getColumn('contactNomPrenom')?.setFilterValue(savedName);
         }
-    
+
         // 🔹 Restaurer le filtre "Période" (et éviter qu'il soit écrasé)
         const savedDateRange = localStorage.getItem('filter-date-range');
         if (savedDateRange && savedDateRange !== "undefined") {
@@ -40,7 +40,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                     const parsedDateRange = {
                         from: new Date(stroredDateRange.from),
                         to: new Date(stroredDateRange.to),
-                      };
+                    };
                     setDateRange(parsedDateRange);
                     table.getColumn('createdAt')?.setFilterValue(parsedDateRange);
                 }
@@ -58,23 +58,23 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
         const newName = event.target.value;
         setFilterName(newName);
         table.getColumn('contactNomPrenom')?.setFilterValue(newName);
-        
+
         // 🔥 Sauvegarde dans localStorage
         localStorage.setItem('filter-name', newName);
     };
 
     // ✅ Mise à jour du filtre "Période"
     const handleDateRangeChange = (newDateRange: DateRange | undefined) => {
-      if(newDateRange?.from != null && newDateRange?.to != null){
-        
+        if (newDateRange?.from != null && newDateRange?.to != null) {
+
             setDateRange(newDateRange);
             table.getColumn('createdAt')?.setFilterValue(newDateRange);
             localStorage.setItem('filter-date-range', JSON.stringify(newDateRange));
-       
-      }
-    
+
+        }
+
         // 🔥 Sauvegarde dans localStorage
-       
+
     };
 
     // ✅ Réinitialisation complète des filtres
@@ -97,7 +97,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
     return (
         <div className="flex items-center justify-between">
             <div className="flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
-                
+
                 {/* 🔍 Filtre par nom (avec sauvegarde) */}
                 <Input
                     placeholder="Filtrer les noms..."
@@ -107,11 +107,11 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                 />
 
                 <div className="flex gap-x-2">
-                    
+
                     {/* 📅 Filtre par Période (avec sauvegarde) */}
                     {table.getColumn('createdAt') && (
-                        <DatePickerWithRange 
-                            value={dateRange} 
+                        <DatePickerWithRange
+                            value={dateRange}
                             onChange={handleDateRangeChange} // ✅ Mise à jour avec `localStorage`
                         />
                     )}
@@ -133,23 +133,23 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                             options={situationTypes.map((t) => ({ ...t }))}
                         />
                     )}
-                      {/* 📌 Filtre par Situation Professionnelle */}
-                      {table.getColumn('situationFamiliale') && (
+                    {/* 📌 Filtre par Situation Professionnelle */}
+                    {table.getColumn('situationFamiliale') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('situationFamiliale')}
                             title="Situation Famil."
                             options={situationFamilleTypes.map((t) => ({ ...t }))}
                         />
                     )}
-                     {/* 📌 Filtre par categorie */}
-                     {table.getColumn('categorieDemandeur') && (
+                    {/* 📌 Filtre par categorie */}
+                    {table.getColumn('categorieDemandeur') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('categorieDemandeur')}
                             title="Catégorie"
                             options={categorieTypes.map((t) => ({ ...t }))}
                         />
                     )}
-                    
+
                 </div>
 
                 {/* 🔄 Bouton de réinitialisation des filtres */}
@@ -167,9 +167,9 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
             {/* ⚙️ Options d'affichage des colonnes */}
             <div className='mx-2'><DataTableViewOptions table={table} /></div>
-            <div><DataTableExport table={table}/></div>
-            
-           
+            <div><DataTableExport table={table} /></div>
+
+
         </div>
     );
 }

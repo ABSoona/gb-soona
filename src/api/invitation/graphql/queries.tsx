@@ -1,9 +1,8 @@
 import { gql } from '@apollo/client';
 
-import { CONTACT_FIELDS } from '@/api/contact/graphql/fragment';
 import { INVITATION_FIELDS } from './fragment';
 
-export const GET_INVITATIONS= gql`
+export const GET_INVITATIONS = gql`
   query GetInvitations($skip: Float, $take: Float, $where : InvitationWhereInput) {
     invitations(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Asc }]) {
       ...InvitationFields

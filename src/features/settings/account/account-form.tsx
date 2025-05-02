@@ -1,78 +1,76 @@
-import { useEffect, useState } from 'react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from '@/hooks/use-toast'
+import { getCurrentUser, updateUser } from '@/api/user/userService'
+import { PasswordInput } from '@/components/password-input'
 import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
-  
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { getCurrentUser, updateUser } from '@/api/user/userService'
-import { PasswordInput } from '@/components/password-input'
+import { toast } from '@/hooks/use-toast'
 import { GenerateFakeData } from '@/test/seed'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 // Schéma du formulaire avec mot de passe optionnel
 const userFormSchema = z.object({
   email: z
-  .string()
-  .min(1, { message: 'Email is required.' })
-  .email({ message: 'Email is invalid.' }),
+    .string()
+    .min(1, { message: 'Email is required.' })
+    .email({ message: 'Email is invalid.' }),
   firstName: z.string().min(1, { message: 'Prénom requis' }),
   lastName: z.string().min(1, { message: 'Nom requis' }),
-   password: z.string().transform((pwd) => pwd.trim()),
-   confirmPassword:z.string().optional().transform((pwd) => pwd?.trim() ?? ''),
+  password: z.string().transform((pwd) => pwd.trim()),
+  confirmPassword: z.string().optional().transform((pwd) => pwd?.trim() ?? ''),
 })
-.superRefine(({  password, confirmPassword }, ctx) => {
-  if ( password !== '') {
-    if (password === '') {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Password is required.',
-        path: ['password'],
-      })
-    }
+  .superRefine(({ password, confirmPassword }, ctx) => {
+    if (password !== '') {
+      if (password === '') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Password is required.',
+          path: ['password'],
+        })
+      }
 
-    if (password.length < 8) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Le mot de passe doit contenir au moins 8 caractères.',
-        path: ['password'],
-      })
-    }
+      if (password.length < 8) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Le mot de passe doit contenir au moins 8 caractères.',
+          path: ['password'],
+        })
+      }
 
-    if (!password.match(/[a-z]/)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Le mot de passe doit contenir au moins une lettre minuscule.',
-        path: ['password'],
-      })
-    }
+      if (!password.match(/[a-z]/)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Le mot de passe doit contenir au moins une lettre minuscule.',
+          path: ['password'],
+        })
+      }
 
-    if (!password.match(/\d/)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Le mot de passe doit contenir au moins un chiffre.',
-        path: ['password'],
-      })
-    }
+      if (!password.match(/\d/)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Le mot de passe doit contenir au moins un chiffre.',
+          path: ['password'],
+        })
+      }
 
-    if (password !== confirmPassword) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Les mots de passe ne correspondent pas.",
-        path: ['confirmPassword'],
-      })
+      if (password !== confirmPassword) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Les mots de passe ne correspondent pas.",
+          path: ['confirmPassword'],
+        })
+      }
     }
-  }
-})
+  })
 type UserFormValues = z.infer<typeof userFormSchema>
 
 export function UserForm() {
@@ -123,7 +121,7 @@ export function UserForm() {
     const { confirmPassword, ...rest } = data
 
     const payload = {
-      ...rest ,
+      ...rest,
       ...(rest.password ? {} : { password: undefined }),
     }
 
@@ -191,45 +189,45 @@ export function UserForm() {
           )}
         />
 
-<FormField
-                control={form.control}
-                name='password'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel >
-                      Mot de passe
-                    </FormLabel>
-                    <FormControl>
-                      <PasswordInput
-                        placeholder='Laisser vide si inchangé'
-                        className='col-span-4'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='confirmPassword'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel >
-                      Confirmer le mot de passe
-                    </FormLabel>
-                    <FormControl>
-                      <PasswordInput
-                        disabled={!isPasswordTouched}
-                        placeholder='e.g., S3cur3P@ssw0rd'
-                        className='col-span-4'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-              />
+        <FormField
+          control={form.control}
+          name='password'
+          render={({ field }) => (
+            <FormItem className='space-y-1'>
+              <FormLabel >
+                Mot de passe
+              </FormLabel>
+              <FormControl>
+                <PasswordInput
+                  placeholder='Laisser vide si inchangé'
+                  className='col-span-4'
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage className='col-span-4 col-start-3' />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='confirmPassword'
+          render={({ field }) => (
+            <FormItem className='space-y-1'>
+              <FormLabel >
+                Confirmer le mot de passe
+              </FormLabel>
+              <FormControl>
+                <PasswordInput
+                  disabled={!isPasswordTouched}
+                  placeholder='e.g., S3cur3P@ssw0rd'
+                  className='col-span-4'
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage className='col-span-4 col-start-3' />
+            </FormItem>
+          )}
+        />
 
         <Button type='submit'>Mettre à jour</Button> <GenerateFakeData />
       </form>

@@ -1,34 +1,30 @@
 'use client'
 
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { AidesTable } from '@/features/aides/components/aides-table'
-import { columns as aidecolumns } from '@/features/aides/components/aides-columns'
-import { ActivityType, Demande, DemandeStatus } from '@/model/demande/Demande'
-import { situationTypes } from '@/model/demande/Demande'
-import { situationFamilleTypes } from '@/model/demande/Demande'
-import { DocumentsManager } from '@/features/documents/documents-manager'
+import { useDemandeService } from '@/api/demande/demandeService'
 import { useDocumentService } from '@/api/document/documentService'
+import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService'
 import { Button } from '@/components/ui/button'
-import { Plus, FileText, StickyNote, PhoneMissed, PhoneCall, RefreshCw, RefreshCwOff, CheckCircle, PauseCircle, MapPin } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { columns as aidecolumns } from '@/features/aides/components/aides-columns'
+import { AidesDialogs } from '@/features/aides/components/aides-dialogs'
+import { AidesTable } from '@/features/aides/components/aides-table'
+import { useAides } from '@/features/aides/context/aides-context'
+import { DocumentsManager } from '@/features/documents/documents-manager'
 import { useDocumentActions } from '@/features/documents/useDocumentActions'
 import { getUserId } from '@/lib/session'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
+import { ActivityType, Demande, DemandeStatus, situationFamilleTypes, situationTypes } from '@/model/demande/Demande'
+import { Document } from '@/model/document/Document'
 import { TypeDocument } from '@/model/typeDocument/typeDocument'
-import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService'
+import { TabsContent } from '@radix-ui/react-tabs'
+import { CheckCircle, FileText, MapPin, PauseCircle, PhoneCall, PhoneMissed, Plus, RefreshCwOff, StickyNote } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { categorieTypes } from '../data/data'
-import { ScrollArea } from '@radix-ui/react-scroll-area'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { TabsContent } from '@radix-ui/react-tabs'
 import { DemandeActivityTimeline } from './DemandeActivityTimeline'
-import { useDemandeService } from '@/api/demande/demandeService'
 import { NoteSuiviSheet } from './NoteSuiviSheet'
-import { Document } from '@/model/document/Document'
-import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useConfirmDialog } from './demande-confirm-dialog'
-import { useAides } from '@/features/aides/context/aides-context'
-import { AidesDialogs } from '@/features/aides/components/aides-dialogs'
 
 
 interface Props {
@@ -57,7 +53,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const currentRow: Demande | undefined = demandes.length > 0 ? demandes[0] : undefined;*/
   const { openConfirmDialog, ConfirmDialogComponent } = useConfirmDialog()
   const pendingStatusUpdate = useRef(false);
-  const nextStatusRef = useRef< DemandeStatus | null>(null);
+  const nextStatusRef = useRef<DemandeStatus | null>(null);
   const fewAidesColumns = aidecolumns.filter(column =>
     column.id && ['dateAide', 'montant', 'frequence', 'verse', 'resteAVerser'].includes(column.id)
   );
@@ -72,7 +68,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     where: { rattachement: 'Suivi' },
   });
 
-  const { setOpenAide} = useAides()
+  const { setOpenAide } = useAides()
   const { typeDocuments } = useTypeDocumentService({ where: { rattachement: 'Demande' } });
   const handleTypeClick = (typeId: number) => {
     setSelectedTypeId(typeId);
@@ -196,7 +192,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
 
     if (type === "accept") {
       nextStatusRef.current = "EnCours";
-     
+
       openConfirmDialog(
         "Ajouter un aide ?",
         "Souhaitez-vous ajouter une aide maintenant ?",
@@ -208,7 +204,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     if (type === "refuse") {
       nextStatusRef.current = "refusée";
       await updateDemande(currentRow.id, { status: nextStatusRef.current });
-    
+
     }
 
   };
@@ -226,7 +222,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const handleConfirmedStatusChange = async () => {
     if (nextStatusRef.current) {
       await updateDemande(currentRow.id, { status: nextStatusRef.current });
-      
+
     }
     nextStatusRef.current = null;
   };
@@ -238,7 +234,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     }
     nextStatusRef.current = null;
   };
-  
+
 
 
   return (
@@ -252,67 +248,67 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle>Suivi et actions</CardTitle>
             {!['clôturée', 'Abandonnée'].includes(currentRow.status) && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
 
-                {currentRow.status === 'en_commision' &&
-                  <>
-                    <DropdownMenuLabel>Décision</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("accept")}>
-                      <CheckCircle className="mr-2 h-4 w-4" />
-                      Approuver la demande
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() =>handleCreatePredefinedActivity("refuse")}>
-                      <PauseCircle className="mr-2 h-4 w-4" />
-                      Ajourner la demande
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                  </>
-
-
-                }
-                {/* Partie Activités */}
-                <DropdownMenuLabel>Activités</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("priseContactEchec")}>
-                  <PhoneMissed className="mr-2 h-4 w-4" />
-                  Prise de contact échouée
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("priseContactReussie")}>
-                  <PhoneCall className="mr-2 h-4 w-4" />
-                  Entretien avec le demandeur
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("abandon")}>
-                  <RefreshCwOff className="mr-2 h-4 w-4" />
-                  Abandon de la demande
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("visite")}>
-                  <MapPin className="mr-2 h-4 w-4" />
-                  Visite programmée
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setOpenNoteSheet(true)}>
-                  <StickyNote className="mr-2 h-4 w-4" />
-                  Note de suivi
-                </DropdownMenuItem>
+                  {currentRow.status === 'en_commision' &&
+                    <>
+                      <DropdownMenuLabel>Décision</DropdownMenuLabel>
+                      <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("accept")}>
+                        <CheckCircle className="mr-2 h-4 w-4" />
+                        Approuver la demande
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("refuse")}>
+                        <PauseCircle className="mr-2 h-4 w-4" />
+                        Ajourner la demande
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
 
 
-                <DropdownMenuSeparator />
-
-                {/* Partie Documents */}
-                <DropdownMenuLabel>Documents</DropdownMenuLabel>
-                {typeDocumentsSuivi?.map((type: TypeDocument) => (
-                  <DropdownMenuItem key={type.id} onClick={() => handleTypeClick(type.id)}>
-                    <FileText className="mr-2 h-4 w-4" />
-                    {type.label}
+                  }
+                  {/* Partie Activités */}
+                  <DropdownMenuLabel>Activités</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("priseContactEchec")}>
+                    <PhoneMissed className="mr-2 h-4 w-4" />
+                    Prise de contact échouée
                   </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+                  <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("priseContactReussie")}>
+                    <PhoneCall className="mr-2 h-4 w-4" />
+                    Entretien avec le demandeur
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("abandon")}>
+                    <RefreshCwOff className="mr-2 h-4 w-4" />
+                    Abandon de la demande
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("visite")}>
+                    <MapPin className="mr-2 h-4 w-4" />
+                    Visite programmée
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setOpenNoteSheet(true)}>
+                    <StickyNote className="mr-2 h-4 w-4" />
+                    Note de suivi
+                  </DropdownMenuItem>
+
+
+                  <DropdownMenuSeparator />
+
+                  {/* Partie Documents */}
+                  <DropdownMenuLabel>Documents</DropdownMenuLabel>
+                  {typeDocumentsSuivi?.map((type: TypeDocument) => (
+                    <DropdownMenuItem key={type.id} onClick={() => handleTypeClick(type.id)}>
+                      <FileText className="mr-2 h-4 w-4" />
+                      {type.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
           </CardHeader>
 
@@ -411,7 +407,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
 
           </div>
 
-          
+
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
@@ -462,7 +458,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
 
       </div>
       {ConfirmDialogComponent}
-      <AidesDialogs showContactSearch={false} forContactId={currentRow.contact.id } forDemandeId={currentRow.id} showDemandeSearch={false}/>
+      <AidesDialogs showContactSearch={false} forContactId={currentRow.contact.id} forDemandeId={currentRow.id} showDemandeSearch={false} />
     </div>
 
 
