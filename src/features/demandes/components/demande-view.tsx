@@ -360,7 +360,14 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
             </CardHeader>
             <CardContent className="space-y-2">
               <DetailRow label="Nom et Prénom" value={`${currentRow?.contact?.nom} ${currentRow?.contact?.prenom}`} link={`/contacts/${currentRow.contact.id}`} capitalize={true} />
-              <DetailRow label="Âge" value={currentRow?.contact?.age + ' ans' ?? 'N/A'} />
+              <DetailRow
+                label="Âge"
+                value={
+                  currentRow?.contact?.age != null
+                    ? `${currentRow.contact.age} ans`
+                    : 'N/A'
+                }
+              />
               <DetailRow label="Email" value={currentRow?.contact.email ?? 'N/A'} />
               <DetailRow label="Tél" value={currentRow?.contact.telephone ?? 'N/A'} />
               <DetailRow label="Adresse" value={currentRow?.contact.adresse ?? 'N/A'} capitalize={true} />
