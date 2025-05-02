@@ -265,11 +265,11 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                     <DropdownMenuLabel>Décision</DropdownMenuLabel>
                     <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("accept")}>
                       <CheckCircle className="mr-2 h-4 w-4" />
-                      Approuver
+                      Approuver la demande
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() =>handleCreatePredefinedActivity("refuse")}>
                       <PauseCircle className="mr-2 h-4 w-4" />
-                      Ajourner
+                      Ajourner la demande
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </>

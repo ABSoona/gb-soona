@@ -61,7 +61,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
 
   
   const { createAide, updateAide, refetch, isSubmitting } = useAideService();
-
+ const{updateDemande} = useDemandeService();
   const isEdit = !!currentRow;
   const { triggerRefetchAides } = useAides();
   const defaultFormValues: AideForm = isEdit && currentRow
@@ -141,11 +141,14 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
     try {
       if (isEdit && currentRow?.id) {
         await updateAide(currentRow.id, aidePayload);
+       
         toast({ title: 'Aide mise à jour avec succès !' });
       } else {
         await createAide(aidePayload);
         toast({ title: 'Nouvelle aide créée avec succès !' });
       }
+      if( demandeId && !values.reetudier && values.frequence==='UneFois')
+        await updateDemande(demandeId,{status:"clôturée"});
       triggerRefetchAides();
       form.reset();
       onOpenChange(false);
@@ -254,7 +257,7 @@ const dernierVersement = calculerDateDernierVersement(dateAide, frequence, Numbe
                 render={({ field }) => {
                   
                   return(<FormItem className="space-y-1">
-                    <FormLabel>Pour la demande</FormLabel>
+                    <FormLabel>Demande concernée</FormLabel>
                     <FormControl>
                       <SelectDropdown
                         placeholder="Choisissez une demande"
@@ -382,7 +385,7 @@ const dernierVersement = calculerDateDernierVersement(dateAide, frequence, Numbe
                {(typeAide === 'AssistanceAdministrative' || ( typeAide === 'FinanciRe' && reetudier)) &&
                 <FormField control={form.control} name="dateExpiration" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date de réexamen</FormLabel>
+                    <FormLabel>{reetudier ? "Date de réexamen":"Date de fin"}</FormLabel>
                     <FormControl>
                       <DatePicker
                         date={field.value}

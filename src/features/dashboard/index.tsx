@@ -21,6 +21,7 @@ import { DateRange } from 'react-day-picker'
 import { useDashboardStats } from './data-service'
 import { formatMontant } from '@/utils/misc'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ClockArrowUp, HandshakeIcon, ScanEye } from 'lucide-react'
 
 export default function Dashboard() {
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -105,25 +106,38 @@ export default function Dashboard() {
             {[ {
               title: 'Nouvelles demandes',
               icon: <IconAlertSquare  className='h-7 w-7 text-muted-foreground' />,
-              value: stats ? stats.demandesEnAttente : null
+              value: stats ? stats.nouvellesDemandes : null
             }, 
-              {
+            {
+              title: 'Demandes en commmission',
+              icon: <ScanEye  className='h-7 w-7 text-muted-foreground' />,
+              value: stats ? stats.DemandesEncommission : null
+            },
+            {
+              title: 'Demandes en attente',
+              icon: <ClockArrowUp  className='h-7 w-7 text-muted-foreground' />,
+              value: stats ? stats.DemandesEnAttente : null
+            },
+            {
+              title: 'Demandes en visite',
+              icon: <HandshakeIcon  className='h-7 w-7 text-muted-foreground' />,
+              value: stats ? stats.DemandesEnVisite : null
+            },
+            
+             /*  {
               title: 'Aides versés',
               icon: <IconHeartHandshake className='h-7 w-7 text-muted-foreground' />,
               value: stats ? formatMontant(stats.totalVerse) : null
-            }, {
+            }, */ {
               title: 'Reste à verser',
               icon: <IconPercentage20 className='h-7 w-7 text-muted-foreground' />,
               value: stats ? formatMontant(stats.totalReste) : null
-            }, {
-              title: 'Demandes',
-              icon: <IconMailDown className='h-7 w-7 text-muted-foreground' />,
-              value: stats ? stats.totalDemandes : null
-            },{
+            }, 
+           /*  {
               title: 'Personnes aidées',
               icon: <IconUsers className='h-7 w-7 text-muted-foreground' />,
               value: stats ? stats.totalContacts : null
-            }].map(({ title, icon, value }, index) => (
+            } */].map(({ title, icon, value }, index) => (
               <Card key={index}>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>{title}</CardTitle>
