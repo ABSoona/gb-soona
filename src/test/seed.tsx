@@ -6,9 +6,9 @@ import { faker } from '@faker-js/faker';
 import { useState } from 'react';
 
 export function GenerateFakeData() {
-  const { contacts, deleteContact, createContact } = useContactService();
-  const { demandes, deleteDemande, createDemande } = useDemandeService();
-  const { aides, deleteAide, createAide } = useAideService();
+  const { createContact } = useContactService();
+  const { createDemande } = useDemandeService();
+  const { createAide } = useAideService();
 
   const [loading, setLoading] = useState(false);
 
@@ -69,7 +69,7 @@ export function GenerateFakeData() {
 
       const aideCount = faker.number.int({ min: 1, max: 3 });
       for (let k = 0; k < aideCount; k++) {
-        const now = new Date();
+        
         await createAide({
           contact: { id: contactId },
           dateAide: faker.date.between({ from: '2025-01-01', to: '2026-03-01' },).toISOString(),
