@@ -64,7 +64,10 @@ interface DashboardStats {
   totalVerse: number;
   totalReste: number;
   totalDemandes: number;
-  demandesEnAttente: number;
+  nouvellesDemandes: number;
+  DemandesEnAttente: number;
+  DemandesEnVisite: number;
+  DemandesEncommission: number;
   totalContacts: number;
   loading: boolean;
 }
@@ -161,7 +164,10 @@ export function useDashboardStats(dateRange: { from: Date; to: Date }): Dashboar
     totalVerse,
     totalReste,
     totalDemandes: demandes.length,
-    demandesEnAttente: demandes.filter((n:Demande) => n.status==='recue').length ,
+    nouvellesDemandes: demandes.filter((n:Demande) => n.status==='recue').length ,
+    DemandesEnAttente : demandes.filter((n:Demande) => n.status==='EnAttente').length ,
+    DemandesEncommission : demandes.filter((n:Demande) => n.status==='en_commision').length ,
+    DemandesEnVisite : demandes.filter((n:Demande) => n.status==='en_visite').length ,
     totalContacts: contacts.length,
     loading: loadingAides || loadingDemandes || loadingContacts,
   };
