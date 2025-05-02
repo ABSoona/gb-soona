@@ -1,10 +1,7 @@
 import { ContactStatus } from '@/model/contact/Contact'
 import {
-
-  IconExternalLink,
   IconShield,
-  IconUsersGroup,
-
+  IconUsersGroup
 } from '@tabler/icons-react'
 
 
@@ -20,7 +17,7 @@ export const contactStatusTypes = [
     value: 'blacklisté',
     icon: IconUsersGroup,
   },
- 
+
 ] as const
 
 
@@ -33,4 +30,3 @@ export const contactStatusColor = new Map<ContactStatus, string>([
 ])
 
 
- 

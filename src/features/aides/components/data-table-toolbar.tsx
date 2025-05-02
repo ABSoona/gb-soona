@@ -29,7 +29,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             setFilterName(savedName);
             table.getColumn('contactNomPrenom')?.setFilterValue(savedName);
         }
-    
+
         // 🔹 Restaurer le filtre "Période" (et éviter qu'il soit écrasé)
         const savedDateRange = localStorage.getItem('filter-date-range');
         if (savedDateRange && savedDateRange !== "undefined") {
@@ -39,7 +39,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                     const parsedDateRange = {
                         from: new Date(stroredDateRange.from),
                         to: new Date(stroredDateRange.to),
-                      };
+                    };
                     setDateRange(parsedDateRange);
                     table.getColumn('dateAide')?.setFilterValue(parsedDateRange);
                 }
@@ -57,23 +57,23 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
         const newName = event.target.value;
         setFilterName(newName);
         table.getColumn('contactNomPrenom')?.setFilterValue(newName);
-        
+
         // 🔥 Sauvegarde dans localStorage
         localStorage.setItem('filter-name', newName);
     };
 
     // ✅ Mise à jour du filtre "Période"
     const handleDateRangeChange = (newDateRange: DateRange | undefined) => {
-      if(newDateRange?.from != null && newDateRange?.to != null){
-        
+        if (newDateRange?.from != null && newDateRange?.to != null) {
+
             setDateRange(newDateRange);
             table.getColumn('dateAide')?.setFilterValue(newDateRange);
             localStorage.setItem('filter-date-range', JSON.stringify(newDateRange));
-       
-      }
-    
+
+        }
+
         // 🔥 Sauvegarde dans localStorage
-       
+
     };
 
     // ✅ Réinitialisation complète des filtres
@@ -96,7 +96,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
     return (
         <div className="flex items-center justify-between">
             <div className="flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
-                
+
                 {/* 🔍 Filtre par nom (avec sauvegarde) */}
                 <Input
                     placeholder="Filtrer par noms..."
@@ -106,17 +106,17 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                 />
 
                 <div className="flex gap-x-2">
-                    
+
                     {/* 📅 Filtre par Période (avec sauvegarde) */}
                     {table.getColumn('dateAide') && (
-                        <DatePickerWithRange 
-                            value={dateRange} 
+                        <DatePickerWithRange
+                            value={dateRange}
                             onChange={handleDateRangeChange} // ✅ Mise à jour avec `localStorage`
                         />
                     )}
 
-                    
-              
+
+
                     {/* 📌 Filtre par Statut */}
                     {table.getColumn('frequence') && (
                         <DataTableFacetedFilter
@@ -125,22 +125,22 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                             options={aideFrquenceTypes.map((t) => ({ ...t }))}
                         />
                     )}
-                      {table.getColumn('crediteur') && (
+                    {table.getColumn('crediteur') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('crediteur')}
                             title="Créditeur"
                             options={aideCredieteurTypes.map((t) => ({ ...t }))}
                         />
                     )}
-                     {table.getColumn('suspendue') && (
+                    {table.getColumn('suspendue') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('suspendue')}
                             title="suspendue"
-                            options={[{label:'Oui',value:'false'},{label:'Non',value:'true'}]}
+                            options={[{ label: 'Oui', value: 'false' }, { label: 'Non', value: 'true' }]}
                         />
                     )}
-                   
-                    
+
+
                 </div>
 
                 {/* 🔄 Bouton de réinitialisation des filtres */}
@@ -158,9 +158,9 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
             {/* ⚙️ Options d'affichage des colonnes */}
             <div className='mx-2'><DataTableViewOptions table={table} /></div>
-            <div><DataTableExport table={table}/></div>
-            
-           
+            <div><DataTableExport table={table} /></div>
+
+
         </div>
     );
 }

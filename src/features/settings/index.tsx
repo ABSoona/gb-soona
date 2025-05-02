@@ -1,26 +1,18 @@
-import { Outlet } from '@tanstack/react-router'
+import AppLayout from '@/components/layout/app-layout'
+import { Separator } from '@/components/ui/separator'
 import {
   IconBell,
-  IconBrowserCheck,
-  IconNotification,
   IconPalette,
-  IconTool,
-  IconUser,
+  IconTool
 } from '@tabler/icons-react'
-import { Separator } from '@/components/ui/separator'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
+import { Outlet } from '@tanstack/react-router'
 import SidebarNav from './components/sidebar-nav'
-import AppLayout from '@/components/layout/app-layout'
 
 export default function Settings() {
   return (
     <>
       {/* ===== Top Heading ===== */}
-    
+
 
       <AppLayout>
         <div className='space-y-0.5'>
@@ -28,7 +20,7 @@ export default function Settings() {
             Mon compte
           </h1>
           <p className='text-muted-foreground'>
-          Gérez les paramètres de votre compte et définissez vos préférences e-mail.
+            Gérez les paramètres de votre compte et définissez vos préférences e-mail.
           </p>
         </div>
         <Separator className='my-4 lg:my-6' />
@@ -46,7 +38,7 @@ export default function Settings() {
 }
 
 const sidebarNavItems = [
- 
+
   {
     title: 'Mon compte',
     icon: <IconTool size={18} />,
@@ -62,9 +54,9 @@ const sidebarNavItems = [
     icon: <IconBell size={18} />,
     href: '/settings/notifications',
   },
-/*  {
-    title: 'Display',
-    icon: <IconBrowserCheck size={18} />,
-    href: '/settings/display',
-  },*/
+  /*  {
+      title: 'Display',
+      icon: <IconBrowserCheck size={18} />,
+      href: '/settings/display',
+    },*/
 ]

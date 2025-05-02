@@ -3,10 +3,10 @@
 
 // Je commence ici par `WebsiteDemandeDialogs.tsx`
 
-import { WebsiteDemandeViewDialog } from './websiteDemande-view-dialog';
+import { useWebsiteDemandes } from '../context/website-demandes-context';
 import { WebsiteDemandeActionDialog } from './websiteDemande-action-dialog';
 import { WebsiteDemandeDeleteDialog } from './websiteDemande-delete-dialog';
-import { useWebsiteDemandes } from '../context/website-demandes-context';
+import { WebsiteDemandeViewDialog } from './websiteDemande-view-dialog';
 
 interface Props {
   showContactSearch?: boolean;
@@ -20,7 +20,7 @@ export function WebsiteDemandeDialogs({ showContactSearch = true }: Props) {
         key="demande-add"
         open={open === 'add'}
         onOpenChange={() => setOpen('add')}
-       
+
       />
 
       {currentRow && (
@@ -33,7 +33,7 @@ export function WebsiteDemandeDialogs({ showContactSearch = true }: Props) {
               setTimeout(() => setCurrentRow(null), 500);
             }}
             currentRow={currentRow}
-         
+
           />
 
           <WebsiteDemandeDeleteDialog

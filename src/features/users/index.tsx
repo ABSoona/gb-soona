@@ -1,8 +1,3 @@
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
 import { columns } from './components/users-columns'
 import { UsersDialogs } from './components/users-dialogs'
 import { UsersPrimaryButtons } from './components/users-primary-buttons'
@@ -11,14 +6,14 @@ import UsersProvider from './context/users-context'
 
 
 import { getUsers } from '@/api/user/userService'
-import { useQuery } from '@tanstack/react-query'
-import { User } from '@/model/user/User'
 import AppLayout from '@/components/layout/app-layout'
+import { User } from '@/model/user/User'
 import { IconUsers } from '@tabler/icons-react'
+import { useQuery } from '@tanstack/react-query'
 
 export default function Users() {
 
-  
+
   // Parse user list
   const { data: users } = useQuery<User[]>({
     queryKey: ['users'],
@@ -27,12 +22,12 @@ export default function Users() {
 
   return (
     <UsersProvider>
-     
+
       <AppLayout>
         <div className='mb-2 flex flex-wrap items-center justify-between space-y-2'>
           <div>
-          <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-  <IconUsers className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+              <IconUsers className="h-6 w-6 text-primary" />
               Utilisateurs</h2>
             <p className='text-muted-foreground'>
               Vous pouvez gérer ici les accès à GBSoona
@@ -45,7 +40,7 @@ export default function Users() {
         </div>
       </AppLayout>
 
-      <UsersDialogs/>
+      <UsersDialogs />
     </UsersProvider>
   )
 }

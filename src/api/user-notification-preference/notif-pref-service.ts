@@ -1,14 +1,14 @@
-import { useQuery, useMutation } from '@apollo/client';
-import { GET_USERNOTIFICATIONPREFERENCES, CREATE_USERNOTIFICATIONPREFERENCE, UPDATE_USERNOTIFICATIONPREFERENCE, DELETE_USERNOTIFICATIONPREFERENCE } from './graphql/queries';
 import { toast } from '@/hooks/use-toast';
-import { handleServerError } from '@/utils/handle-server-error';
 import { NotificationPreferenceferences } from '@/model/user-notification-preferences/user-notification-preferences';
+import { handleServerError } from '@/utils/handle-server-error';
+import { useMutation, useQuery } from '@apollo/client';
+import { CREATE_USERNOTIFICATIONPREFERENCE, DELETE_USERNOTIFICATIONPREFERENCE, GET_USERNOTIFICATIONPREFERENCES, UPDATE_USERNOTIFICATIONPREFERENCE } from './graphql/queries';
 
 export function useNotificationPrefrenceService(variables?: any) {
   // 👉 Variables dynamiques : toutes les notificationprefrences ou notificationprefrences d’un contact
- /*  const variables = contactId
-    ? { where: { contact: { id:  contactId } }  }
-    : {}; */
+  /*  const variables = contactId
+     ? { where: { contact: { id:  contactId } }  }
+     : {}; */
 
   const { data, loading, error, refetch } = useQuery(GET_USERNOTIFICATIONPREFERENCES, {
     variables,
@@ -72,7 +72,7 @@ export function useNotificationPrefrenceService(variables?: any) {
   };
 
   return {
-    notificationprefrences: (data?.userNotificationPreferences  || []) as NotificationPreferenceferences[],
+    notificationprefrences: (data?.userNotificationPreferences || []) as NotificationPreferenceferences[],
     loading,
     error,
     refetch,

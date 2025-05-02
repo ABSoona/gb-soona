@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { IconAlertTriangle } from '@tabler/icons-react';
-import { toast } from '@/hooks/use-toast';
+import { useAideService } from '@/api/aide/aideService';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ConfirmDialog } from '@/components/confirm-dialog';
+import { toast } from '@/hooks/use-toast';
 import { Aide } from '@/model/aide/Aide';
-import { useAideService } from '@/api/aide/aideService';
+import { IconAlertTriangle } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useAides } from '../context/aides-context';
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
 
 export function AidesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
   const queryClient = useQueryClient();
-  const { deleteAide,  isSubmitting } = useAideService(); // ✅ Utilisation du service
+  const { deleteAide, isSubmitting } = useAideService(); // ✅ Utilisation du service
   const [value, setValue] = useState<number | ''>('');
   const { triggerRefetchAides } = useAides();
 
@@ -54,7 +54,7 @@ export function AidesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
         <div className='space-y-4'>
           <p>
             Êtes-vous sûr de vouloir supprimer l'aide de {' '}
-            <span className='font-bold'>{currentRow.montant.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0})}</span> ? Cette action est
+            <span className='font-bold'>{currentRow.montant.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}</span> ? Cette action est
             irréversible.
           </p>
 

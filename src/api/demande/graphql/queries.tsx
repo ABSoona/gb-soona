@@ -1,7 +1,7 @@
-import { gql } from '@apollo/client';
-import { CONTACT_FIELDS } from '@/api/contact/graphql/fragment';
 import { AIDE_FIELDS } from '@/api/aide/graphql/fragment';
-import { DEMANDE_FIELDS, DEMANDE_ACTIVITY_FIELDS } from './fragment';
+import { CONTACT_FIELDS } from '@/api/contact/graphql/fragment';
+import { gql } from '@apollo/client';
+import { DEMANDE_ACTIVITY_FIELDS, DEMANDE_FIELDS } from './fragment';
 
 export const GET_DEMANDES = gql`
   query GetDemandesWithContactAides($skip: Float, $take: Float, $where : DemandeWhereInput) {

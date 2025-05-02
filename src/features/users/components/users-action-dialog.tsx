@@ -1,18 +1,9 @@
 'use client'
 
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from '@/hooks/use-toast'
+import { createUser, updateUser } from '@/api/user/userService'
+import { PasswordInput } from '@/components/password-input'
+import { SelectDropdown } from '@/components/select-dropdown'
 import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
 import {
   Form,
   FormControl,
@@ -23,19 +14,27 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { PasswordInput } from '@/components/password-input'
-import { SelectDropdown } from '@/components/select-dropdown'
-import { callTypes, userTypes } from '../data/data'
-import { User, UserRole } from '@/model/user/User'
-import { createUser, updateUser } from '@/api/user/userService'
-import { UserStatus } from '@/model/user/User'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
+import { toast } from '@/hooks/use-toast'
+import { User, UserRole, UserStatus } from '@/model/user/User'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { userTypes } from '../data/data'
 
 const formSchema = z
   .object({
     firstName: z.string().min(1, { message: 'First Name is required.' }),
     lastName: z.string().min(1, { message: 'Last Name is required.' }),
-  
+
 
     email: z
       .string()
@@ -97,29 +96,29 @@ interface Props {
   onOpenChange: (open: boolean) => void
 }
 
-export function UsersActionDialog({ currentRow, open, onOpenChange  }: Props) {
+export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
   const queryClient = useQueryClient()
   const isEdit = !!currentRow
   const form = useForm<UserForm>({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
       ? {
-          ...currentRow,
-          password: '',
-          confirmPassword: '',
-          isEdit,
-        }
+        ...currentRow,
+        password: '',
+        confirmPassword: '',
+        isEdit,
+      }
       : {
-          firstName: '',
-          lastName: '',
-        
-          email: '',
-          role: '',
+        firstName: '',
+        lastName: '',
 
-          password: '',
-          confirmPassword: '',
-          isEdit,
-        },
+        email: '',
+        role: '',
+
+        password: '',
+        confirmPassword: '',
+        isEdit,
+      },
   })
 
   const onSubmit = async (values: UserForm) => {
@@ -133,10 +132,10 @@ export function UsersActionDialog({ currentRow, open, onOpenChange  }: Props) {
       email: values.email,
       role: role,
       roles: [role],
-      status: status  ,
+      status: status,
       ...(values.password ? { password: values.password } : {}),
     }
-  
+
     try {
       if (isEdit && currentRow?.id) {
         // PATCH : Mise à jour
@@ -153,10 +152,10 @@ export function UsersActionDialog({ currentRow, open, onOpenChange  }: Props) {
       onOpenChange(false)
     } catch (error) {
       console.error('Erreur lors de la soumission :', error)
-     
+
     }
   }
-  
+
   const isPasswordTouched = !!form.formState.dirtyFields.password
 
   return (
@@ -222,7 +221,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange  }: Props) {
                   </FormItem>
                 )}
               />
-             
+
               <FormField
                 control={form.control}
                 name='email'
@@ -242,7 +241,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange  }: Props) {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name='role'

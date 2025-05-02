@@ -1,18 +1,5 @@
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { IconMailPlus, IconSend } from '@tabler/icons-react'
-import { toast } from '@/hooks/use-toast'
+import { SelectDropdown } from '@/components/select-dropdown'
 import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
 import {
   Form,
   FormControl,
@@ -22,9 +9,22 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
-import { SelectDropdown } from '@/components/select-dropdown'
+import { toast } from '@/hooks/use-toast'
 import { situationTypes } from '@/model/demande/Demande'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { IconMailPlus, IconSend } from '@tabler/icons-react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const formSchema = z.object({
   email: z
@@ -74,8 +74,8 @@ export function DemandesInviteDialog({ open, onOpenChange }: Props) {
             <IconMailPlus /> Invite Demande
           </SheetTitle>
           <SheetDescription>
-          Invitez un nouvel utilisateur à rejoindre votre équipe en lui envoyant une 
-          invitation par e-mail. Attribuez-lui un rôle pour définir son niveau d’accès..
+            Invitez un nouvel utilisateur à rejoindre votre équipe en lui envoyant une
+            invitation par e-mail. Attribuez-lui un rôle pour définir son niveau d’accès..
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>

@@ -1,19 +1,19 @@
+import { useContactService } from '@/api/contact/contact-service';
 import { Header } from '@/components/layout/header';
 import { Main } from '@/components/layout/main';
 import { ProfileDropdown } from '@/components/profile-dropdown';
 import { Search } from '@/components/search';
 import { ThemeSwitch } from '@/components/theme-switch';
+import { Button } from '@/components/ui/button';
+import { Contact } from '@/model/contact/Contact';
 import { handleServerError } from '@/utils/handle-server-error';
+import { IconLayoutSidebarRightExpand } from '@tabler/icons-react';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { ChevronLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useContactService } from '@/api/contact/contact-service';
-import { Contact } from '@/model/contact/Contact';
-import { ContactView } from './components/contact-view';
+import AidesProvider from '../aides/context/aides-context';
 import { detailOpenOption } from '../demandes/components/demandes-table';
 import DemandesProvider from '../demandes/context/demandes-context';
-import AidesProvider from '../aides/context/aides-context';
-import { IconLayoutSidebarRightExpand } from '@tabler/icons-react';
+import { ContactView } from './components/contact-view';
 import { useContacts } from './context/contacts-context';
 
 
@@ -52,18 +52,18 @@ export default function ContactDetail() {
             </Button>
             <h2 className="text-2xl font-bold tracking-tight">Contact N° {id}</h2>
           </div>
-         <div>
-          <Button  variant="outline" onClick={() => {
+          <div>
+            <Button variant="outline" onClick={() => {
               setCurrentRow(contact)
               setOpen('timeline')
             }}>
-          <IconLayoutSidebarRightExpand size='42'/> Time line
-          </Button>
-          
-         </div>
+              <IconLayoutSidebarRightExpand size='42' /> Time line
+            </Button>
+
+          </div>
         </div>
-       
-      
+
+
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {isLoading ? (
             <div className="flex items-center justify-center py-4">
@@ -81,19 +81,19 @@ export default function ContactDetail() {
           ) : (
             <AidesProvider>
               <DemandesProvider>
-               <ContactView currentRow={contact}  showDetailIn={detailOpenOption.sheet} />
-            </DemandesProvider>
+                <ContactView currentRow={contact} showDetailIn={detailOpenOption.sheet} />
+              </DemandesProvider>
             </AidesProvider>
-            
-           
+
+
           )}
         </div>
       </Main>
 
-      
-    
-      
-      
+
+
+
+
     </>
   );
 }

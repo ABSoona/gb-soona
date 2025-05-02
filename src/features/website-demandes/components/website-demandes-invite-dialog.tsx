@@ -1,17 +1,5 @@
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { IconMailPlus, IconSend } from '@tabler/icons-react'
+import { useInvitationService } from '@/api/invitation/invitationService'; // ✅ ajout du hook
 import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
 import {
   Form,
   FormControl,
@@ -21,9 +9,20 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
-import { SelectDropdown } from '@/components/select-dropdown'
-import { useInvitationService } from '@/api/invitation/invitationService' // ✅ ajout du hook
+import { zodResolver } from '@hookform/resolvers/zod'
+import { IconMailPlus, IconSend } from '@tabler/icons-react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const formSchema = z.object({
   email: z
@@ -32,7 +31,7 @@ const formSchema = z.object({
     .email({ message: 'Email is invalid.' }),
   role: z.string().min(1, { message: 'Role is required.' }),
   desc: z.string().optional(),
-  
+
 })
 
 type UserInviteForm = z.infer<typeof formSchema>
@@ -55,8 +54,8 @@ export function UsersInviteDialog({ open, onOpenChange }: Props) {
       email: values.email,
       role: values.role,
       message: values.desc,
-      token :'',
-      used :false
+      token: '',
+      used: false
     }
 
     const success = await createInvitation(payload)
@@ -109,7 +108,7 @@ export function UsersInviteDialog({ open, onOpenChange }: Props) {
               )}
             />
 
-           
+
 
             <FormField
               control={form.control}

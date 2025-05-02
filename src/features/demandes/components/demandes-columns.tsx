@@ -1,16 +1,11 @@
-import { ColumnDef } from '@tanstack/react-table';
-import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import LongText from '@/components/long-text';
-import { Demande, DemandeStatus, categorieDemandeur } from '@/model/demande/Demande';
-import { DataTableColumnHeader } from './data-table-column-header';
-import { DataTableRowActions } from './data-table-row-actions';
-import { categorieTypes, demandeStatusColor, demandeStatusTypes } from '../data/data';
-import { situationTypes } from '@/model/demande/Demande';
-import { situationFamilleTypes } from '@/model/demande/Demande';
-import { SituationPro } from "@/model/demande/Demande";
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Demande, DemandeStatus, SituationPro, categorieDemandeur, situationFamilleTypes, situationTypes } from '@/model/demande/Demande';
+import { ColumnDef } from '@tanstack/react-table';
 import { DateRange } from 'react-day-picker';
+import { categorieTypes, demandeStatusColor, demandeStatusTypes } from '../data/data';
+import { DataTableRowActions } from './data-table-row-actions';
 
 const dateRangeFilter: ColumnDef<Demande>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
     if (!filterValue || (!filterValue.from && !filterValue.to)) {
@@ -27,44 +22,45 @@ const dateRangeFilter: ColumnDef<Demande>['filterFn'] = (row, columnId, filterVa
 
 export const columns: ColumnDef<Demande>[] = [
     // Sélection des lignes
-   /* {
-        id: 'select',
-        header: ({ table }) => (
-            <Checkbox
-                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-                className="translate-y-[2px]"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-                className="translate-y-[2px]"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },*/
+    /* {
+         id: 'select',
+         header: ({ table }) => (
+             <Checkbox
+                 checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                 aria-label="Select all"
+                 className="translate-y-[2px]"
+             />
+         ),
+         cell: ({ row }) => (
+             <Checkbox
+                 checked={row.getIsSelected()}
+                 onCheckedChange={(value) => row.toggleSelected(!!value)}
+                 aria-label="Select row"
+                 className="translate-y-[2px]"
+             />
+         ),
+         enableSorting: false,
+         enableHiding: false,
+     },*/
 
     // 📄 Informations de la Demande
     {
-        
+
         accessorFn: (row) => row.id,
         id: 'numeroDemande',
         header: 'N°',
         cell: ({ row }) => row.original.id ?? 'N/A',
     },
     {
-        
+
         accessorKey: 'id',
         header: 'ID Demande',
         cell: ({ row }) => <LongText className="max-w-36">{row.getValue('id')}</LongText>,
         enableHiding: false,
     },
-    {   id: 'createdAt',
+    {
+        id: 'createdAt',
         accessorKey: 'createdAt',
         header: 'Reçue le',
         cell: ({ row }) => {
@@ -79,13 +75,13 @@ export const columns: ColumnDef<Demande>[] = [
         accessorFn: (row) => `${row.contact?.nom ?? ''} ${row.contact?.prenom ?? ''}`,
         id: 'contactNomPrenom',
         header: 'Demandeur',
-        cell: ({ row }) => { return ( <span className='capitalize'>{row.original.contact?.nom ?? 'N/A'} {row.original.contact?.prenom ?? ''}</span>) },
+        cell: ({ row }) => { return (<span className='capitalize'>{row.original.contact?.nom ?? 'N/A'} {row.original.contact?.prenom ?? ''}</span>) },
         enableHiding: true,
         filterFn: (row, id, value) => {
             const fullName = `${row.getValue(id)}`.toLowerCase(); // 🔥 Concaténer nom + prénom
-            return  fullName.includes(value.toLowerCase()); // 🔍 Vérifie si une partie du texte correspond
+            return fullName.includes(value.toLowerCase()); // 🔍 Vérifie si une partie du texte correspond
         },
-        
+
     },
     {
         accessorFn: (row) => row.contact?.nom,
@@ -124,7 +120,7 @@ export const columns: ColumnDef<Demande>[] = [
         id: 'situationFamiliale',
         header: 'Situation Familiale',
         cell: ({ row }) => {
-            const situationF =  row.original?.situationFamiliale ?? 'N/A';
+            const situationF = row.original?.situationFamiliale ?? 'N/A';
             return situationFamilleTypes.find(s => s.value === situationF)?.label ?? 'N/A';
         }
     },
@@ -138,7 +134,7 @@ export const columns: ColumnDef<Demande>[] = [
         },
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
-          },
+        },
     },
     {
         accessorFn: (row) => row?.categorieDemandeur,
@@ -150,30 +146,30 @@ export const columns: ColumnDef<Demande>[] = [
         },
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
-          },
+        },
     },
 
     {
         accessorFn: (row) => row?.revenus,
         id: 'revenus',
         header: 'Revenus',
-        cell: ({ row }) => row.original?.revenus?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
+        cell: ({ row }) => row.original?.revenus?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 'N/A',
     },
     {
-       // accessorFn: (row) => row.contact?.revenus,
+        // accessorFn: (row) => row.contact?.revenus,
         id: 'charges',
         accessorKey: 'charges',
         header: 'Charges',
-        cell: ({ row }) =>  
-        ((row.original?.facturesEnergie ?? 0) +
-        (row.original?.loyer ?? 0)).toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ,
+        cell: ({ row }) =>
+            ((row.original?.facturesEnergie ?? 0) +
+                (row.original?.loyer ?? 0)).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }),
         enableHiding: true,
     },
     {
         accessorFn: (row) => row?.revenusConjoint,
         id: 'revenusConjoint',
         header: 'Revenus Conjoint',
-        cell: ({ row }) => row.original?.revenusConjoint?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
+        cell: ({ row }) => row.original?.revenusConjoint?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 'N/A',
         enableHiding: true,
     },
     {
@@ -192,13 +188,13 @@ export const columns: ColumnDef<Demande>[] = [
         accessorFn: (row) => row?.facturesEnergie,
         id: 'facturesEnergie',
         header: 'Factures Énergie',
-        cell: ({ row }) => row.original?.facturesEnergie?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? '0',
+        cell: ({ row }) => row.original?.facturesEnergie?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? '0',
     },
     {
         accessorFn: (row) => row?.loyer,
         id: 'loyer',
         header: 'Loyer',
-        cell: ({ row }) => row.original?.loyer?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
+        cell: ({ row }) => row.original?.loyer?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 'N/A',
     },
     {
         //accessorFn: (row) => row?.resteAVivre,
@@ -206,15 +202,15 @@ export const columns: ColumnDef<Demande>[] = [
         id: 'resteAVivre',
         header: 'Reste à Vivre',
         cell: ({ row }) => (
-        (row.original?.revenusConjoint ?? 0) +
-        (row.original?.apl ?? 0) +
-        (row.original?.revenus ?? 0) -
-        (row.original?.facturesEnergie ?? 0) -
-        (row.original?.autresCharges ?? 0) -
-        (row.original?.loyer ?? 0)) 
-        .toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ,
+            (row.original?.revenusConjoint ?? 0) +
+            (row.original?.apl ?? 0) +
+            (row.original?.revenus ?? 0) -
+            (row.original?.facturesEnergie ?? 0) -
+            (row.original?.autresCharges ?? 0) -
+            (row.original?.loyer ?? 0))
+            .toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }),
     },
-   
+
 
     // 💰 Aides Associées
     {
@@ -223,13 +219,13 @@ export const columns: ColumnDef<Demande>[] = [
         cell: ({ row }) => {
             const aides = row.original.contact?.aides ?? [];
             const totalAides = aides.reduce((total, aide) => total + (aide.montant ?? 0), 0);
-            return totalAides.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? '0';
+            return totalAides.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? '0';
         },
     },
 
     // 🟡 Statut de la Demande
     {
-        id : 'status',
+        id: 'status',
         accessorKey: 'status',
         header: 'Statut',
         cell: ({ row }) => {
@@ -244,14 +240,14 @@ export const columns: ColumnDef<Demande>[] = [
         },
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
-          },
+        },
     },
 
     // ⚙️ Actions
     {
         id: 'actions',
         cell: DataTableRowActions,
-           
-    
+
+
     },
 ];

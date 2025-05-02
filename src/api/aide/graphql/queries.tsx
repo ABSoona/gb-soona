@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 import { CONTACT_FIELDS } from '@/api/contact/graphql/fragment';
 import { AIDE_FIELDS } from './fragment';
 
-export const GET_AIDES= gql`
+export const GET_AIDES = gql`
   query GetAidesWithContact($skip: Float, $take: Float, $where : AideWhereInput) {
     aides(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Asc }]) {
       ...AideFields

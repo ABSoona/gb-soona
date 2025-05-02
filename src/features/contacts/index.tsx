@@ -1,21 +1,15 @@
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
 import { aidesColumns } from './components/contacts-columns';
 //import { ContactsDialogs } from './components/contacts-dialogs';
 import { ContactsPrimaryButtons } from './components/contacts-primary-buttons';
 import { ContactsTable } from './components/contacts-table';
 import ContactsProvider from './context/contacts-context';
 
-import { handleServerError } from '@/utils/handle-server-error';
 import { useContactService } from '@/api/contact/contact-service';
-import { ContactsDialogs } from './components/contacts-dialogs';
-import { Skeleton } from '@/components/ui/skeleton';
 import AppLayout from '@/components/layout/app-layout';
 import { TableSkeleton } from '@/components/ui/skeleton-table';
+import { handleServerError } from '@/utils/handle-server-error';
 import { IconUser } from '@tabler/icons-react';
+import { ContactsDialogs } from './components/contacts-dialogs';
 
 export default function Contacts() {
     // ✅ Utilisation du service pour récupérer les contacts
@@ -29,22 +23,22 @@ export default function Contacts() {
     return (
         <ContactsProvider>
 
-             <AppLayout>
+            <AppLayout>
                 <div className="mb-2 flex flex-wrap items-center justify-between space-y-2">
                     <div>
-                    <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                     <IconUser className="h-6 w-6 text-primary" />
+                        <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                            <IconUser className="h-6 w-6 text-primary" />
                             Liste des Contacts</h2>
                         <p className="text-muted-foreground">
                             Gérez vos contacts et leurs statuts ici.
                         </p>
                     </div>
-                     <ContactsPrimaryButtons /> 
+                    <ContactsPrimaryButtons />
                 </div>
 
                 <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
-                {isLoading ? (
-                          <TableSkeleton rows={10} columns={8}/>
+                    {isLoading ? (
+                        <TableSkeleton rows={10} columns={8} />
                     ) : error ? (
                         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
                             <p>❌ Erreur lors du chargement des contacts.</p>
@@ -60,7 +54,7 @@ export default function Contacts() {
                 </div>
             </AppLayout>
 
-          <ContactsDialogs /> 
+            <ContactsDialogs />
         </ContactsProvider>
     );
 }

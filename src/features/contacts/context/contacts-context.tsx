@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Contact } from '@/model/contact/Contact'
+import React, { useState } from 'react'
 
 type ContactsDialogType = 'invite' | 'add' | 'edit' | 'delete' | 'view' | 'timeline'
 

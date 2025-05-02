@@ -1,46 +1,44 @@
+import { useDemandeService } from '@/api/demande/demandeService';
 import { Header } from '@/components/layout/header';
 import { Main } from '@/components/layout/main';
 import { ProfileDropdown } from '@/components/profile-dropdown';
 import { Search } from '@/components/search';
 import { ThemeSwitch } from '@/components/theme-switch';
-import { useDemandeService } from '@/api/demande/demandeService';
-import { handleServerError } from '@/utils/handle-server-error';
-import { DemandeView } from './components/demande-view';
-import { Demande } from '@/model/demande/Demande';
-import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { ChevronLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useDemandes } from './context/demandes-context'; // ✅ Import du contexte
-import { DemandesDialogs } from './components/demandes-dialogs';
-import AidesProvider from '../aides/context/aides-context';
 import { Badge } from '@/components/ui/badge';
-import { demandeStatusColor, demandeStatusTypes } from './data/data';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Demande } from '@/model/demande/Demande';
+import { handleServerError } from '@/utils/handle-server-error';
+import { useNavigate, useParams } from '@tanstack/react-router';
+import { ChevronLeft } from 'lucide-react';
+import AidesProvider from '../aides/context/aides-context';
+import { DemandeView } from './components/demande-view';
+import { demandeStatusColor, demandeStatusTypes } from './data/data';
 
 interface Props {
   showContact?: boolean
 }
 
-export default function DemandeDetail({showContact=true }: Props) {
+export default function DemandeDetail({ showContact = true }: Props) {
   const id = useParams({
     from: '/_authenticated/demandes/$id',
     select: (params) => params?.id,
   });
 
   const navigate = useNavigate();
-  const { demandes, loading: isLoading, error } = useDemandeService({ where: { id: { equals: Number(id) } }});
+  const { demandes, loading: isLoading, error } = useDemandeService({ where: { id: { equals: Number(id) } } });
   const demande: Demande = demandes.length > 0 ? demandes[0] : undefined;
   const searchParams = new URLSearchParams(location.search);
   const from = searchParams.get('from');
 
 
   // Récupération du contexte pour gérer les actions sur les demandes
- //const { setOpenDemande: setOpen, setCurrentRow } = useDemandes(); // ✅ Fonctionne car le provider est défini dans un composant parent
+  //const { setOpenDemande: setOpen, setCurrentRow } = useDemandes(); // ✅ Fonctionne car le provider est défini dans un composant parent
 
   const handleRetour = () => {
     if (from) {
       navigate({ to: from });
-    } 
+    }
   };
   // Gestion des erreurs
   if (error) {
@@ -57,21 +55,21 @@ export default function DemandeDetail({showContact=true }: Props) {
         </div>
       </Header>
       <Main>
-      <div className="mb-2 flex items-center justify-between">
-  <div className="flex items-center gap-2">
-    <Button variant="outline" onClick={handleRetour} size="sm">
-      <ChevronLeft   />
-    </Button>
-    <h2 className="text-2xl font-bold tracking-tight">Demande N° {id}</h2>
-  </div>
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={handleRetour} size="sm">
+              <ChevronLeft />
+            </Button>
+            <h2 className="text-2xl font-bold tracking-tight">Demande N° {id}</h2>
+          </div>
 
-  <Badge
-    variant="outline"
-    className={`${cn( demandeStatusColor.get(demande?.status))} text-sm`}
-  >
-    {demandeStatusTypes.find(s => s.value === demande?.status)?.label ?? 'Inconnu'}
-  </Badge>
-</div>
+          <Badge
+            variant="outline"
+            className={`${cn(demandeStatusColor.get(demande?.status))} text-sm`}
+          >
+            {demandeStatusTypes.find(s => s.value === demande?.status)?.label ?? 'Inconnu'}
+          </Badge>
+        </div>
 
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
           {isLoading ? (
@@ -89,7 +87,7 @@ export default function DemandeDetail({showContact=true }: Props) {
             </div>
           ) : (
             <AidesProvider>
-            <DemandeView currentRow={demande} showContact={showContact} />
+              <DemandeView currentRow={demande} showContact={showContact} />
             </AidesProvider>
           )}
         </div>

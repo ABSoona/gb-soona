@@ -8,11 +8,11 @@ import { useState } from 'react';
 export function GenerateFakeData() {
   const { contacts, deleteContact, createContact } = useContactService();
   const { demandes, deleteDemande, createDemande } = useDemandeService();
- const { aides, deleteAide, createAide } = useAideService(); 
+  const { aides, deleteAide, createAide } = useAideService();
 
   const [loading, setLoading] = useState(false);
 
-  const demandeStatusTypes = ['recue', 'en_visite', 'en_commision', 'clôturée', 'refusée','EnCours'] as const;
+  const demandeStatusTypes = ['recue', 'en_visite', 'en_commision', 'clôturée', 'refusée', 'EnCours'] as const;
   const situationsPro = ['sans_emploi', 'employé', 'indépendant', 'retraité'] as const;
   const situationsFam = ['marié', 'divorcé', 'veuf', 'célibataire'] as const;
 
@@ -20,9 +20,9 @@ export function GenerateFakeData() {
     setLoading(true);
 
     // 🔀 Supprimer les anciennes entrées
-   /* for (const aide of aides) await deleteAide(aide.id);
-    for (const demande of demandes) await deleteDemande(demande.id); 
-    for (const contact of contacts) await deleteContact(contact.id);*/
+    /* for (const aide of aides) await deleteAide(aide.id);
+     for (const demande of demandes) await deleteDemande(demande.id); 
+     for (const contact of contacts) await deleteContact(contact.id);*/
 
     // ✨ Générer 20 contacts avec aides et demandes
     for (let i = 0; i < 20; i++) {
@@ -72,7 +72,7 @@ export function GenerateFakeData() {
         const now = new Date();
         await createAide({
           contact: { id: contactId },
-          dateAide: faker.date.between({from :'2025-01-01',to:'2026-03-01'},).toISOString(),
+          dateAide: faker.date.between({ from: '2025-01-01', to: '2026-03-01' },).toISOString(),
           dateExpiration: faker.date.soon({ days: 120 }).toISOString(),
           montant: faker.number.int({ min: 100, max: 1200 }),
           nombreVersements: faker.number.int({ min: 1, max: 6 }),
@@ -84,7 +84,7 @@ export function GenerateFakeData() {
           suspendue: false,
         });
       }
-    } 
+    }
 
     setLoading(false);
   };

@@ -1,7 +1,7 @@
-import { ApolloClient, InMemoryCache, ApolloLink } from '@apollo/client';
+import { ApolloClient, ApolloLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { getToken } from './session';
 import { createUploadLink } from './customUploadLink';
+import { getToken } from './session';
 
 const uploadLink = createUploadLink({
   uri: import.meta.env.VITE_GQL_BASE_URL,

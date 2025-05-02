@@ -1,17 +1,17 @@
-import { useAides } from '../context/aides-context'
-import { AideViewDialog } from './aide-view-dialog'
-import { AidesActionDialog } from './aides-action-dialog'
-import { AidesDeleteDialog } from './aides-delete-dialog'
+import { useAides } from '../context/aides-context';
+import { AideViewDialog } from './aide-view-dialog';
+import { AidesActionDialog } from './aides-action-dialog';
+import { AidesDeleteDialog } from './aides-delete-dialog';
 
 
 interface Props {
 
   showContactSearch?: boolean;
-  forContactId? :number;
-  forDemandeId?:number;
-  showDemandeSearch?:boolean
+  forContactId?: number;
+  forDemandeId?: number;
+  showDemandeSearch?: boolean
 }
-export function AidesDialogs({showContactSearch = true, forContactId,forDemandeId,showDemandeSearch=true} : Props) {
+export function AidesDialogs({ showContactSearch = true, forContactId, forDemandeId, showDemandeSearch = true }: Props) {
   const { openAide: open, setOpenAide: setOpen, currentRow, setCurrentRow } = useAides()
   return (
     <>
@@ -19,13 +19,13 @@ export function AidesDialogs({showContactSearch = true, forContactId,forDemandeI
         key='aide-add'
         open={open === 'add'}
         onOpenChange={() => setOpen('add')}
-        showContactSearch = {showContactSearch}
+        showContactSearch={showContactSearch}
         forContactId={forContactId}
-        forDemandeId = {forDemandeId}
-        showDemandeSearch = {showDemandeSearch}
+        forDemandeId={forDemandeId}
+        showDemandeSearch={showDemandeSearch}
       />
 
-      
+
 
       {currentRow && (
         <>
@@ -39,7 +39,7 @@ export function AidesDialogs({showContactSearch = true, forContactId,forDemandeI
               }, 500)
             }}
             currentRow={currentRow}
-            showContactSearch = {showContactSearch}
+            showContactSearch={showContactSearch}
           />
 
           <AidesDeleteDialog
@@ -64,10 +64,10 @@ export function AidesDialogs({showContactSearch = true, forContactId,forDemandeI
               }, 500)
             }}
             currentRow={currentRow}
-      
+
 
           />
-          
+
         </>
       )}
     </>

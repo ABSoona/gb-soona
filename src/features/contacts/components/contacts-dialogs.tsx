@@ -16,7 +16,7 @@ export function ContactsDialogs() {
         onOpenChange={() => setOpen('add')}
       />
 
-      
+
       {currentRow && (
         <>
           <ContactsActionDialog
@@ -44,7 +44,7 @@ export function ContactsDialogs() {
             currentRow={currentRow}
           />
 
-        <ContactViewDialog
+          <ContactViewDialog
             key={`contact-view-${currentRow.id}`}
             open={open === 'view'}
             onOpenChange={() => {
@@ -67,7 +67,7 @@ export function ContactsDialogs() {
             }}
             currentRow={currentRow}
           />
-          
+
         </>
       )}
     </>

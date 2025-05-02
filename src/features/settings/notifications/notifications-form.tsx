@@ -1,11 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from '@/hooks/use-toast'
-import { Switch } from '@/components/ui/switch'
+import { useNotificationPrefrenceService } from '@/api/user-notification-preference/notif-pref-service'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -15,16 +10,21 @@ import {
   FormItem,
   FormLabel,
 } from '@/components/ui/form'
-import { useNotificationPrefrenceService } from '@/api/user-notification-preference/notif-pref-service'
-import { NotificationType } from '@/model/user-notification-preferences/user-notification-preferences'
+import { Switch } from '@/components/ui/switch'
+import { toast } from '@/hooks/use-toast'
 import { getUserId } from '@/lib/session'
+import { NotificationType } from '@/model/user-notification-preferences/user-notification-preferences'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 const notificationsFormSchema = z.object({
   nouvelleDemande: z.boolean().default(false),
   demandeEnVsite: z.boolean().default(false),
   demandeEnCommission: z.boolean().default(false),
   aideExpire: z.boolean().default(false),
   contactBlackL: z.boolean().default(false),
-  ErreursDemandes :  z.boolean().default(false),
+  ErreursDemandes: z.boolean().default(false),
 })
 
 type NotificationsFormValues = z.infer<typeof notificationsFormSchema>
@@ -35,7 +35,7 @@ const typeToFieldMap: Record<NotificationType, keyof NotificationsFormValues> = 
   DemandeEnCommission: 'demandeEnCommission',
   ContactBan: 'contactBlackL',
   AideExpir: 'aideExpire',
-  ErreursDemandes :'ErreursDemandes'
+  ErreursDemandes: 'ErreursDemandes'
 }
 
 const fieldToTypeMap = Object.fromEntries(
@@ -44,10 +44,10 @@ const fieldToTypeMap = Object.fromEntries(
 
 export function NotificationsForm() {
   const {
-    notificationprefrences: userNotificationPreferences ,
+    notificationprefrences: userNotificationPreferences,
     createNotificationPrefrence,
     updateNotificationPrefrence,
-  } = useNotificationPrefrenceService({where:{user:{id:getUserId()}}})
+  } = useNotificationPrefrenceService({ where: { user: { id: getUserId() } } })
 
   const form = useForm<NotificationsFormValues>({
     resolver: zodResolver(notificationsFormSchema),
@@ -63,18 +63,18 @@ export function NotificationsForm() {
   // ⚡ Charger les prefs depuis GraphQL et remplir le formulaire
   useEffect(() => {
     if (!userNotificationPreferences || userNotificationPreferences.length === 0) return;
-  
+
     const prefs: Partial<NotificationsFormValues> = {};
-  
+
     userNotificationPreferences.forEach((pref) => {
       const field = typeToFieldMap[pref.typeField];
       if (field) prefs[field] = pref.active;
     });
-  
+
     // Vérifie si les valeurs ont vraiment changé
     const currentValues = form.getValues();
     const shouldReset = Object.entries(prefs).some(([key, value]) => currentValues[key as keyof NotificationsFormValues] !== value);
-  
+
     if (shouldReset) {
       form.reset(prefs);
     }
@@ -113,7 +113,7 @@ export function NotificationsForm() {
         <Section title='Aides'>
           <PrefSwitch form={form} name='aideExpire' label='Aide expirée' description='Quand une aide récurrente arrive à expiration.' />
         </Section>
-        
+
 
         <Button type='submit'>Mettre à jour</Button>
       </form>

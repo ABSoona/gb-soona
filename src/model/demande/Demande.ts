@@ -1,8 +1,8 @@
 
 
-import { array, z } from 'zod';
-import { contactSchema } from '../contact/Contact';
 import { IconExternalLink, IconShield, IconUsersGroup } from "@tabler/icons-react";
+import { z } from 'zod';
+import { contactSchema } from '../contact/Contact';
 
 // Schéma pour le statut de la demande
 export const demandeStatusSchema = z.union([
@@ -40,24 +40,24 @@ const activityTypeSchema = z.union([
   z.literal('visite'),
   z.literal('statusUpdate'),
   z.literal('note'),
-  z.literal('docAjout'), 
-  z.literal('abandon'), 
+  z.literal('docAjout'),
+  z.literal('abandon'),
   z.literal('accept'),
   z.literal('refuse'),
   z.literal('expiration'),
-  
+
 ]);
 
 export type ActivityType = z.infer<typeof activityTypeSchema>;
 
 export const DemandeActivitySchema = z.object({
   id: z.number(),
-  createdAt :z.coerce.date(),
-  updatedAt :z.coerce.date(),
-  message :  z.string(),
-  titre : z.string(),
-  typeField : activityTypeSchema,
-  aideId : z.coerce.number().optional(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  message: z.string(),
+  titre: z.string(),
+  typeField: activityTypeSchema,
+  aideId: z.coerce.number().optional(),
   user: z.object({
     id: z.number(),
     firstName: z.string(),
@@ -71,10 +71,10 @@ export type SituationPro = z.infer<typeof situationProSchema>;
 // Schéma principal pour les demandes
 export const demandeSchema = z.object({
   id: z.number(),
-  contact: contactSchema.omit({demandes: true}),
+  contact: contactSchema.omit({ demandes: true }),
   status: demandeStatusSchema,
   remarques: z.string().optional(),
-  createdAt :z.coerce.date(),
+  createdAt: z.coerce.date(),
   situationFamiliale: situationFamSchema,
   nombreEnfants: z.coerce.number().min(-1).max(10),
   agesEnfants: z.string().optional().or(z.literal('')),
@@ -86,12 +86,12 @@ export const demandeSchema = z.object({
   facturesEnergie: z.coerce.number(),
   autresCharges: z.coerce.number(),
   apl: z.coerce.number(),
-  dettes:  z.coerce.number(),
-  natureDettes:z.string().optional(),
+  dettes: z.coerce.number(),
+  natureDettes: z.string().optional(),
   autresAides: z.string().optional(),
   categorieDemandeur: categorieSchema.optional().nullable(),
-  demandeActivities : z.array(DemandeActivitySchema)
-  
+  demandeActivities: z.array(DemandeActivitySchema)
+
 });
 
 

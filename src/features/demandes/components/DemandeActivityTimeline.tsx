@@ -1,10 +1,10 @@
-import { Pencil, PhoneCall, PhoneMissed, StickyNote, MapPin, RefreshCw, RefreshCwOff, HeartHandshake, MoreVertical, Trash, FilePlus2, Timer, ClockAlert, ListCheck, CircleCheckBig, Ban } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import { useMutation } from "@apollo/client";
-import { UPDATE_DEMANDE_ACTIVITY } from "@/api/demande/graphql/queries"; // à créer si ce n’est pas fait
-import { DemandeActivity } from "@/model/demande/Demande";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useDemandeService } from "@/api/demande/demandeService";
+import { UPDATE_DEMANDE_ACTIVITY } from "@/api/demande/graphql/queries"; // à créer si ce n’est pas fait
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DemandeActivity } from "@/model/demande/Demande";
+import { useMutation } from "@apollo/client";
+import { Ban, CircleCheckBig, ClockAlert, FilePlus2, HeartHandshake, MapPin, MoreVertical, Pencil, PhoneCall, PhoneMissed, RefreshCw, RefreshCwOff, StickyNote, Trash } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 
 
 interface Props {
@@ -28,18 +28,18 @@ const getIconForType = (type: string) => {
       return <RefreshCwOff className="h-4 w-4 inline mr-2" />;
     case "aideAdd":
       return <HeartHandshake className="h-4 w-4 inline mr-2" />;
-    case  'docAjout' : 
-      return <FilePlus2  className="h-4 w-4 inline mr-2" />;
-    case  'expiration' : 
-      return <ClockAlert  className="h-4 w-4 inline mr-2" />;
-    case  'accept' : 
-      return <CircleCheckBig  className="h-4 w-4 inline mr-2" />;
-    case  'refuse' : 
-      return <Ban  className="h-4 w-4 inline mr-2" />;  
+    case 'docAjout':
+      return <FilePlus2 className="h-4 w-4 inline mr-2" />;
+    case 'expiration':
+      return <ClockAlert className="h-4 w-4 inline mr-2" />;
+    case 'accept':
+      return <CircleCheckBig className="h-4 w-4 inline mr-2" />;
+    case 'refuse':
+      return <Ban className="h-4 w-4 inline mr-2" />;
     default:
       return null;
 
-    
+
   }
 };
 

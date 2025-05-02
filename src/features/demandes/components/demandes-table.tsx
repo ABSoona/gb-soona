@@ -1,4 +1,13 @@
-import { useState, useEffect } from 'react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Demande } from '@/model/demande/Demande';
+import { useNavigate } from '@tanstack/react-router';
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -14,58 +23,49 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import { Demande } from '@/model/demande/Demande';
+import { useState } from 'react';
+import { DateRange } from 'react-day-picker';
+import { useDemandes } from '../context/demandes-context';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
-import { useDemandes } from '../context/demandes-context';
-import { DateRange } from 'react-day-picker';
-import {  useNavigate } from '@tanstack/react-router'
 
 declare module '@tanstack/react-table' {
     interface ColumnMeta<TData extends RowData, TValue> {
-        className: string; 
+        className: string;
     }
 }
-export enum detailOpenOption  {'sheet', 'page'} ;
+export enum detailOpenOption { 'sheet', 'page' };
 interface DataTableProps {
-    columns: ColumnDef<Demande>[]; 
-    data: Demande[]; 
+    columns: ColumnDef<Demande>[];
+    data: Demande[];
     hideTools?: boolean;
-    showDetailIn?: detailOpenOption ;
-    hideActions?:boolean
+    showDetailIn?: detailOpenOption;
+    hideActions?: boolean
 }
 
-export function DemandesTable({ columns, data, hideTools = false, hideActions = false, showDetailIn =  detailOpenOption.page }: DataTableProps) {
+export function DemandesTable({ columns, data, hideTools = false, hideActions = false, showDetailIn = detailOpenOption.page }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({});
     const navigate = useNavigate();
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
 
-             {
-                  contactId: false,
-                  Age: false,
-                  agesEnfants: false,
-                  nombreEnfants: false,
-                  autresAides: false,
-                  facturesEnergie: false,
-                  loyer: false,
-                  contactNom: false,
-                  contactPrenom: false,
-                  remarques: false,                
-                  revenusConjoint: false,
-                  id: false,
-                  status : true,
+        {
+            contactId: false,
+            Age: false,
+            agesEnfants: false,
+            nombreEnfants: false,
+            autresAides: false,
+            facturesEnergie: false,
+            loyer: false,
+            contactNom: false,
+            contactPrenom: false,
+            remarques: false,
+            revenusConjoint: false,
+            id: false,
+            status: true,
 
-                 
-              }
-            
+
+        }
+
     );
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -97,14 +97,14 @@ export function DemandesTable({ columns, data, hideTools = false, hideActions = 
         getFacetedUniqueValues: getFacetedUniqueValues(),
     });
     // 🔥 Appliquer le filtre `createdAt` dès que `dateRange` change
-   
 
-   const { setOpenDemande: setOpen, setCurrentRow } = useDemandes();
+
+    const { setOpenDemande: setOpen, setCurrentRow } = useDemandes();
 
     return (
         <div className="space-y-4">
             {/* 🔥 Passer `setDateRange` à `DataTableToolbar` */}
-            {!hideTools && <DataTableToolbar table={table}  />}
+            {!hideTools && <DataTableToolbar table={table} />}
 
             <div className="rounded-md border">
                 <Table>
@@ -137,7 +137,7 @@ export function DemandesTable({ columns, data, hideTools = false, hideActions = 
                                         <TableCell
                                             key={cell.id}
                                             className={cell.column.columnDef.meta?.className ?? ''}
-                                          
+
                                             onClick={(e) => {
                                                 if (cell.column.id !== 'actions') {
                                                     if (showDetailIn == detailOpenOption.page) {

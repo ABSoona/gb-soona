@@ -1,13 +1,13 @@
+import { Button } from '@/components/ui/button';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
-import { Button } from '@/components/ui/button';
 
 interface DataTableExportProps<TData> {
   table: Table<TData>;
 }
 
 export function DataTableExport<TData>({ table }: DataTableExportProps<TData>) {
-  
+
   // Fonction d'export en CSV
   const exportToCSV = () => {
     const rows = table.getRowModel().rows; // Récupérer les lignes affichées
@@ -22,7 +22,7 @@ export function DataTableExport<TData>({ table }: DataTableExportProps<TData>) {
 
     const csvContent = [
       headers.join(','), // Ajouter les en-têtes
-      ...rows.map(row => 
+      ...rows.map(row =>
         headers.map(header => JSON.stringify(row.getValue(header) ?? '')).join(',')
       ) // Ajouter les données des lignes
     ].join('\n');
@@ -30,7 +30,7 @@ export function DataTableExport<TData>({ table }: DataTableExportProps<TData>) {
     // Créer un objet Blob pour le téléchargement
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    
+
     // Créer un lien de téléchargement
     const link = document.createElement('a');
     link.href = url;

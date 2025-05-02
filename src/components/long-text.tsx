@@ -1,5 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
-import { cn } from '@/lib/utils'
 import {
   Popover,
   PopoverContent,
@@ -11,6 +9,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
+import { useEffect, useRef, useState } from 'react'
 
 interface Props {
   children: React.ReactNode

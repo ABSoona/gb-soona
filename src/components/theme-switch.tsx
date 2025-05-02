@@ -1,7 +1,3 @@
-import { useEffect } from 'react'
-import { IconCheck, IconMoon, IconSun } from '@tabler/icons-react'
-import { cn } from '@/lib/utils'
-import { useTheme } from '@/context/theme-context'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -9,6 +5,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useTheme } from '@/context/theme-context'
+import { cn } from '@/lib/utils'
+import { IconCheck, IconMoon, IconSun } from '@tabler/icons-react'
+import { useEffect } from 'react'
 
 export function ThemeSwitch() {
   const { theme, setTheme } = useTheme()

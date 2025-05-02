@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { IconAlertTriangle } from '@tabler/icons-react';
-import { toast } from '@/hooks/use-toast';
+import { useDemandeService } from '@/api/demande/demandeService';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ConfirmDialog } from '@/components/confirm-dialog';
+import { toast } from '@/hooks/use-toast';
 import { Demande } from '@/model/demande/Demande';
-import { useDemandeService } from '@/api/demande/demandeService';
+import { IconAlertTriangle } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useDemandes } from '../context/demandes-context';
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
 
 export function DemandesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
   const queryClient = useQueryClient();
-  const { deleteDemande,  isSubmitting } = useDemandeService(); // ✅ Utilisation du service
+  const { deleteDemande, isSubmitting } = useDemandeService(); // ✅ Utilisation du service
   const [value, setValue] = useState<number | ''>('');
   const { triggerRefetchDemandes } = useDemandes();
   const handleDelete = async () => {

@@ -1,13 +1,13 @@
-import { useState } from 'react'
-import { IconAlertTriangle } from '@tabler/icons-react'
-import { toast } from '@/hooks/use-toast'
+import { deleteUser } from '@/api/user/userService'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ConfirmDialog } from '@/components/confirm-dialog'
+import { toast } from '@/hooks/use-toast'
 import { User } from '@/model/user/User'
-import { deleteUser } from '@/api/user/userService'
+import { IconAlertTriangle } from '@tabler/icons-react'
 import { useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 
 interface Props {
   open: boolean
@@ -15,7 +15,7 @@ interface Props {
   currentRow: User
 
 }
- 
+
 export function UsersDeleteDialog({
   open,
   onOpenChange,

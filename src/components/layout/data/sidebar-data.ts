@@ -1,26 +1,15 @@
 import {
-
-  IconBrowserCheck,
-  IconChecklist,
-  IconCoinEuro,
   IconFile,
   IconHeartHandshake,
   IconHelp,
   IconLayoutDashboard,
-  IconLockAccess,
   IconLogs,
   IconMailDown,
-  IconNotification,
-  IconPalette,
-  IconSettings,
-  IconTaxEuro,
-  IconTool,
-  IconUserCog,
-  IconUsers,
+  IconUsers
 } from '@tabler/icons-react'
 
-import { type SidebarData } from '../types'
 import { UserIcon } from 'lucide-react'
+import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
   user: {
@@ -40,53 +29,53 @@ export const sidebarData: SidebarData = {
         {
           title: 'Demandes',
           url: '/demandes',
-          icon: IconMailDown ,
-        },   
+          icon: IconMailDown,
+        },
         {
           title: 'Contacts',
           url: '/contacts',
           icon: UserIcon,
-        },      
+        },
         {
           title: 'Aides',
           url: '/aides',
-          icon: IconHeartHandshake ,
-        },      
-      
+          icon: IconHeartHandshake,
+        },
+
       ],
     },
- /*    {
-      title: 'Pages',
-      items: [
-        {
-          title: 'Auth',
-          icon: IconLockAccess,
-          items: [
-            {
-              title: 'Sign In',
-              url: '/sign-in',
-            },
-            {
-              title: 'Sign In (2 Col)',
-              url: '/sign-in-2',
-            },
-            {
-              title: 'Sign Up',
-              url: '/sign-up',
-            },
-            {
-              title: 'Forgot Password',
-              url: '/forgot-password',
-            },
-            {
-              title: 'OTP',
-              url: '/otp',
-            },
-          ],
-        },
-        
-      ],
-    }, */
+    /*    {
+         title: 'Pages',
+         items: [
+           {
+             title: 'Auth',
+             icon: IconLockAccess,
+             items: [
+               {
+                 title: 'Sign In',
+                 url: '/sign-in',
+               },
+               {
+                 title: 'Sign In (2 Col)',
+                 url: '/sign-in-2',
+               },
+               {
+                 title: 'Sign Up',
+                 url: '/sign-up',
+               },
+               {
+                 title: 'Forgot Password',
+                 url: '/forgot-password',
+               },
+               {
+                 title: 'OTP',
+                 url: '/otp',
+               },
+             ],
+           },
+           
+         ],
+       }, */
     {
       title: 'Autres',
       items: [
@@ -105,19 +94,19 @@ export const sidebarData: SidebarData = {
           url: '/website-demandes',
           icon: IconLogs,
         },
-       /*  {
-          title: 'Réglages',
-          icon: IconSettings,
-          items: [
-           
-            {
-              title: 'Mon compte',
-              url: '/settings',
-              icon: IconUserCog,
-            },
-           
-          ],
-        }, */
+        /*  {
+           title: 'Réglages',
+           icon: IconSettings,
+           items: [
+            
+             {
+               title: 'Mon compte',
+               url: '/settings',
+               icon: IconUserCog,
+             },
+            
+           ],
+         }, */
         {
           title: 'Documentation',
           url: '/help-center',

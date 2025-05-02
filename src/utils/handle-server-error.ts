@@ -1,7 +1,7 @@
-import { AxiosError } from 'axios';
-import { ApolloError } from '@apollo/client';
 import { toast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/stores/authStore';
+import { ApolloError } from '@apollo/client';
+import { AxiosError } from 'axios';
 
 export function handleServerError(error: unknown) {
 
@@ -41,7 +41,7 @@ export function handleServerError(error: unknown) {
     if (error instanceof ApolloError) {
         if (error.graphQLErrors.length > 0) {
             error.graphQLErrors.forEach((graphQLError) => {
-              
+
 
                 switch (graphQLError.extensions?.code) {
                     case 'UNAUTHENTICATED':
@@ -70,7 +70,7 @@ export function handleServerError(error: unknown) {
                 description: error.networkError.message,
             });
         }
-       
+
         throw error;
         return;
     }
@@ -83,5 +83,5 @@ export function handleServerError(error: unknown) {
 
     // Erreur inconnue
     toast({ variant: 'destructive', title: errMsg });
-   
+
 }

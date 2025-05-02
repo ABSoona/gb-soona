@@ -1,7 +1,7 @@
-import { gql } from '@apollo/client';
-import { CONTACT_FIELDS } from './fragment';
 import { AIDE_FIELDS } from '@/api/aide/graphql/fragment';
 import { DEMANDE_FIELDS } from '@/api/demande/graphql/fragment';
+import { gql } from '@apollo/client';
+import { CONTACT_FIELDS } from './fragment';
 
 export const SEARCH_CONTACTS = gql`
   query SearchContacts($search: String) {
@@ -19,7 +19,7 @@ export const SEARCH_CONTACTS = gql`
     }
   }
 `;
-export const GET_CONTACTS= gql`
+export const GET_CONTACTS = gql`
   query GetContacts($skip: Float, $take: Float, $where : ContactWhereInput) {
     contacts(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Asc }]) {
       ...ContactFields
@@ -36,7 +36,7 @@ export const GET_CONTACTS= gql`
   ${DEMANDE_FIELDS}
 `;
 
-export const GET_CONTACT= gql`
+export const GET_CONTACT = gql`
   query GetContacts($skip: Float, $take: Float, $where : ContactWhereInput) {
     contacts(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Asc }]) {
       ...ContactFields

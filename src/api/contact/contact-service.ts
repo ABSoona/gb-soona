@@ -1,5 +1,5 @@
 import { useApolloClient, useMutation, useQuery } from '@apollo/client';
-import { SEARCH_CONTACTS,GET_CONTACTS, CREATE_CONTACT, UPDATE_CONTACT, DELETE_CONTACT, GET_CONTACT  } from './graphql/queries';
+import { SEARCH_CONTACTS, GET_CONTACTS, CREATE_CONTACT, UPDATE_CONTACT, DELETE_CONTACT, GET_CONTACT } from './graphql/queries';
 import { toast } from '@/hooks/use-toast';
 import { handleServerError } from '@/utils/handle-server-error';
 import { useState } from 'react';

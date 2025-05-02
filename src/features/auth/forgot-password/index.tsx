@@ -12,10 +12,10 @@ export default function ForgotPassword() {
             Mot de passe oublié
           </h1>
           <p className='text-sm text-muted-foreground'>
-          Entre ton adresse e-mail enregistrée et nous t’enverrons un lien pour réinitialiser ton mot de passe.
+            Entre ton adresse e-mail enregistrée et nous t’enverrons un lien pour réinitialiser ton mot de passe.
           </p>
         </div>
-        <ForgotForm />       
+        <ForgotForm />
       </Card>
     </AuthLayout>
   )

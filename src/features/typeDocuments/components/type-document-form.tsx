@@ -1,22 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from '@/components/ui/form';
 import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService';
-import { TypeDocument } from '@/model/typeDocument/typeDocument';
-import { typesDocuments } from '../data/data';
 import { SelectDropdown } from '@/components/select-dropdown';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,8 +10,22 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from '@/components/ui/form';
+import { toast } from '@/hooks/use-toast';
+import { TypeDocument } from '@/model/typeDocument/typeDocument';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { DotsHorizontalIcon, LockClosedIcon } from '@radix-ui/react-icons';
 import { IconTrash } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { typesDocuments } from '../data/data';
 
 const formSchema = z.object({
   labels: z.record(z.string()),
@@ -75,8 +75,8 @@ export function TypeDocumentForm({ typeDocuments }: Props) {
         const id = doc.id;
         const label = data.labels[id];
         const rattachement = data.rattachements[id];
-        
-      
+
+
         return updateTypeDocument(id, { label, rattachement });
       });
 

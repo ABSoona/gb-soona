@@ -1,23 +1,23 @@
 'use client'
 
-import { HTMLAttributes, useEffect, useState } from 'react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate, useSearch } from '@tanstack/react-router'
+import { HTMLAttributes, useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-import { cn } from '@/lib/utils'
+import { useInvitationService } from '@/api/invitation/invitationService'
+import { createUserWithUnvitation } from '@/api/user/userService'
+import { PasswordInput } from '@/components/password-input'
 import { Button } from '@/components/ui/button'
 import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { PasswordInput } from '@/components/password-input'
-import { useInvitationService } from '@/api/invitation/invitationService'
-import { createUserWithUnvitation } from '@/api/user/userService'
-import { toast } from '@/hooks/use-toast'
-import { UserRole } from '@/model/user/User'
 import { userTypes } from '@/features/users/data/data'
+import { toast } from '@/hooks/use-toast'
+import { cn } from '@/lib/utils'
+import { UserRole } from '@/model/user/User'
 
 type SignUpFormProps = HTMLAttributes<HTMLDivElement>
 
@@ -31,7 +31,7 @@ const formSchema = z.object({
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Les mots de passe ne correspondent pas',
   path: ['confirmPassword'],
-  
+
 })
 
 export function SignUpForm({ className, ...props }: SignUpFormProps) {
@@ -54,7 +54,7 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
       email: '',
       password: '',
       confirmPassword: '',
-      role:''
+      role: ''
     },
   })
 
@@ -76,24 +76,24 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
     setIsLoading(true)
 
     try {
-      const role  = data.role as UserRole
+      const role = data.role as UserRole
       await createUserWithUnvitation({
         email: data.email,
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
         token: token, // essentiel pour valider le lien
-        username : data.email,
-        roles:[role],
+        username: data.email,
+        roles: [role],
         role: role
       })
       toast({ title: '🎉 Compte créé avec succès !' })
       form.reset()
       await new Promise((resolve) => setTimeout(resolve, 1000)) // petite pause visuelle
-navigate({ to: '/sign-in' })
+      navigate({ to: '/sign-in' })
     } catch (error) {
       console.error(error)
-   
+
     } finally {
       setIsLoading(false)
     }
@@ -102,7 +102,7 @@ navigate({ to: '/sign-in' })
     const match = userTypes.find((item) => item.value === value);
     return match?.label || value;
   };
-  
+
   return (
     <div className={cn('grid gap-6', className)} {...props}>
       <Form {...form}>
@@ -128,7 +128,7 @@ navigate({ to: '/sign-in' })
                 <FormItem className='space-y-1'>
                   <FormLabel>Nom</FormLabel>
                   <FormControl>
-                    <Input placeholder='Dupont' {...field}  />
+                    <Input placeholder='Dupont' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,14 +147,14 @@ navigate({ to: '/sign-in' })
                 </FormItem>
               )}
             />
-              <FormField
+            <FormField
               control={form.control}
               name='role'
               render={({ field }) => (
                 <FormItem className='space-y-1'>
                   <FormLabel>Rôle</FormLabel>
                   <FormControl>
-                    <Input  placeholder='' value={getRoleLabel(field.value)} disabled />
+                    <Input placeholder='' value={getRoleLabel(field.value)} disabled />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,15 +1,11 @@
-import { ColumnDef } from '@tanstack/react-table';
-import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import LongText from '@/components/long-text';
 import { Aide, AideFrequence } from '@/model/aide/Aide';
-import { DataTableColumnHeader } from './data-table-column-header';
-import { DataTableRowActions } from './data-table-row-actions';
-import { aideCredieteurTypes, aideFrquenceTypes, typeAideTypes} from '../data/data';
-import { differenceInWeeks, differenceInMonths, isBefore, addWeeks, addMonths, isEqual } from 'date-fns';
+import { ColumnDef } from '@tanstack/react-table';
+import { addMonths, isBefore, isEqual } from 'date-fns';
+import { XCircleIcon } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
-import { CheckCircleIcon, XCircleIcon } from 'lucide-react';
+import { aideCredieteurTypes, aideFrquenceTypes, typeAideTypes } from '../data/data';
+import { DataTableRowActions } from './data-table-row-actions';
 
 const dateRangeFilter: ColumnDef<Aide>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
     if (!filterValue || (!filterValue.from && !filterValue.to)) {
@@ -26,51 +22,52 @@ const dateRangeFilter: ColumnDef<Aide>['filterFn'] = (row, columnId, filterValue
 
 export const columns: ColumnDef<Aide>[] = [
     // Sélection des lignes
-   /* {
-        id: 'select',
-        header: ({ table }) => (
-            <Checkbox
-                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-                className="translate-y-[2px]"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-                className="translate-y-[2px]"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },*/
+    /* {
+         id: 'select',
+         header: ({ table }) => (
+             <Checkbox
+                 checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                 aria-label="Select all"
+                 className="translate-y-[2px]"
+             />
+         ),
+         cell: ({ row }) => (
+             <Checkbox
+                 checked={row.getIsSelected()}
+                 onCheckedChange={(value) => row.toggleSelected(!!value)}
+                 aria-label="Select row"
+                 className="translate-y-[2px]"
+             />
+         ),
+         enableSorting: false,
+         enableHiding: false,
+     },*/
 
     {
         accessorFn: (row) => `${row.contact?.nom ?? ''} ${row.contact?.prenom ?? ''}`,
         id: 'contactNomPrenom',
         header: 'Bénéficiaire',
-        cell: ({ row }) => { return ( <span className='capitalize'>{row.original.contact?.nom ?? 'N/A'} {row.original.contact?.prenom ?? ''}</span>) },
+        cell: ({ row }) => { return (<span className='capitalize'>{row.original.contact?.nom ?? 'N/A'} {row.original.contact?.prenom ?? ''}</span>) },
         enableHiding: true,
         filterFn: (row, id, value) => {
             const fullName = `${row.getValue(id)}`.toLowerCase(); // 🔥 Concaténer nom + prénom
-            return  fullName.includes(value.toLowerCase()); // 🔍 Vérifie si une partie du texte correspond
+            return fullName.includes(value.toLowerCase()); // 🔍 Vérifie si une partie du texte correspond
         },
-        
+
     },
 
     // 📄 Informations de la Aide
-   
+
     {
-        
+
         accessorKey: 'id',
         header: 'ID Aide',
         cell: ({ row }) => <LongText className="max-w-36">{row.getValue('id')}</LongText>,
         enableHiding: false,
     },
-    {   id: 'createdAt',
+    {
+        id: 'createdAt',
         accessorKey: 'createdAt',
         header: 'Créée le',
         cell: ({ row }) => {
@@ -85,28 +82,28 @@ export const columns: ColumnDef<Aide>[] = [
         accessorFn: (row) => row.typeField,
         id: 'typeField',
         header: 'Type',
-        cell: ({ row }) => typeAideTypes.find(e=> e.value===row.original?.typeField)?.label ?? 'N/A',
+        cell: ({ row }) => typeAideTypes.find(e => e.value === row.original?.typeField)?.label ?? 'N/A',
         enableHiding: true,
     },
     {
         accessorFn: (row) => row.montant,
         id: 'montant',
         header: 'montant',
-        cell: ({ row }) => row.original?.montant?.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR',minimumFractionDigits: 0}) ?? 'N/A',
+        cell: ({ row }) => row.original?.montant?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 'N/A',
         enableHiding: true,
     },
-  
+
     {
         accessorFn: (row) => row.frequence,
         id: 'frequence',
         header: 'Frequence',
-        cell: ({ row }) =>{
+        cell: ({ row }) => {
             const frequenceAide: AideFrequence = row.getValue('frequence');
             return aideFrquenceTypes.find(s => s.value === frequenceAide)?.label ?? '';
         },
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
-          },
+        },
     },
     {
         accessorFn: (row) => row.nombreVersements,
@@ -129,13 +126,13 @@ export const columns: ColumnDef<Aide>[] = [
         accessorFn: (row) => row.crediteur,
         id: 'crediteur',
         header: 'Crédieteur',
-        cell: ({ row }) =>{
+        cell: ({ row }) => {
 
             return aideCredieteurTypes.find(s => s.value === row.getValue('crediteur'))?.label ?? '';
         },
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
-          },
+        },
     },
     {
         id: 'verse',
@@ -146,19 +143,19 @@ export const columns: ColumnDef<Aide>[] = [
             const nombreVersements = row.original.nombreVersements ?? 1;
             const suspendue = row.original.suspendue;
             const today = new Date();
-    
+
             if (isBefore(today, dateAide)) {
                 return '0,00 €';
             }
-    
+
             if (row.original.frequence === 'UneFois') {
                 return montantParVersement.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
             }
-    
+
             // Nombre de versements effectués depuis dateAide jusqu'à today
             let nbVersementsEffectues = 0;
             let nextPaymentDate = dateAide;
-    
+
             for (let i = 0; i < nombreVersements; i++) {
                 if (isBefore(nextPaymentDate, today) || isEqual(nextPaymentDate, today)) {
                     nbVersementsEffectues++;
@@ -168,15 +165,15 @@ export const columns: ColumnDef<Aide>[] = [
                     break;
                 }
             }
-    
+
             if (suspendue) nbVersementsEffectues = 0;
-    
+
             const montantVerse = (nbVersementsEffectues * montantParVersement).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
             return montantVerse;
         }
     },
-  
-    
+
+
     {
         id: 'resteAVerser',
         header: 'Reste à verser',
@@ -186,14 +183,14 @@ export const columns: ColumnDef<Aide>[] = [
             const dateAide = new Date(row.original.dateAide);
             const suspendue = row.original.suspendue;
             const today = new Date();
-    
+
             if (row.original.frequence === 'UneFois') {
                 return '0,00 €';
             }
-    
+
             let nbVersementsEffectues = 0;
             let nextPaymentDate = dateAide;
-    
+
             for (let i = 0; i < nombreVersements; i++) {
                 if (isBefore(nextPaymentDate, today) || isEqual(nextPaymentDate, today)) {
                     nbVersementsEffectues++;
@@ -202,65 +199,65 @@ export const columns: ColumnDef<Aide>[] = [
                     break;
                 }
             }
-    
+
             if (suspendue) nbVersementsEffectues = 0;
-    
+
             const montantRestant = Math.max(0, (nombreVersements - nbVersementsEffectues) * montantParVersement).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
             return montantRestant;
         }
     },
-    
-    
-   /* {
-        accessorFn: (row) => row.dateExpiration,
-        id: 'dateExpiration',
-        header: 'Expire le',
-        cell: ({ row }) => {
-            const date = row.getValue('dateExpiration') as string;
-            return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';
-        },
-        filterFn: dateRangeFilter, // Ajout du filtre
-    },*/
-    
+
+
+    /* {
+         accessorFn: (row) => row.dateExpiration,
+         id: 'dateExpiration',
+         header: 'Expire le',
+         cell: ({ row }) => {
+             const date = row.getValue('dateExpiration') as string;
+             return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';
+         },
+         filterFn: dateRangeFilter, // Ajout du filtre
+     },*/
+
     {
         accessorFn: (row) => row.suspendue,
         id: 'suspendue',
         header: 'Suspendue',
         cell: ({ row }) => {
-            
-                
-            
-         return    row.original.suspendue ? 
-         <div   > <XCircleIcon  className='align-middle'/></div> : 
-           ''
+
+
+
+            return row.original.suspendue ?
+                <div   > <XCircleIcon className='align-middle' /></div> :
+                ''
         },
     },
-   
-    // 🟡 Statut de la Aide
-   /* {
-        id : 'status',
-        accessorKey: 'status',
-        header: 'Statut',
-        cell: ({ row }) => {
-            const status: AideStatus = row.getValue('status');
-            const statusLabel = aideStatusTypes.find(s => s.value === status)?.label ?? 'Inconnu';
 
-            return (
-                <Badge variant="outline" className={cn('capitalize', aideStatusColor.get(status))}>
-                    {statusLabel}
-                </Badge>
-            );
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id))
-          },
-    },*/
+    // 🟡 Statut de la Aide
+    /* {
+         id : 'status',
+         accessorKey: 'status',
+         header: 'Statut',
+         cell: ({ row }) => {
+             const status: AideStatus = row.getValue('status');
+             const statusLabel = aideStatusTypes.find(s => s.value === status)?.label ?? 'Inconnu';
+ 
+             return (
+                 <Badge variant="outline" className={cn('capitalize', aideStatusColor.get(status))}>
+                     {statusLabel}
+                 </Badge>
+             );
+         },
+         filterFn: (row, id, value) => {
+             return value.includes(row.getValue(id))
+           },
+     },*/
 
     // ⚙️ Actions
     {
         id: 'actions',
         cell: DataTableRowActions,
-           
-    
+
+
     },
 ];

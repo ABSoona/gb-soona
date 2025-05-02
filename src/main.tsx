@@ -1,15 +1,13 @@
-import { StrictMode } from 'react';
-import ReactDOM from 'react-dom/client';
-import { AxiosError } from 'axios';
+import { client } from '@/lib/apollo-client'; // ✅ Import correct du client Apollo
+import { handleServerError } from '@/utils/handle-server-error';
 import { ApolloProvider } from '@apollo/client';
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { useAuthStore } from '@/stores/authStore';
-import { handleServerError } from '@/utils/handle-server-error';
-import { toast } from '@/hooks/use-toast';
+import { AxiosError } from 'axios';
+import { StrictMode } from 'react';
+import ReactDOM from 'react-dom/client';
 import { FontProvider } from './context/font-context';
 import { ThemeProvider } from './context/theme-context';
-import { client } from '@/lib/apollo-client'; // ✅ Import correct du client Apollo
 import './index.css';
 import { routeTree } from './routeTree.gen';
 

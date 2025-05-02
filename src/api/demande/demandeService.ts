@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
-import {
-  GET_DEMANDES,
-  CREATE_DEMANDE,
-  UPDATE_DEMANDE,
-  DELETE_DEMANDE,
-  CREATE_DEMANDE_ACTIVITY,
-  DELETE_DEMANDE_ACTIVITY,
-} from './graphql/queries';
 import { toast } from '@/hooks/use-toast';
 import { handleServerError } from '@/utils/handle-server-error';
+import { useMutation, useQuery } from '@apollo/client';
+import { useState } from 'react';
+import {
+  CREATE_DEMANDE,
+  CREATE_DEMANDE_ACTIVITY,
+  DELETE_DEMANDE,
+  DELETE_DEMANDE_ACTIVITY,
+  GET_DEMANDES,
+  UPDATE_DEMANDE,
+} from './graphql/queries';
 
 export function useDemandeService(variables?: any) {
   const { data, loading, error, refetch } = useQuery(GET_DEMANDES, {
@@ -143,8 +143,8 @@ export function useDemandeService(variables?: any) {
       setIsSubmitting(false);
     }
   };
-  
-  
+
+
 
   return {
     demandes: data?.demandes || [],

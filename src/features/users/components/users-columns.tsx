@@ -1,15 +1,13 @@
-import { ColumnDef } from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
-import LongText from '@/components/long-text'
-import { callTypes, userTypes } from '../data/data'
+import { cn } from '@/lib/utils'
 import { User } from '@/model/user/User'
+import { ColumnDef } from '@tanstack/react-table'
+import { callTypes, userTypes } from '../data/data'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
 
 export const columns: ColumnDef<User>[] = [
- 
+
 
   {
     accessorKey: 'fullName',
@@ -32,7 +30,7 @@ export const columns: ColumnDef<User>[] = [
       <div className='w-fit text-nowrap'>{row.getValue('username')}</div>
     ),
   },
- 
+
   {
     accessorKey: 'status',
     header: ({ column }) => (

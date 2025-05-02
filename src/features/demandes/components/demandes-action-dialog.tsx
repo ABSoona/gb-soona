@@ -1,17 +1,8 @@
 'use client';
 
-import { number, z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useDemandeService } from '@/api/demande/demandeService';
+import { SelectDropdown } from '@/components/select-dropdown';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
 import {
   Form,
   FormControl,
@@ -20,24 +11,31 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { SelectDropdown } from '@/components/select-dropdown';
-import { Demande, demandeSchema } from '@/model/demande/Demande';
-import { useDemandeService } from '@/api/demande/demandeService';
-import { toast } from '@/hooks/use-toast';
-import { handleServerError } from '@/utils/handle-server-error';
-import { Textarea } from '@/components/ui/textarea';
-import { ContactSearchCombobox } from './contact-search';
 import { Input } from '@/components/ui/input';
-import { situationTypes } from '@/model/demande/Demande';
-import { situationFamilleTypes } from '@/model/demande/Demande';
-import { categorieTypes, demandeStatusTypes } from '../data/data';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/hooks/use-toast';
+import { Demande, demandeSchema, situationFamilleTypes, situationTypes } from '@/model/demande/Demande';
+import { handleServerError } from '@/utils/handle-server-error';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { useDemandes } from '../context/demandes-context';
+import { categorieTypes, demandeStatusTypes } from '../data/data';
+import { ContactSearchCombobox } from './contact-search';
 
 
 // 📌 Schéma de validation du formulaire avec Zod
 const formSchema = demandeSchema
-  .omit({ id: true, contact: true,createdAt:true,demandeActivities:true  }) // Supprime les champs "id" et "contact"
+  .omit({ id: true, contact: true, createdAt: true, demandeActivities: true }) // Supprime les champs "id" et "contact"
   .extend({ contactId: z.any() });  // Ajoute "contactId"
 
 type DemandeForm = z.infer<typeof formSchema>;
@@ -50,50 +48,50 @@ interface Props {
 
 export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) {
 
-  
+
 
   const { createDemande, updateDemande, refetch, isSubmitting } = useDemandeService();
   const { triggerRefetchDemandes } = useDemandes();
   const isEdit = !!currentRow;
-  
+
   const form = useForm<DemandeForm>({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
       ? {
-          contactId: currentRow?.contact?.nom || '',
-          status: currentRow?.status || {value:'recue'},
-          remarques: currentRow?.remarques || '',
-          nombreEnfants : Number(currentRow?.nombreEnfants),
-          agesEnfants :currentRow?.agesEnfants || '',
-          situationFamiliale:currentRow?.situationFamiliale,
-          situationProfessionnelle:currentRow?.situationProfessionnelle,
-          situationProConjoint : currentRow?.situationProConjoint ?currentRow?.situationProConjoint : undefined,
-          revenus:Number(currentRow?.revenus),
-          revenusConjoint:Number(currentRow?.revenusConjoint),
-          loyer:Number(currentRow?.loyer),
-          facturesEnergie:Number(currentRow?.facturesEnergie),
-          dettes:Number(currentRow?.dettes),
-          natureDettes:currentRow?.natureDettes || '',
-          autresAides:currentRow?.autresAides || '',
-          autresCharges:(currentRow?.autresCharges)|| 0,
-          apl:Number(currentRow?.apl),
-          categorieDemandeur:(currentRow?.categorieDemandeur)
-          
-        }
-      : {
-          contactId: '',
-          status: 'recue',
-          remarques: '',
-          nombreEnfants : 0,
-          autresAides : '',
-          autresCharges : 0,
-          dettes : 0,
-          apl:0,
-          revenus:0,
-          facturesEnergie:0,
-          revenusConjoint : 0,
+        contactId: currentRow?.contact?.nom || '',
+        status: currentRow?.status || { value: 'recue' },
+        remarques: currentRow?.remarques || '',
+        nombreEnfants: Number(currentRow?.nombreEnfants),
+        agesEnfants: currentRow?.agesEnfants || '',
+        situationFamiliale: currentRow?.situationFamiliale,
+        situationProfessionnelle: currentRow?.situationProfessionnelle,
+        situationProConjoint: currentRow?.situationProConjoint ? currentRow?.situationProConjoint : undefined,
+        revenus: Number(currentRow?.revenus),
+        revenusConjoint: Number(currentRow?.revenusConjoint),
+        loyer: Number(currentRow?.loyer),
+        facturesEnergie: Number(currentRow?.facturesEnergie),
+        dettes: Number(currentRow?.dettes),
+        natureDettes: currentRow?.natureDettes || '',
+        autresAides: currentRow?.autresAides || '',
+        autresCharges: (currentRow?.autresCharges) || 0,
+        apl: Number(currentRow?.apl),
+        categorieDemandeur: (currentRow?.categorieDemandeur)
 
-        },
+      }
+      : {
+        contactId: '',
+        status: 'recue',
+        remarques: '',
+        nombreEnfants: 0,
+        autresAides: '',
+        autresCharges: 0,
+        dettes: 0,
+        apl: 0,
+        revenus: 0,
+        facturesEnergie: 0,
+        revenusConjoint: 0,
+
+      },
   });
   const situationFamiliale = form.watch("situationFamiliale");
   const dettes = form.watch("dettes");
@@ -104,24 +102,24 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
       contact: { id: Number(values.contactId) }, // Utilisation du contact ID sélectionné
       status: values.status,
       remarques: values.remarques,
-      revenus : Number(values.revenus),
-      nombreEnfants : Number(values.nombreEnfants),
-          agesEnfants :values.agesEnfants,
-          situationFamiliale:values.situationFamiliale,
-          situationProfessionnelle:values.situationProfessionnelle,
-          situationProConjoint : values.situationProConjoint,
-          revenusConjoint:Number(values.revenusConjoint),
-          loyer:Number(values.loyer),
-          facturesEnergie:(values.facturesEnergie),
-          dettes:Number(values.dettes),
-          natureDettes:values.natureDettes,
-          autresAides:values.autresAides,
-          autresCharges:Number(values.autresCharges),
-          apl:Number(values.apl),
-          categorieDemandeur : values.categorieDemandeur
-      
+      revenus: Number(values.revenus),
+      nombreEnfants: Number(values.nombreEnfants),
+      agesEnfants: values.agesEnfants,
+      situationFamiliale: values.situationFamiliale,
+      situationProfessionnelle: values.situationProfessionnelle,
+      situationProConjoint: values.situationProConjoint,
+      revenusConjoint: Number(values.revenusConjoint),
+      loyer: Number(values.loyer),
+      facturesEnergie: (values.facturesEnergie),
+      dettes: Number(values.dettes),
+      natureDettes: values.natureDettes,
+      autresAides: values.autresAides,
+      autresCharges: Number(values.autresCharges),
+      apl: Number(values.apl),
+      categorieDemandeur: values.categorieDemandeur
+
     };
-  
+
     try {
       if (isEdit && currentRow?.id) {
         await updateDemande(currentRow.id, demandePayload);
@@ -132,9 +130,9 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
         toast({ title: 'Nouvelle demande créée avec succès !' });
       }
       onOpenChange(false);
-     triggerRefetchDemandes();
+      triggerRefetchDemandes();
       form.reset();
-      
+
     } catch (error) {
       console.error('❌ Erreur lors de la soumission :', error);
       handleServerError(error);
@@ -142,7 +140,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
   };
 
   return (
-    
+
     <Sheet
       open={open}
       onOpenChange={(state) => {
@@ -160,12 +158,12 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
         <ScrollArea className="h-full w-full py-1 pr-4">
           <Form {...form}>
             <form id="demande-form" onSubmit={(e) => {
-  console.log(form.formState.errors);
-  form.handleSubmit(onSubmit)(e);
-  console.log("✅ handleSubmit exécuté !");
-}}className="space-y-4 p-0.5">
-               
-            <FormField
+              console.log(form.formState.errors);
+              form.handleSubmit(onSubmit)(e);
+              console.log("✅ handleSubmit exécuté !");
+            }} className="space-y-4 p-0.5">
+
+              <FormField
                 control={form.control}
                 name="contactId"
                 render={({ field }) => (
@@ -179,7 +177,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                         }}
                         defaultContact={
                           isEdit && currentRow?.contact
-                            ? { id: currentRow.contact.id, nom: currentRow.contact.nom ,prenom: currentRow.contact.prenom }
+                            ? { id: currentRow.contact.id, nom: currentRow.contact.nom, prenom: currentRow.contact.prenom }
                             : undefined
                         }
                       />
@@ -199,20 +197,20 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                       onValueChange={field.onChange}
                       placeholder="Choisissez une categorie"
                       className="col-span-4"
-                      items={[...categorieTypes]}       
-                                   
+                      items={[...categorieTypes]}
+
                     />
                     <FormMessage />
                   </FormItem>
                 )}
               />
-               <FormField
+              <FormField
                 control={form.control}
                 name='nombreEnfants'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                     Nombre d'enfants
+                      Nombre d'enfants
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -230,33 +228,33 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
-             {
-              nombreEnfants > 0 && <FormField
-              control={form.control}
-              name='agesEnfants'
-              render={({ field }) => (
-                <FormItem className='space-y-1'>
-                  <FormLabel>
-                  Ages des enfants
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Ex : 9, 13 et 17 '
-                      className='col-span-4'
-                      autoComplete='off'
-                      {...field}
-                      
-                    />
-                  </FormControl>
-                  <FormMessage className='col-span-4 col-start-3' />
-                </FormItem>
-              )}
-              
-            />
-             }  
-               <FormField
+              {
+                nombreEnfants > 0 && <FormField
+                  control={form.control}
+                  name='agesEnfants'
+                  render={({ field }) => (
+                    <FormItem className='space-y-1'>
+                      <FormLabel>
+                        Ages des enfants
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Ex : 9, 13 et 17 '
+                          className='col-span-4'
+                          autoComplete='off'
+                          {...field}
+
+                        />
+                      </FormControl>
+                      <FormMessage className='col-span-4 col-start-3' />
+                    </FormItem>
+                  )}
+
+                />
+              }
+              <FormField
                 control={form.control}
                 name="situationFamiliale"
                 render={({ field }) => (
@@ -267,14 +265,14 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                       onValueChange={field.onChange}
                       placeholder="Choisissez une situation"
                       className="col-span-4"
-                      items={[...situationFamilleTypes]}       
-                                   
+                      items={[...situationFamilleTypes]}
+
                     />
                     <FormMessage />
                   </FormItem>
                 )}
               />
-                <FormField
+              <FormField
                 control={form.control}
                 name="situationProfessionnelle"
                 render={({ field }) => (
@@ -285,13 +283,13 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                       onValueChange={field.onChange}
                       placeholder="Choisissez une situation"
                       className="col-span-4"
-                      items={[...situationTypes]}                    
+                      items={[...situationTypes]}
                     />
                     <FormMessage />
                   </FormItem>
                 )}
               />
-               {situationFamiliale==="marié" && <FormField
+              {situationFamiliale === "marié" && <FormField
                 control={form.control}
                 name="situationProConjoint"
                 render={({ field }) => (
@@ -302,7 +300,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                       onValueChange={field.onChange}
                       placeholder="Choisissez une situation"
                       className="col-span-4"
-                      items={[...situationTypes]}                    
+                      items={[...situationTypes]}
                     />
                     <FormMessage />
                   </FormItem>
@@ -312,11 +310,11 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
 
               <FormField
                 control={form.control}
-                name='revenus' 
+                name='revenus'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                   Revenus  (€)
+                      Revenus  (€)
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -324,22 +322,22 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
-                       
-                        
+
+
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
-            {situationFamiliale==="marié" && <FormField
+              {situationFamiliale === "marié" && <FormField
                 control={form.control}
-                name='revenusConjoint' 
+                name='revenusConjoint'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                   Revenus du conjoint  (€)
+                      Revenus du conjoint  (€)
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -347,20 +345,20 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
-                       
+
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
-                )}                
+                )}
               />}
-               <FormField
+              <FormField
                 control={form.control}
-                name='apl' 
+                name='apl'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                   APL  (€)
+                      APL  (€)
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -373,15 +371,15 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
               <FormField
                 control={form.control}
-                name='autresAides' 
+                name='autresAides'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                   Autres aides
+                      Autres aides
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -394,15 +392,15 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
               <FormField
                 control={form.control}
-                name='loyer' 
+                name='loyer'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                   Loyer mensuel (€)
+                      Loyer mensuel (€)
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -415,15 +413,15 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
               <FormField
                 control={form.control}
-                name='facturesEnergie' 
+                name='facturesEnergie'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                    Factures Energie (€)
+                      Factures Energie (€)
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -436,15 +434,15 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
               <FormField
                 control={form.control}
-                name='autresCharges' 
+                name='autresCharges'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                   Autres charges (€)
+                      Autres charges (€)
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -457,16 +455,16 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
 
-            <FormField
+              <FormField
                 control={form.control}
-                name='dettes' 
+                name='dettes'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                   Dettes (€)
+                      Dettes (€)
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -479,15 +477,15 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
-              />  
-             { dettes > 0 && <FormField
+
+              />
+              {dettes > 0 && <FormField
                 control={form.control}
-                name='natureDettes' 
+                name='natureDettes'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                   Natures des dettes
+                      Natures des dettes
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -500,11 +498,11 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
-              />  }
+
+              />}
 
               {/* 📌 Sélecteur de statut */}
-             {isEdit && <FormField
+              {isEdit && <FormField
                 control={form.control}
                 name="status"
                 render={({ field }) => (
@@ -515,12 +513,12 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                       onValueChange={field.onChange}
                       placeholder="Choisissez un statut"
                       className="col-span-4"
-                      items={[...demandeStatusTypes]}        
+                      items={[...demandeStatusTypes]}
                     />
                     <FormMessage />
                   </FormItem>
                 )}
-              />} 
+              />}
 
               {/* 📌 Champ Remarques */}
               <FormField
@@ -540,7 +538,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
           </Form>
         </ScrollArea>
         <SheetFooter>
-        
+
           <Button type="submit" form="demande-form" disabled={isSubmitting}>
             {isSubmitting ? 'En cours...' : 'Enregistrer'}
           </Button>

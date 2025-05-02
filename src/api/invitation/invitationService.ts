@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
-import { GET_INVITATIONS, CREATE_INVITATION, UPDATE_INVITATION, DELETE_INVITATION } from './graphql/queries';
 import { toast } from '@/hooks/use-toast';
 import { handleServerError } from '@/utils/handle-server-error';
+import { useMutation, useQuery } from '@apollo/client';
+import { useState } from 'react';
+import { CREATE_INVITATION, DELETE_INVITATION, GET_INVITATIONS, UPDATE_INVITATION } from './graphql/queries';
 
 export function useInvitationService(variables?: any) {
   const [isSubmitting, setIsSubmitting] = useState(false);

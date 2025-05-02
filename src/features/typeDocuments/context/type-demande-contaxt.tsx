@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { TypeDocument } from '@/model/typeDocument/typeDocument'
+import React, { useState } from 'react'
 
 type TypeDocumentDialogType = 'add' | 'edit' | 'delete'
 

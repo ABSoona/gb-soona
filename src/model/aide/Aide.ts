@@ -39,26 +39,26 @@ const aideCrediteurSchema = z.union([
   z.literal('UnCrAncier'),
 
 ]);
-export type AideCredieteur= z.infer<typeof aideCrediteurSchema>;
+export type AideCredieteur = z.infer<typeof aideCrediteurSchema>;
 
 
 // Schéma principal pour les aides
 export const aideSchema = z.object({
-  contact: contactSchema.omit({aides: true, demandes:true,document : true}),
+  contact: contactSchema.omit({ aides: true, demandes: true, document: true }),
   id: z.number(),
   typeField: aideTypeSchema,
   montant: z.coerce.number(),
   dateAide: z.coerce.date(),
   dateExpiration: z.coerce.date().optional(),
- // paiementRecurrent: z.boolean(),
-  frequence : aideFrequenceSchema,
+  // paiementRecurrent: z.boolean(),
+  frequence: aideFrequenceSchema,
   suspendue: z.boolean(),
   nombreVersements: z.coerce.number(),
-  crediteur : aideCrediteurSchema,
-  infosCrediteur : z.coerce.string().optional() ,
-  remarque : z.coerce.string().optional(),
-  demande : demandeSchema,
-  status : aideSatusSchema,
+  crediteur: aideCrediteurSchema,
+  infosCrediteur: z.coerce.string().optional(),
+  remarque: z.coerce.string().optional(),
+  demande: demandeSchema,
+  status: aideSatusSchema,
   reetudier: z.boolean()
 
 });

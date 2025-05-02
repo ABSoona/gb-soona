@@ -1,10 +1,11 @@
-import { HTMLAttributes, useState } from 'react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link } from '@tanstack/react-router'
+import { HTMLAttributes, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-import { cn } from '@/lib/utils'
+import { login } from '@/api/api'; // Assure-toi que le chemin est correct
+import { PasswordInput } from '@/components/password-input'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -15,8 +16,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { PasswordInput } from '@/components/password-input'
-import { login } from '@/api/api' // Assure-toi que le chemin est correct
+import { cn } from '@/lib/utils'
 import { useNavigate } from '@tanstack/react-router'
 
 
@@ -27,13 +27,13 @@ const formSchema = z.object({
   email: z
     .string()
     .min(1, { message: 'Please enter your email' }),
-   // .email({ message: 'Invalid email address' }),
+  // .email({ message: 'Invalid email address' }),
   password: z
     .string()
     .min(1, {
       message: 'Please enter your password',
     })
-    
+
 })
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
@@ -49,18 +49,18 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true);
-   // setError(null);
-  
+    // setError(null);
+
     try {
       // Appel à l'API avec les données du formulaire (username et password)
       const userData = await login(data.email, data.password);
-  
+
       // Stockage des données utilisateur dans le localStorage
       localStorage.setItem('token', userData.accessToken);
       localStorage.setItem('userId', userData.id);
       localStorage.setItem('username', userData.username);
       localStorage.setItem('roles', JSON.stringify(userData.roles));
-  
+
       // Redirection vers la page d'accueil ou une autre page protégée
       navigate({ to: '/' });
       console.log('Connexion réussie !', userData);

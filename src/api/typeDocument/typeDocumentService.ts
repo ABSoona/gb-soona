@@ -1,14 +1,14 @@
 
-import { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
-import {
-  GET_TYPE_DOCUMENTS,
-  CREATE_TYPE_DOCUMENT,
-  UPDATE_TYPE_DOCUMENT,
-  DELETE_TYPE_DOCUMENT,
-} from './graphql/queries';
 import { toast } from '@/hooks/use-toast';
 import { handleServerError } from '@/utils/handle-server-error';
+import { useMutation, useQuery } from '@apollo/client';
+import { useState } from 'react';
+import {
+  CREATE_TYPE_DOCUMENT,
+  DELETE_TYPE_DOCUMENT,
+  GET_TYPE_DOCUMENTS,
+  UPDATE_TYPE_DOCUMENT,
+} from './graphql/queries';
 
 export function useTypeDocumentService(variables?: any) {
   const [isSubmitting, setIsSubmitting] = useState(false);

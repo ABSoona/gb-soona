@@ -1,17 +1,10 @@
 'use client';
 
-import { z } from 'zod';
-import { useForm, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useAideService } from '@/api/aide/aideService';
+import { useDemandeService } from '@/api/demande/demandeService';
+import { SelectDropdown } from '@/components/select-dropdown';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Form,
   FormControl,
@@ -20,27 +13,34 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { SelectDropdown } from '@/components/select-dropdown';
-import { Aide, aideSchema } from '@/model/aide/Aide';
-import { useAideService } from '@/api/aide/aideService';
-import { toast } from '@/hooks/use-toast';
-import { handleServerError } from '@/utils/handle-server-error';
-import { ContactSearchCombobox } from './contact-search';
 import { Input } from '@/components/ui/input';
-import { aideCredieteurTypes, aideFrquenceTypes, typeAideTypes } from '../data/data';
-import { DatePicker } from '@/components/ui/date-picker';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
-import { addDays, addMonths, addWeeks } from 'date-fns';
 import { Textarea } from '@/components/ui/textarea';
-import { useAides } from '../context/aides-context';
-import { useEffect, useMemo } from 'react';
-import { useDemandeService } from '@/api/demande/demandeService';
+import { toast } from '@/hooks/use-toast';
+import { Aide, aideSchema } from '@/model/aide/Aide';
 import { Demande } from '@/model/demande/Demande';
+import { handleServerError } from '@/utils/handle-server-error';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { addDays, addMonths, addWeeks } from 'date-fns';
+import { useEffect } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { z } from 'zod';
+import { useAides } from '../context/aides-context';
+import { aideCredieteurTypes, aideFrquenceTypes, typeAideTypes } from '../data/data';
+import { ContactSearchCombobox } from './contact-search';
 
 
 // 📌 Schéma de validation du formulaire avec Zod
-const formSchema = aideSchema.omit({ id: true, contact: true, demande: true,status:true }).extend({ contactId: z.any(), demandeId: z.any() });
+const formSchema = aideSchema.omit({ id: true, contact: true, demande: true, status: true }).extend({ contactId: z.any(), demandeId: z.any() });
 
 type AideForm = z.infer<typeof formSchema>;
 
@@ -59,13 +59,13 @@ interface Props {
 export function AidesActionDialog({ currentRow, open, onOpenChange, showContactSearch = true, showDemandeSearch = true, forContactId, forDemandeId }: Props) {
 
 
-  
+
   const { createAide, updateAide, refetch, isSubmitting } = useAideService();
- const{updateDemande} = useDemandeService();
+  const { updateDemande } = useDemandeService();
   const isEdit = !!currentRow;
   const { triggerRefetchAides } = useAides();
   const defaultFormValues: AideForm = isEdit && currentRow
-  ? {
+    ? {
       contactId: currentRow.contact?.id || '',
       typeField: currentRow.typeField,
       montant: Number(currentRow.montant),
@@ -80,7 +80,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       demandeId: currentRow.demande?.id?.toString() ?? '',
       reetudier: currentRow.reetudier ?? false,
     }
-  : {
+    : {
       contactId: forContactId ?? '',
       typeField: 'FinanciRe',
       montant: 0,
@@ -95,16 +95,16 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       demandeId: forDemandeId?.toString() ?? '',
       reetudier: false,
     };
-    const form = useForm<AideForm>({
-      resolver: zodResolver(formSchema),
-      defaultValues: defaultFormValues,
-    });
-    
+  const form = useForm<AideForm>({
+    resolver: zodResolver(formSchema),
+    defaultValues: defaultFormValues,
+  });
+
   const selectedContactId = useWatch({
     control: form.control,
     name: 'contactId',
   });
-  
+
   const { demandes } = useDemandeService(
     selectedContactId
       ? { where: { contact: { id: Number(selectedContactId) } } }
@@ -115,7 +115,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       form.setValue('demandeId', '');
     }
   }, [selectedContactId, form]);
-  
+
   const onSubmit = async (values: AideForm) => {
     console.log(form.formState.errors);
     const contactId = forContactId ?? values.contactId; // priorité au forContactId
@@ -125,7 +125,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       typeField: values.typeField,
       montant: Number(values.montant),
       dateAide: values.dateAide,
-      dateExpiration:   values.dateExpiration ,
+      dateExpiration: values.dateExpiration,
       // paiementRecurrent: values.paiementRecurrent,
       frequence: values.frequence,
       suspendue: values.suspendue,
@@ -134,21 +134,21 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       infosCrediteur: values.infosCrediteur,
       remarque: values.remarque,
       demande: { id: Number(demandeId) },
-      reetudier : values.reetudier,
-      status:"EnCours"
+      reetudier: values.reetudier,
+      status: "EnCours"
     };
 
     try {
       if (isEdit && currentRow?.id) {
         await updateAide(currentRow.id, aidePayload);
-       
+
         toast({ title: 'Aide mise à jour avec succès !' });
       } else {
         await createAide(aidePayload);
         toast({ title: 'Nouvelle aide créée avec succès !' });
       }
-      if( demandeId && !values.reetudier && values.frequence==='UneFois')
-        await updateDemande(demandeId,{status:"clôturée"});
+      if (demandeId && !values.reetudier && values.frequence === 'UneFois')
+        await updateDemande(Number(demandeId), { status: "clôturée" });
       triggerRefetchAides();
       form.reset();
       onOpenChange(false);
@@ -162,7 +162,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
   const paiementRecurrent = form.watch("frequence");
   const typeAide = useWatch({ control: form.control, name: 'typeField' });
   const crediteur = useWatch({ control: form.control, name: 'crediteur' });
-  const reetudier =  useWatch({ control: form.control, name: 'reetudier' });
+  const reetudier = useWatch({ control: form.control, name: 'reetudier' });
   function calculerDateDernierVersement(dateAide: Date, frequence: string, nombreVersements: number): Date | null {
     if (!dateAide || !frequence || !nombreVersements) return null;
     switch (frequence) {
@@ -181,33 +181,33 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
     }
   }
   const dateAide = useWatch({ control: form.control, name: 'dateAide' });
-const frequence = useWatch({ control: form.control, name: 'frequence' });
-const nombreVersements = useWatch({ control: form.control, name: 'nombreVersements' });
+  const frequence = useWatch({ control: form.control, name: 'frequence' });
+  const nombreVersements = useWatch({ control: form.control, name: 'nombreVersements' });
 
-useEffect(() => {
-  if (isEdit) return; // ✅ NE RIEN FAIRE si on édite une aide existante
+  useEffect(() => {
+    if (isEdit) return; // ✅ NE RIEN FAIRE si on édite une aide existante
 
-  const nb = Number(nombreVersements || 1);
+    const nb = Number(nombreVersements || 1);
 
-  if (typeAide === 'AssistanceAdministrative') {
-    form.setValue('dateExpiration', addMonths(dateAide, 3));
-  } else if (frequence === 'UneFois') {
-    form.setValue('dateExpiration', addDays(dateAide, 27));
-  } else {
-    const newDateExpiration = calculerDateDernierVersement(dateAide, frequence, nb);
-    if (newDateExpiration) {
-      form.setValue('dateExpiration', newDateExpiration);
+    if (typeAide === 'AssistanceAdministrative') {
+      form.setValue('dateExpiration', addMonths(dateAide, 3));
+    } else if (frequence === 'UneFois') {
+      form.setValue('dateExpiration', addDays(dateAide, 27));
+    } else {
+      const newDateExpiration = calculerDateDernierVersement(dateAide, frequence, nb);
+      if (newDateExpiration) {
+        form.setValue('dateExpiration', newDateExpiration);
+      }
     }
-  }
-}, [dateAide, frequence, nombreVersements, typeAide, isEdit]);
-    
-const dernierVersement = calculerDateDernierVersement(dateAide, frequence, Number(nombreVersements || 1));
+  }, [dateAide, frequence, nombreVersements, typeAide, isEdit]);
+
+  const dernierVersement = calculerDateDernierVersement(dateAide, frequence, Number(nombreVersements || 1));
   return (
     <Sheet
       open={open}
       onOpenChange={(state) => {
         onOpenChange(state);
-    
+
         if (state) {
           form.reset(defaultFormValues);
         }
@@ -255,8 +255,8 @@ const dernierVersement = calculerDateDernierVersement(dateAide, frequence, Numbe
                 control={form.control}
                 name="demandeId"
                 render={({ field }) => {
-                  
-                  return(<FormItem className="space-y-1">
+
+                  return (<FormItem className="space-y-1">
                     <FormLabel>Demande concernée</FormLabel>
                     <FormControl>
                       <SelectDropdown
@@ -317,7 +317,7 @@ const dernierVersement = calculerDateDernierVersement(dateAide, frequence, Numbe
                   <FormMessage />
                 </FormItem>
               )} />
-             
+
               {typeAide === "FinanciRe" &&
                 <FormField control={form.control} name="crediteur" render={({ field }) => (
                   <FormItem>
@@ -363,29 +363,29 @@ const dernierVersement = calculerDateDernierVersement(dateAide, frequence, Numbe
               )}
 
 
-               { <FormField 
+              {<FormField
                 control={form.control}
                 name="reetudier"
-                
+
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-[auto_1fr] items-center gap-2">
-                      
+
                     <FormControl>
-                      <Switch 
+                      <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
                     <FormLabel className="text-sm leading-none" >Réétudier la demande</FormLabel>
-                 
+
                     <FormMessage />
                   </FormItem>
                 )}
-              /> }
-               {(typeAide === 'AssistanceAdministrative' || ( typeAide === 'FinanciRe' && reetudier)) &&
+              />}
+              {(typeAide === 'AssistanceAdministrative' || (typeAide === 'FinanciRe' && reetudier)) &&
                 <FormField control={form.control} name="dateExpiration" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{reetudier ? "Date de réexamen":"Date de fin"}</FormLabel>
+                    <FormLabel>{reetudier ? "Date de réexamen" : "Date de fin"}</FormLabel>
                     <FormControl>
                       <DatePicker
                         date={field.value}
@@ -395,7 +395,7 @@ const dernierVersement = calculerDateDernierVersement(dateAide, frequence, Numbe
                     <FormMessage />
                   </FormItem>
                 )} />
-               }
+              }
 
               <FormField control={form.control} name="remarque" render={({ field }) => (
                 <FormItem>

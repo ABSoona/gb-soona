@@ -1,6 +1,3 @@
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { Row } from '@tanstack/react-table'
-import { IconEdit, IconTrash } from '@tabler/icons-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -10,8 +7,11 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useAides } from '../context/aides-context'
 import { Aide } from '@/model/aide/Aide'
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { IconEdit, IconTrash } from '@tabler/icons-react'
+import { Row } from '@tanstack/react-table'
+import { useAides } from '../context/aides-context'
 
 interface DataTableRowActionsProps {
   row: Row<Aide>

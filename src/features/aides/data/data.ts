@@ -13,41 +13,41 @@
   ],
 ])*/
 export const aideStatusTypes =
-[
-  { label: 'En cours', value: 'EnCours' },
-  { label: 'Expirée', value: 'Expir' },
+  [
+    { label: 'En cours', value: 'EnCours' },
+    { label: 'Expirée', value: 'Expir' },
 
- ] as const
+  ] as const
 
- export const aideFrquenceTypes =
- [
-  { label: 'Une fois', value: 'UneFois' },
-  { label: 'Chaque semaine', value: 'Hebdomadaire' },
-  { label: 'Chaque 2 semaine ', value: 'BiMensuelle' },
-   { label: 'Chaque mois', 
-   value: 'Mensuelle' 
-  },   
-   { label: 'Chaque 3 mois', value: 'Trimestrielle' },
-   
+export const aideFrquenceTypes =
+  [
+    { label: 'Une fois', value: 'UneFois' },
+    { label: 'Chaque semaine', value: 'Hebdomadaire' },
+    { label: 'Chaque 2 semaine ', value: 'BiMensuelle' },
+    {
+      label: 'Chaque mois',
+      value: 'Mensuelle'
+    },
+    { label: 'Chaque 3 mois', value: 'Trimestrielle' },
+
 
 
   ] as const
- 
- 
 
-  export const aideCredieteurTypes =
+
+
+export const aideCredieteurTypes =
   [
     { label: 'Le Bénéficiaire', value: 'LeBNFiciaire' },
     { label: 'Un Créancier', value: 'UnCrAncier' },
-  
-   ] as const
+
+  ] as const
 
 
 
-   export const typeAideTypes =
-   [
-     { label: 'Financière', value: 'FinanciRe' },
-     { label: 'Assitance Administrative', value: 'AssistanceAdministrative' },
-   
-    ] as const
- 
+export const typeAideTypes =
+  [
+    { label: 'Financière', value: 'FinanciRe' },
+    { label: 'Assitance Administrative', value: 'AssistanceAdministrative' },
+
+  ] as const

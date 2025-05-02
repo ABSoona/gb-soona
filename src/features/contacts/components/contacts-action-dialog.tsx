@@ -1,17 +1,8 @@
 'use client';
 
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useContactService } from '@/api/contact/contact-service';
+import { SelectDropdown } from '@/components/select-dropdown';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
 import {
   Form,
   FormControl,
@@ -20,21 +11,29 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { SelectDropdown } from '@/components/select-dropdown';
-import { Contact, contactSchema } from '@/model/contact/Contact';
-import { useContactService } from '@/api/contact/contact-service';
-import { toast } from '@/hooks/use-toast';
-import { handleServerError } from '@/utils/handle-server-error';
-import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/hooks/use-toast';
+import { Contact, contactSchema } from '@/model/contact/Contact';
+import { handleServerError } from '@/utils/handle-server-error';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { contactStatusTypes } from '../data/data';
-import { useDemandes } from '@/features/demandes/context/demandes-context';
 
 
 // 📌 Schéma de validation du formulaire avec Zod
 const formSchema = contactSchema
-  .omit({id:true, aides: true, demandes : true,createdAt:true , updatedAt : true  }); // Supprime les champs "id" et "contact"  // Ajoute "contactId"
+  .omit({ id: true, aides: true, demandes: true, createdAt: true, updatedAt: true }); // Supprime les champs "id" et "contact"  // Ajoute "contactId"
 
 type ContactForm = z.infer<typeof formSchema>;
 
@@ -46,63 +45,63 @@ interface Props {
 
 export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) {
 
-  
 
-  const { createContact, updateContact, refetch,  isSubmitting } = useContactService();
+
+  const { createContact, updateContact, refetch, isSubmitting } = useContactService();
 
   const isEdit = !!currentRow;
-  
+
   const form = useForm<ContactForm>({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
       ? {
-          nom: currentRow?.nom || '',
-          prenom: currentRow?.prenom || '',
-          status: currentRow?.status || {value:'active'},
-          remarques: currentRow?.remarques || '',
-          age : Number(currentRow?.age),
-          telephone : currentRow?.telephone,
-          email :currentRow?.email || '',
-          ville : currentRow?.ville,
-          codePostal : currentRow?.codePostal,
-          adresse : currentRow?.adresse,
-          
-          
-        }
+        nom: currentRow?.nom || '',
+        prenom: currentRow?.prenom || '',
+        status: currentRow?.status || { value: 'active' },
+        remarques: currentRow?.remarques || '',
+        age: Number(currentRow?.age),
+        telephone: currentRow?.telephone,
+        email: currentRow?.email || '',
+        ville: currentRow?.ville,
+        codePostal: currentRow?.codePostal,
+        adresse: currentRow?.adresse,
+
+
+      }
       : {
         nom: '',
-        prenom:  '',
+        prenom: '',
         status: 'active',
         remarques: '',
-        telephone : '',
-        email :'',
-        ville:'',
-        codePostal : 78000,
+        telephone: '',
+        email: '',
+        ville: '',
+        codePostal: 78000,
         adresse: '',
-        age : 0 ,
+        age: 0,
 
-        },
+      },
   });
- 
+
   const onSubmit = async (values: ContactForm) => {
     console.log("erreur de validation: ");
     const contactPayload = {
-     
-     status: values.status,
-     remarques: values.remarques,
-     nom : values.nom ,
-     prenom : values.prenom,
-     email: values.email,
-     telephone:values.telephone,
-     ville : values.ville,
-     adresse : values.adresse,
-     codePostal : Number(values.codePostal),
-     age : Number(values.age),
-    
+
+      status: values.status,
+      remarques: values.remarques,
+      nom: values.nom,
+      prenom: values.prenom,
+      email: values.email,
+      telephone: values.telephone,
+      ville: values.ville,
+      adresse: values.adresse,
+      codePostal: Number(values.codePostal),
+      age: Number(values.age),
+
 
 
     };
-  
+
     try {
       if (isEdit && currentRow?.id) {
         await updateContact(currentRow.id, contactPayload);
@@ -122,7 +121,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
   };
 
   return (
-    
+
     <Sheet
       open={open}
       onOpenChange={(state) => {
@@ -140,19 +139,19 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
         <ScrollArea className="h-full w-full py-1 pr-4">
           <Form {...form}>
             <form id="contact-form" onSubmit={(e) => {
-  console.log(form.formState.errors);
-  form.handleSubmit(onSubmit)(e);
-  console.log("✅ handleSubmit exécuté !");
-}}className="space-y-4 p-0.5">
-               
-           
-               <FormField
+              console.log(form.formState.errors);
+              form.handleSubmit(onSubmit)(e);
+              console.log("✅ handleSubmit exécuté !");
+            }} className="space-y-4 p-0.5">
+
+
+              <FormField
                 control={form.control}
                 name='nom'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                   Nom
+                      Nom
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -166,15 +165,15 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
-               <FormField
+              <FormField
                 control={form.control}
                 name='prenom'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                    Prenom
+                      Prenom
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -182,21 +181,21 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
-                        
+
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
-               <FormField
+              <FormField
                 control={form.control}
                 name='age'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                    Age
+                      Age
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -204,21 +203,21 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
-                        
+
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
-               <FormField
+              <FormField
                 control={form.control}
                 name='email'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                    Email
+                      Email
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -226,22 +225,22 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
-                        type= 'email'
-                        
+                        type='email'
+
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
-               <FormField
+              <FormField
                 control={form.control}
                 name='telephone'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                    Téléphone
+                      Téléphone
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -249,14 +248,14 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
-                        type= 'phone'
-                        
+                        type='phone'
+
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
               <FormField
                 control={form.control}
@@ -264,7 +263,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                    Adresse
+                      Adresse
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -272,21 +271,21 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
-                        
+
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
-               <FormField
+              <FormField
                 control={form.control}
                 name='ville'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                    Ville
+                      Ville
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -294,21 +293,21 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
-                        
+
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
-                <FormField
+              <FormField
                 control={form.control}
                 name='codePostal'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                    Code Postal
+                      Code Postal
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -316,13 +315,13 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
-                        
+
                       />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-                
+
               />
 
               {/* 📌 Sélecteur de statut */}
@@ -337,7 +336,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                       onValueChange={field.onChange}
                       placeholder="Choisissez un statut"
                       className="col-span-4"
-                      items={[...contactStatusTypes]}        
+                      items={[...contactStatusTypes]}
                     />
                     <FormMessage />
                   </FormItem>
@@ -362,9 +361,9 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
           </Form>
         </ScrollArea>
         <SheetFooter>
-        
-          <Button type="submit" form="contact-form" disabled={isSubmitting }>
-            {isSubmitting  ? 'En cours...' : 'Enregistrer'}
+
+          <Button type="submit" form="contact-form" disabled={isSubmitting}>
+            {isSubmitting ? 'En cours...' : 'Enregistrer'}
           </Button>
         </SheetFooter>
       </SheetContent>

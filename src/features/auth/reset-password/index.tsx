@@ -1,5 +1,5 @@
-import { Link } from '@tanstack/react-router'
 import { Card } from '@/components/ui/card'
+import { Link } from '@tanstack/react-router'
 import AuthLayout from '../auth-layout'
 import { ResetPasswordForm } from './components/reset-password-form'
 
@@ -12,8 +12,8 @@ export default function ResetPassword() {
             Crérer votre compte
           </h1>
           <p className='text-sm text-muted-foreground'>
-           completer le formualire  pour créer un compte. <br />
-           Vous avez déja un compte?{' '}
+            completer le formualire  pour créer un compte. <br />
+            Vous avez déja un compte?{' '}
             <Link
               to='/sign-in'
               className='underline underline-offset-4 hover:text-primary'
@@ -23,8 +23,8 @@ export default function ResetPassword() {
           </p>
         </div>
         <ResetPasswordForm />
-        
+
       </Card>
-    </AuthLayout> 
+    </AuthLayout>
   )
 }

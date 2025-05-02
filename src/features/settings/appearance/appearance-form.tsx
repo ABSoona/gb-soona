@@ -1,13 +1,3 @@
-import { useEffect } from 'react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { ChevronDownIcon } from '@radix-ui/react-icons'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { fonts } from '@/config/fonts'
-import { cn } from '@/lib/utils'
-import { useFont } from '@/context/font-context'
-import { useTheme } from '@/context/theme-context'
-import { toast } from '@/hooks/use-toast'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Form,
@@ -19,6 +9,16 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { fonts } from '@/config/fonts'
+import { useFont } from '@/context/font-context'
+import { useTheme } from '@/context/theme-context'
+import { toast } from '@/hooks/use-toast'
+import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ChevronDownIcon } from '@radix-ui/react-icons'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const LOCAL_STORAGE_KEY = 'appearance-preferences'
 
