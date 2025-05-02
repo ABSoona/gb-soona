@@ -19,7 +19,7 @@ import { useContacts } from './context/contacts-context';
 
 export default function ContactDetail() {
   const id = useParams({
-    from: '/_authenticated/contacts/$id',
+    from: '/_authenticated/contacts/$id' as const,
     select: (params) => params?.id,
   });
 

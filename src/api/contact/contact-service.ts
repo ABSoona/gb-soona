@@ -16,7 +16,7 @@ export function useContactSearch(search: string) {
 
 
 export function useContactService(variables?: any) {
-  const client = useApolloClient();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
