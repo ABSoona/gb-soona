@@ -172,7 +172,7 @@ interface ChartTooltipProps
 const ChartTooltip = React.forwardRef<
   HTMLDivElement,
   ChartTooltipProps & React.RefAttributes<HTMLDivElement>
->(({ content: customContent, formatter, labelFormatter, hideLabel, ...rechartsProps }, ref) => {
+>(({ content: customContent, formatter, labelFormatter, hideLabel, ...rechartsProps }) => {
   return (
     <Tooltip
       {...rechartsProps}
@@ -253,7 +253,7 @@ interface ChartLegendProps extends Omit<LegendProps, "content" | "ref"> {
 const ChartLegend = React.forwardRef<
   HTMLDivElement,
   ChartLegendProps & React.RefAttributes<HTMLDivElement>
->(({ content: customContent, ...rechartsProps }, ref) => {
+>(({ content: customContent, ...rechartsProps }) => {
   return (
     <Legend
       {...rechartsProps}

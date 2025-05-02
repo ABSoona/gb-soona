@@ -4,6 +4,7 @@ export function setSession(token: string, userId: string, username: string, role
   localStorage.setItem('token', token);
   localStorage.setItem('userId', userId);
   localStorage.setItem('roles', JSON.stringify(roles));
+  console.log(username);
 }
 // Fonction pour nettoyer la session lors de la déconnexion
 
