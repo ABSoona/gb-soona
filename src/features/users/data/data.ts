@@ -21,14 +21,31 @@ export const userTypes = [
     value: 'admin',
     icon: IconShield,
   },
-  {
+  /* {
     label: 'Standard',
     value: 'user',
     icon: IconUsersGroup,
+  }, */
+  {
+    label: 'Membre',
+    value: 'coordinateur',
+    icon: IconUsersGroup,
   },
   {
-    label: 'Externe',
-    value: 'external',
+    label: 'Bénévole',
+    value: 'visiteur',
     icon: IconExternalLink,
   },
+ 
+  {
+    label: 'Trésorier',
+    value: 'tresorier',
+    icon: IconUsersGroup,
+  },
+  {
+    label: 'Assistant social',
+    value: 'assistant_social',
+    icon: IconUsersGroup,
+  },
+  
 ] as const

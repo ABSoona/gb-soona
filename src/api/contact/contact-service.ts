@@ -3,6 +3,7 @@ import { SEARCH_CONTACTS, GET_CONTACTS, CREATE_CONTACT, UPDATE_CONTACT, DELETE_C
 import { toast } from '@/hooks/use-toast';
 import { handleServerError } from '@/utils/handle-server-error';
 import { useState } from 'react';
+import axiosInstance from '@/lib/axtios-instance';
 export function useContactSearch(search: string) {
   const { data, loading, error } = useQuery(SEARCH_CONTACTS, { variables: { search }, skip: !search });
 
@@ -42,7 +43,7 @@ export function useContactService(variables?: any) {
       const result = await createContactMutation({ variables: { data } });
       await refetch();
       const contact = result.data?.createContact;
-      toast({ title: 'Contact créé avec succès.' });
+      toast({ title: 'Bénéficiaire créé avec succès.' });
       return contact;
     } catch (err) {
       handleServerError(err);
@@ -67,7 +68,7 @@ export function useContactService(variables?: any) {
       const { id: _, ...updateData } = data;
       await updateContactMutation({ variables: { id, data: updateData } });
       await refetch();
-      toast({ title: 'Contact mis à jour avec succès.' });
+      toast({ title: 'Bénéficiaire mis à jour avec succès.' });
     } catch (err) {
       handleServerError(err);
     } finally {
@@ -89,13 +90,21 @@ export function useContactService(variables?: any) {
       setIsSubmitting(true);
       await deleteContactMutation({ variables: { id } });
       await refetch();
-      toast({ title: 'Contact supprimé.' });
+      toast({ title: 'Bénéficiaire supprimé.' });
     } catch (err) {
       handleServerError(err);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const sendMessage = async (data: {contactId:string,objet :string,message:string}): Promise<void> => {
+    const response = await axiosInstance.post<void>(`contacts/${data.contactId}/send-message`, data);
+    return response.data;
+  };
+  
+
+  
 
   return {
     contacts: data?.contacts || [],
@@ -105,6 +114,9 @@ export function useContactService(variables?: any) {
     createContact,
     updateContact,
     deleteContact,
+    sendMessage,
     isSubmitting, // ✅ pour désactiver les boutons ou afficher "en cours..."
   };
+
+  
 }

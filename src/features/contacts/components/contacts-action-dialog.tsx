@@ -109,7 +109,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
       } else {
         console.log(contactPayload);
         await createContact(contactPayload);
-        toast({ title: 'Nouveau contact créée avec succès !' });
+        toast({ title: 'Nouveau bénéficiaire créée avec succès !' });
       }
 
       form.reset();

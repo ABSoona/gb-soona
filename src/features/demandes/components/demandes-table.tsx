@@ -56,12 +56,18 @@ export function DemandesTable({ columns, data, hideTools = false, hideActions = 
             autresAides: false,
             facturesEnergie: false,
             loyer: false,
+            revenus:false,
             contactNom: false,
             contactPrenom: false,
+            situationFamiliale: false,
             remarques: false,
             revenusConjoint: false,
             id: false,
             status: true,
+            charges:false,
+            dettes : false,
+            contactAge: false,
+            situationProfessionnelle:false
 
 
         }

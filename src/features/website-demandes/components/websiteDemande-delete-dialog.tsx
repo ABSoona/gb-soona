@@ -59,7 +59,7 @@ export function WebsiteDemandeDeleteDialog({ open, onOpenChange, currentRow }: P
           </p>
 
           <Label>
-            Confirmez en tapant le nom du demandeur :
+            Confirmez en tapant le nom du bénéficiaire :
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}

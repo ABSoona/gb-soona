@@ -32,7 +32,7 @@ export const sidebarData: SidebarData = {
           icon: IconMailDown,
         },
         {
-          title: 'Contacts',
+          title: 'Bénéficiaires',
           url: '/contacts',
           icon: UserIcon,
         },

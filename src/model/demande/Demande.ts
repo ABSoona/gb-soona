@@ -3,17 +3,20 @@
 import { IconExternalLink, IconShield, IconUsersGroup } from "@tabler/icons-react";
 import { z } from 'zod';
 import { contactSchema } from '../contact/Contact';
+import { userSchema } from "../user/User";
 
 // Schéma pour le statut de la demande
 export const demandeStatusSchema = z.union([
   z.literal('recue'),
+  z.literal('EnAttenteDocs'),
   z.literal('en_visite'),
   z.literal('en_commision'),
+  z.literal('EnCours'),
   z.literal('clôturée'),
   z.literal('refusée'),
-  z.literal('EnCours'),
   z.literal('Abandonée'),
   z.literal('EnAttente'),
+  
 ]);
 export type DemandeStatus = z.infer<typeof demandeStatusSchema>;
 const situationProSchema = z.union([
@@ -45,6 +48,7 @@ const activityTypeSchema = z.union([
   z.literal('accept'),
   z.literal('refuse'),
   z.literal('expiration'),
+  z.literal('docsRequest'),
 
 ]);
 
@@ -90,7 +94,13 @@ export const demandeSchema = z.object({
   natureDettes: z.string().optional(),
   autresAides: z.string().optional(),
   categorieDemandeur: categorieSchema.optional().nullable(),
-  demandeActivities: z.array(DemandeActivitySchema)
+  demandeActivities: z.array(DemandeActivitySchema),
+  acteur : userSchema,
+  proprietaire : userSchema,
+  dernierContact:z.string().optional(),
+  derniereRelance:z.string().optional(),
+  nombreRelances:z.coerce.number().optional(),
+  recommandation:z.string().optional(),
 
 });
 
