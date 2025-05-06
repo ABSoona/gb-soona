@@ -65,7 +65,7 @@ export const aidesColumns: ColumnDef<Contact>[] = [
     },
     {
         accessorKey: 'id',
-        header: 'ID Contact',
+        header: 'ID Bénéficiaire',
         cell: ({ row }) => <LongText className="max-w-36">{row.getValue('id')}</LongText>,
         enableHiding: false,
     },

@@ -19,12 +19,16 @@ import { ActivityType, Demande, DemandeStatus, situationFamilleTypes, situationT
 import { Document } from '@/model/document/Document'
 import { TypeDocument } from '@/model/typeDocument/typeDocument'
 import { TabsContent } from '@radix-ui/react-tabs'
-import { CheckCircle, FileText, MapPin, PauseCircle, PhoneCall, PhoneMissed, Plus, RefreshCwOff, StickyNote } from 'lucide-react'
+import { CheckCircle, FilePlus2, FileText, MapPin, PauseCircle, PhoneCall, PhoneMissed, Plus, RefreshCwOff, StickyNote } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { categorieTypes } from '../data/data'
 import { DemandeActivityTimeline } from './DemandeActivityTimeline'
 import { NoteSuiviSheet } from './NoteSuiviSheet'
 import { useConfirmDialog } from './demande-confirm-dialog'
+import { DocsRequestSheet } from './DocsRequestSheet'
+import { useContactService } from '@/api/contact/contact-service'
+import CoordinateursMapSheet from './assign-coordinateur'
+import { User } from '@/model/user/User'
 
 
 interface Props {
@@ -48,6 +52,8 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const { handleFileUpload, handleDelete } = useDocumentActions({ demande: { id: currentRow.id } });
   const { createDemandeActivity, updateDemande } = useDemandeService();
   const [openNoteSheet, setOpenNoteSheet] = useState(false);
+  const [openDocsRequestSheet, setOpenDocsRequestSheet] = useState(false);
+  const [openVisiteSheet, setOpenVisiteSheet] = useState(false);
   /*const { demandes, loading: isLoading, error } = useDemandeService({where : {id :{equals:demandeId} }});
   //const { setOpen, setCurrentRow } = useDemandes()
   const currentRow: Demande | undefined = demandes.length > 0 ? demandes[0] : undefined;*/
@@ -64,6 +70,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const resteAVivre = totalRevenus - totalCharges
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
+  const { sendMessage, isSubmitting } = useContactService(); // ✅ Utilisation du service
   const { typeDocuments: typeDocumentsSuivi } = useTypeDocumentService({
     where: { rattachement: 'Suivi' },
   });
@@ -96,10 +103,10 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         pendingStatusUpdate.current = true;
         openConfirmDialog(
           "Passer la demande en commission ?",
-          "Souhaitez-vous faire passer cette demande au statut « en commission » ?",
+          "Souhaitez-vous soumette cette demande à la comité » ?",
           async () => {
             if (pendingStatusUpdate.current) {
-              await updateDemande(currentRow.id, { status: "en_commision" });
+              await updateDemande(currentRow.id, { status: "en_commision", acteur:currentRow?.proprietaire && {connect:{id:currentRow?.proprietaire.id}}});
               pendingStatusUpdate.current = false;
             }
           },
@@ -112,23 +119,24 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     }
   };
 
-  const handleCreatePredefinedActivity = async (type: ActivityType) => {
+  const handleCreatePredefinedActivity = async (type: ActivityType,variables?: Record<string, string>) => {
     const titlesAndMessages: Record<ActivityType, { titre: string; message: string }> = {
       priseContactEchec: {
         titre: "Prise de contact échouée",
-        message: "Impossible de joindre le demandeur.",
+        message: "Impossible de joindre le bénéficiaire.",
       },
       priseContactReussie: {
-        titre: "Entretien avec le demandeur",
-        message: "Le demandeur été contacté.",
+        titre: "Entretien avec le bénéficiaire",
+        message: "Le bénéficiaire été contacté.",
       },
       note: {
         titre: "Note de suivi",
         message: "",
       },
       visite: {
-        titre: "Visite programmée",
-        message: "Une visite a été convenue avec le demandeur",
+        titre: "Coordinateur de visite designé ",
+        message: variables ? `${variables.coordinateur} a été désigné comme coordinateur de la visite. Le bénévole le plus proche du bénéficiaire est ${variables.visiteur}` 
+        :" Un Coordinateur de visiste a été désigné"
       },
       statusUpdate: {
         titre: "Changement de statut",
@@ -153,6 +161,10 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       expiration: {
         titre: "Aide expirée",
         message: "Une aide dans le cadre de cette demande a expiré",
+      },
+      docsRequest: {
+        titre: "Justificatifs demandés",
+        message: "Un mail a été envoyé au bénéficiaire  pour demander les pièces justificatifs",
       }
 
 
@@ -170,17 +182,17 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       userId: userId!,
     });
     // Déclencher confirmation si applicable
-    if (type === "priseContactEchec" && currentRow.status === "recue") {
+     if (type === "priseContactEchec" && ["recue", "EnAttenteDocs"].includes(currentRow.status) && (currentRow.nombreRelances &&  currentRow.nombreRelances> 4)) {
       nextStatusRef.current = "EnAttente";
       openConfirmDialog(
         "Changer le statut de la demande ?",
-        "Souhaitez-vous mettre ma demande en attente ?",
+        "Le bénéficiaire reste injoignable après 4 tentavive de contact,Souhaitez-vous mettre ma demande en attente ?",
         handleConfirmedStatusChange,
         { confirmText: "Oui", cancelBtnText: "Annuler" }
       );
-    }
+    } 
 
-    if (type === "visite") {
+  /*   if (type === "visite") {
       nextStatusRef.current = "en_visite";
       openConfirmDialog(
         "Changer le statut de la demande ?",
@@ -188,7 +200,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         handleConfirmedStatusChange,
         { confirmText: "Oui", cancelBtnText: "Annuler" }
       );
-    }
+    } */
 
     if (type === "accept") {
       nextStatusRef.current = "EnCours";
@@ -219,6 +231,28 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     });
   };
 
+  const handleSubmitDocsRequest = async ({
+    objet,
+    message,
+    sendMail,
+  }: {
+    objet: string;
+    message: string;
+    sendMail: boolean;
+  }) => {
+    if (sendMail) {
+      await sendMessage({
+        contactId: currentRow.contact.id.toString(),
+        objet,
+        message, // ⬅️ ici, message est le HTML du RichTextEditor
+
+      });
+    }
+  
+    await handleCreatePredefinedActivity("docsRequest");
+    await updateDemande(currentRow.id, { status: "EnAttenteDocs" });
+  };
+
   const handleConfirmedStatusChange = async () => {
     if (nextStatusRef.current) {
       await updateDemande(currentRow.id, { status: nextStatusRef.current });
@@ -235,8 +269,18 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     nextStatusRef.current = null;
   };
 
-
-
+  const handleDocsRequest = async () => {
+   
+    setOpenDocsRequestSheet(true)
+  
+  };
+  
+  const handleOpenVisiteSheet = async () => {
+   
+    setOpenVisiteSheet(true); // Ouvre la Sheet
+  };
+ const hasContactAttempts:boolean = (currentRow.demandeActivities.filter((e) => (e.typeField==="priseContactReussie"))).length >0
+  
   return (
 
     <div className="sm:min-w-full grid grid-cols-1 xl:grid-cols-1 2xl:grid-cols-3 md:grid-cols-1 gap-6 mt-6">
@@ -273,35 +317,44 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
 
                   }
                   {/* Partie Activités */}
-                  <DropdownMenuLabel>Activités</DropdownMenuLabel>
+                  <DropdownMenuLabel>Evénements</DropdownMenuLabel>
                   <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("priseContactEchec")}>
                     <PhoneMissed className="mr-2 h-4 w-4" />
                     Prise de contact échouée
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("priseContactReussie")}>
                     <PhoneCall className="mr-2 h-4 w-4" />
-                    Entretien avec le demandeur
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("abandon")}>
-                    <RefreshCwOff className="mr-2 h-4 w-4" />
-                    Abandon de la demande
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("visite")}>
-                    <MapPin className="mr-2 h-4 w-4" />
-                    Visite programmée
+                    Entretien avec le bénéficiaire
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setOpenNoteSheet(true)}>
                     <StickyNote className="mr-2 h-4 w-4" />
                     Note de suivi
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => handleDocsRequest()} disabled={!hasContactAttempts}>
+                    <FilePlus2 className="mr-2 h-4 w-4" />
+                    Demander des justificatifs
+                  </DropdownMenuItem>
+                  
+                   <DropdownMenuItem onClick={handleOpenVisiteSheet}  disabled={currentRow.status == "recue" ||  !hasContactAttempts}>
+                    <MapPin className="mr-2 h-4 w-4" />
+                    Organiser une visite
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("abandon")}>
+                    <RefreshCwOff className="mr-2 h-4 w-4" />
+                    Abandonner de la demande
                   </DropdownMenuItem>
 
 
                   <DropdownMenuSeparator />
 
                   {/* Partie Documents */}
-                  <DropdownMenuLabel>Documents</DropdownMenuLabel>
+                  <DropdownMenuLabel>Ajouer un documents</DropdownMenuLabel>
                   {typeDocumentsSuivi?.map((type: TypeDocument) => (
-                    <DropdownMenuItem key={type.id} onClick={() => handleTypeClick(type.id)}>
+                    <DropdownMenuItem key={type.id} onClick={() => handleTypeClick(type.id)}  
+                    disabled={type.internalCode == 'rapport_visite' && ( currentRow.status == "recue" ||  !hasContactAttempts)}>
                       <FileText className="mr-2 h-4 w-4" />
                       {type.label}
                     </DropdownMenuItem>
@@ -344,6 +397,25 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         onOpenChange={setOpenNoteSheet}
         onSubmit={handleSubmitNote}
       />
+      <DocsRequestSheet
+        open={openDocsRequestSheet}
+        onOpenChange={setOpenDocsRequestSheet}
+        onSubmit={handleSubmitDocsRequest}
+      />
+      <CoordinateursMapSheet
+        open={openVisiteSheet}
+        onOpenChange={setOpenVisiteSheet}
+        contactId={currentRow.contact.id}
+        onAssign={async (data: { visiteur: User; coordinateur: User}) => {
+          console.log("Assignation déclenchée côté parent avec :", data.visiteur.id);
+          data.coordinateur =data.coordinateur  ? data.coordinateur :data.visiteur
+          await handleCreatePredefinedActivity("visite",{visiteur: `${data.visiteur.firstName} ${data.visiteur.lastName}`,coordinateur:`${data.coordinateur.firstName} ${data.coordinateur.lastName}`}); // Enregistre l'activité "visite"
+          const acteur = data.coordinateur ?  data.coordinateur : data.visiteur
+          await updateDemande(currentRow.id, { status: "en_visite", acteur: { id: acteur.id } })
+          setOpenVisiteSheet(false);
+        }}
+      />
+
       <div className={`${showContact ? "col-span-2" : "col-span-3 "} space-y-6`}>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-5 gap-2">
           <InfoCard title="Revenus" value={`${totalRevenus?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
@@ -421,7 +493,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
           {showAides &&
             <Card>
               <CardHeader>
-                <CardTitle>Aides Reçues par le demandeur</CardTitle>
+                <CardTitle>Aides Reçues par le bénéficiaire</CardTitle>
               </CardHeader>
               <CardContent>
                 {currentRow?.contact.aides && currentRow?.contact.aides.length > 0 ? (
@@ -439,7 +511,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
           {showDocuements &&
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                <CardTitle>Justificatifs du demandeur</CardTitle>
+                <CardTitle>Justificatifs du bénéficiaire</CardTitle>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="h-8">

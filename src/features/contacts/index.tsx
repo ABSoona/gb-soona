@@ -28,9 +28,9 @@ export default function Contacts() {
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
                             <IconUser className="h-6 w-6 text-primary" />
-                            Liste des Contacts</h2>
+                            Liste des bénéficiaires</h2>
                         <p className="text-muted-foreground">
-                            Gérez vos contacts et leurs statuts ici.
+                            Gérez vos bénéficiaires et leurs statuts ici.
                         </p>
                     </div>
                     <ContactsPrimaryButtons />

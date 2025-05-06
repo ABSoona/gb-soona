@@ -233,7 +233,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
                 name="contactId"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel>Contact</FormLabel>
+                    <FormLabel>Bénéficiaire</FormLabel>
                     <FormControl>
                       <ContactSearchCombobox
                         onSelect={(contactId) => {
@@ -255,7 +255,6 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
                 control={form.control}
                 name="demandeId"
                 render={({ field }) => {
-
                   return (<FormItem className="space-y-1">
                     <FormLabel>Demande concernée</FormLabel>
                     <FormControl>

@@ -6,6 +6,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { DateRange } from 'react-day-picker';
 import { categorieTypes, demandeStatusColor, demandeStatusTypes } from '../data/data';
 import { DataTableRowActions } from './data-table-row-actions';
+import { formatDistanceToNow } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const dateRangeFilter: ColumnDef<Demande>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
     if (!filterValue || (!filterValue.from && !filterValue.to)) {
@@ -74,7 +76,7 @@ export const columns: ColumnDef<Demande>[] = [
     {
         accessorFn: (row) => `${row.contact?.nom ?? ''} ${row.contact?.prenom ?? ''}`,
         id: 'contactNomPrenom',
-        header: 'Demandeur',
+        header: 'Bénéficiaire',
         cell: ({ row }) => { return (<span className='capitalize'>{row.original.contact?.nom ?? 'N/A'} {row.original.contact?.prenom ?? ''}</span>) },
         enableHiding: true,
         filterFn: (row, id, value) => {
@@ -83,6 +85,70 @@ export const columns: ColumnDef<Demande>[] = [
         },
 
     },
+    {
+        accessorFn: (row) => row?.categorieDemandeur,
+        id: 'categorieDemandeur',
+        header: 'Catégorie',
+        cell: ({ row }) => {
+            const categorieDemandeur: categorieDemandeur = row.getValue('categorieDemandeur');
+            return categorieTypes.find(s => s.value === categorieDemandeur)?.label ?? 'N/A';
+        },
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+    },
+    {
+        accessorFn: (row) => `${row?.acteur?.firstName ?? ''} ${row?.acteur?.lastName ?? ''}`,
+        id: 'acteur',
+        header: 'Attribué à',
+        cell: ({ row }) => { return (<span className='capitalize'>{row.original?.acteur?.firstName ?? 'N/A'} {row.original?.acteur?.lastName ?? ''}</span>) },
+        enableHiding: true,
+        filterFn: (row, id, value) => {
+            const fullName = `${row.getValue(id)}`.toLowerCase(); // 🔥 Concaténer nom + prénom
+            return fullName.includes(value.toLowerCase()); // 🔍 Vérifie si une partie du texte correspond
+        },
+
+    },
+    {
+        id: 'dernierContact',
+        accessorKey: 'dernierContact',
+        header: 'Dérnier contact ',
+        cell: ({ row }) => {
+            const dateStr = row.getValue('dernierContact') as string;
+            if (!dateStr) return 'Jamais';
+        
+            const date = new Date(dateStr);
+            return `${formatDistanceToNow(date, { addSuffix: true, locale: fr })}`;
+          },
+        filterFn: dateRangeFilter, // Ajout du filtre
+    },
+    {
+        id: 'derniereRelance',
+        accessorKey: 'derniereRelance',
+        header: 'Dernière relance',
+        cell: ({ row }) => {
+          const dateStr = row.getValue('derniereRelance') as string;
+          if (!dateStr) return 'Jamais';
+      
+          const date = new Date(dateStr);
+          return `${formatDistanceToNow(date, { addSuffix: true, locale: fr })}`;
+        },
+        filterFn: dateRangeFilter,
+      },
+    {
+        accessorFn: (row) => row?.nombreRelances,
+        id: 'nombreRelances',
+        header: 'Relances',
+        cell: ({ row }) => {
+          const relances = row.original.nombreRelances;
+      
+          if (!relances) return 'Jamais'; // couvre null, undefined, et 0
+          return `${relances} fois`;
+        },
+      },
+    
+    
+   
     {
         accessorFn: (row) => row.contact?.nom,
         id: 'contactNom',
@@ -136,18 +202,7 @@ export const columns: ColumnDef<Demande>[] = [
             return value.includes(row.getValue(id))
         },
     },
-    {
-        accessorFn: (row) => row?.categorieDemandeur,
-        id: 'categorieDemandeur',
-        header: 'Catégorie',
-        cell: ({ row }) => {
-            const categorieDemandeur: categorieDemandeur = row.getValue('categorieDemandeur');
-            return categorieTypes.find(s => s.value === categorieDemandeur)?.label ?? 'N/A';
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id))
-        },
-    },
+   
 
     {
         accessorFn: (row) => row?.revenus,

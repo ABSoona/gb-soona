@@ -106,8 +106,8 @@ export function NotificationsForm() {
           <PrefSwitch form={form} name='ErreursDemandes' label='Erreur depuis sonna.com' description='Quand une demande est reçu de puis sonna.com mais ne peut pas être integré dans GBsoona.' />
         </Section>
 
-        <Section title='Contact'>
-          <PrefSwitch form={form} name='contactBlackL' label='Contact blacklisté' description='Quand un contact est blacklisté.' />
+        <Section title='Bénéficiaire'>
+          <PrefSwitch form={form} name='contactBlackL' label='Bénéficiaire blacklisté' description='Quand un contact est blacklisté.' />
         </Section>
 
         <Section title='Aides'>

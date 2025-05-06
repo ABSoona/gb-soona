@@ -22,6 +22,16 @@ export const DEMANDE_FIELDS = gql`
     remarques
     categorieDemandeur
     updatedAt
+    dernierContact
+    derniereRelance
+    nombreRelances
+    recommandation
+    acteur {
+      id
+      firstName
+      lastName
+
+    }
     contact {
       id
     }

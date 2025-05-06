@@ -14,7 +14,7 @@ export function WebsiteDemandeView({ currentRow }: Props) {
     <div className="sm:min-w-full grid grid-cols-1 xl:grid-cols-1 2xl:grid-cols-3 md:grid-cols-1 gap-6 mt-6">
       <Card>
         <CardHeader>
-          <CardTitle>Informations du demandeur</CardTitle>
+          <CardTitle>Informations du bénéficiaire</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <p><strong>Nom :</strong> {currentRow.nomDemandeur}</p>

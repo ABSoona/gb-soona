@@ -56,7 +56,7 @@ export function ContactsDeleteDialog({ open, onOpenChange, currentRow }: Props) 
           </p>
 
           <Label>
-            Confirmez en tapant le N° de contact :
+            Confirmez en tapant le N° de bénéficiaire :
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value === '' ? '' : Number(e.target.value))} // ✅ Gestion du champ vide

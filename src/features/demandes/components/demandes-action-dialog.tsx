@@ -31,12 +31,14 @@ import { z } from 'zod';
 import { useDemandes } from '../context/demandes-context';
 import { categorieTypes, demandeStatusTypes } from '../data/data';
 import { ContactSearchCombobox } from './contact-search';
+import { useUserServicev2 } from '@/api/user/userService.v2';
+import { User } from '@/model/user/User';
 
 
 // 📌 Schéma de validation du formulaire avec Zod
 const formSchema = demandeSchema
-  .omit({ id: true, contact: true, createdAt: true, demandeActivities: true }) // Supprime les champs "id" et "contact"
-  .extend({ contactId: z.any() });  // Ajoute "contactId"
+  .omit({ id: true, contact: true, createdAt: true, demandeActivities: true,acteur :true,proprietaire:true }) // Supprime les champs "id" et "contact"
+  .extend({ contactId: z.any(), acteurId: z.any()});  // Ajoute "contactId"
 
 type DemandeForm = z.infer<typeof formSchema>;
 
@@ -51,6 +53,9 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
 
 
   const { createDemande, updateDemande, refetch, isSubmitting } = useDemandeService();
+  const { users } = useUserServicev2(
+     { where: { role: { not: "visiteur" } } } 
+  );
   const { triggerRefetchDemandes } = useDemandes();
   const isEdit = !!currentRow;
 
@@ -75,7 +80,9 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
         autresAides: currentRow?.autresAides || '',
         autresCharges: (currentRow?.autresCharges) || 0,
         apl: Number(currentRow?.apl),
-        categorieDemandeur: (currentRow?.categorieDemandeur)
+        categorieDemandeur: (currentRow?.categorieDemandeur),
+        acteurId: currentRow?.acteur?.id || undefined,
+        
 
       }
       : {
@@ -89,7 +96,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
         apl: 0,
         revenus: 0,
         facturesEnergie: 0,
-        revenusConjoint: 0,
+        revenusConjoint: 0
 
       },
   });
@@ -100,6 +107,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
     console.log("erreur de validation: ");
     const demandePayload = {
       contact: { id: Number(values.contactId) }, // Utilisation du contact ID sélectionné
+      acteur : {id : values.acteurId},
       status: values.status,
       remarques: values.remarques,
       revenus: Number(values.revenus),
@@ -116,7 +124,8 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
       autresAides: values.autresAides,
       autresCharges: Number(values.autresCharges),
       apl: Number(values.apl),
-      categorieDemandeur: values.categorieDemandeur
+      categorieDemandeur: values.categorieDemandeur,
+      proprietaire: !isEdit? {id : values.acteurId}:null,
 
     };
 
@@ -191,7 +200,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                 name="categorieDemandeur"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel>Catégorie du demandeur</FormLabel>
+                    <FormLabel>Catégorie du bénéficiaire</FormLabel>
                     <SelectDropdown
                       defaultValue={field.value?.toString()}
                       onValueChange={field.onChange}
@@ -519,6 +528,24 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                   </FormItem>
                 )}
               />}
+               <FormField
+                control={form.control}
+                name="acteurId"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel>Attribuée à</FormLabel>
+                    <SelectDropdown
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Choisissez un membre"
+                      className="col-span-4"
+      
+                      items={users.map((e:User)=>({value:e.id.toString(),label:`${e.firstName} ${e.lastName}`}))}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               {/* 📌 Champ Remarques */}
               <FormField

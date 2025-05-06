@@ -25,6 +25,8 @@ export const demandeStatusTypes =
     { label: 'En cours', value: 'EnCours' },
     { label: 'Abandonnée', value: 'Abandonnée' },
     { label: 'En attente', value: 'EnAttente' },
+    { label: 'En attente de justificatifs', value: 'EnAttenteDocs' },
+    
 
   ] as const
 

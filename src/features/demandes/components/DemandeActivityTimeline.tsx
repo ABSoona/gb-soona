@@ -36,6 +36,8 @@ const getIconForType = (type: string) => {
       return <CircleCheckBig className="h-4 w-4 inline mr-2" />;
     case 'refuse':
       return <Ban className="h-4 w-4 inline mr-2" />;
+    case 'docsRequest':
+        return <FilePlus2 className="h-4 w-4 inline mr-2" />;
     default:
       return null;
 
