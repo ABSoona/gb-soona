@@ -53,10 +53,12 @@ export function NavGroup({ title, items }: NavGroup) {
   )
 }
 
-const NavBadge = ({ children }: { children: ReactNode }) => (
-  <Badge className='rounded-full px-1 py-0 text-xs'>{children}</Badge>
-)
-
+const NavBadge = ({ children, color }: { children: ReactNode; color?: string }) => (
+  <Badge className={`min-w-[1.1rem] h-4 flex items-center justify-center rounded-full px-1 text-xs ${color ?? 'bg-cyan-600'}`}>
+    
+    {children}
+  </Badge>
+);
 const SidebarMenuLink = ({ item, href }: { item: NavLink; href: string }) => {
   const { setOpenMobile } = useSidebar()
   return (
@@ -69,7 +71,7 @@ const SidebarMenuLink = ({ item, href }: { item: NavLink; href: string }) => {
         <Link to={item.url} onClick={() => setOpenMobile(false)}>
           {item.icon && <item.icon />}
           <span>{item.title}</span>
-          {item.badge && <NavBadge>{item.badge}</NavBadge>}
+          {item.badge && <NavBadge color={item.badgeColor}>{item.badge}</NavBadge>}
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
@@ -95,7 +97,7 @@ const SidebarMenuCollapsible = ({
           <SidebarMenuButton tooltip={item.title}>
             {item.icon && <item.icon />}
             <span>{item.title}</span>
-            {item.badge && <NavBadge>{item.badge}</NavBadge>}
+            {item.badge && <NavBadge color={item.badgeColor}>{item.badge}</NavBadge>}
             <ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
           </SidebarMenuButton>
         </CollapsibleTrigger>
@@ -110,7 +112,7 @@ const SidebarMenuCollapsible = ({
                   <Link to={subItem.url} onClick={() => setOpenMobile(false)}>
                     {subItem.icon && <subItem.icon />}
                     <span>{subItem.title}</span>
-                    {subItem.badge && <NavBadge>{subItem.badge}</NavBadge>}
+                    {subItem.badge && <NavBadge color={subItem.badgeColor}>{subItem.badge}</NavBadge>}
                   </Link>
                 </SidebarMenuSubButton>
               </SidebarMenuSubItem>
@@ -139,7 +141,7 @@ const SidebarMenuCollapsedDropdown = ({
           >
             {item.icon && <item.icon />}
             <span>{item.title}</span>
-            {item.badge && <NavBadge>{item.badge}</NavBadge>}
+            {item.badge && <NavBadge color={item.badgeColor}>{item.badge}</NavBadge>}
             <ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
           </SidebarMenuButton>
         </DropdownMenuTrigger>

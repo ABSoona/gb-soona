@@ -39,6 +39,7 @@ export default function CoordinateursMapSheet({ open, onOpenChange, contactId,on
   );
   const contact = contacts[0];
   const [beneficiaireCoords, setBeneficiaireCoords] = useState<{ lat: number, lng: number } | null>(null);
+  const [isAssigning, setIsAssigning] = useState(false);
 
   useEffect(() => {
     if (contact) {
@@ -134,12 +135,12 @@ export default function CoordinateursMapSheet({ open, onOpenChange, contactId,on
               </div>
               {visiteur.superieur && (
                 <div className="text-xs text-muted-foreground">
-                  Coordinateur : {visiteur.superieur.firstName} {visiteur.superieur.lastName}
+                  Contact AB soona : {visiteur.superieur.firstName} {visiteur.superieur.lastName}
                 </div>
               )}
               <div className="flex gap-2 mt-1">
                 {visiteur.role === "coordinateur" && (
-                  <Badge variant="secondary">Coordinateur</Badge>
+                  <Badge variant="secondary">Membre</Badge>
                 )}
                 {visiteur.distanceKm != null && (
                   <Badge variant="outline">{visiteur.distanceKm.toFixed(1)} km</Badge>
@@ -154,23 +155,34 @@ export default function CoordinateursMapSheet({ open, onOpenChange, contactId,on
 
   {/* Bouton fixe en bas */}
   <div className="px-4 pb-4">
-    <button
-      className="w-full bg-primary text-white px-4 py-2 rounded-md disabled:opacity-50"
-      disabled={!selectedVisiteurId}
-      onClick={() => {
-        if (selectedVisiteurId) {
-          const visiteur = visiteursWithDistance.find(v => v.id === selectedVisiteurId);
-          if (visiteur) {
-            onAssign({
-              visiteur,
-              coordinateur: visiteur.superieur ?? null
-            });
-          }
+  <button
+  className="w-full bg-primary text-white px-4 py-2 rounded-md disabled:opacity-50 flex items-center justify-center gap-2"
+  disabled={!selectedVisiteurId || isAssigning}
+  onClick={async () => {
+    if (selectedVisiteurId) {
+      const visiteur = visiteursWithDistance.find(v => v.id === selectedVisiteurId);
+      if (visiteur) {
+        setIsAssigning(true);
+        try {
+          await onAssign({
+            visiteur,
+            coordinateur: visiteur.superieur ?? null
+          });
+        } finally {
+          setIsAssigning(false);
         }
-      }}
-    >
-      Attribuer la visite
-    </button>
+      }
+    }
+  }}
+>
+  {isAssigning && (
+    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3.5-3.5L12 0v4a8 8 0 00-8 8z" />
+    </svg>
+  )}
+  {isAssigning ? "Attribution..." : "Attribuer la visite"}
+</button>
   </div>
 </Card>
 

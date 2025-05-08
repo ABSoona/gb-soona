@@ -10,6 +10,7 @@ import { RichTextEditorContent } from './rich-text-editor-content';
 import { $generateNodesFromDOM } from '@lexical/html';
 import { $getRoot, $insertNodes } from 'lexical';
 
+
 export function RichTextEditor({
   value,
   onChange,
@@ -28,6 +29,11 @@ export function RichTextEditor({
         italic: 'italic',
         underline: 'underline',
         strikethrough: 'line-through',
+      },
+      list: {
+        ul: 'list-disc list-inside',
+        ol: 'list-decimal list-inside',
+        listitem: 'ml-4',
       },
     },
     onError: (error) => {

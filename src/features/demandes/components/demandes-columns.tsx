@@ -112,7 +112,7 @@ export const columns: ColumnDef<Demande>[] = [
     {
         id: 'dernierContact',
         accessorKey: 'dernierContact',
-        header: 'Dérnier contact ',
+        header: 'Entretien tél',
         cell: ({ row }) => {
             const dateStr = row.getValue('dernierContact') as string;
             if (!dateStr) return 'Jamais';
@@ -138,7 +138,7 @@ export const columns: ColumnDef<Demande>[] = [
     {
         accessorFn: (row) => row?.nombreRelances,
         id: 'nombreRelances',
-        header: 'Relances',
+        header: 'Relancé',
         cell: ({ row }) => {
           const relances = row.original.nombreRelances;
       

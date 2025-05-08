@@ -41,7 +41,7 @@ export function useConfirmDialog() {
     }
 
     const ConfirmDialogComponent = (
-        <ConfirmDialog
+        <ConfirmDialog className="whitespace-pre-line"
             {...dialogProps}
             onOpenChange={(open) => setDialogProps((prev) => ({ ...prev, open }))}
             handleConfirm={async () => {

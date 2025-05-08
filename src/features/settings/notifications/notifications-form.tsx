@@ -1,6 +1,7 @@
 'use client'
 
 import { useNotificationPrefrenceService } from '@/api/user-notification-preference/notif-pref-service'
+import { getCurrentUser } from '@/api/user/userService'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -25,6 +26,7 @@ const notificationsFormSchema = z.object({
   aideExpire: z.boolean().default(false),
   contactBlackL: z.boolean().default(false),
   ErreursDemandes: z.boolean().default(false),
+  demandeAffecte:z.boolean().default(false)
 })
 
 type NotificationsFormValues = z.infer<typeof notificationsFormSchema>
@@ -35,7 +37,8 @@ const typeToFieldMap: Record<NotificationType, keyof NotificationsFormValues> = 
   DemandeEnCommission: 'demandeEnCommission',
   ContactBan: 'contactBlackL',
   AideExpir: 'aideExpire',
-  ErreursDemandes: 'ErreursDemandes'
+  ErreursDemandes: 'ErreursDemandes',
+  DemandeAffecte : "demandeAffecte"
 }
 
 const fieldToTypeMap = Object.fromEntries(
@@ -87,7 +90,7 @@ export function NotificationsForm() {
       if (existing) {
         return updateNotificationPrefrence(existing.id, { active: value })
       } else {
-        return createNotificationPrefrence({ typeField: type, active: value })
+        return createNotificationPrefrence({ typeField: type, active: value,user:{id:getUserId()} })
       }
     })
 
@@ -101,6 +104,7 @@ export function NotificationsForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
         <Section title='Demandes'>
           <PrefSwitch form={form} name='nouvelleDemande' label='Nouvelle demande' description='Quand une nouvelle demande est reçue.' />
+          <PrefSwitch form={form} name='demandeAffecte' label='Demande affecté' description="Quand une m'a été affecté." />
           <PrefSwitch form={form} name='demandeEnVsite' label='Demande en visite' description='Quand une demande passe au statut "En visite".' />
           <PrefSwitch form={form} name='demandeEnCommission' label='Demande en commission' description='Quand une demande passe au statut "En commission".' />
           <PrefSwitch form={form} name='ErreursDemandes' label='Erreur depuis sonna.com' description='Quand une demande est reçu de puis sonna.com mais ne peut pas être integré dans GBsoona.' />

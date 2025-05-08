@@ -67,7 +67,8 @@ export function DemandesTable({ columns, data, hideTools = false, hideActions = 
             charges:false,
             dettes : false,
             contactAge: false,
-            situationProfessionnelle:false
+            situationProfessionnelle:false,
+            resteAVivre:false
 
 
         }

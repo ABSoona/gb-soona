@@ -7,23 +7,24 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import logo from '../../assets/logo.png';
-import { sidebarData } from './data/sidebar-data';
+import { useSidebarData } from './data/sidebar-data';
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
+  const { navGroups } = useSidebarData();
+
   return (
-    <Sidebar collapsible='icon' variant='floating' {...props}>
+    <Sidebar collapsible="icon" variant="floating" {...props}>
       <SidebarHeader>
         <img className="logo" src={logo} alt="Logo" />
       </SidebarHeader>
       <SidebarContent>
-        {sidebarData.navGroups.map((props) => (
-          <NavGroup key={props.title} {...props} />
+        {navGroups.map((group) => (
+          <NavGroup key={group.title} {...group} />
         ))}
       </SidebarContent>
-      <SidebarFooter>
-
-      </SidebarFooter>
+      <SidebarFooter />
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

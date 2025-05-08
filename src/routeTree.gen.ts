@@ -74,6 +74,21 @@ const AuthenticatedSettingsAppearanceLazyImport = createFileRoute(
 const AuthenticatedSettingsAccountLazyImport = createFileRoute(
   '/_authenticated/settings/account',
 )()
+const AuthenticatedDemandesNouvellesLazyImport = createFileRoute(
+  '/_authenticated/demandes/nouvelles',
+)()
+const AuthenticatedDemandesMesDemandesLazyImport = createFileRoute(
+  '/_authenticated/demandes/mes-demandes',
+)()
+const AuthenticatedDemandesEnVisiteLazyImport = createFileRoute(
+  '/_authenticated/demandes/en-visite',
+)()
+const AuthenticatedDemandesEnCoursTraitementLazyImport = createFileRoute(
+  '/_authenticated/demandes/en-cours-traitement',
+)()
+const AuthenticatedDemandesEnCommissionLazyImport = createFileRoute(
+  '/_authenticated/demandes/en-commission',
+)()
 const AuthenticatedDemandesIdLazyImport = createFileRoute(
   '/_authenticated/demandes/$id',
 )()
@@ -328,6 +343,61 @@ const AuthenticatedSettingsAccountLazyRoute =
     ),
   )
 
+const AuthenticatedDemandesNouvellesLazyRoute =
+  AuthenticatedDemandesNouvellesLazyImport.update({
+    id: '/demandes/nouvelles',
+    path: '/demandes/nouvelles',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/demandes/nouvelles.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthenticatedDemandesMesDemandesLazyRoute =
+  AuthenticatedDemandesMesDemandesLazyImport.update({
+    id: '/demandes/mes-demandes',
+    path: '/demandes/mes-demandes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/demandes/mes-demandes.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthenticatedDemandesEnVisiteLazyRoute =
+  AuthenticatedDemandesEnVisiteLazyImport.update({
+    id: '/demandes/en-visite',
+    path: '/demandes/en-visite',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/demandes/en-visite.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthenticatedDemandesEnCoursTraitementLazyRoute =
+  AuthenticatedDemandesEnCoursTraitementLazyImport.update({
+    id: '/demandes/en-cours-traitement',
+    path: '/demandes/en-cours-traitement',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/demandes/en-cours-traitement.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthenticatedDemandesEnCommissionLazyRoute =
+  AuthenticatedDemandesEnCommissionLazyImport.update({
+    id: '/demandes/en-commission',
+    path: '/demandes/en-commission',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/demandes/en-commission.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
 const AuthenticatedDemandesIdLazyRoute =
   AuthenticatedDemandesIdLazyImport.update({
     id: '/demandes/$id',
@@ -469,6 +539,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDemandesIdLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/demandes/en-commission': {
+      id: '/_authenticated/demandes/en-commission'
+      path: '/demandes/en-commission'
+      fullPath: '/demandes/en-commission'
+      preLoaderRoute: typeof AuthenticatedDemandesEnCommissionLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/demandes/en-cours-traitement': {
+      id: '/_authenticated/demandes/en-cours-traitement'
+      path: '/demandes/en-cours-traitement'
+      fullPath: '/demandes/en-cours-traitement'
+      preLoaderRoute: typeof AuthenticatedDemandesEnCoursTraitementLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/demandes/en-visite': {
+      id: '/_authenticated/demandes/en-visite'
+      path: '/demandes/en-visite'
+      fullPath: '/demandes/en-visite'
+      preLoaderRoute: typeof AuthenticatedDemandesEnVisiteLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/demandes/mes-demandes': {
+      id: '/_authenticated/demandes/mes-demandes'
+      path: '/demandes/mes-demandes'
+      fullPath: '/demandes/mes-demandes'
+      preLoaderRoute: typeof AuthenticatedDemandesMesDemandesLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/demandes/nouvelles': {
+      id: '/_authenticated/demandes/nouvelles'
+      path: '/demandes/nouvelles'
+      fullPath: '/demandes/nouvelles'
+      preLoaderRoute: typeof AuthenticatedDemandesNouvellesLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/settings/account': {
       id: '/_authenticated/settings/account'
       path: '/account'
@@ -596,6 +701,11 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedContactsIdLazyRoute: typeof AuthenticatedContactsIdLazyRoute
   AuthenticatedDemandesIdLazyRoute: typeof AuthenticatedDemandesIdLazyRoute
+  AuthenticatedDemandesEnCommissionLazyRoute: typeof AuthenticatedDemandesEnCommissionLazyRoute
+  AuthenticatedDemandesEnCoursTraitementLazyRoute: typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
+  AuthenticatedDemandesEnVisiteLazyRoute: typeof AuthenticatedDemandesEnVisiteLazyRoute
+  AuthenticatedDemandesMesDemandesLazyRoute: typeof AuthenticatedDemandesMesDemandesLazyRoute
+  AuthenticatedDemandesNouvellesLazyRoute: typeof AuthenticatedDemandesNouvellesLazyRoute
   AuthenticatedAidesIndexLazyRoute: typeof AuthenticatedAidesIndexLazyRoute
   AuthenticatedContactsIndexLazyRoute: typeof AuthenticatedContactsIndexLazyRoute
   AuthenticatedDemandesIndexLazyRoute: typeof AuthenticatedDemandesIndexLazyRoute
@@ -612,6 +722,16 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedContactsIdLazyRoute: AuthenticatedContactsIdLazyRoute,
   AuthenticatedDemandesIdLazyRoute: AuthenticatedDemandesIdLazyRoute,
+  AuthenticatedDemandesEnCommissionLazyRoute:
+    AuthenticatedDemandesEnCommissionLazyRoute,
+  AuthenticatedDemandesEnCoursTraitementLazyRoute:
+    AuthenticatedDemandesEnCoursTraitementLazyRoute,
+  AuthenticatedDemandesEnVisiteLazyRoute:
+    AuthenticatedDemandesEnVisiteLazyRoute,
+  AuthenticatedDemandesMesDemandesLazyRoute:
+    AuthenticatedDemandesMesDemandesLazyRoute,
+  AuthenticatedDemandesNouvellesLazyRoute:
+    AuthenticatedDemandesNouvellesLazyRoute,
   AuthenticatedAidesIndexLazyRoute: AuthenticatedAidesIndexLazyRoute,
   AuthenticatedContactsIndexLazyRoute: AuthenticatedContactsIndexLazyRoute,
   AuthenticatedDemandesIndexLazyRoute: AuthenticatedDemandesIndexLazyRoute,
@@ -644,6 +764,11 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
   '/demandes/$id': typeof AuthenticatedDemandesIdLazyRoute
+  '/demandes/en-commission': typeof AuthenticatedDemandesEnCommissionLazyRoute
+  '/demandes/en-cours-traitement': typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
+  '/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
+  '/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
+  '/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
@@ -674,6 +799,11 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
   '/demandes/$id': typeof AuthenticatedDemandesIdLazyRoute
+  '/demandes/en-commission': typeof AuthenticatedDemandesEnCommissionLazyRoute
+  '/demandes/en-cours-traitement': typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
+  '/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
+  '/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
+  '/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
@@ -708,6 +838,11 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
   '/_authenticated/demandes/$id': typeof AuthenticatedDemandesIdLazyRoute
+  '/_authenticated/demandes/en-commission': typeof AuthenticatedDemandesEnCommissionLazyRoute
+  '/_authenticated/demandes/en-cours-traitement': typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
+  '/_authenticated/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
+  '/_authenticated/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
+  '/_authenticated/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
@@ -742,6 +877,11 @@ export interface FileRouteTypes {
     | '/'
     | '/contacts/$id'
     | '/demandes/$id'
+    | '/demandes/en-commission'
+    | '/demandes/en-cours-traitement'
+    | '/demandes/en-visite'
+    | '/demandes/mes-demandes'
+    | '/demandes/nouvelles'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -771,6 +911,11 @@ export interface FileRouteTypes {
     | '/'
     | '/contacts/$id'
     | '/demandes/$id'
+    | '/demandes/en-commission'
+    | '/demandes/en-cours-traitement'
+    | '/demandes/en-visite'
+    | '/demandes/mes-demandes'
+    | '/demandes/nouvelles'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -803,6 +948,11 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/contacts/$id'
     | '/_authenticated/demandes/$id'
+    | '/_authenticated/demandes/en-commission'
+    | '/_authenticated/demandes/en-cours-traitement'
+    | '/_authenticated/demandes/en-visite'
+    | '/_authenticated/demandes/mes-demandes'
+    | '/_authenticated/demandes/nouvelles'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
@@ -883,6 +1033,11 @@ export const routeTree = rootRoute
         "/_authenticated/",
         "/_authenticated/contacts/$id",
         "/_authenticated/demandes/$id",
+        "/_authenticated/demandes/en-commission",
+        "/_authenticated/demandes/en-cours-traitement",
+        "/_authenticated/demandes/en-visite",
+        "/_authenticated/demandes/mes-demandes",
+        "/_authenticated/demandes/nouvelles",
         "/_authenticated/aides/",
         "/_authenticated/contacts/",
         "/_authenticated/demandes/",
@@ -950,6 +1105,26 @@ export const routeTree = rootRoute
     },
     "/_authenticated/demandes/$id": {
       "filePath": "_authenticated/demandes/$id.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/demandes/en-commission": {
+      "filePath": "_authenticated/demandes/en-commission.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/demandes/en-cours-traitement": {
+      "filePath": "_authenticated/demandes/en-cours-traitement.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/demandes/en-visite": {
+      "filePath": "_authenticated/demandes/en-visite.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/demandes/mes-demandes": {
+      "filePath": "_authenticated/demandes/mes-demandes.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/demandes/nouvelles": {
+      "filePath": "_authenticated/demandes/nouvelles.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/settings/account": {

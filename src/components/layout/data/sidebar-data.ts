@@ -3,21 +3,22 @@ import {
   IconHeartHandshake,
   IconHelp,
   IconLayoutDashboard,
-  IconLogs,
   IconMailDown,
+  IconSettings,
   IconUsers
-} from '@tabler/icons-react'
+} from '@tabler/icons-react';
+import { Globe, Squircle, UserIcon } from 'lucide-react';
+import { useDemandeService } from '@/api/demande/demandeService';
+import type { SidebarData, NavGroup } from '../types';
 
-import { UserIcon } from 'lucide-react'
-import { type SidebarData } from '../types'
+export function useSidebarData(): SidebarData {
+  //const { demandes } = useDemandeService();
 
-export const sidebarData: SidebarData = {
-  user: {
-    name: 'satnaing',
-    email: 'satnaingdev@gmail.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
-  navGroups: [
+  const { stats, loading } = useDemandeService();
+  // Badges par sous-catégorie (à adapter selon ta logique métier)
+
+
+  const navGroups: NavGroup[] = [
     {
       title: 'General',
       items: [
@@ -28,8 +29,48 @@ export const sidebarData: SidebarData = {
         },
         {
           title: 'Demandes',
-          url: '/demandes',
           icon: IconMailDown,
+
+          items: [
+            {
+              title: 'Toutes les demandes',
+              url: '/demandes',
+              icon: Squircle,
+            },
+            {
+              title: 'Affectée à moi',
+              url: '/demandes/mes-demandes',
+              icon: Squircle,
+              badge: stats.affecteAMoi > 0 ? String(stats.affecteAMoi) : undefined,
+             
+            },
+            {
+              title: 'Nouvelles',
+              url: '/demandes/nouvelles',
+              icon: Squircle,
+              badge: stats.nouvelles > 0 ? String(stats.nouvelles ) : undefined,
+              //badgeColor:"bg-red-600",
+            },
+            {
+              title: "Suivies",
+              url: '/demandes/en-cours-traitement',
+              icon: Squircle,
+              badge: stats.suivies > 0 ? String(stats.suivies) : undefined,
+
+            },
+             {
+              title: 'En visite',
+              url: '/demandes/en-visite',
+              icon: Squircle,
+              badge: stats.enVisite > 0 ? String(stats.enVisite) : undefined,
+            }, 
+            {
+              title: 'En commité',
+              url: '/demandes/en-commission',
+              icon: Squircle,
+              badge: stats.enCommite > 0 ? String(stats.enCommite) : undefined,
+            },
+          ],
         },
         {
           title: 'Bénéficiaires',
@@ -41,72 +82,32 @@ export const sidebarData: SidebarData = {
           url: '/aides',
           icon: IconHeartHandshake,
         },
-
       ],
     },
-    /*    {
-         title: 'Pages',
-         items: [
-           {
-             title: 'Auth',
-             icon: IconLockAccess,
-             items: [
-               {
-                 title: 'Sign In',
-                 url: '/sign-in',
-               },
-               {
-                 title: 'Sign In (2 Col)',
-                 url: '/sign-in-2',
-               },
-               {
-                 title: 'Sign Up',
-                 url: '/sign-up',
-               },
-               {
-                 title: 'Forgot Password',
-                 url: '/forgot-password',
-               },
-               {
-                 title: 'OTP',
-                 url: '/otp',
-               },
-             ],
-           },
-           
-         ],
-       }, */
     {
       title: 'Autres',
       items: [
         {
-          title: 'Utilisateurs',
-          url: '/users',
-          icon: IconUsers,
+          title: 'Paramètres',
+          icon: IconSettings,
+          items: [
+            {
+              title: 'Utilisateurs',
+              url: '/users',
+              icon: Squircle,
+            },
+            {
+              title: 'Type de documents',
+              url: '/typeDocuments',
+              icon: Squircle,
+            },
+          ],
         },
         {
-          title: 'Type de documents',
-          url: '/typeDocuments',
-          icon: IconFile,
-        },
-        {
-          title: 'Inscriptions sonna.com',
+          title: 'Inscriptions sonna.fr',
           url: '/website-demandes',
-          icon: IconLogs,
+          icon: Globe,
         },
-        /*  {
-           title: 'Réglages',
-           icon: IconSettings,
-           items: [
-            
-             {
-               title: 'Mon compte',
-               url: '/settings',
-               icon: IconUserCog,
-             },
-            
-           ],
-         }, */
         {
           title: 'Documentation',
           url: '/help-center',
@@ -114,5 +115,14 @@ export const sidebarData: SidebarData = {
         },
       ],
     },
-  ],
+  ];
+
+  return {
+    user: {
+      name: 'satnaing',
+      email: 'satnaingdev@gmail.com',
+      avatar: '/avatars/shadcn.jpg',
+    },
+    navGroups,
+  };
 }

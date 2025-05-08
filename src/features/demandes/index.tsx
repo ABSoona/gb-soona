@@ -1,3 +1,4 @@
+import { DemandeStatus } from '@/model/demande/Demande';
 import { columns } from './components/demandes-columns';
 import { DemandesDialogs } from './components/demandes-dialogs';
 import { DemandesPrimaryButtons } from './components/demandes-primary-buttons';
@@ -10,9 +11,27 @@ import { TableSkeleton } from '@/components/ui/skeleton-table';
 import { handleServerError } from '@/utils/handle-server-error';
 import { IconMailDown } from '@tabler/icons-react';
 
-export default function Demandes() {
+export default function Demandes({ acteurId, status,title,description, newOlny }: { acteurId?: string, status?: DemandeStatus | DemandeStatus[],title?:string,description?:string, newOlny?: boolean }) {
     // ✅ Utilisation du service pour récupérer les demandes
-    const { demandes, loading: isLoading, error } = useDemandeService({ order: 10 });
+    const where: any = {};
+
+
+    if (acteurId) {
+        where.acteur = { id: acteurId };
+    }
+    if (status) {
+        if (Array.isArray(status)) {
+            where.status = { in: status }; // ✅ plusieurs statuts
+        } else {
+            where.status = { equals: status }; // ✅ un seul statut
+        }
+    }
+
+    const { demandes, loading: isLoading, error } = useDemandeService({
+        where,
+    });
+
+    const filteredDemandes = newOlny ? demandes.filter((e) => (!(e.demandeActivities.length > 1))) : demandes
 
     // Gestion des erreurs via la fonction centralisée
     if (error) {
@@ -20,6 +39,7 @@ export default function Demandes() {
     }
 
     return (
+
         <DemandesProvider>
             <AppLayout>
 
@@ -27,9 +47,9 @@ export default function Demandes() {
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
                             <IconMailDown className="h-6 w-6 text-primary" />
-                            Liste des Demandes</h2>
+                            {title?title : "Liste des Demandes"}</h2>
                         <p className="text-muted-foreground">
-                            Gérez vos demandes et leurs statuts ici.
+                            {description?description:"Gérez vos demandes et leurs statuts ici"}
                         </p>
                     </div>
                     <DemandesPrimaryButtons />
@@ -43,12 +63,12 @@ export default function Demandes() {
                             <p>❌ Erreur lors du chargement des demandes.</p>
                             <p>{(error as Error)?.message ?? 'Une erreur inattendue est survenue.'}</p>
                         </div>
-                    ) : demandes?.length === 0 ? (
+                    ) : filteredDemandes?.length === 0 ? (
                         <div className="text-center py-4">
                             <p>Aucune demande trouvée.</p>
                         </div>
                     ) : (
-                        <DemandesTable data={demandes ?? []} columns={columns} hideTools={false} />
+                        <DemandesTable data={filteredDemandes ?? []} columns={columns} hideTools={false} />
                     )}
 
                 </div>
