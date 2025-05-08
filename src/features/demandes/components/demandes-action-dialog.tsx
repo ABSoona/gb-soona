@@ -540,7 +540,22 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                       placeholder="Choisissez un membre"
                       className="col-span-4"
       
-                      items={users.map((e:User)=>({value:e.id.toString(),label:`${e.firstName} ${e.lastName}`}))}
+                      items={users.map((user: User) => {
+                        const initials = `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase();
+                        const label = (
+                          <div className="flex items-center gap-2">
+                            <div className="h-6 w-6 rounded-full bg-black text-xs text-center font-medium text-white flex items-center justify-center">
+                              {initials}
+                            </div>
+                            <span>{user.firstName} {user.lastName}</span>
+                          </div>
+                        );
+                      
+                        return {
+                          value: user.id.toString(),
+                          label,
+                        };
+                      })}
                     />
                     <FormMessage />
                   </FormItem>

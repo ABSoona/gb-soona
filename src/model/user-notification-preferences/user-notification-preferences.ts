@@ -9,7 +9,9 @@ const notificationTypeSchema = z.union([
   z.literal('DemandeEnCommission'),
   z.literal('ContactBan'),
   z.literal('AideExpir'),
-  z.literal('ErreursDemandes')
+  z.literal('ErreursDemandes'),
+  z.literal('DemandeAffecte')
+
 
 ]);
 export type NotificationType = z.infer<typeof notificationTypeSchema>;
@@ -34,5 +36,6 @@ export const notificationTypes =
     { label: 'ContactBan', value: 'ContactBan' },
     { label: 'AideExpir', value: 'AideExpir' },
     { label: 'ErreursDemandes', value: 'ErreursDemandes' },
+    { label: 'DemandeAffecte', value: 'DemandeAffecte' },
 
   ] as const

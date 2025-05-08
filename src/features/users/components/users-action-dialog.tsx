@@ -26,9 +26,10 @@ import { toast } from '@/hooks/use-toast'
 import { User, UserRole, UserStatus } from '@/model/user/User'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 import { userTypes } from '../data/data'
+import { Switch } from '@/components/ui/switch'
 
 const formSchema = z
   .object({
@@ -44,9 +45,13 @@ const formSchema = z
     role: z.string().min(1, { message: 'Role is required.' }),
     confirmPassword: z.string().transform((pwd) => pwd.trim()),
     isEdit: z.boolean(),
+    adresseRue:z.string().optional(),
+    adresseCodePostal: z.string().optional(),
+    adresseVille: z.string().optional(),
+    hasAccess : z.boolean()
   })
-  .superRefine(({ isEdit, password, confirmPassword }, ctx) => {
-    if (!isEdit || (isEdit && password !== '')) {
+  .superRefine(({ isEdit,hasAccess, password, confirmPassword }, ctx) => {
+    if ((!isEdit && hasAccess)|| (isEdit && password !== '')) {
       if (password === '') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -90,6 +95,7 @@ const formSchema = z
   })
 type UserForm = z.infer<typeof formSchema>
 
+
 interface Props {
   currentRow?: User
   open: boolean
@@ -114,17 +120,18 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
 
         email: '',
         role: '',
-
+        hasAccess:true,
         password: '',
         confirmPassword: '',
         isEdit,
       },
   })
-
+  const avecAcces =  useWatch({ control: form.control, name: 'hasAccess' });
   const onSubmit = async (values: UserForm) => {
     // Filtrer les champs inutiles pour l'API
     let status: UserStatus = 'active';
     let role: UserRole = values.role as UserRole;
+    const password=  !isEdit && !values.hasAccess ? Math.random().toString(36).slice(-10) : values.password;
     const userPayload = {
       firstName: values.firstName,
       lastName: values.lastName,
@@ -133,7 +140,11 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
       role: role,
       roles: [role],
       status: status,
-      ...(values.password ? { password: values.password } : {}),
+      adresseRue:values.adresseRue,
+      adresseCodePostal: values.adresseCodePostal,
+      adresseVille : values.adresseVille,
+      hasAccess : values.hasAccess,
+      ...(password? { password: password } : {}),
     }
 
     try {
@@ -221,6 +232,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                   </FormItem>
                 )}
               />
+              
 
               <FormField
                 control={form.control}
@@ -241,7 +253,66 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                   </FormItem>
                 )}
               />
-
+               <FormField
+                control={form.control}
+                name='adresseRue'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                      Adresse (Rue)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Rue de la paix'
+                        className='col-span-4'
+                        autoComplete='off'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='adresseCodePostal'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                      Code postal
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='78180'
+                        className='col-span-4'
+                        autoComplete='off'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='adresseVille'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                      Ville
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Coignière'
+                        className='col-span-4'
+                        autoComplete='off'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name='role'
@@ -264,7 +335,27 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                   </FormItem>
                 )}
               />
-              <FormField
+              {<FormField
+                              control={form.control}
+                              name="hasAccess"
+              
+                              render={({ field }) => (
+                                <FormItem className="grid grid-cols-[auto_1fr] items-center gap-2">
+              
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="text-sm leading-none" >Avec accès</FormLabel>
+              
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />}
+             
+             {avecAcces &&  <FormField
                 control={form.control}
                 name='password'
                 render={({ field }) => (
@@ -282,7 +373,8 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-              />
+              />}
+              {avecAcces &&
               <FormField
                 control={form.control}
                 name='confirmPassword'
@@ -302,7 +394,8 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
-              />
+              />}
+              
             </form>
           </Form>
         </ScrollArea>

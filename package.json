@@ -11,7 +11,8 @@
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "knip": "knip",
-    "scan-labels": "ts-node scripts/scan-labels.ts"
+    "scan-labels": "ts-node scripts/scan-labels.ts",
+    "routes:generate": "tanstack router generate"
   },
   "dependencies": {
     "@apollo/client": "^3.13.1",
@@ -52,6 +53,7 @@
     "cmdk": "1.0.4",
     "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
+    "framer-motion": "^12.10.1",
     "geolib": "^3.3.4",
     "js-cookie": "^3.0.5",
     "lexical": "^0.31.0",

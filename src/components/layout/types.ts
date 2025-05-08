@@ -9,8 +9,10 @@ interface User {
 
 
 interface BaseNavItem {
+  id?:string
   title: string
   badge?: string
+  badgeColor? : string
   icon?: React.ElementType
 }
 

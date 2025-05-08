@@ -7,11 +7,44 @@ import {
   CREATE_DEMANDE_ACTIVITY,
   DELETE_DEMANDE,
   DELETE_DEMANDE_ACTIVITY,
+  GET_DEMANDE_STATS,
   GET_DEMANDES,
   UPDATE_DEMANDE,
 } from './graphql/queries';
+import { Demande } from '@/model/demande/Demande';
+import { getUserId } from '@/lib/session';
 
-export function useDemandeService(variables?: any) {
+type DemandeServiceParams = {
+  order?: number;
+  where?: Record<string, any>; // tu peux affiner selon ton schéma GraphQL
+};
+
+export function useDemandeService(variables?: DemandeServiceParams): {
+  demandes: Demande[];
+  loading: boolean;
+  error: unknown;
+  refetch: () => void;
+  createDemande: (data: any) => Promise<boolean>;
+  updateDemande: (id: number, data: any) => Promise<boolean>;
+  deleteDemande: (id: number) => Promise<boolean>;
+  createDemandeActivity: (params: {
+    titre: string;
+    message: string;
+    typeField: string;
+    demandeId: number;
+    userId?: string;
+  }) => Promise<boolean>;
+  deleteDemandeActivity: (id: number) => Promise<boolean>;
+  isSubmitting: boolean;
+  stats: {
+    total: number;
+    suivies: number;
+    enVisite: number;
+    enCommite: number;
+    affecteAMoi: number;
+    nouvelles: number;
+  };
+} {
   const { data, loading, error, refetch } = useQuery(GET_DEMANDES, {
     variables: variables || {},
     fetchPolicy: 'network-only',
@@ -19,6 +52,26 @@ export function useDemandeService(variables?: any) {
       console.log("✅ DEMANDES chargées :", newData);
     }
   });
+  const userId = getUserId();
+
+  const {
+    data: statsData,
+    refetch: refetchStats,
+    loading: loadingStats,
+  } = useQuery(GET_DEMANDE_STATS, {
+    variables: { userId },
+    fetchPolicy: 'network-only',
+  });
+  const stats = {
+    total: statsData?.total?.count ?? 0,
+    suivies: statsData?.suivies?.count ?? 0,
+    enVisite: statsData?.enVisite?.count ?? 0,
+    enCommite: statsData?.enCommite?.count ?? 0,
+    affecteAMoi: statsData?.affecteAMoi?.count ?? 0,
+    nouvelles:
+      statsData?.recue?.filter((d: any) => d.demandeActivities.length === 1)
+        ?.length ?? 0,
+  };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -26,6 +79,7 @@ export function useDemandeService(variables?: any) {
   const [createDemandeMutation] = useMutation(CREATE_DEMANDE);
   const [createDemandeActivityMutation] = useMutation(CREATE_DEMANDE_ACTIVITY);
   const [deleteDemandeActivityMutation] = useMutation(DELETE_DEMANDE_ACTIVITY);
+
   const createDemande = async (data: any) => {
     try {
       setIsSubmitting(true);
@@ -57,6 +111,7 @@ export function useDemandeService(variables?: any) {
       setIsSubmitting(true);
       await updateDemandeMutation({ variables: { id, data } });
       await refetch();
+      await refetchStats();
       toast({ title: 'Demande mise à jour.' });
       return true;
     } catch (err) {
@@ -83,6 +138,7 @@ export function useDemandeService(variables?: any) {
       setIsSubmitting(true);
       await deleteDemandeMutation({ variables: { id } });
       await refetch();
+      await refetchStats();
       toast({ title: 'Demande supprimée.' });
       return true;
     } catch (err) {
@@ -93,6 +149,7 @@ export function useDemandeService(variables?: any) {
     }
   };
 
+  // CREATE ACTIVITY
   const createDemandeActivity = async ({
     titre,
     message,
@@ -115,11 +172,12 @@ export function useDemandeService(variables?: any) {
             message,
             typeField,
             demande: { id: demandeId },
-            user: userId ? { id: userId } : undefined, // ✅ ici
+            user: userId ? { id: userId } : undefined,
           },
         },
       });
       await refetch();
+      await refetchStats();
       toast({ title: 'Activité créée avec succès.' });
       return true;
     } catch (err) {
@@ -129,11 +187,13 @@ export function useDemandeService(variables?: any) {
       setIsSubmitting(false);
     }
   };
+
   const deleteDemandeActivity = async (id: number) => {
     try {
       setIsSubmitting(true);
       await deleteDemandeActivityMutation({ variables: { id } });
       await refetch();
+      await refetchStats();
       toast({ title: 'Activité supprimée.' });
       return true;
     } catch (err) {
@@ -144,10 +204,8 @@ export function useDemandeService(variables?: any) {
     }
   };
 
-
-
   return {
-    demandes: data?.demandes || [],
+    demandes: data?.demandes ?? [],
     loading,
     error,
     refetch,
@@ -156,6 +214,7 @@ export function useDemandeService(variables?: any) {
     deleteDemande,
     createDemandeActivity,
     deleteDemandeActivity,
-    isSubmitting, // 🔥 centralisé ici
+    isSubmitting,
+    stats,
   };
 }

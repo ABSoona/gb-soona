@@ -4,6 +4,7 @@ import {
   IconShield,
   IconUsersGroup,
 } from '@tabler/icons-react'
+import { HandCoins, HandHelping, UserPlus } from 'lucide-react'
 
 export const callTypes = new Map<UserStatus, string>([
   ['active', 'bg-teal-100/30 text-teal-900 dark:text-teal-200 border-teal-200'],
@@ -34,18 +35,18 @@ export const userTypes = [
   {
     label: 'Bénévole',
     value: 'visiteur',
-    icon: IconExternalLink,
+    icon: UserPlus,
   },
  
   {
     label: 'Trésorier',
     value: 'tresorier',
-    icon: IconUsersGroup,
+    icon: HandCoins ,
   },
   {
     label: 'Assistant social',
     value: 'assistant_social',
-    icon: IconUsersGroup,
+    icon: HandHelping,
   },
   
 ] as const

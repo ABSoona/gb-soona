@@ -12,6 +12,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useState } from "react";
+import { docRequestdefaultMessage } from "../data/data";
 
 interface DocsRequestSheetProps {
   open: boolean;
@@ -55,7 +56,8 @@ export const DocsRequestSheet: React.FC<DocsRequestSheetProps> = ({
             value={objet}
             onChange={(e) => setObjet(e.target.value)}
           />
-          <RichTextEditor value={message} onChange={setMessage}  initialValue="<p>Bonjour, veuillez nous transmettre les documents suivants :</p><ul><li>Justificatif de domicile</li><li>Dernier avis d’imposition</li></ul>" />
+          <RichTextEditor 
+           value={message} onChange={setMessage}  initialValue={docRequestdefaultMessage}/>
         </div>
 
         <SheetFooter className="pt-4 flex justify-end gap-2">

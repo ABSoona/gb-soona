@@ -14,7 +14,7 @@ export const demandeStatusSchema = z.union([
   z.literal('EnCours'),
   z.literal('clôturée'),
   z.literal('refusée'),
-  z.literal('Abandonée'),
+  z.literal('Abandonnée'),
   z.literal('EnAttente'),
   
 ]);

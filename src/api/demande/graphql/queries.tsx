@@ -80,3 +80,58 @@ export const DELETE_DEMANDE_ACTIVITY = gql`
     }
   }
 `;
+
+//stats queries ici 
+
+export const GET_DEMANDE_STATS = gql`
+  query CountDemandesStats($userId: String!) {
+    total: _demandesMeta {
+      count
+    }
+
+    suivies: _demandesMeta(
+      where: {
+        status: { in: ["recue","en_commision", "en_visite", "EnAttenteDocs"] }
+      }
+    ) {
+      count
+    }
+
+    enVisite: _demandesMeta(
+      where: {
+        status: { equals: "en_visite" }
+      }
+    ) {
+      count
+    }
+
+    enCommite: _demandesMeta(
+      where: {
+        status: { equals: "en_commision" }
+      }
+    ) {
+      count
+    }
+      affecteAMoi: _demandesMeta(
+      where: {
+        acteur: { id: $userId  }
+      }
+    ) {
+      count
+    }
+
+    recue: demandes(
+      where: {
+        status: { equals: "recue" }
+      }
+    ) {
+      id
+      acteur {
+        id
+      } 
+      demandeActivities {
+        id
+      }
+    }
+  }
+`;

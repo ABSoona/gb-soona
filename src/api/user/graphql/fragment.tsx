@@ -16,6 +16,7 @@ export const USER_FIELDS = gql`
     adresseRue
     adresseVille
     token
+    hasAccess
     superieur {
       id
       email

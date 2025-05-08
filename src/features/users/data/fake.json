@@ -1,0 +1,341 @@
+[
+    {
+        "adresseCodePostal": null,
+        "adresseRue": null,
+        "adresseVille": null,
+        "createdAt": "2025-05-06T15:28:48.340Z",
+        "email": "gb@soona.fr",
+        "firstName": "admin",
+        "id": "cmacnzs9h0000vi7464phrvyu",
+        "lastName": "admin",
+        "role": "admin",
+        "roles": [
+            "admin"
+        ],
+        "status": "active",
+        "superieur": null,
+        "token": null,
+        "updatedAt": "2025-05-06T15:28:48.340Z",
+        "username": "gb@soona.fr"
+    },
+    {
+        "adresseCodePostal": null,
+        "adresseRue": null,
+        "adresseVille": null,
+        "createdAt": "2025-05-06T15:28:48.405Z",
+        "email": "wordpress@soona.fr",
+        "firstName": "wordpress",
+        "id": "cmacnzsb90001vi742624ux42",
+        "lastName": "api",
+        "role": "admin",
+        "roles": [
+            "user"
+        ],
+        "status": "active",
+        "superieur": null,
+        "token": null,
+        "updatedAt": "2025-05-06T15:28:48.405Z",
+        "username": "wordpress@soona.fr"
+    },
+    {
+        "adresseCodePostal": null,
+        "adresseRue": null,
+        "adresseVille": null,
+        "createdAt": "2025-05-06T20:35:39.165Z",
+        "email": "tresor@example.fr",
+        "firstName": "Alain",
+        "id": "cmacyye580004aunljsj6pjwj",
+        "lastName": "Trésor",
+        "role": "tresorier",
+        "roles": [
+            "tresorier"
+        ],
+        "status": "active",
+        "superieur": null,
+        "token": null,
+        "updatedAt": "2025-05-06T20:35:39.165Z",
+        "username": "tresor@example.fr"
+    },
+    {
+        "adresseCodePostal": null,
+        "adresseRue": null,
+        "adresseVille": null,
+        "createdAt": "2025-05-06T21:02:45.253Z",
+        "email": "myriem@example.com",
+        "firstName": "myriem",
+        "id": "cmaczx8ud0006aunlagucrgrc",
+        "lastName": "b",
+        "role": "assistant_social",
+        "roles": [
+            "assistant_social"
+        ],
+        "status": "active",
+        "superieur": null,
+        "token": null,
+        "updatedAt": "2025-05-06T21:02:45.253Z",
+        "username": "myriem@example.com"
+    },
+    {
+        "adresseCodePostal": "31000",
+        "adresseRue": "2 rue Lafayette",
+        "adresseVille": "Toulouse",
+        "createdAt": "2025-05-06T15:45:00.573Z",
+        "email": "mehdi.kacem@example.com",
+        "firstName": "Mehdi",
+        "id": "cmacokmfz0000zbopfu93qm7t",
+        "lastName": "Kacem",
+        "role": "coordinateur",
+        "roles": [
+            "coordinateur"
+        ],
+        "status": "active",
+        "superieur": null,
+        "token": "",
+        "updatedAt": "2025-05-07T06:40:06.385Z",
+        "username": "mehdi.kacem@example.com"
+    },
+    {
+        "adresseCodePostal": "69002",
+        "adresseRue": "4 avenue Victor Hugo",
+        "adresseVille": "Lyon",
+        "createdAt": "2025-05-06T15:47:56.638Z",
+        "email": "yassine.bouziane@example.com",
+        "firstName": "Yassine",
+        "id": "cmacooeal0003zbopufwyyw56",
+        "lastName": "Bouziane",
+        "role": "coordinateur",
+        "roles": [
+            "coordinateur"
+        ],
+        "status": "active",
+        "superieur": null,
+        "token": "",
+        "updatedAt": "2025-05-07T06:40:42.842Z",
+        "username": "yassine.bouziane@example.com"
+    },
+    {
+        "adresseCodePostal": "59000",
+        "adresseRue": "33 rue Nationale",
+        "adresseVille": "Lille",
+        "createdAt": "2025-05-06T15:45:12.585Z",
+        "email": "amina.cherif@example.com",
+        "firstName": "Amina",
+        "id": "cmacokvpl0001zbop9p9qzggl",
+        "lastName": "Cherif",
+        "role": "coordinateur",
+        "roles": [
+            "coordinateur"
+        ],
+        "status": "active",
+        "superieur": null,
+        "token": "",
+        "updatedAt": "2025-05-07T06:41:18.136Z",
+        "username": "amina.cherif@example.com"
+    },
+    {
+        "adresseCodePostal": "75010",
+        "adresseRue": "10 rue des Lilas",
+        "adresseVille": "Paris",
+        "createdAt": "2025-05-06T15:47:34.426Z",
+        "email": "sarah.benali@example.com",
+        "firstName": "Sarah",
+        "id": "cmaconx5m0002zbopnkdhetcw",
+        "lastName": "Benali",
+        "role": "coordinateur",
+        "roles": [
+            "coordinateur"
+        ],
+        "status": "active",
+        "superieur": null,
+        "token": "",
+        "updatedAt": "2025-05-07T06:41:24.231Z",
+        "username": "sarah.benali@example.com"
+    },
+    {
+        "adresseCodePostal": "75009",
+        "adresseRue": "15 boulevard Haussmann",
+        "adresseVille": "Paris",
+        "createdAt": "2025-05-06T15:48:15.888Z",
+        "email": "claire.dubois@example.com",
+        "firstName": "Claire",
+        "id": "cmacoot5c0004zbopm1qd6lj2",
+        "lastName": "Dubois",
+        "role": "coordinateur",
+        "roles": [
+            "coordinateur"
+        ],
+        "status": "active",
+        "superieur": null,
+        "token": "",
+        "updatedAt": "2025-05-07T06:41:30.135Z",
+        "username": "claire.dubois@example.com"
+    },
+    {
+        "adresseCodePostal": "93100",
+        "adresseRue": "4 allée des Tilleuls",
+        "adresseVille": "Montreuil",
+        "createdAt": "2025-05-06T15:51:45.948Z",
+        "email": "nadia.rahmani@example.com",
+        "firstName": "Nadia",
+        "id": "cmacotb8c0009zbopvdm4xrak",
+        "lastName": "Rahmani",
+        "role": "visiteur",
+        "roles": [
+            "visiteur"
+        ],
+        "status": "active",
+        "superieur": {
+            "id": "cmaconx5m0002zbopnkdhetcw"
+        },
+        "token": "",
+        "updatedAt": "2025-05-07T06:41:36.382Z",
+        "username": "nadia.rahmani@example.com"
+    },
+    {
+        "adresseCodePostal": "93110",
+        "adresseRue": "17 rue du Colonel Fabien",
+        "adresseVille": "Rosny-sous-Bois",
+        "createdAt": "2025-05-06T15:52:54.044Z",
+        "email": "rachid.boukhelifa@example.com",
+        "firstName": "Rachid",
+        "id": "cmacourrv000azbopcrzf64al",
+        "lastName": "Boukhelifa",
+        "role": "visiteur",
+        "roles": [
+            "visiteur"
+        ],
+        "status": "active",
+        "superieur": {
+            "id": "cmaconx5m0002zbopnkdhetcw"
+        },
+        "token": "",
+        "updatedAt": "2025-05-07T06:41:42.294Z",
+        "username": "rachid.boukhelifa@example.com"
+    },
+    {
+        "adresseCodePostal": "75020",
+        "adresseRue": "25 rue des Glycines",
+        "adresseVille": "Paris",
+        "createdAt": "2025-05-06T15:53:02.484Z",
+        "email": "mounia.elharbi@example.com",
+        "firstName": "Mounia",
+        "id": "cmacouyab000bzbop1jgs7p2s",
+        "lastName": "El Harbi",
+        "role": "visiteur",
+        "roles": [
+            "visiteur"
+        ],
+        "status": "active",
+        "superieur": {
+            "id": "cmaconx5m0002zbopnkdhetcw"
+        },
+        "token": "",
+        "updatedAt": "2025-05-07T06:41:48.287Z",
+        "username": "mounia.elharbi@example.com"
+    },
+    {
+        "adresseCodePostal": "69008",
+        "adresseRue": "8 rue des Frères Lumière",
+        "adresseVille": "Lyon",
+        "createdAt": "2025-05-06T15:53:13.550Z",
+        "email": "imane.kaddouri@example.com",
+        "firstName": "Imane",
+        "id": "cmacov6tq000czbopbf1vgksj",
+        "lastName": "Kaddouri",
+        "role": "visiteur",
+        "roles": [
+            "visiteur"
+        ],
+        "status": "active",
+        "superieur": {
+            "id": "cmacooeal0003zbopufwyyw56"
+        },
+        "token": "",
+        "updatedAt": "2025-05-07T06:41:54.125Z",
+        "username": "imane.kaddouri@example.com"
+    },
+    {
+        "adresseCodePostal": "69100",
+        "adresseRue": "51 avenue Jean Jaurès",
+        "adresseVille": "Villeurbanne",
+        "createdAt": "2025-05-06T15:53:21.407Z",
+        "email": "walid.zeroual@example.com",
+        "firstName": "Walid",
+        "id": "cmacovcvy000dzbopjydyqbpa",
+        "lastName": "Zeroual",
+        "role": "visiteur",
+        "roles": [
+            "visiteur"
+        ],
+        "status": "active",
+        "superieur": {
+            "id": "cmacooeal0003zbopufwyyw56"
+        },
+        "token": "",
+        "updatedAt": "2025-05-07T06:42:00.136Z",
+        "username": "walid.zeroual@example.com"
+    },
+    {
+        "adresseCodePostal": "75013",
+        "adresseRue": "11 rue des Jardins",
+        "adresseVille": "Paris",
+        "createdAt": "2025-05-06T15:53:29.364Z",
+        "email": "sofia.benamar@example.com",
+        "firstName": "Sofia",
+        "id": "cmacovj0z000ezbop4adluxtd",
+        "lastName": "Benamar",
+        "role": "visiteur",
+        "roles": [
+            "visiteur"
+        ],
+        "status": "active",
+        "superieur": {
+            "id": "cmacoot5c0004zbopm1qd6lj2"
+        },
+        "token": "",
+        "updatedAt": "2025-05-07T06:42:06.195Z",
+        "username": "sofia.benamar@example.com"
+    },
+    {
+        "adresseCodePostal": "94110",
+        "adresseRue": "29 rue Paul Bert",
+        "adresseVille": "Arcueil",
+        "createdAt": "2025-05-06T15:53:36.493Z",
+        "email": "amine.fekir@example.com",
+        "firstName": "Amine",
+        "id": "cmacovoj1000fzbopffc54lej",
+        "lastName": "Fekir",
+        "role": "visiteur",
+        "roles": [
+            "visiteur"
+        ],
+        "status": "active",
+        "superieur": {
+            "id": "cmacoot5c0004zbopm1qd6lj2"
+        },
+        "token": "",
+        "updatedAt": "2025-05-07T06:42:12.300Z",
+        "username": "amine.fekir@example.com"
+    },
+    {
+        "adresseCodePostal": "92220",
+        "adresseRue": "36 rue Voltaire",
+        "adresseVille": "Bagneux",
+        "createdAt": "2025-05-06T15:53:44.685Z",
+        "email": "leila.chennouf@example.com",
+        "firstName": "Leila",
+        "id": "cmacovuuk000gzbopuaxzp09e",
+        "lastName": "Chennouf",
+        "role": "visiteur",
+        "roles": [
+            "visiteur"
+        ],
+        "status": "active",
+        "superieur": {
+            "id": "cmacoot5c0004zbopm1qd6lj2"
+        },
+        "token": "",
+        "updatedAt": "2025-05-07T06:42:18.002Z",
+        "username": "leila.chennouf@example.com"
+    }
+]
