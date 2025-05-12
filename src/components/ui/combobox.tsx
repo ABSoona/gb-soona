@@ -43,15 +43,23 @@ export function Combobox({
               items.map((item) => (
                 <div
                   key={item.value}
-                  className="w-full rounded-md justify-start bg-gray-100 text-black px-3 py-2 text-left hover:bg-gray-800 hover:bg-gray-400  hover:text-white hover:cursor-pointer"
+                  className="w-full px-3 py-2 text-left text-black hover:bg-muted cursor-pointer transition-all duration-150 rounded-md"
                   onClick={() => {
                     onValueChange(item.value);
                     setOpen(false);
                   }}
                 >
-                  <div className='cursor-pointer text-sm capitalize'>{item.label}</div>
-                  <div className='cursor-pointer text-sm'>{item.label2}</div>
-                  <div className='cursor-pointer text-sm'>{item.label3}</div>
+                  <div className="flex flex-col group transition-all duration-150">
+                    <div className="text-sm capitalize font-medium group-hover:text-base">
+                      {item.label}
+                    </div>
+                    <div className="text-xs text-muted-foreground group-hover:text-sm">
+                      {item.label2}
+                    </div>
+                    <div className="text-xs text-muted-foreground group-hover:text-sm">
+                      {item.label3}
+                    </div>
+                  </div>
                 </div>
               ))
             ) : (

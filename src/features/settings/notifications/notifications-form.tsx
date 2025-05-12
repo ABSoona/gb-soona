@@ -106,7 +106,7 @@ export function NotificationsForm() {
           <PrefSwitch form={form} name='nouvelleDemande' label='Nouvelle demande' description='Quand une nouvelle demande est reçue.' />
           <PrefSwitch form={form} name='demandeAffecte' label='Demande affecté' description="Quand une m'a été affecté." />
           <PrefSwitch form={form} name='demandeEnVsite' label='Demande en visite' description='Quand une demande passe au statut "En visite".' />
-          <PrefSwitch form={form} name='demandeEnCommission' label='Demande en commission' description='Quand une demande passe au statut "En commission".' />
+          <PrefSwitch form={form} name='demandeEnCommission' label='Demande en commission' description='Quand une demande passe au statut "En comité".' />
           <PrefSwitch form={form} name='ErreursDemandes' label='Erreur depuis sonna.com' description='Quand une demande est reçu de puis sonna.com mais ne peut pas être integré dans GBsoona.' />
         </Section>
 

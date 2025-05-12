@@ -18,7 +18,7 @@ interface Props {
 
 export function DemandesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
   const queryClient = useQueryClient();
-  const { deleteDemande, isSubmitting } = useDemandeService(); // ✅ Utilisation du service
+  const { deleteDemande, isSubmitting } = useDemandeService({where:{id:{equals:currentRow.id}}}); // ✅ Utilisation du service
   const [value, setValue] = useState<number | ''>('');
   const { triggerRefetchDemandes } = useDemandes();
   const handleDelete = async () => {

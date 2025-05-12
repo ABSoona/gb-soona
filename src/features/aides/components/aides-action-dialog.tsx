@@ -31,12 +31,20 @@ import { Demande } from '@/model/demande/Demande';
 import { handleServerError } from '@/utils/handle-server-error';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addDays, addMonths, addWeeks } from 'date-fns';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { useAides } from '../context/aides-context';
 import { aideCredieteurTypes, aideFrquenceTypes, typeAideTypes } from '../data/data';
 import { ContactSearchCombobox } from './contact-search';
+import { useDocumentActions } from '@/features/documents/useDocumentActions';
+import { DocumentsManager } from '@/features/documents/documents-manager';
+import { useDocumentService } from '@/api/document/documentService';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Plus } from 'lucide-react';
+import { TypeDocument } from '@/model/typeDocument/typeDocument';
+import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService';
 
 
 // 📌 Schéma de validation du formulaire avec Zod
@@ -59,11 +67,16 @@ interface Props {
 export function AidesActionDialog({ currentRow, open, onOpenChange, showContactSearch = true, showDemandeSearch = true, forContactId, forDemandeId }: Props) {
 
 
-
   const { createAide, updateAide, refetch, isSubmitting } = useAideService();
-  const { updateDemande } = useDemandeService();
+
   const isEdit = !!currentRow;
   const { triggerRefetchAides } = useAides();
+  const whereClause=isEdit?{ where: { aide: { id: currentRow?.id } } }:{ where: { aide: { id: 0} } }
+  const { documents } = useDocumentService();
+  const { handleFileUpload, handleDelete } = useDocumentActions({ aide: { id: currentRow ? currentRow.id : 0 } });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
+  const { typeDocuments } = useTypeDocumentService({ where: { rattachement: 'Aide' } });
   const defaultFormValues: AideForm = isEdit && currentRow
     ? {
       contactId: currentRow.contact?.id || '',
@@ -105,7 +118,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
     name: 'contactId',
   });
 
-  const { demandes } = useDemandeService(
+  const { demandes,updateDemande } = useDemandeService(
     selectedContactId
       ? { where: { contact: { id: Number(selectedContactId) } } }
       : { where: { id: { equals: 0 } } } // requête vide
@@ -116,6 +129,19 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
     }
   }, [selectedContactId, form]);
 
+  const handleTypeClick = (typeId: number) => {
+    setSelectedTypeId(typeId);
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && selectedTypeId && currentRow) {
+      await handleFileUpload(currentRow.contact.id, file, selectedTypeId, undefined, currentRow.id);
+      setSelectedTypeId(null);
+      e.target.value = '';
+    }
+  };
   const onSubmit = async (values: AideForm) => {
     console.log(form.formState.errors);
     const contactId = forContactId ?? values.contactId; // priorité au forContactId
@@ -432,6 +458,39 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
 
             </form>
           </Form>
+
+          {isEdit && <Card className="mt-6">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 ">
+              <CardTitle>Documents</CardTitle>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {typeDocuments?.map((type: TypeDocument) => (
+                    <DropdownMenuItem key={type.id} onClick={() => handleTypeClick(type.id)}>
+                      {type.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
+
+
+            </CardHeader>
+            <CardContent className="text-2xl font-bold">
+              <DocumentsManager nbColumns={1}
+                documents={documents}
+                contactId={currentRow ? currentRow?.contact.id : 0}
+                onUpload={handleFileUpload}
+                onDelete={handleDelete}
+              />
+            </CardContent>
+          </Card>}
+
         </ScrollArea>
         <SheetFooter>
           <Button type="submit" form="aide-form" disabled={isSubmitting}>{isSubmitting ? 'En cours...' : 'Enregistrer'}</Button>

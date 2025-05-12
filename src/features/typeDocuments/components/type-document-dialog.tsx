@@ -28,7 +28,7 @@ import { typesDocuments } from '../data/data';
 
 const formSchema = z.object({
   label: z.string().min(2, { message: 'Le nom est requis' }),
-  rattachement: z.enum(['Contact', 'Demande', 'Suivi']),
+  rattachement: z.enum(['Contact', 'Demande', 'Suivi','Aide']),
 });
 
 type TypeDocumentForm = z.infer<typeof formSchema>;

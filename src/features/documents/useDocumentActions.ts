@@ -5,14 +5,15 @@ import { toast } from '@/hooks/use-toast';
 type WhereClause = {
   contact?: { id: number };
   demande?: { id: number };
+  aide?: {id: number};
 };
 
 export function useDocumentActions(where: WhereClause) {
   const { createAndUploadDocument, deleteDocument, refetchDocuments } = useDocumentService({ where });
 
-  const handleFileUpload = async (contactId: number, file: File, typeId: number, demandeId?: number) => {
+  const handleFileUpload = async (contactId: number,  file: File, typeId: number, demandeId?: number,aideId?:number,) => {
     try {
-      await createAndUploadDocument(contactId, file, typeId, demandeId);
+      await createAndUploadDocument(contactId, file, typeId, demandeId,aideId);
       await refetchDocuments(); // 👈 bien sur les bons documents
       toast({ title: 'Document ajouté avec succès' });
     } catch (error) {

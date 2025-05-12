@@ -30,6 +30,7 @@ import { useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 import { userTypes } from '../data/data'
 import { Switch } from '@/components/ui/switch'
+import { useUserServicev2 } from '@/api/user/userService.v2'
 
 const formSchema = z
   .object({
@@ -39,23 +40,24 @@ const formSchema = z
 
     email: z
       .string()
-      .min(1, { message: 'Email is required.' })
-      .email({ message: 'Email is invalid.' }),
+      .min(1, { message: 'Email est obligatoir.' })
+      .email({ message: 'Email invalide.' }),
     password: z.string().transform((pwd) => pwd.trim()),
     role: z.string().min(1, { message: 'Role is required.' }),
     confirmPassword: z.string().transform((pwd) => pwd.trim()),
     isEdit: z.boolean(),
-    adresseRue:z.string().optional(),
+    adresseRue: z.string().optional(),
     adresseCodePostal: z.string().optional(),
     adresseVille: z.string().optional(),
-    hasAccess : z.boolean()
+    hasAccess: z.boolean(),
+    superieurId : z.string().optional()
   })
-  .superRefine(({ isEdit,hasAccess, password, confirmPassword }, ctx) => {
-    if ((!isEdit && hasAccess)|| (isEdit && password !== '')) {
+  .superRefine(({ isEdit, hasAccess, password, confirmPassword,superieurId }, ctx) => {
+    if ((!isEdit && hasAccess) || (isEdit && password !== '')) {
       if (password === '') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Password is required.',
+          message: 'Le mot de passe est obligatoire.',
           path: ['password'],
         })
       }
@@ -63,7 +65,7 @@ const formSchema = z
       if (password.length < 8) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Password must be at least 8 characters long.',
+          message: 'Le mot de passe doit contenir au moins caractères.',
           path: ['password'],
         })
       }
@@ -71,7 +73,7 @@ const formSchema = z
       if (!password.match(/[a-z]/)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Password must contain at least one lowercase letter.',
+          message: 'Le mot de passe doit contenir au moins une miniscule.',
           path: ['password'],
         })
       }
@@ -79,7 +81,7 @@ const formSchema = z
       if (!password.match(/\d/)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Password must contain at least one number.',
+          message: 'Le mot de passe doit contenir au moins un chiffre',
           path: ['password'],
         })
       }
@@ -87,8 +89,15 @@ const formSchema = z
       if (password !== confirmPassword) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Passwords don't match.",
+          message: "La confirmation de mot de passe ne correspond pas.",
           path: ['confirmPassword'],
+        })
+      }
+      if (!hasAccess && superieurId==undefined ){
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Un utilisateur sans accès doit avoir un membre contact ",
+          path: ['superieurId'],
         })
       }
     }
@@ -112,26 +121,29 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
         ...currentRow,
         password: '',
         confirmPassword: '',
+        superieurId : currentRow?.superieur?.id,
         isEdit,
       }
       : {
         firstName: '',
         lastName: '',
-
         email: '',
         role: '',
-        hasAccess:true,
+        hasAccess: true,
         password: '',
         confirmPassword: '',
         isEdit,
       },
   })
-  const avecAcces =  useWatch({ control: form.control, name: 'hasAccess' });
+    const { users } = useUserServicev2(
+       { where: { role: { not: "visiteur" } } } 
+    );
+  const avecAcces = useWatch({ control: form.control, name: 'hasAccess' });
   const onSubmit = async (values: UserForm) => {
     // Filtrer les champs inutiles pour l'API
     let status: UserStatus = 'active';
     let role: UserRole = values.role as UserRole;
-    const password=  !isEdit && !values.hasAccess ? Math.random().toString(36).slice(-10) : values.password;
+    const password = !isEdit && !values.hasAccess ? Math.random().toString(36).slice(-10) : values.password;
     const userPayload = {
       firstName: values.firstName,
       lastName: values.lastName,
@@ -140,11 +152,12 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
       role: role,
       roles: [role],
       status: status,
-      adresseRue:values.adresseRue,
+      adresseRue: values.adresseRue,
       adresseCodePostal: values.adresseCodePostal,
-      adresseVille : values.adresseVille,
-      hasAccess : values.hasAccess,
-      ...(password? { password: password } : {}),
+      adresseVille: values.adresseVille,
+      hasAccess: values.hasAccess,
+      superieur : values.superieurId?{id:values.superieurId}:undefined,
+      ...(password ? { password: password } : {}),
     }
 
     try {
@@ -232,7 +245,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                   </FormItem>
                 )}
               />
-              
+
 
               <FormField
                 control={form.control}
@@ -253,7 +266,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                   </FormItem>
                 )}
               />
-               <FormField
+              <FormField
                 control={form.control}
                 name='adresseRue'
                 render={({ field }) => (
@@ -335,27 +348,61 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                   </FormItem>
                 )}
               />
+              
               {<FormField
+                control={form.control}
+                name="hasAccess"
+
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-[auto_1fr] items-center gap-2">
+
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel className="text-sm leading-none" >Avec accès</FormLabel>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />}
+               {!avecAcces && <FormField
                               control={form.control}
-                              name="hasAccess"
-              
+                              name="superieurId"
                               render={({ field }) => (
-                                <FormItem className="grid grid-cols-[auto_1fr] items-center gap-2">
-              
-                                  <FormControl>
-                                    <Switch
-                                      checked={field.value}
-                                      onCheckedChange={field.onChange}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="text-sm leading-none" >Avec accès</FormLabel>
-              
+                                <FormItem className="space-y-1">
+                                  <FormLabel>Membre contact</FormLabel>
+                                  <SelectDropdown
+                                    defaultValue={field.value}
+                                    disabled={avecAcces}
+                                    onValueChange={field.onChange}
+                                    placeholder="Choisissez un membre"
+                                    className="col-span-4"
+                    
+                                    items={users.map((user: User) => {
+                                      const initials = `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase();
+                                      const label = (
+                                        <div className="flex items-center gap-2">
+                                          <div className="h-6 w-6 rounded-full bg-black text-xs text-center font-medium text-white flex items-center justify-center">
+                                            {initials}
+                                          </div>
+                                          <span>{user.firstName} {user.lastName}</span>
+                                        </div>
+                                      );
+                                    
+                                      return {
+                                        value: user.id.toString(),
+                                        label,
+                                      };
+                                    })}
+                                  />
                                   <FormMessage />
                                 </FormItem>
                               )}
                             />}
-             
-             {avecAcces &&  <FormField
+              {avecAcces && <FormField
                 control={form.control}
                 name='password'
                 render={({ field }) => (
@@ -375,27 +422,27 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                 )}
               />}
               {avecAcces &&
-              <FormField
-                control={form.control}
-                name='confirmPassword'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel >
-                      Confirmer le mot de passe
-                    </FormLabel>
-                    <FormControl>
-                      <PasswordInput
-                        disabled={!isPasswordTouched}
-                        placeholder='e.g., S3cur3P@ssw0rd'
-                        className='col-span-4'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-              />}
-              
+                <FormField
+                  control={form.control}
+                  name='confirmPassword'
+                  render={({ field }) => (
+                    <FormItem className='space-y-1'>
+                      <FormLabel >
+                        Confirmer le mot de passe
+                      </FormLabel>
+                      <FormControl>
+                        <PasswordInput
+                          disabled={!isPasswordTouched}
+                          placeholder='e.g., S3cur3P@ssw0rd'
+                          className='col-span-4'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className='col-span-4 col-start-3' />
+                    </FormItem>
+                  )}
+                />}
+
             </form>
           </Form>
         </ScrollArea>

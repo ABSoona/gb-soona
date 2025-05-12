@@ -51,14 +51,15 @@ interface Props {
 export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) {
 
 
-
-  const { createDemande, updateDemande, refetch, isSubmitting } = useDemandeService();
+ 
+ 
   const { users } = useUserServicev2(
      { where: { role: { not: "visiteur" } } } 
   );
   const { triggerRefetchDemandes } = useDemandes();
   const isEdit = !!currentRow;
-
+  const whereClause = isEdit ? {where:{id : {equals:currentRow.id}}}:{where:{id:{equals:0}}} 
+  const { createDemande, updateDemande, refetch, isSubmitting } = useDemandeService(whereClause);
   const form = useForm<DemandeForm>({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit

@@ -11,7 +11,7 @@ import { TableSkeleton } from '@/components/ui/skeleton-table';
 import { handleServerError } from '@/utils/handle-server-error';
 import { IconMailDown } from '@tabler/icons-react';
 
-export default function Demandes({ acteurId, status,title,description, newOlny }: { acteurId?: string, status?: DemandeStatus | DemandeStatus[],title?:string,description?:string, newOlny?: boolean }) {
+export default function Demandes({ acteurId, status,title,description, newOlny,excludeNews }: { acteurId?: string, status?: DemandeStatus | DemandeStatus[],title?:string,description?:string, newOlny?: boolean ,excludeNews?:boolean}) {
     // ✅ Utilisation du service pour récupérer les demandes
     const where: any = {};
 
@@ -31,8 +31,8 @@ export default function Demandes({ acteurId, status,title,description, newOlny }
         where,
     });
 
-    const filteredDemandes = newOlny ? demandes.filter((e) => (!(e.demandeActivities.length > 1))) : demandes
-
+    let filteredDemandes = newOlny ? demandes.filter((e) => (!(e.demandeActivities.length > 1))) : demandes
+    filteredDemandes = excludeNews ?demandes.filter((e) => (e.demandeActivities.length > 1)) :filteredDemandes 
     // Gestion des erreurs via la fonction centralisée
     if (error) {
         handleServerError(error);
@@ -47,7 +47,7 @@ export default function Demandes({ acteurId, status,title,description, newOlny }
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
                             <IconMailDown className="h-6 w-6 text-primary" />
-                            {title?title : "Liste des Demandes"}</h2>
+                            {title?title : "Liste de toutes les Demandes"}</h2>
                         <p className="text-muted-foreground">
                             {description?description:"Gérez vos demandes et leurs statuts ici"}
                         </p>

@@ -5,6 +5,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { callTypes, userTypes } from '../data/data'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 export const columns: ColumnDef<User>[] = [
 
@@ -17,9 +18,18 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const { firstName, lastName } = row.original
       const fullName = `${firstName} ${lastName}`
-      return fullName
+      const initials =
+        (firstName?.[0] ?? '') + (lastName?.[0] ?? '')
+  
+      return (
+        <div className="flex items-center gap-2">
+          <Avatar>
+            <AvatarFallback>{initials.toUpperCase()}</AvatarFallback>
+          </Avatar>
+          <span>{fullName}</span>
+        </div>
+      )
     },
-
   },
   {
     accessorKey: 'username',

@@ -3,6 +3,8 @@ import { getUserId } from '@/lib/session';
 import { User } from '@/model/user/User';
 
 
+
+
 // Récupérer la liste des utilisateurs
 export const getUsers = async (): Promise<User[]> => {
   const response = await axiosInstance.get<User[]>('/users');
@@ -48,4 +50,22 @@ export const resetPassword = async (password: string, token: string): Promise<vo
 export const createUserWithUnvitation = async (user: Partial<User>): Promise<User> => {
   const response = await axiosInstance.post<User>('/users/register', user);
   return response.data;
+};
+
+
+export const notifyUser = async ( data: {
+  template: string;
+  to: string;
+  subject: string;
+  variables: Record<string, string>;
+}): Promise<void> => {
+  const response = await axiosInstance.post<{
+    template: string;
+    to: string;
+    subject: string;
+    variables: Record<string, string>;
+  }>('/users/notify', data);
+
+  
+
 };

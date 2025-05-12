@@ -21,8 +21,8 @@ import { z } from 'zod'
 const userFormSchema = z.object({
   email: z
     .string()
-    .min(1, { message: 'Email is required.' })
-    .email({ message: 'Email is invalid.' }),
+    .min(1, { message: 'EmailoObligatoire.' })
+    .email({ message: 'Email invalide.' }),
   firstName: z.string().min(1, { message: 'Prénom requis' }),
   lastName: z.string().min(1, { message: 'Nom requis' }),
   password: z.string().transform((pwd) => pwd.trim()),

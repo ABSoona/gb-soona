@@ -29,7 +29,7 @@ import { typesDocuments } from '../data/data';
 
 const formSchema = z.object({
   labels: z.record(z.string()),
-  rattachements: z.record(z.union([z.literal('Contact'), z.literal('Demande'), z.literal('Suivi')])),
+  rattachements: z.record(z.union([z.literal('Contact'), z.literal('Demande'), z.literal('Suivi'),z.literal('Aide')])),
 });
 type TypeDocumentFormValues = z.infer<typeof formSchema>;
 
@@ -57,7 +57,7 @@ export function TypeDocumentForm({ typeDocuments }: Props) {
   useEffect(() => {
     if (typeDocuments.length > 0) {
       const labels: Record<string, string> = {};
-      const rattachements: Record<string, 'Contact' | 'Demande' | 'Suivi'> = {};
+      const rattachements: Record<string, 'Contact' | 'Demande' | 'Suivi' | 'Aide'> = {};
 
       typeDocuments.forEach((doc: TypeDocument) => {
         const id = doc.id.toString();

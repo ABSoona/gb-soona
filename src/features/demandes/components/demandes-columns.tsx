@@ -8,6 +8,7 @@ import { categorieTypes, demandeStatusColor, demandeStatusTypes } from '../data/
 import { DataTableRowActions } from './data-table-row-actions';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { userTypes } from '@/features/users/data/data';
 
 const dateRangeFilter: ColumnDef<Demande>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
     if (!filterValue || (!filterValue.from && !filterValue.to)) {
@@ -101,14 +102,28 @@ export const columns: ColumnDef<Demande>[] = [
         accessorFn: (row) => `${row?.acteur?.firstName ?? ''} ${row?.acteur?.lastName ?? ''}`,
         id: 'acteur',
         header: 'Attribué à',
-        cell: ({ row }) => { return (<span className='capitalize'>{row.original?.acteur?.firstName ?? 'N/A'} {row.original?.acteur?.lastName ?? ''}</span>) },
+        cell: ({ row }) => {
+          const acteur = row.original?.acteur;
+          const fullName = `${acteur?.firstName ?? 'N/A'} ${acteur?.lastName ?? ''}`;
+          const role = acteur?.role;
+          const userType = userTypes.find(({ value }) => value === role);
+      
+          return (
+            <div className='flex items-center gap-x-2'>
+              {userType?.icon && (
+                <userType.icon size={18} className='text-muted-foreground' />
+              )}
+              <span className='capitalize'>{fullName}</span>
+            </div>
+          );
+        },
         enableHiding: true,
         filterFn: (row, id, value) => {
-            const fullName = `${row.getValue(id)}`.toLowerCase(); // 🔥 Concaténer nom + prénom
-            return fullName.includes(value.toLowerCase()); // 🔍 Vérifie si une partie du texte correspond
+          const fullName = `${row.getValue(id)}`.toLowerCase();
+          return fullName.includes(value.toLowerCase());
         },
-
-    },
+      },
+      
     {
         id: 'dernierContact',
         accessorKey: 'dernierContact',

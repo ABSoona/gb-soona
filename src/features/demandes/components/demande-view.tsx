@@ -19,7 +19,7 @@ import { ActivityType, Demande, DemandeStatus, situationFamilleTypes, situationT
 import { Document } from '@/model/document/Document'
 import { TypeDocument } from '@/model/typeDocument/typeDocument'
 import { TabsContent } from '@radix-ui/react-tabs'
-import { CheckCircle, FilePlus2, FileText, MapPin, PauseCircle, PhoneCall, PhoneMissed, Plus, RefreshCwOff, StickyNote } from 'lucide-react'
+import { CheckCircle, ExternalLink, FilePlus2, FileText, MapPin, PauseCircle, PhoneCall, PhoneMissed, Plus, RefreshCwOff, StickyNote, UserCheck } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { categorieTypes } from '../data/data'
 import { DemandeActivityTimeline } from './DemandeActivityTimeline'
@@ -32,6 +32,10 @@ import { User } from '@/model/user/User'
 import { useUserServicev2 } from '@/api/user/userService.v2'
 import { equal } from 'assert'
 import { addMonths } from 'date-fns'
+import { shareFicheVisite } from '@/api/demande/demandeService'
+import { FicheVisiteShareSheet } from './shareFicheVisite'
+import { useNavigate } from '@tanstack/react-router'
+import { AssignDemandeSheet } from './assign-demande-dialog'
 
 
 interface Props {
@@ -53,13 +57,14 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const suiviDdemandeur = documents.filter((doc: Document) => doc.typeDocument?.rattachement === "Demande");
   const userId = getUserId();
   const { handleFileUpload, handleDelete } = useDocumentActions({ demande: { id: currentRow.id } });
-  const { createDemandeActivity, updateDemande } = useDemandeService();
+  const { createDemandeActivity, updateDemande } = useDemandeService({where : {id:{equals:currentRow.id}}});
   const [openNoteSheet, setOpenNoteSheet] = useState(false);
+  const [openShareFicheVisite, setOpenShareFicheVisite] = useState(false);
+  
   const [openDocsRequestSheet, setOpenDocsRequestSheet] = useState(false);
+  const [openAssignDemandeSheet, setOpenAssignDemandeSheet] = useState(false);
   const [openVisiteSheet, setOpenVisiteSheet] = useState(false);
-  /*const { demandes, loading: isLoading, error } = useDemandeService({where : {id :{equals:demandeId} }});
-  //const { setOpen, setCurrentRow } = useDemandes()
-  const currentRow: Demande | undefined = demandes.length > 0 ? demandes[0] : undefined;*/
+  
   const { openConfirmDialog, ConfirmDialogComponent } = useConfirmDialog()
   const pendingStatusUpdate = useRef(false);
   const nextStatusRef = useRef<DemandeStatus | null>(null);
@@ -73,7 +78,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const resteAVivre = totalRevenus - totalCharges
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
-  const { sendMessage, isSubmitting } = useContactService(); // ✅ Utilisation du service
+  const { sendMessage, isSubmitting } = useContactService({where : {id:{equals:currentRow.contact.id}}}); // ✅ Utilisation du service
   const { typeDocuments: typeDocumentsSuivi } = useTypeDocumentService({
     where: { rattachement: 'Suivi' },
   });
@@ -84,11 +89,12 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     setSelectedTypeId(typeId);
     fileInputRef.current?.click();
   };
+  const navigate = useNavigate();
  const {users}: { users: User[] } = useUserServicev2({where:{role:{equals:"tresorier"}}})
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     const selectedType = typeDocumentsSuivi?.find((t: TypeDocument) => t.id === selectedTypeId);
-
+    
     if (file && selectedTypeId) {
       await handleFileUpload(currentRow.contact.id, file, selectedTypeId, currentRow.id);
 
@@ -180,7 +186,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     const { titre, message } = titlesAndMessages[type];
 
 
-
+    
     const success = await createDemandeActivity({
       titre,
       message,
@@ -195,7 +201,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         "Mettre en attente ?",  
         `Le bénéficiaire est injoignable après 4 tentavives de contact.
          Souhaitez-vous mettre la demande en attente?
-         Sans retour du bénéficiaire la demande sera cloturée automatiquement le ${addMonths(new Date(),1).toLocaleDateString()}`,
+         Sans retour du bénéficiaire, la demande sera cloturée automatiquement le ${addMonths(new Date(),1).toLocaleDateString()}`,
         handleConfirmedStatusChange,
         { confirmText: "Oui", cancelBtnText: "Annuler" }
       );
@@ -240,6 +246,14 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       userId: userId!,
     });
   };
+  const handleSubmitFicheVisite = async ({ userId, message }: { userId: string; message: string }) => {
+    await shareFicheVisite({demandeId:currentRow.id,userId:userId,subordoneId:userId});
+          setOpenShareFicheVisite(false);
+  };
+  const handDownloadFicheVisite = async()=>{
+    
+    navigate({ to: `/demandes/${currentRow.id}/fiche-visite-pdf` });
+  }
 
   const handleSubmitDocsRequest = async ({
     objet,
@@ -289,6 +303,19 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
    
     setOpenVisiteSheet(true); // Ouvre la Sheet
   };
+  const handleAbandonnerDemande =async() =>{
+
+    await handleCreatePredefinedActivity("abandon");
+    await updateDemande(currentRow.id, { status: "Abandonnée" });
+  }
+  const handleOpenAssigSheet = async () => {
+   
+    setOpenAssignDemandeSheet(true); // Ouvre la Sheet
+  };
+  const handleSubmitAssignDemande = async ({ userId, message }: { userId: string; message: string }) => {
+   await updateDemande(currentRow.id ,{acteur:{id:userId}})
+  };
+  
  const hasContactAttempts:boolean = (currentRow.demandeActivities.filter((e) => (e.typeField==="priseContactReussie"))).length >0
   
   return (
@@ -342,17 +369,23 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => handleOpenAssigSheet()}>
+                    <UserCheck className="mr-2 h-4 w-4" />
+                    Affecter la demande à...
+                  </DropdownMenuItem>        
                   <DropdownMenuItem onClick={() => handleDocsRequest()} disabled={!hasContactAttempts}>
                     <FilePlus2 className="mr-2 h-4 w-4" />
                     Demander des justificatifs
-                  </DropdownMenuItem>
-                  
+                  </DropdownMenuItem>                
                    <DropdownMenuItem onClick={handleOpenVisiteSheet}  disabled={["recue", "EnAttente"].includes(currentRow.status) ||  !hasContactAttempts || !hasDocument}>
                     <MapPin className="mr-2 h-4 w-4" />
                     Organiser une visite
                   </DropdownMenuItem>
-                  
-                  <DropdownMenuItem onClick={() => handleCreatePredefinedActivity("abandon")}>
+                  <DropdownMenuItem onClick={() => setOpenShareFicheVisite(true)} disabled={["recue", "EnAttente"].includes(currentRow.status) ||  !hasContactAttempts || !hasDocument}>
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Partager Fiche de visite
+                  </DropdownMenuItem>                  
+                  <DropdownMenuItem onClick={() => handleAbandonnerDemande()}>
                     <RefreshCwOff className="mr-2 h-4 w-4" />
                     Abandonner la demande
                   </DropdownMenuItem>
@@ -377,12 +410,13 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
 
           <CardContent className="space-y-2 max-h-[600px] overflow-y-auto pr-2">
             <Tabs defaultValue="Activites" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsList className="grid w-full grid-cols-3 mb-6">
                 <TabsTrigger value="Activites">Activités</TabsTrigger>
                 <TabsTrigger value="Documents">Documents</TabsTrigger>
+                <TabsTrigger value="Visites">Visites</TabsTrigger>
               </TabsList>
               <TabsContent value='Activites' >
-                <DemandeActivityTimeline activities={currentRow.demandeActivities} />
+                <DemandeActivityTimeline demandeId={currentRow.id} activities={currentRow.demandeActivities} />
               </TabsContent>
               <TabsContent value="Documents">
                 {suiviDocuments.length > 0 ? (
@@ -396,6 +430,9 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                   <p className="text-gray-500 text-sm">Aucun document de suivi pour cette demande.</p>
                 )}
               </TabsContent>
+              <TabsContent value='Visites' >
+              Fonctionalité à venir
+              </TabsContent>
             </Tabs>
           </CardContent>
 
@@ -407,10 +444,21 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         onOpenChange={setOpenNoteSheet}
         onSubmit={handleSubmitNote}
       />
+       <FicheVisiteShareSheet
+        open={openShareFicheVisite}
+        onOpenChange={setOpenShareFicheVisite}
+        onSubmit={handleSubmitFicheVisite}
+        onDownload={handDownloadFicheVisite}
+      />
       <DocsRequestSheet
         open={openDocsRequestSheet}
         onOpenChange={setOpenDocsRequestSheet}
         onSubmit={handleSubmitDocsRequest}
+      />
+       <AssignDemandeSheet
+        open={openAssignDemandeSheet}
+        onOpenChange={setOpenAssignDemandeSheet}
+        onSubmit={handleSubmitAssignDemande}
       />
       <CoordinateursMapSheet
         open={openVisiteSheet}
@@ -422,6 +470,9 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
           await handleCreatePredefinedActivity("visite",{visiteur: `${data.visiteur.firstName} ${data.visiteur.lastName}`,coordinateur:`${data.coordinateur.firstName} ${data.coordinateur.lastName}`}); // Enregistre l'activité "visite"
           const acteur = data.coordinateur ?  data.coordinateur : data.visiteur
           await updateDemande(currentRow.id, { status: "en_visite", acteur: { id: acteur.id } })
+          const baseUrl = import.meta.env.VITE_FRONTEND_URL;
+         
+          await shareFicheVisite({demandeId:currentRow.id,userId:data.coordinateur.id,subordoneId:data.visiteur.id});
           setOpenVisiteSheet(false);
         }}
       />

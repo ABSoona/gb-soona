@@ -89,12 +89,15 @@ export const GET_DEMANDE_STATS = gql`
       count
     }
 
-    suivies: _demandesMeta(
+    suivies: demandes(
       where: {
         status: { in: ["recue","en_commision", "en_visite", "EnAttenteDocs"] }
       }
     ) {
-      count
+      id
+      demandeActivities {
+        id
+      }
     }
 
     enVisite: _demandesMeta(

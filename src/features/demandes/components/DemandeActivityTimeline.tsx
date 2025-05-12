@@ -6,13 +6,15 @@ import { useMutation } from "@apollo/client";
 import {
   Ban, CircleCheckBig, ClockAlert, FilePlus2, HeartHandshake, MapPin,
   MoreVertical, Pencil, PhoneCall, PhoneMissed, RefreshCw, RefreshCwOff,
-  StickyNote, Trash
+  StickyNote, Trash,
+  UserPlus
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
   activities: DemandeActivity[];
+  demandeId:number
 }
 
 const getIconForType = (type: string) => {
@@ -29,16 +31,17 @@ const getIconForType = (type: string) => {
     case "expiration": return <ClockAlert className="h-4 w-4 inline mr-2" />;
     case "accept": return <CircleCheckBig className="h-4 w-4 inline mr-2" />;
     case "refuse": return <Ban className="h-4 w-4 inline mr-2" />;
+    case "userAssign": return <UserPlus className="h-4 w-4 inline mr-2" />;
     default: return null;
   }
 };
 
-export const DemandeActivityTimeline: React.FC<Props> = ({ activities }) => {
+export const DemandeActivityTimeline: React.FC<Props> = ({ activities,demandeId }) => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingMessage, setEditingMessage] = useState("");
   const [expandedMessages, setExpandedMessages] = useState<Record<number, boolean>>({});
   const [updateDemandeActivity] = useMutation(UPDATE_DEMANDE_ACTIVITY);
-  const { deleteDemandeActivity } = useDemandeService();
+  const { deleteDemandeActivity } = useDemandeService({where :{id:{equals:demandeId}}});
   const textareaRefs = useRef<Record<number, HTMLTextAreaElement | null>>({});
 
   const startEditing = (activity: DemandeActivity) => {
