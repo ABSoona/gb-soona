@@ -17,7 +17,7 @@ export function useSidebarData(): SidebarData {
   const { stats, loading } = useDemandeService();
   // Badges par sous-catégorie (à adapter selon ta logique métier)
 
-
+  
   const navGroups: NavGroup[] = [
     {
       title: 'General',
@@ -33,9 +33,10 @@ export function useSidebarData(): SidebarData {
 
           items: [
             {
-              title: 'Toutes les demandes',
+              title: 'Toutes',
               url: '/demandes',
               icon: Squircle,
+              badge: stats.total >0? String(stats.total) : undefined,
             },
             {
               title: 'Affectée à moi',

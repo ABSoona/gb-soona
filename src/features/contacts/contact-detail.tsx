@@ -47,7 +47,7 @@ export default function ContactDetail() {
       <Main>
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => navigate({ to: '/contacts' })} size="icon">
+            <Button variant="ghost" onClick={() => navigate({ to: '..' })} size="icon">
               <ChevronLeft />
             </Button>
             <h2 className="text-2xl font-bold tracking-tight">Contact N° {id}</h2>

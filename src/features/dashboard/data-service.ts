@@ -164,7 +164,7 @@ export function useDashboardStats(dateRange: { from: Date; to: Date }): Dashboar
     totalVerse,
     totalReste,
     totalDemandes: demandes.length,
-    nouvellesDemandes: demandes.filter((n: Demande) => n.status === 'recue').length,
+    nouvellesDemandes: demandes?.filter((d: any) => d.demandeActivities.length === 1).length || 0,
     DemandesEnAttente: demandes.filter((n: Demande) => n.status === 'EnAttente').length,
     DemandesEncommission: demandes.filter((n: Demande) => n.status === 'en_commision').length,
     DemandesEnVisite: demandes.filter((n: Demande) => n.status === 'en_visite').length,

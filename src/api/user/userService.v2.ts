@@ -2,7 +2,17 @@ import { toast } from '@/hooks/use-toast';
 import { handleServerError } from '@/utils/handle-server-error';
 import { useMutation, useQuery } from '@apollo/client';
 import { useState } from 'react';
-import { CREATE_USER, DELETE_USER, GET_USERS, UPDATE_USER } from './graphql/queries';
+import { CREATE_USER, DELETE_USER, GET_USERS, SEARCH_USERS, UPDATE_USER } from './graphql/queries';
+
+export function useUsersSearch(search: string) {
+  const { data, loading, error } = useQuery(SEARCH_USERS, { variables: { search }, skip: !search });
+
+  return {
+    users: data?.users || [],
+    loading,
+    error,
+  };
+}
 
 export function useUserServicev2(variables?: any) {
   const [isSubmitting, setIsSubmitting] = useState(false);

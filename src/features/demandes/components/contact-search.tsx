@@ -1,73 +1,109 @@
 import { useContactSearch } from '@/api/contact/contact-service';
-import { Badge } from '@/components/ui/badge'; // Badge stylisé
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Combobox } from '@/components/ui/combobox';
-import { X } from 'lucide-react'; // Icône pour supprimer la sélection
+import { Contact } from '@/model/contact/Contact';
+import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface ContactSearchComboboxProps {
   onSelect: (contactId: number | null) => void;
-  defaultContact?: { id: number; nom: string; prenom: string };
+  defaultContact?: {
+    id: number;
+    nom: string;
+    prenom: string;
+    telephone?: string;
+    email?: string;
+  };
 }
 
-export function ContactSearchCombobox({ onSelect, defaultContact }: ContactSearchComboboxProps) {
+export function ContactSearchCombobox({
+  onSelect,
+  defaultContact,
+}: ContactSearchComboboxProps) {
   const [search, setSearch] = useState('');
   const { contacts, loading } = useContactSearch(search);
   const [selectedContact, setSelectedContact] = useState(defaultContact || null);
   const hasSelectedManually = useRef(false);
-  const hasClearedManually = useRef(false); // ✅ Empêche le useEffect de réappliquer defaultContact
+  const hasClearedManually = useRef(false);
 
-  // 🔥 Mise à jour lorsqu'on ouvre une demande en mode édition (sauf si suppression manuelle)
   useEffect(() => {
     if (defaultContact && !hasSelectedManually.current && !hasClearedManually.current) {
-      console.log('🔄 Mise à jour depuis `defaultContact`:', defaultContact.id);
       setSelectedContact(defaultContact);
       onSelect(defaultContact.id);
     }
   }, [defaultContact]);
 
-  // 🔥 Fonction pour supprimer la sélection
   const handleRemoveContact = () => {
     setSelectedContact(null);
     onSelect(null);
     setSearch('');
-    hasClearedManually.current = true; // ✅ Bloque la réinitialisation du useEffect
+    hasClearedManually.current = true;
   };
 
   return (
     <div className="relative">
       {selectedContact ? (
-        // ✅ Affichage du contact sous forme de badge
-        <div className="flex items-center justify-between capitalize rounded-md bg-gray-100 px-3 py-2 text-sm shadow-sm">
-          <Badge variant="secondary" className="flex items-center bg-primary gap-2 text-white hover:bg-primary">
-            {selectedContact.nom} {selectedContact.prenom} - N° {selectedContact.id}
-            <button onClick={handleRemoveContact} className="ml-2  hover:text-red-600">
-              <X size={14} />
-            </button>
-          </Badge>
+        <div className="flex items-center gap-3 rounded-md border px-3 py-2 shadow-sm bg-white">
+          <Avatar>
+            <AvatarFallback>
+              {selectedContact.nom?.charAt(0)}
+              {selectedContact.prenom?.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <p className="font-medium">
+              {selectedContact.nom} {selectedContact.prenom}
+            </p>
+            {selectedContact.telephone && (
+              <p className="text-xs text-muted-foreground">{selectedContact.telephone}</p>
+            )}
+            {selectedContact.email && (
+              <p className="text-xs text-muted-foreground">{selectedContact.email}</p>
+            )}
+          </div>
+          <button onClick={handleRemoveContact} className="ml-auto hover:text-red-600">
+            <X size={16} />
+          </button>
         </div>
       ) : (
-        // ✅ Input de recherche si aucun contact n'est sélectionné
         <Combobox
           value={search}
           onValueChange={(contactId) => {
-            const contact = contacts.find((c: { id: number; }) => c.id === Number(contactId));
+            const contact = contacts.find((c:Contact) => c.id === Number(contactId));
             if (contact) {
-              console.log('🆕 Nouveau contact sélectionné :', contact.id);
               hasSelectedManually.current = true;
-              hasClearedManually.current = false; // ✅ Réactive la mise à jour de `defaultContact`
+              hasClearedManually.current = false;
               setSelectedContact(contact);
               onSelect(contact.id);
             }
           }}
-          items={contacts.map((contact: { id: { toString: () => any; }; nom: any; prenom: any; email: string; telephone: string }) => ({
+          onInputChange={(e) => setSearch(e.target.value)}
+          items={contacts.map((contact:Contact) => ({
             value: contact.id.toString(),
-            label: `${contact.nom} ${contact.prenom} - N° ${contact.id}`,
-            label2: ` ${contact.telephone}`,
-            label3: ` ${contact.email}`
+            label: (
+              <div className="flex items-center gap-3 group">
+                <Avatar className="h-6 w-6">
+                  <AvatarFallback>
+                    {contact.nom?.charAt(0)}
+                    {contact.prenom?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col transition-all duration-150">
+                  <span className="font-medium text-sm group-hover:text-base">
+                    {contact.nom} {contact.prenom}
+                  </span>
+                  <span className="text-xs text-muted-foreground group-hover:text-sm">
+                    {contact.telephone}
+                  </span>
+                  <span className="text-xs text-muted-foreground group-hover:text-sm">
+                    {contact.email}
+                  </span>
+                </div>
+              </div>
+            )
           }))}
           placeholder="Rechercher un contact..."
           isLoading={loading}
-          onInputChange={(e) => setSearch(e.target.value)}
         />
       )}
     </div>

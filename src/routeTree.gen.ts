@@ -18,6 +18,7 @@ import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index
 import { Route as authSignInImport } from './routes/(auth)/sign-in'
 import { Route as authOtpImport } from './routes/(auth)/otp'
 import { Route as auth500Import } from './routes/(auth)/500'
+import { Route as authDemandesIdFicheVisitePdfImport } from './routes/(auth)/demandes.$id.fiche-visite-pdf'
 
 // Create Virtual Routes
 
@@ -89,11 +90,11 @@ const AuthenticatedDemandesEnCoursTraitementLazyImport = createFileRoute(
 const AuthenticatedDemandesEnCommissionLazyImport = createFileRoute(
   '/_authenticated/demandes/en-commission',
 )()
-const AuthenticatedDemandesIdLazyImport = createFileRoute(
-  '/_authenticated/demandes/$id',
-)()
 const AuthenticatedContactsIdLazyImport = createFileRoute(
   '/_authenticated/contacts/$id',
+)()
+const AuthenticatedDemandesIdIndexLazyImport = createFileRoute(
+  '/_authenticated/demandes/$id/',
 )()
 
 // Create/Update Routes
@@ -398,15 +399,6 @@ const AuthenticatedDemandesEnCommissionLazyRoute =
     ),
   )
 
-const AuthenticatedDemandesIdLazyRoute =
-  AuthenticatedDemandesIdLazyImport.update({
-    id: '/demandes/$id',
-    path: '/demandes/$id',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any).lazy(() =>
-    import('./routes/_authenticated/demandes/$id.lazy').then((d) => d.Route),
-  )
-
 const AuthenticatedContactsIdLazyRoute =
   AuthenticatedContactsIdLazyImport.update({
     id: '/contacts/$id',
@@ -415,6 +407,24 @@ const AuthenticatedContactsIdLazyRoute =
   } as any).lazy(() =>
     import('./routes/_authenticated/contacts/$id.lazy').then((d) => d.Route),
   )
+
+const AuthenticatedDemandesIdIndexLazyRoute =
+  AuthenticatedDemandesIdIndexLazyImport.update({
+    id: '/demandes/$id/',
+    path: '/demandes/$id/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/demandes/$id/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const authDemandesIdFicheVisitePdfRoute =
+  authDemandesIdFicheVisitePdfImport.update({
+    id: '/(auth)/demandes/$id/fiche-visite-pdf',
+    path: '/demandes/$id/fiche-visite-pdf',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -530,13 +540,6 @@ declare module '@tanstack/react-router' {
       path: '/contacts/$id'
       fullPath: '/contacts/$id'
       preLoaderRoute: typeof AuthenticatedContactsIdLazyImport
-      parentRoute: typeof AuthenticatedRouteImport
-    }
-    '/_authenticated/demandes/$id': {
-      id: '/_authenticated/demandes/$id'
-      path: '/demandes/$id'
-      fullPath: '/demandes/$id'
-      preLoaderRoute: typeof AuthenticatedDemandesIdLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
     '/_authenticated/demandes/en-commission': {
@@ -665,6 +668,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWebsiteDemandesIndexLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/(auth)/demandes/$id/fiche-visite-pdf': {
+      id: '/(auth)/demandes/$id/fiche-visite-pdf'
+      path: '/demandes/$id/fiche-visite-pdf'
+      fullPath: '/demandes/$id/fiche-visite-pdf'
+      preLoaderRoute: typeof authDemandesIdFicheVisitePdfImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authenticated/demandes/$id/': {
+      id: '/_authenticated/demandes/$id/'
+      path: '/demandes/$id'
+      fullPath: '/demandes/$id'
+      preLoaderRoute: typeof AuthenticatedDemandesIdIndexLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
   }
 }
 
@@ -700,7 +717,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteLazyRoute: typeof AuthenticatedSettingsRouteLazyRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedContactsIdLazyRoute: typeof AuthenticatedContactsIdLazyRoute
-  AuthenticatedDemandesIdLazyRoute: typeof AuthenticatedDemandesIdLazyRoute
   AuthenticatedDemandesEnCommissionLazyRoute: typeof AuthenticatedDemandesEnCommissionLazyRoute
   AuthenticatedDemandesEnCoursTraitementLazyRoute: typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
   AuthenticatedDemandesEnVisiteLazyRoute: typeof AuthenticatedDemandesEnVisiteLazyRoute
@@ -714,6 +730,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTypeDocumentsIndexLazyRoute: typeof AuthenticatedTypeDocumentsIndexLazyRoute
   AuthenticatedUsersIndexLazyRoute: typeof AuthenticatedUsersIndexLazyRoute
   AuthenticatedWebsiteDemandesIndexLazyRoute: typeof AuthenticatedWebsiteDemandesIndexLazyRoute
+  AuthenticatedDemandesIdIndexLazyRoute: typeof AuthenticatedDemandesIdIndexLazyRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -721,7 +738,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedSettingsRouteLazyRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedContactsIdLazyRoute: AuthenticatedContactsIdLazyRoute,
-  AuthenticatedDemandesIdLazyRoute: AuthenticatedDemandesIdLazyRoute,
   AuthenticatedDemandesEnCommissionLazyRoute:
     AuthenticatedDemandesEnCommissionLazyRoute,
   AuthenticatedDemandesEnCoursTraitementLazyRoute:
@@ -742,6 +758,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedUsersIndexLazyRoute: AuthenticatedUsersIndexLazyRoute,
   AuthenticatedWebsiteDemandesIndexLazyRoute:
     AuthenticatedWebsiteDemandesIndexLazyRoute,
+  AuthenticatedDemandesIdIndexLazyRoute: AuthenticatedDemandesIdIndexLazyRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -763,7 +780,6 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503LazyRoute
   '/': typeof AuthenticatedIndexRoute
   '/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
-  '/demandes/$id': typeof AuthenticatedDemandesIdLazyRoute
   '/demandes/en-commission': typeof AuthenticatedDemandesEnCommissionLazyRoute
   '/demandes/en-cours-traitement': typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
   '/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
@@ -782,6 +798,8 @@ export interface FileRoutesByFullPath {
   '/typeDocuments': typeof AuthenticatedTypeDocumentsIndexLazyRoute
   '/users': typeof AuthenticatedUsersIndexLazyRoute
   '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
+  '/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
+  '/demandes/$id': typeof AuthenticatedDemandesIdIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
@@ -798,7 +816,6 @@ export interface FileRoutesByTo {
   '/503': typeof errors503LazyRoute
   '/': typeof AuthenticatedIndexRoute
   '/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
-  '/demandes/$id': typeof AuthenticatedDemandesIdLazyRoute
   '/demandes/en-commission': typeof AuthenticatedDemandesEnCommissionLazyRoute
   '/demandes/en-cours-traitement': typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
   '/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
@@ -817,6 +834,8 @@ export interface FileRoutesByTo {
   '/typeDocuments': typeof AuthenticatedTypeDocumentsIndexLazyRoute
   '/users': typeof AuthenticatedUsersIndexLazyRoute
   '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
+  '/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
+  '/demandes/$id': typeof AuthenticatedDemandesIdIndexLazyRoute
 }
 
 export interface FileRoutesById {
@@ -837,7 +856,6 @@ export interface FileRoutesById {
   '/(errors)/503': typeof errors503LazyRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
-  '/_authenticated/demandes/$id': typeof AuthenticatedDemandesIdLazyRoute
   '/_authenticated/demandes/en-commission': typeof AuthenticatedDemandesEnCommissionLazyRoute
   '/_authenticated/demandes/en-cours-traitement': typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
   '/_authenticated/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
@@ -856,6 +874,8 @@ export interface FileRoutesById {
   '/_authenticated/typeDocuments/': typeof AuthenticatedTypeDocumentsIndexLazyRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexLazyRoute
   '/_authenticated/website-demandes/': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
+  '/(auth)/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
+  '/_authenticated/demandes/$id/': typeof AuthenticatedDemandesIdIndexLazyRoute
 }
 
 export interface FileRouteTypes {
@@ -876,7 +896,6 @@ export interface FileRouteTypes {
     | '/503'
     | '/'
     | '/contacts/$id'
-    | '/demandes/$id'
     | '/demandes/en-commission'
     | '/demandes/en-cours-traitement'
     | '/demandes/en-visite'
@@ -895,6 +914,8 @@ export interface FileRouteTypes {
     | '/typeDocuments'
     | '/users'
     | '/website-demandes'
+    | '/demandes/$id/fiche-visite-pdf'
+    | '/demandes/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/500'
@@ -910,7 +931,6 @@ export interface FileRouteTypes {
     | '/503'
     | '/'
     | '/contacts/$id'
-    | '/demandes/$id'
     | '/demandes/en-commission'
     | '/demandes/en-cours-traitement'
     | '/demandes/en-visite'
@@ -929,6 +949,8 @@ export interface FileRouteTypes {
     | '/typeDocuments'
     | '/users'
     | '/website-demandes'
+    | '/demandes/$id/fiche-visite-pdf'
+    | '/demandes/$id'
   id:
     | '__root__'
     | '/_authenticated'
@@ -947,7 +969,6 @@ export interface FileRouteTypes {
     | '/(errors)/503'
     | '/_authenticated/'
     | '/_authenticated/contacts/$id'
-    | '/_authenticated/demandes/$id'
     | '/_authenticated/demandes/en-commission'
     | '/_authenticated/demandes/en-cours-traitement'
     | '/_authenticated/demandes/en-visite'
@@ -966,6 +987,8 @@ export interface FileRouteTypes {
     | '/_authenticated/typeDocuments/'
     | '/_authenticated/users/'
     | '/_authenticated/website-demandes/'
+    | '/(auth)/demandes/$id/fiche-visite-pdf'
+    | '/_authenticated/demandes/$id/'
   fileRoutesById: FileRoutesById
 }
 
@@ -983,6 +1006,7 @@ export interface RootRouteChildren {
   errors404LazyRoute: typeof errors404LazyRoute
   errors500LazyRoute: typeof errors500LazyRoute
   errors503LazyRoute: typeof errors503LazyRoute
+  authDemandesIdFicheVisitePdfRoute: typeof authDemandesIdFicheVisitePdfRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -999,6 +1023,7 @@ const rootRouteChildren: RootRouteChildren = {
   errors404LazyRoute: errors404LazyRoute,
   errors500LazyRoute: errors500LazyRoute,
   errors503LazyRoute: errors503LazyRoute,
+  authDemandesIdFicheVisitePdfRoute: authDemandesIdFicheVisitePdfRoute,
 }
 
 export const routeTree = rootRoute
@@ -1023,7 +1048,8 @@ export const routeTree = rootRoute
         "/(errors)/403",
         "/(errors)/404",
         "/(errors)/500",
-        "/(errors)/503"
+        "/(errors)/503",
+        "/(auth)/demandes/$id/fiche-visite-pdf"
       ]
     },
     "/_authenticated": {
@@ -1032,7 +1058,6 @@ export const routeTree = rootRoute
         "/_authenticated/settings",
         "/_authenticated/",
         "/_authenticated/contacts/$id",
-        "/_authenticated/demandes/$id",
         "/_authenticated/demandes/en-commission",
         "/_authenticated/demandes/en-cours-traitement",
         "/_authenticated/demandes/en-visite",
@@ -1045,7 +1070,8 @@ export const routeTree = rootRoute
         "/_authenticated/tasks/",
         "/_authenticated/typeDocuments/",
         "/_authenticated/users/",
-        "/_authenticated/website-demandes/"
+        "/_authenticated/website-demandes/",
+        "/_authenticated/demandes/$id/"
       ]
     },
     "/(auth)/500": {
@@ -1101,10 +1127,6 @@ export const routeTree = rootRoute
     },
     "/_authenticated/contacts/$id": {
       "filePath": "_authenticated/contacts/$id.lazy.tsx",
-      "parent": "/_authenticated"
-    },
-    "/_authenticated/demandes/$id": {
-      "filePath": "_authenticated/demandes/$id.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/demandes/en-commission": {
@@ -1177,6 +1199,13 @@ export const routeTree = rootRoute
     },
     "/_authenticated/website-demandes/": {
       "filePath": "_authenticated/website-demandes/index.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/(auth)/demandes/$id/fiche-visite-pdf": {
+      "filePath": "(auth)/demandes.$id.fiche-visite-pdf.tsx"
+    },
+    "/_authenticated/demandes/$id/": {
+      "filePath": "_authenticated/demandes/$id/index.lazy.tsx",
       "parent": "/_authenticated"
     }
   }

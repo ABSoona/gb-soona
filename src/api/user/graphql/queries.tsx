@@ -46,7 +46,18 @@ export const DELETE_USER = gql`
  
 `;
 
-
+export const SEARCH_USERS = gql`
+  query SearchUsers($search: String) {
+    users(where: { lastName: { contains: $search, mode: Insensitive } }) {
+      id
+      firstName 
+      lastName
+      email
+      roles
+      role
+    }
+  }
+`;
 
 
 

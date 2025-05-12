@@ -53,7 +53,7 @@ export function useDocumentService(variables?: any) {
     }
   });
 
-  const createAndUploadDocument = async (contactId: number, file: File, typeId: number, demandeId?: number) => {
+  const createAndUploadDocument = async (contactId: number, file: File, typeId: number, demandeId?: number,aideId?: number) => {
     let documentId: string | null = null;
 
     try {
@@ -75,7 +75,8 @@ export function useDocumentService(variables?: any) {
             contact: !demandeId ? { id: contactId } : null,
             contenu: "{}",
             demande: demandeId ? { id: demandeId } : null,
-            typeDocument: { id: typeId }
+            typeDocument: { id: typeId },
+            aide:aideId?{id:aideId}:null
           },
         },
       });

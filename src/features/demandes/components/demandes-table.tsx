@@ -150,9 +150,9 @@ export function DemandesTable({ columns, data, hideTools = false, hideActions = 
                                                     if (showDetailIn == detailOpenOption.page) {
 
                                                         navigate({
-                                                            to: `/demandes/${row.original.id.toString()}`,
+                                                            to: `/demandes/${row.original.id.toString()}/`,
                                                             params: { id: row.original.id.toString() },
-                                                            search: { from: location.pathname } // Ajout du paramètre de recherche
+                                                            // Ajout du paramètre de recherche
                                                         });
 
 

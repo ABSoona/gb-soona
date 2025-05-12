@@ -54,7 +54,7 @@ export default function Aides() {
                 </div>
             </AppLayout>
 
-            <AidesDialogs />
+            {<AidesDialogs />}
         </AidesProvider>
     );
 }

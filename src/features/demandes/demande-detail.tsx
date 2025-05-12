@@ -21,13 +21,13 @@ interface Props {
 
 export default function DemandeDetail({ showContact = true }: Props) {
   const id = useParams({
-    from: '/_authenticated/demandes/$id',
+    from: '/_authenticated/demandes/$id/',
     select: (params) => params?.id,
   });
 
   const navigate = useNavigate();
   const { demandes, loading: isLoading, error } = useDemandeService({ where: { id: { equals: Number(id) } } });
-  const demande: Demande = demandes.length > 0 ? demandes[0] : undefined;
+ const demande = demandes[0]!;
   const searchParams = new URLSearchParams(location.search);
   const from = searchParams.get('from');
 
@@ -36,9 +36,9 @@ export default function DemandeDetail({ showContact = true }: Props) {
   //const { setOpenDemande: setOpen, setCurrentRow } = useDemandes(); // ✅ Fonctionne car le provider est défini dans un composant parent
 
   const handleRetour = () => {
-    if (from) {
-      navigate({ to: from });
-    }
+   
+      navigate({ to: '..' });
+   
   };
   // Gestion des erreurs
   if (error) {
@@ -57,7 +57,7 @@ export default function DemandeDetail({ showContact = true }: Props) {
       <Main>
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleRetour} size="sm">
+            <Button variant="ghost" onClick={handleRetour} size="icon">
               <ChevronLeft />
             </Button>
             <h2 className="text-2xl font-bold tracking-tight">Demande N° {id}</h2>

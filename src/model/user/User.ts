@@ -21,22 +21,22 @@ const userRoleSchema = z.union([
 ])
 
 const userSchemaWithoutHearchi = z.object({
-  createdAt: z.coerce.date(),
-  email: z.string(),
-  firstName: z.string(),
+  createdAt: z.coerce.date().optional(),
+  email: z.string().optional(),
+  firstName: z.string().optional(),
   id: z.string(),
-  lastName: z.string(),
-  role: userRoleSchema,
-  roles: z.array(userRoleSchema),
-  updatedAt: z.coerce.date(),
-  username: z.string(),
-  status: userStatusSchema,
-  password: z.string(),
+  lastName: z.string().optional(),
+  role: userRoleSchema.optional(),
+  roles: z.array(userRoleSchema).optional(),
+  updatedAt: z.coerce.date().optional(),
+  username: z.string().optional(),
+  status: userStatusSchema.optional(),
+  password: z.string().optional(),
   token: z.string().optional(),
   adresseCodePostal : z.string().optional(),
   adresseRue : z.string().optional(),
   adresseVille :z.string().optional(),
-  hasAccess:z.boolean()
+  hasAccess:z.boolean().optional()
   
 
 

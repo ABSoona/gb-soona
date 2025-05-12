@@ -135,7 +135,7 @@ export default function CoordinateursMapSheet({ open, onOpenChange, contactId,on
               </div>
               {visiteur.superieur && (
                 <div className="text-xs text-muted-foreground">
-                  Contact AB soona : {visiteur.superieur.firstName} {visiteur.superieur.lastName}
+                  Membre contact : {visiteur.superieur.firstName} {visiteur.superieur.lastName}
                 </div>
               )}
               <div className="flex gap-2 mt-1">

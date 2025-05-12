@@ -25,18 +25,24 @@ import { useState } from "react";
 
 
 
+
 interface Props {
   contactId: number;
   documents: Document[];
+  nbColumns?:number;
   onUpload: (contactId: number, file: File, typeId: number, demandeId: number) => Promise<void>;
   onDelete: (docId: string) => Promise<void>;
+
+
 }
 
-export function DocumentsManager({ contactId, documents, onUpload, onDelete }: Props) {
+export function DocumentsManager({ contactId, documents, nbColumns,onUpload, onDelete }: Props) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [docName, setDocName] = useState<string | null>(null);
   const [previewType, setPreviewType] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  const className = nbColumns? `grid grid-cols-${nbColumns}  gap-4 max-w-[500px] `
+  :"grid grid-cols-4 md:grid-cols-3 sm:grid-cols-1 gap-4 max-w-[500px] "
 
 
 
@@ -60,7 +66,7 @@ export function DocumentsManager({ contactId, documents, onUpload, onDelete }: P
     <>
       {/* Document Grid */}
       <div className="space-y-6">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-[500px] ">
+        <div className= {className}>
           {documents.map((doc) => (
             <div
               key={doc.id}

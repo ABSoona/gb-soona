@@ -30,6 +30,7 @@ export const DEMANDE_FIELDS = gql`
       id
       firstName
       lastName
+      role
 
     }
     contact {

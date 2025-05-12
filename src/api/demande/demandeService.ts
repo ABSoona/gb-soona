@@ -13,6 +13,7 @@ import {
 } from './graphql/queries';
 import { Demande } from '@/model/demande/Demande';
 import { getUserId } from '@/lib/session';
+import axiosInstance from '@/lib/axtios-instance';
 
 type DemandeServiceParams = {
   order?: number;
@@ -64,7 +65,8 @@ export function useDemandeService(variables?: DemandeServiceParams): {
   });
   const stats = {
     total: statsData?.total?.count ?? 0,
-    suivies: statsData?.suivies?.count ?? 0,
+    suivies: statsData?.suivies?.filter((d: any) => d.demandeActivities.length > 1)
+    ?.length ?? 0,
     enVisite: statsData?.enVisite?.count ?? 0,
     enCommite: statsData?.enCommite?.count ?? 0,
     affecteAMoi: statsData?.affecteAMoi?.count ?? 0,
@@ -217,4 +219,29 @@ export function useDemandeService(variables?: DemandeServiceParams): {
     isSubmitting,
     stats,
   };
+
+}
+
+export const downloadFicheVisitePdf = async (demandeId: number,token:string): Promise<void> => {
+  const response = await axiosInstance.get(`/demandes/${demandeId}/pdf?token=${token}`, {
+    responseType: 'blob',
+  });
+
+  const blob = response.data;
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.download = `fiche-visite-${demandeId}.pdf`;
+  link.click();
+  window.URL.revokeObjectURL(link.href);
+};
+export const shareFicheVisite = async ( data: {
+  demandeId: number;
+  userId: string;
+  subordoneId: string;
+}): Promise<void> => {
+  const response = await axiosInstance.put<{
+    demandeId: number;
+    userId: string;
+    subordoneId: string;
+  }>(`/demandes/${data.demandeId}/share`, data);
 }
