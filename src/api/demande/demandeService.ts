@@ -18,6 +18,7 @@ import axiosInstance from '@/lib/axtios-instance';
 type DemandeServiceParams = {
   order?: number;
   where?: Record<string, any>; // tu peux affiner selon ton schéma GraphQL
+  take?:number
 };
 
 export function useDemandeService(variables?: DemandeServiceParams): {
