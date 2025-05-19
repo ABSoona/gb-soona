@@ -1,7 +1,9 @@
 
+
 import { z } from 'zod';
 import { contactSchema } from '../contact/Contact';
 import { demandeSchema } from '../demande/Demande';
+
 
 // Schéma pour le statut de la aide
 const aideTypeSchema = z.union([
@@ -41,6 +43,9 @@ const aideCrediteurSchema = z.union([
 ]);
 export type AideCredieteur = z.infer<typeof aideCrediteurSchema>;
 
+export const versementLight = z.object({ id: z.number(),
+  status: z.union([z.literal('Verse'), z.literal('AVerser')])
+ })
 
 // Schéma principal pour les aides
 export const aideSchema = z.object({
@@ -59,7 +64,8 @@ export const aideSchema = z.object({
   remarque: z.coerce.string().optional(),
   demande: demandeSchema,
   status: aideSatusSchema,
-  reetudier: z.boolean()
+  reetudier: z.boolean(),
+  versements : z.array(versementLight).optional(),
 
 });
 export type Aide = z.infer<typeof aideSchema>;

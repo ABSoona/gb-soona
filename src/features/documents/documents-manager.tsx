@@ -20,8 +20,14 @@ import { Document } from "@/model/document/Document";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { IconDownload, IconTrash } from "@tabler/icons-react";
 import { format } from "date-fns";
-import { File } from "lucide-react";
+import { CalendarDays, File } from "lucide-react";
 import { useState } from "react";
+import DocumentPreviewSheet from './ocumentPreviewSheet';
+import { AttachmentType } from '@/model/typeDocument/typeDocument';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { AvatarFallback } from '@radix-ui/react-avatar';
+
 
 
 
@@ -29,44 +35,67 @@ import { useState } from "react";
 interface Props {
   contactId: number;
   documents: Document[];
-  nbColumns?:number;
+  nbColumns?: number;
   onUpload: (contactId: number, file: File, typeId: number, demandeId: number) => Promise<void>;
   onDelete: (docId: string) => Promise<void>;
+  attachement?: AttachmentType
 
 
 }
 
-export function DocumentsManager({ contactId, documents, nbColumns,onUpload, onDelete }: Props) {
+export function DocumentsManager({ contactId, documents, nbColumns, onUpload, onDelete, attachement }: Props) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [docName, setDocName] = useState<string | null>(null);
+  const [document, setDocument] = useState<Document | null>(null);
   const [previewType, setPreviewType] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
-  const className = nbColumns? `grid grid-cols-${nbColumns}  gap-4 max-w-[500px] `
-  :"grid grid-cols-4 md:grid-cols-3 sm:grid-cols-1 gap-4 max-w-[500px] "
+  const className = nbColumns ? `grid grid-cols-${nbColumns}  gap-4 max-w-[500px] `
+    : "grid grid-cols-4 md:grid-cols-3 sm:grid-cols-1 gap-4 max-w-[500px] "
 
 
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const goTo = async (index: number) => {
+    const doc = documents[index];
+    if (!doc) return;
+    const { url, type } = await previewDocument(doc);
+    setCurrentIndex(index);
+    setPreviewUrl(url);
+    setDocument(doc);
+    setPreviewType(type || 'unsupported');
+  };
 
+  const goNext = () => {
+    if (currentIndex !== null && currentIndex < documents.length - 1) {
+      void goTo(currentIndex + 1);
+    }
+  };
+
+  const goPrev = () => {
+    if (currentIndex !== null && currentIndex > 0) {
+      void goTo(currentIndex - 1);
+    }
+  };
   const handlePreview = async (doc: Document) => {
     try {
       const { url, type } = await previewDocument(doc);
       if (type === 'unsupported') {
-        toast({ title: 'Format non supporté pour la prévisualisation', variant: 'destructive' });
+        toast({ title: 'Format non supporté', variant: 'destructive' });
       } else {
+        const index = documents.findIndex((d) => d.id === doc.id);
+        setCurrentIndex(index);
         setPreviewUrl(url);
-        setDocName(doc.contenu.filename)
+        setDocument(doc);
         setPreviewType(type || 'unsupported');
         setOpen(true);
       }
     } catch (e) {
-      toast({ title: 'Erreur lors de la prévisualisation', variant: 'destructive' });
+      toast({ title: 'Erreur de prévisualisation', variant: 'destructive' });
     }
   };
-
   return (
     <>
       {/* Document Grid */}
       <div className="space-y-6">
-        <div className= {className}>
+        <div className={className}>
           {documents.map((doc) => (
             <div
               key={doc.id}
@@ -105,20 +134,45 @@ export function DocumentsManager({ contactId, documents, nbColumns,onUpload, onD
               </DropdownMenu>
 
               <File className="h-8 w-8 text-primary mb-2" />
-              <TooltipProvider>
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <p className="first-letter:uppercase text-center text-xs font-medium truncate w-full cursor-default">
+                    {doc.name ?? doc.contenu.filename}
+                  </p>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-80">
+                  <div className="flex space-x-4">
+                  <File className="h-8 w-8 text-primary mb-2" />
+                    <div className="space-y-1">
+                    <h3 className="first-letter:uppercase text-sm">
+                      {doc.typeDocument?.label ?? "Type de document inconnu"} 
+                      </h3>
+                      <p className="text-sm font-semibold"> {doc.name ?? doc.contenu.filename}</p>
+                     
+                      <div className="flex items-center pt-2">
+                        <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
+                        <span className="text-xs text-muted-foreground">
+                          Ajouté le {new Date(doc.createdAt).toLocaleDateString('FR-fr')}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+
+              {/*  <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <p className="first-letter:uppercase text-center text-sm font-medium truncate w-full cursor-default">
-                      {doc.typeDocument?.label}
-                    </p>
+                    
                   </TooltipTrigger>
                   <TooltipContent>
                     <span>{doc.contenu.filename}</span>
                   </TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
+              </TooltipProvider> */}
               <div className="flex justify-center w-full gap-2 mt-2 text-xs text-muted-foreground text-center">
-                Ajouté le {format(new Date(doc.createdAt), 'dd/MM/yyyy')}
+                {doc.typeDocument?.label}
+                {/*    Ajouté le {format(new Date(doc.createdAt), 'dd/MM/yyyy')} */}
               </div>
             </div>
           ))}
@@ -126,22 +180,18 @@ export function DocumentsManager({ contactId, documents, nbColumns,onUpload, onD
       </div>
 
       {/* ✅ Sheet Preview */}
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="rightfull" className="p-4">
-          <SheetHeader>
-            <SheetTitle>{docName}</SheetTitle>
-          </SheetHeader>
-          {previewType === 'pdf' && (
-            <iframe src={previewUrl!} className="w-full h-[80vh] rounded border mt-4" />
-          )}
-          {['jpg', 'png', 'jpeg'].includes(previewType || '') && (
-            <img src={previewUrl!} alt="preview" className="w-full max-h-[80vh] object-contain mt-4" />
-          )}
-          <SheetClose asChild>
-            <Button variant="outline" className="mt-4">Fermer</Button>
-          </SheetClose>
-        </SheetContent>
-      </Sheet>
+      <DocumentPreviewSheet
+        open={open}
+        onOpenChange={setOpen}
+        previewUrl={previewUrl}
+        document={document}
+        previewType={previewType}
+        onNext={goNext}
+        onPrev={goPrev}
+        canNext={currentIndex !== null && currentIndex < documents.length - 1}
+        canPrev={currentIndex !== null && currentIndex > 0}
+        doctypeAttachment={attachement}
+      />
     </>
   );
 }

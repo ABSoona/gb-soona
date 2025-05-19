@@ -61,7 +61,7 @@ export const columns: ColumnDef<Task>[] = [
   {
     accessorKey: 'status',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Status' />
+      <DataTableColumnHeader column={column} title='Etat' />
     ),
     cell: ({ row }) => {
       const status = statuses.find(

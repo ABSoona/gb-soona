@@ -5,6 +5,7 @@ import { z } from 'zod';
 // Schéma principal pour les aides
 export const documentSchema = z.object({
   id: z.string(),
+  name:z.string().optional(),
   contenu: z.object({
     filename: z.string(),
     url: z.string()

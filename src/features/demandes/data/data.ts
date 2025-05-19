@@ -25,14 +25,15 @@ export const demandeStatusColor = new Map<DemandeStatus, string>([
 export const demandeStatusTypes =
   [
     { label: 'Reçue', value: 'recue' },
-    { label: 'En comité', value: 'en_commision' },
-    { label: 'En visite', value: 'en_visite' },
-    { label: 'Clôturée', value: 'clôturée' },
-    { label: 'Refusée', value: 'refusée' },
-    { label: 'En cours', value: 'EnCours' },
-    { label: 'Abandonnée', value: 'Abandonnée' },
-    { label: 'En attente', value: 'EnAttente' },
     { label: 'Attente justificatifs', value: 'EnAttenteDocs' },
+    { label: 'En visite', value: 'en_visite' },
+    { label: 'En comité', value: 'en_commision' },
+    { label: 'En cours', value: 'EnCours' },
+    { label: 'Clôturée', value: 'clôturée' },
+    { label: 'En attente', value: 'EnAttente' },
+    { label: 'Refusée', value: 'refusée' },
+    { label: 'Abandonnée', value: 'Abandonnée' },
+
     
 
   ] as const

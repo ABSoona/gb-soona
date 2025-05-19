@@ -132,7 +132,7 @@ export function AidesTable({ columns, data, hideTools = false, hideActions = fal
                                                         navigate({
                                                             to: `/aides/${row.original.id.toString()}`,
                                                             params: { id: row.original.id.toString() },
-                                                            search: { from: location.pathname } // Ajout du paramètre de recherche
+                                                           
                                                         });
 
                                                     }

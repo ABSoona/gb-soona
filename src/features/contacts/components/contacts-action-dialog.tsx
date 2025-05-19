@@ -49,7 +49,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
  
 
   const isEdit = !!currentRow;
-  const whereClause = isEdit ? {where:{id:{equals:currentRow.id}}}:{where:{equals:{id:0}}};
+  const whereClause = isEdit ? {where:{id:{equals:currentRow.id}}}:{};
   const { createContact, updateContact, refetch, isSubmitting } = useContactService(whereClause);
   const form = useForm<ContactForm>({
     resolver: zodResolver(formSchema),
@@ -330,7 +330,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                 name="status"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel>Statut</FormLabel>
+                    <FormLabel>Etat</FormLabel>
                     <SelectDropdown
                       defaultValue={field.value}
                       onValueChange={field.onChange}

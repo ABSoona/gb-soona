@@ -89,7 +89,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
         table.getAllColumns().forEach(column => {
             if (column.getCanFilter()) {
-                localStorage.removeItem(`filters-${column.id}`);
+                localStorage.removeItem(`demande-filters-${column.id}`);
             }
         });
     };
@@ -116,11 +116,11 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                         />
                     )}
 
-                    {/* 📌 Filtre par Statut */}
+                    {/* 📌 Filtre par Etat */}
                     {table.getColumn('status') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('status')}
-                            title="Statut"
+                            title="Etat"
                             options={demandeStatusTypes.map((t) => ({ ...t }))}
                         />
                     )}

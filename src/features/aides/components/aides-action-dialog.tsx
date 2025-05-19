@@ -71,12 +71,12 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
 
   const isEdit = !!currentRow;
   const { triggerRefetchAides } = useAides();
-  const whereClause=isEdit?{ where: { aide: { id: currentRow?.id } } }:{ where: { aide: { id: 0} } }
+  /* const whereClause=isEdit?{ where: { aide: { id: currentRow?.id } } }:{ where: { aide: { id: 0} } }
   const { documents } = useDocumentService();
-  const { handleFileUpload, handleDelete } = useDocumentActions({ aide: { id: currentRow ? currentRow.id : 0 } });
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { handleFileUpload, handleDelete } = useDocumentActions({ aide: { id: currentRow ? currentRow.id : 0 } }); */
+  /* const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
-  const { typeDocuments } = useTypeDocumentService({ where: { rattachement: 'Aide' } });
+  const { typeDocuments } = useTypeDocumentService({ where: { rattachement: 'Aide' } }); */
   const defaultFormValues: AideForm = isEdit && currentRow
     ? {
       contactId: currentRow.contact?.id || '',
@@ -129,19 +129,19 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
     }
   }, [selectedContactId, form]);
 
-  const handleTypeClick = (typeId: number) => {
+ /*  const handleTypeClick = (typeId: number) => {
     setSelectedTypeId(typeId);
     fileInputRef.current?.click();
-  };
+  }; */
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  /* const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && selectedTypeId && currentRow) {
       await handleFileUpload(currentRow.contact.id, file, selectedTypeId, undefined, currentRow.id);
       setSelectedTypeId(null);
       e.target.value = '';
     }
-  };
+  }; */
   const onSubmit = async (values: AideForm) => {
     console.log(form.formState.errors);
     const contactId = forContactId ?? values.contactId; // priorité au forContactId
@@ -173,8 +173,8 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
         await createAide(aidePayload);
         toast({ title: 'Nouvelle aide créée avec succès !' });
       }
-      if (demandeId && !values.reetudier && values.frequence === 'UneFois')
-        await updateDemande(Number(demandeId), { status: "clôturée" });
+    /*   if (demandeId && !values.reetudier && values.frequence === 'UneFois')
+        await updateDemande(Number(demandeId), { status: "clôturée" }); */
       triggerRefetchAides();
       form.reset();
       onOpenChange(false);
@@ -218,7 +218,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
     if (typeAide === 'AssistanceAdministrative') {
       form.setValue('dateExpiration', addMonths(dateAide, 3));
     } else if (frequence === 'UneFois') {
-      form.setValue('dateExpiration', addDays(dateAide, 27));
+      form.setValue('dateExpiration', dateAide);
     } else {
       const newDateExpiration = calculerDateDernierVersement(dateAide, frequence, nb);
       if (newDateExpiration) {
@@ -459,7 +459,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
             </form>
           </Form>
 
-          {isEdit && <Card className="mt-6">
+         {/*  {isEdit && <Card className="mt-6">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 ">
               <CardTitle>Documents</CardTitle>
 
@@ -487,9 +487,10 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
                 contactId={currentRow ? currentRow?.contact.id : 0}
                 onUpload={handleFileUpload}
                 onDelete={handleDelete}
+                attachement={'Contact'}
               />
             </CardContent>
-          </Card>}
+          </Card>} */}
 
         </ScrollArea>
         <SheetFooter>

@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { DOCUMENT_FIELDS } from "./fragment";
 
 
 // MUTATION 1 - Crée le document vide
@@ -19,6 +20,15 @@ export const UPLOAD_CONTENU = gql`
     }
   }
 `;
+
+export const UPDATE_DOCUMENT = gql`
+   mutation updateDocument($id: String! , $data: DocumentUpdateInput!) {
+    updateDocument(where: {id : $id}, data: $data) {
+      ...DocumentFields
+    }
+  }
+     ${DOCUMENT_FIELDS}
+`;
 // MUTATION 3 - Supprime le document
 export const DELETE_DOCUMENT = gql`
   mutation deleteDocument($where: DocumentWhereUniqueInput!) {
@@ -35,10 +45,12 @@ export const GET_DOCUMENTS = gql`
       createdAt
       updatedAt
       contenu
+      name
       typeDocument {  
         id
         label
         rattachement
+        internalCode
        }
     }
   }

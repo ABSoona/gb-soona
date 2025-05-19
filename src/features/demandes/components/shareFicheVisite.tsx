@@ -70,9 +70,9 @@ export const FicheVisiteShareSheet: React.FC<FicheVisiteShareSheetProps> = ({
             <SheetContent side="right" className="space-y-4 p-6">
                 <FormProvider {...form}>
                     <SheetHeader>
-                        <SheetTitle>Partager/Télécharger la fiche de visite</SheetTitle>
+                        <SheetTitle>Partager/Télécharger la demande</SheetTitle>
                         <SheetDescription>
-                            Télécharger la fiche de visite ou Partager la avec un membre de l'équipe  la directement.
+                            Télécharger la demande ou Partager la avec un membre de l'équipe  la directement.
                         </SheetDescription>
                     </SheetHeader>
 

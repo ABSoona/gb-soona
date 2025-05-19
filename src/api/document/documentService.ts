@@ -3,7 +3,9 @@ import axiosInstance from '@/lib/axtios-instance';
 import { Document } from '@/model/document/Document';
 import { useMutation, useQuery } from '@apollo/client';
 import { saveAs } from 'file-saver';
-import { CREATE_DOCUMENT, DELETE_DOCUMENT, GET_DOCUMENTS, UPLOAD_CONTENU } from './queries';
+import { CREATE_DOCUMENT, DELETE_DOCUMENT, GET_DOCUMENTS, UPDATE_DOCUMENT, UPLOAD_CONTENU } from './queries';
+import { toast } from '@/hooks/use-toast';
+import { handleServerError } from '@/utils/handle-server-error';
 
 export async function downloadDocument(docId: string, filename: string) {
   try {
@@ -43,6 +45,7 @@ export function useDocumentService(variables?: any) {
   const [createDocument] = useMutation(CREATE_DOCUMENT);
   const [uploadContenu] = useMutation(UPLOAD_CONTENU, { client: uploadClient });
   const [deleteDocumentMutation] = useMutation(DELETE_DOCUMENT);
+  const [updateDocumentMutation] = useMutation(UPDATE_DOCUMENT);
 
   const { data, refetch } = useQuery(GET_DOCUMENTS, {
 
@@ -53,7 +56,7 @@ export function useDocumentService(variables?: any) {
     }
   });
 
-  const createAndUploadDocument = async (contactId: number, file: File, typeId: number, demandeId?: number,aideId?: number) => {
+  const createAndUploadDocument = async (contactId: number, file: File, typeId: number, demandeId?: number,aideId?: number,versementId?:number,visiteId?:number) => {
     let documentId: string | null = null;
 
     try {
@@ -72,11 +75,14 @@ export function useDocumentService(variables?: any) {
       const { data: createRes } = await createDocument({
         variables: {
           data: {
-            contact: !demandeId ? { id: contactId } : null,
+            contact: !contactId && contactId!=0 ? { id: contactId } : null,
             contenu: "{}",
             demande: demandeId ? { id: demandeId } : null,
             typeDocument: { id: typeId },
-            aide:aideId?{id:aideId}:null
+            aide:aideId?{id:aideId}:null,
+            versements: versementId?{ id: versementId }:null,
+            name:versementId?"Preuve de virement":(visiteId?"Rapport de visite":"Nouveau document"),
+            visites :visiteId?{id:visiteId}:null,
           },
         },
       });
@@ -95,7 +101,8 @@ export function useDocumentService(variables?: any) {
       await refetch();
       return uploadRes?.uploadContenu;
     } catch (error) {
-      console.error("Erreur dans createAndUploadDocument", error);
+      handleServerError(error);
+     
       if (documentId) {
         await deleteDocumentMutation({
           variables: { where: { id: documentId } },
@@ -106,8 +113,27 @@ export function useDocumentService(variables?: any) {
     }
   };
 
+  const updateDocument = async (id: string, data: any) => {
+    if (!id) {
+      toast({
+        title: 'Erreur',
+        description: 'ID du document requis.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
+    try {
+      const { id: _, ...updateData } = data;
+      await updateDocumentMutation({ variables: { id, data: updateData } });
+      await refetch();
+      return data?.updateDocument;
+    } catch (error) {
+     handleServerError(error);
+     throw error;    } 
+  };
 
+  
 
   const deleteDocument = async (documentId: string) => {
     try {
@@ -128,6 +154,7 @@ export function useDocumentService(variables?: any) {
     documents: data?.documents || [],
     createAndUploadDocument,
     deleteDocument,
+    updateDocument,
     refetchDocuments: refetch,
   };
 }

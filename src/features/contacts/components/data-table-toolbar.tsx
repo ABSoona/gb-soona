@@ -56,11 +56,11 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                         />
                     )}
 
-                    {/* 📌 Filtre par Statut */}
+                    {/* 📌 Filtre par Etat */}
                     {table.getColumn('status') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('status')}
-                            title="Statut"
+                            title="Etat"
                             options={contactStatusTypes.map((t) => ({ ...t }))}
                         />
                     )}

@@ -27,8 +27,8 @@ export function DataTablePagination<TData>({
       style={{ overflowClipMargin: 1 }}
     >
       <div className='hidden flex-1 text-sm text-muted-foreground sm:block'>
-        {table.getFilteredSelectedRowModel().rows.length} of{' '}
-        {table.getFilteredRowModel().rows.length} ligne(s) selectionné(s).
+
+        {table.getFilteredRowModel().rows.length} ligne(s)
       </div>
       <div className='flex items-center sm:space-x-6 lg:space-x-8'>
         <div className='flex items-center space-x-2'>

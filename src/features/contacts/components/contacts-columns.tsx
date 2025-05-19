@@ -7,6 +7,7 @@ import { DataTableRowActions } from './data-table-row-actions';
 import { Contact, ContactStatus } from '@/model/contact/Contact';
 import { DateRange } from 'react-day-picker';
 import { contactStatusColor, contactStatusTypes } from '../data/data';
+import { DataTableColumnHeader } from './data-table-column-header';
 
 const dateRangeFilter: ColumnDef<Contact>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
     if (!filterValue || (!filterValue.from && !filterValue.to)) {
@@ -60,7 +61,9 @@ export const aidesColumns: ColumnDef<Contact>[] = [
     {
         accessorFn: (row) => row.id,
         id: 'numBeneficiaire',
-        header: 'Numéro',
+        header: ({ column }) => (
+                   <DataTableColumnHeader column={column} title='Numéro' />
+                 ),
         cell: ({ row }) => row.original.id ?? 'N/A',
     },
     {
@@ -71,7 +74,9 @@ export const aidesColumns: ColumnDef<Contact>[] = [
     },
     {
         accessorKey: 'createdAt',
-        header: 'Créée le',
+         header: ({ column }) => (
+                    <DataTableColumnHeader column={column} title='Créée le' />
+                  ),
         cell: ({ row }) => {
             const date = row.getValue('createdAt') as string;
             return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';
@@ -115,10 +120,12 @@ export const aidesColumns: ColumnDef<Contact>[] = [
     },
 
 
-    // 🟡 Statut de la Demande
+    // 🟡 Etat de la Demande
     {
         accessorKey: 'status',
-        header: 'Statut',
+         header: ({ column }) => (
+                    <DataTableColumnHeader column={column} title='Etat' />
+                  ),
         cell: ({ row }) => {
             const status: ContactStatus = row.getValue('status');
             const statusLabel = contactStatusTypes.find(s => s.value === status)?.label ?? 'Inconnu';

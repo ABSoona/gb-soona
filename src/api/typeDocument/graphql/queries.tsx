@@ -4,7 +4,7 @@ import { TYPE_DOCUMENT_FIELDS } from './fragment';
 
 export const GET_TYPE_DOCUMENTS = gql`
   query GetTypeDocuments($skip: Float, $take: Float, $where: TypeDocumentWhereInput) {
-    typeDocuments(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Asc }]) {
+    typeDocuments(skip: $skip, take: $take, where: $where, orderBy:[{ internalCode: Desc }]) {
       ...TypeDocumentFields
     }
   }

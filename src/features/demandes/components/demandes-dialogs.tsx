@@ -4,7 +4,11 @@ import { DemandesActionDialog } from './demandes-action-dialog'
 import { DemandesDeleteDialog } from './demandes-delete-dialog'
 import { DemandesInviteDialog } from './demandes-invite-dialog'
 
-export function DemandesDialogs() {
+interface Props {
+  refetch: () => void;
+}
+
+export function DemandesDialogs({refetch}:Props) {
   const { openDemande: open, setOpenDemande: setOpen, currentRow, setCurrentRow } = useDemandes()
   return (
     <>
@@ -12,6 +16,7 @@ export function DemandesDialogs() {
         key='demande-add'
         open={open === 'add'}
         onOpenChange={() => setOpen('add')}
+        refetch={refetch}
       />
 
       <DemandesInviteDialog
@@ -32,20 +37,22 @@ export function DemandesDialogs() {
               }, 500)
             }}
             currentRow={currentRow}
+            refetch={refetch}
 
           />
 
-          <DemandesDeleteDialog
-            key={`demande-delete-${currentRow.id}`}
-            open={open === 'delete'}
-            onOpenChange={() => {
-              setOpen('delete')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
-            currentRow={currentRow}
-          />
+<DemandesDeleteDialog
+  key={`demande-delete-${currentRow.id}`}
+  open={open === 'delete'}
+  onOpenChange={() => {
+    setOpen('delete');
+    setTimeout(() => {
+      setCurrentRow(null);
+    }, 500);
+  }}
+  currentRow={currentRow}
+  refetch={refetch}
+/>
 
           <DemandeViewDialog
             key={`demande-view-${currentRow.id}`}

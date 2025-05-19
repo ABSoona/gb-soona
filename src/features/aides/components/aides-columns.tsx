@@ -2,10 +2,12 @@ import LongText from '@/components/long-text';
 import { Aide, AideFrequence } from '@/model/aide/Aide';
 import { ColumnDef } from '@tanstack/react-table';
 import { addMonths, isBefore, isEqual } from 'date-fns';
-import { XCircleIcon } from 'lucide-react';
+import { Check, XCircleIcon } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
-import { aideCredieteurTypes, aideFrquenceTypes, typeAideTypes } from '../data/data';
+import { aideCredieteurTypes, aideFrquenceTypes, aideStatusTypes, typeAideTypes } from '../data/data';
 import { DataTableRowActions } from './data-table-row-actions';
+import { DataTableRowDocuments } from '../../versements/components/data-table-row-documents';
+import { Progress } from '@/components/ui/progress';
 
 const dateRangeFilter: ColumnDef<Aide>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
     if (!filterValue || (!filterValue.from && !filterValue.to)) {
@@ -108,7 +110,7 @@ export const columns: ColumnDef<Aide>[] = [
     {
         accessorFn: (row) => row.nombreVersements,
         id: 'nombreVersements',
-        header: 'Nombres de versements',
+        header: 'Nb de versements',
         cell: ({ row }) => row.getValue('nombreVersements')
 
     },
@@ -135,6 +137,38 @@ export const columns: ColumnDef<Aide>[] = [
         },
     },
     {
+        id: 'progressionVersements',
+        header: 'Progression',
+        cell: ({ row }) => {
+          const total = row.original.nombreVersements ?? 1;
+          const versements = row.original.versements ?? [];
+          const effectues = versements.filter(v => v.status === 'Verse').length;
+          const progress = Math.min((effectues / total) * 100, 100);
+      
+          return (
+            <div className="relative w-full max-w-[180px]">
+              <Progress value={progress} />
+              <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white font-medium pointer-events-none">
+                {effectues} / {total}
+              </span>
+            </div>
+          );
+        },
+        enableHiding: false,
+      },
+      {
+        accessorFn: (row) => row.status,
+        id: 'status',
+        header: 'Etat',
+        cell: ({ row }) => {
+
+            return aideStatusTypes.find(s => s.value === row.getValue('status'))?.label ?? '';
+        },
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+    },
+    /* {
         id: 'verse',
         header: 'Versé',
         cell: ({ row }) => {
@@ -206,7 +240,7 @@ export const columns: ColumnDef<Aide>[] = [
             return montantRestant;
         }
     },
-
+ */
 
     /* {
          accessorFn: (row) => row.dateExpiration,
@@ -220,24 +254,22 @@ export const columns: ColumnDef<Aide>[] = [
      },*/
 
     {
-        accessorFn: (row) => row.suspendue,
-        id: 'suspendue',
-        header: 'Suspendue',
+        accessorFn: (row) => row.reetudier,
+        id: 'reetudier',
+        header: 'Réetudier',
         cell: ({ row }) => {
 
-
-
-            return row.original.suspendue ?
-                <div   > <XCircleIcon className='align-middle' /></div> :
+            return row.original.reetudier ?
+                <div className="flex items-center justify-center h-full"> <Check size={20} className='align-middle' /></div> :
                 ''
         },
     },
 
-    // 🟡 Statut de la Aide
+    // 🟡 Etat de la Aide
     /* {
          id : 'status',
          accessorKey: 'status',
-         header: 'Statut',
+         header: 'Etat',
          cell: ({ row }) => {
              const status: AideStatus = row.getValue('status');
              const statusLabel = aideStatusTypes.find(s => s.value === status)?.label ?? 'Inconnu';
@@ -254,6 +286,7 @@ export const columns: ColumnDef<Aide>[] = [
      },*/
 
     // ⚙️ Actions
+    
     {
         id: 'actions',
         cell: DataTableRowActions,

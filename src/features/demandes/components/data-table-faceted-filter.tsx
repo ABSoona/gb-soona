@@ -37,7 +37,7 @@ export function DataTableFacetedFilter<TData, TValue>({
 
   // 🔥 Restaurer les filtres depuis localStorage au chargement
   useEffect(() => {
-    const savedFilters = localStorage.getItem(`filters-${column?.id}`);
+    const savedFilters = localStorage.getItem(`demande-filters-${column?.id}`);
     if (savedFilters) {
       const parsedFilters = JSON.parse(savedFilters);
       column?.setFilterValue(parsedFilters.length ? parsedFilters : undefined);
@@ -96,7 +96,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                       updatedValues = Array.from(selectedValues);
 
                       // 🔥 Sauvegarde des filtres dans localStorage
-                      localStorage.setItem(`filters-${column?.id}`, JSON.stringify(updatedValues));
+                      localStorage.setItem(`demande-filters-${column?.id}`, JSON.stringify(updatedValues));
 
                       column?.setFilterValue(updatedValues.length ? updatedValues : undefined);
                     }}
@@ -128,7 +128,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     onSelect={() => {
                       column?.setFilterValue(undefined);
                       // 🔥 Supprimer les filtres sauvegardés
-                      localStorage.removeItem(`filters-${column?.id}`);
+                      localStorage.removeItem(`demande-filters-${column?.id}`);
                       selectedValues.clear();
                     }}
                     className='justify-center text-center'

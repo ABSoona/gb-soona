@@ -27,17 +27,19 @@ export default function Demandes({ acteurId, status,title,description, newOlny,e
         }
     }
 
-    const { demandes, loading: isLoading, error } = useDemandeService({
+    const { demandes, loading: isLoading, error,refetch } = useDemandeService({
         where,
     });
 
+
+    
     let filteredDemandes = newOlny ? demandes.filter((e) => (!(e.demandeActivities.length > 1))) : demandes
     filteredDemandes = excludeNews ?demandes.filter((e) => (e.demandeActivities.length > 1)) :filteredDemandes 
     // Gestion des erreurs via la fonction centralisée
     if (error) {
         handleServerError(error);
     }
-
+    refetch()
     return (
 
         <DemandesProvider>
@@ -73,7 +75,7 @@ export default function Demandes({ acteurId, status,title,description, newOlny,e
 
                 </div>
 
-                <DemandesDialogs />
+                <DemandesDialogs refetch={refetch}  />
             </AppLayout>
         </DemandesProvider>
 

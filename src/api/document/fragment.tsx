@@ -5,9 +5,11 @@ export const DOCUMENT_FIELDS = gql`
     id
     contenu
     updatedAt
+    name
     typeDocument {  
       id
-      label}
+      label
+      internalCode}
       
   }
 `;

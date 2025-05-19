@@ -22,7 +22,7 @@ export function WebsiteDemandeView({ currentRow }: Props) {
           <p><strong>Téléphone :</strong> {currentRow.telephoneDemandeur}</p>
           <p><strong>Email :</strong> {currentRow.emailDemandeur}</p>
           <p><strong>Ville :</strong> {currentRow.villeDemandeur}</p>
-          <p><strong>Statut :</strong> {currentRow.status}</p>
+          <p><strong>Etat :</strong> {currentRow.status}</p>
           <p><strong>Créée le :</strong> {new Date(currentRow.createdAt).toLocaleDateString('fr-FR')}</p>
         </CardContent>
       </Card>
