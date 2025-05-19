@@ -12,7 +12,7 @@ import { handleServerError } from '@/utils/handle-server-error';
 
 export function DernieresDemandes() {
   // Utilisation du hook personnalisé pour les demandes
-  const { demandes, loading: isLoading, error } = useDemandeService({ where: { status: { equals: 'recue' } }, take: 8 });
+  const { demandes, loading: isLoading, error } = useDemandeService({ where: { status: { equals: 'recue' } },take:8});
   const fewDemandesColumns = columns.filter(column => column.id && ['numeroDemande', 'contactNomPrenom', 'createdAt', 'status'].includes(column.id));
   if (error) {
     handleServerError(error);
