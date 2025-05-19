@@ -63,10 +63,11 @@ export function useDemandeService(variables?: DemandeServiceParams): {
     variables: { userId },
     fetchPolicy: 'network-only',
   });
+
   const stats = {
     total: statsData?.total?.count ?? 0,
     suivies: statsData?.suivies?.filter((d: any) => d.demandeActivities.length > 1)
-    ?.length ?? 0,
+      ?.length ?? 0,
     enVisite: statsData?.enVisite?.count ?? 0,
     enCommite: statsData?.enCommite?.count ?? 0,
     affecteAMoi: statsData?.affecteAMoi?.count ?? 0,
@@ -222,7 +223,7 @@ export function useDemandeService(variables?: DemandeServiceParams): {
 
 }
 
-export const downloadFicheVisitePdf = async (demandeId: number,token:string): Promise<void> => {
+export const downloadFicheVisitePdf = async (demandeId: number, token: string): Promise<void> => {
   const response = await axiosInstance.get(`/demandes/${demandeId}/pdf?token=${token}`, {
     responseType: 'blob',
   });
@@ -234,7 +235,7 @@ export const downloadFicheVisitePdf = async (demandeId: number,token:string): Pr
   link.click();
   window.URL.revokeObjectURL(link.href);
 };
-export const shareFicheVisite = async ( data: {
+export const shareFicheVisite = async (data: {
   demandeId: number;
   userId: string;
   subordoneId: string;

@@ -1,6 +1,7 @@
 
 
 import { z } from 'zod';
+import { documentSchema } from '../document/Document';
 export const contactStatusSchema = z.union([
   z.literal('active'),
   z.literal('blacklisté'),
@@ -39,5 +40,6 @@ export const contactSchema = z.object({
   remarques: z.string().optional(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  documents:z.array(documentSchema).optional()
 });
 export type Contact = z.infer<typeof contactSchema>;

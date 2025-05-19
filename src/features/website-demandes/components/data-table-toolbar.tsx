@@ -32,7 +32,7 @@ export function DataTableToolbar<TData>({
           {table.getColumn('status') && (
             <DataTableFacetedFilter
               column={table.getColumn('status')}
-              title="Statut"
+              title="Etat"
               options={wsDemandeStatusTypes.map((t) => ({ ...t }))}
             />
           )}

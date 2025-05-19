@@ -14,13 +14,14 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentRow: Demande;
+  refetch: () => void;
 }
 
-export function DemandesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
+export function DemandesDeleteDialog({ open, onOpenChange, currentRow ,refetch}: Props) {
   const queryClient = useQueryClient();
-  const { deleteDemande, isSubmitting } = useDemandeService({where:{id:{equals:currentRow.id}}}); // ✅ Utilisation du service
+  const { deleteDemande, isSubmitting } = useDemandeService(); // ✅ Utilisation du service
   const [value, setValue] = useState<number | ''>('');
-  const { triggerRefetchDemandes } = useDemandes();
+
   const handleDelete = async () => {
     if (value !== currentRow.id) {
       toast({ title: 'ID incorrect !', variant: 'destructive' });
@@ -29,7 +30,7 @@ export function DemandesDeleteDialog({ open, onOpenChange, currentRow }: Props) 
 
     try {
       await deleteDemande(currentRow.id);
-      triggerRefetchDemandes();
+      await refetch();
       queryClient.invalidateQueries({ queryKey: ['demandes'] });
       onOpenChange(false);
     } catch (error) {

@@ -46,60 +46,68 @@ interface Props {
   currentRow?: Demande;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  refetch: () => void;
+
+
 }
 
-export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) {
+export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }: Props) {
 
 
- 
- 
+  
   const { users } = useUserServicev2(
      { where: { role: { not: "visiteur" } } } 
   );
-  const { triggerRefetchDemandes } = useDemandes();
+
   const isEdit = !!currentRow;
   const whereClause = isEdit ? {where:{id : {equals:currentRow.id}}}:{where:{id:{equals:0}}} 
-  const { createDemande, updateDemande, refetch, isSubmitting } = useDemandeService(whereClause);
+  const { createDemande, updateDemande,  isSubmitting } = useDemandeService();
   const form = useForm<DemandeForm>({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
-      ? {
-        contactId: currentRow?.contact?.nom || '',
-        status: currentRow?.status || { value: 'recue' },
-        remarques: currentRow?.remarques || '',
-        nombreEnfants: Number(currentRow?.nombreEnfants),
-        agesEnfants: currentRow?.agesEnfants || '',
-        situationFamiliale: currentRow?.situationFamiliale,
-        situationProfessionnelle: currentRow?.situationProfessionnelle,
-        situationProConjoint: currentRow?.situationProConjoint ? currentRow?.situationProConjoint : undefined,
-        revenus: Number(currentRow?.revenus),
-        revenusConjoint: Number(currentRow?.revenusConjoint),
-        loyer: Number(currentRow?.loyer),
-        facturesEnergie: Number(currentRow?.facturesEnergie),
-        dettes: Number(currentRow?.dettes),
-        natureDettes: currentRow?.natureDettes || '',
-        autresAides: currentRow?.autresAides || '',
-        autresCharges: (currentRow?.autresCharges) || 0,
-        apl: Number(currentRow?.apl),
-        categorieDemandeur: (currentRow?.categorieDemandeur),
-        acteurId: currentRow?.acteur?.id || undefined,
-        
-
+    ? {
+        contactId: currentRow?.contact?.id ?? '',
+        status: currentRow?.status ?? 'recue',
+        remarques: currentRow?.remarques ?? '',
+        nombreEnfants: currentRow?.nombreEnfants ?? 0,
+        agesEnfants: currentRow?.agesEnfants ?? '',
+        situationFamiliale: currentRow?.situationFamiliale ?? undefined,
+        situationProfessionnelle: currentRow?.situationProfessionnelle ?? undefined,
+        situationProConjoint: currentRow?.situationProConjoint ?? undefined,
+        revenus: currentRow?.revenus ?? 0,
+        revenusConjoint: currentRow?.revenusConjoint ?? 0,
+        loyer: currentRow?.loyer ?? 0,
+        facturesEnergie: currentRow?.facturesEnergie ?? 0,
+        dettes: currentRow?.dettes ?? 0,
+        natureDettes: currentRow?.natureDettes ?? '',
+        autresAides: currentRow?.autresAides ?? '',
+        autresCharges: currentRow?.autresCharges ?? 0,
+        apl: currentRow?.apl ?? 0,
+        categorieDemandeur: currentRow?.categorieDemandeur ?? undefined,
+        acteurId: currentRow?.acteur?.id ?? undefined,
       }
-      : {
+    : {
         contactId: '',
         status: 'recue',
         remarques: '',
         nombreEnfants: 0,
+        agesEnfants: '',
+        situationFamiliale: undefined,
+        situationProfessionnelle: undefined,
+        situationProConjoint: undefined,
+        revenus: 0,
+        revenusConjoint: 0,
+        loyer: 0,
+        facturesEnergie: 0,
+        dettes: 0,
+        natureDettes: '',
         autresAides: '',
         autresCharges: 0,
-        dettes: 0,
         apl: 0,
-        revenus: 0,
-        facturesEnergie: 0,
-        revenusConjoint: 0
-
-      },
+        categorieDemandeur: undefined,
+        acteurId: undefined,
+      }
+  
   });
   const situationFamiliale = form.watch("situationFamiliale");
   const dettes = form.watch("dettes");
@@ -133,14 +141,16 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
     try {
       if (isEdit && currentRow?.id) {
         await updateDemande(currentRow.id, demandePayload);
+        
         toast({ title: 'Demande mise à jour avec succès !' });
       } else {
         console.log(demandePayload);
         await createDemande(demandePayload);
+       
         toast({ title: 'Nouvelle demande créée avec succès !' });
       }
       onOpenChange(false);
-      triggerRefetchDemandes();
+      await refetch();
       form.reset();
 
     } catch (error) {
@@ -517,7 +527,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange }: Props) 
                 name="status"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel>Statut</FormLabel>
+                    <FormLabel>Etat</FormLabel>
                     <SelectDropdown
                       defaultValue={field.value}
                       onValueChange={field.onChange}

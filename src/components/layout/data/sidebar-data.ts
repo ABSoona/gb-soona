@@ -7,14 +7,15 @@ import {
   IconSettings,
   IconUsers
 } from '@tabler/icons-react';
-import { Globe, Squircle, UserIcon } from 'lucide-react';
+import { BadgeEuro, Globe, Squircle, UserIcon } from 'lucide-react';
 import { useDemandeService } from '@/api/demande/demandeService';
 import type { SidebarData, NavGroup } from '../types';
+import { equal } from 'assert';
 
 export function useSidebarData(): SidebarData {
   //const { demandes } = useDemandeService();
 
-  const { stats, loading } = useDemandeService();
+  const { stats, loading } = useDemandeService({where :{id :{equals : 0}}});
   // Badges par sous-catégorie (à adapter selon ta logique métier)
 
   
@@ -83,6 +84,29 @@ export function useSidebarData(): SidebarData {
           url: '/aides',
           icon: IconHeartHandshake,
         },
+        {
+          title: 'Versements',
+          
+          icon: BadgeEuro,
+          items:[
+            {
+              title: 'Tous',
+              url: '/versements',
+              icon: Squircle,
+            },
+            {
+              title: 'A venir',
+              url: '/versements/a-verser',
+              icon: Squircle,
+            },
+            {
+              title: 'En retard',
+              url: '/versements/en-retard',
+              icon: Squircle,
+            }
+
+          ]
+        },
       ],
     },
     {
@@ -93,12 +117,12 @@ export function useSidebarData(): SidebarData {
           icon: IconSettings,
           items: [
             {
-              title: 'Utilisateurs',
+              title: 'Equipe',
               url: '/users',
               icon: Squircle,
             },
             {
-              title: 'Type de documents',
+              title: 'Types de documents',
               url: '/typeDocuments',
               icon: Squircle,
             },

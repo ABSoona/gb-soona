@@ -9,6 +9,7 @@ import { DataTableRowActions } from './data-table-row-actions';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { userTypes } from '@/features/users/data/data';
+import { DataTableColumnHeader } from './data-table-column-header';
 
 const dateRangeFilter: ColumnDef<Demande>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
     if (!filterValue || (!filterValue.from && !filterValue.to)) {
@@ -65,7 +66,9 @@ export const columns: ColumnDef<Demande>[] = [
     {
         id: 'createdAt',
         accessorKey: 'createdAt',
-        header: 'Reçue le',
+       header: ({ column }) => (
+                    <DataTableColumnHeader column={column} title='Reçu le' />
+                  ),
         cell: ({ row }) => {
             const date = row.getValue('createdAt') as string;
             return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';
@@ -89,7 +92,9 @@ export const columns: ColumnDef<Demande>[] = [
     {
         accessorFn: (row) => row?.categorieDemandeur,
         id: 'categorieDemandeur',
-        header: 'Catégorie',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Catégorie' />
+          ),
         cell: ({ row }) => {
             const categorieDemandeur: categorieDemandeur = row.getValue('categorieDemandeur');
             return categorieTypes.find(s => s.value === categorieDemandeur)?.label ?? 'N/A';
@@ -101,7 +106,9 @@ export const columns: ColumnDef<Demande>[] = [
     {
         accessorFn: (row) => `${row?.acteur?.firstName ?? ''} ${row?.acteur?.lastName ?? ''}`,
         id: 'acteur',
-        header: 'Attribué à',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Attribué à' />
+          ),
         cell: ({ row }) => {
           const acteur = row.original?.acteur;
           const fullName = `${acteur?.firstName ?? 'N/A'} ${acteur?.lastName ?? ''}`;
@@ -127,7 +134,10 @@ export const columns: ColumnDef<Demande>[] = [
     {
         id: 'dernierContact',
         accessorKey: 'dernierContact',
-        header: 'Entretien tél',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Entretien tél' />
+          ),
+
         cell: ({ row }) => {
             const dateStr = row.getValue('dernierContact') as string;
             if (!dateStr) return 'Jamais';
@@ -140,24 +150,28 @@ export const columns: ColumnDef<Demande>[] = [
     {
         id: 'derniereRelance',
         accessorKey: 'derniereRelance',
-        header: 'Dernière relance',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Dernière relance' />
+          ),
         cell: ({ row }) => {
           const dateStr = row.getValue('derniereRelance') as string;
           if (!dateStr) return 'Jamais';
-      
           const date = new Date(dateStr);
           return `${formatDistanceToNow(date, { addSuffix: true, locale: fr })}`;
         },
         filterFn: dateRangeFilter,
       },
-    {
+      {
         accessorFn: (row) => row?.nombreRelances,
         id: 'nombreRelances',
-        header: 'Relancé',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title='Relancé' />
+        ),
+        sortingFn: (row) => row.original.nombreRelances ?? 0,
+        enableSorting:true,
         cell: ({ row }) => {
           const relances = row.original.nombreRelances;
-      
-          if (!relances) return 'Jamais'; // couvre null, undefined, et 0
+          if (!relances) return 'Jamais';
           return `${relances} fois`;
         },
       },
@@ -293,11 +307,13 @@ export const columns: ColumnDef<Demande>[] = [
         },
     },
 
-    // 🟡 Statut de la Demande
+    // 🟡 Etat de la Demande
     {
         id: 'status',
         accessorKey: 'status',
-        header: 'Statut',
+       header: ({ column }) => (
+                    <DataTableColumnHeader column={column} title='Etat' />
+                  ),
         cell: ({ row }) => {
             const status: DemandeStatus = row.getValue('status');
             const statusLabel = demandeStatusTypes.find(s => s.value === status)?.label ?? 'Inconnu';

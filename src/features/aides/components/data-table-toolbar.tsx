@@ -88,7 +88,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
         table.getAllColumns().forEach(column => {
             if (column.getCanFilter()) {
-                localStorage.removeItem(`filters-${column.id}`);
+                localStorage.removeItem(`aide-filters-${column.id}`);
             }
         });
     };
@@ -117,7 +117,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
 
 
-                    {/* 📌 Filtre par Statut */}
+                    {/* 📌 Filtre par Etat */}
                     {table.getColumn('frequence') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('frequence')}

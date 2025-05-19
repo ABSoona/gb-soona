@@ -22,13 +22,11 @@ export const aideStatusTypes =
 export const aideFrquenceTypes =
   [
     { label: 'Une fois', value: 'UneFois' },
-    { label: 'Chaque semaine', value: 'Hebdomadaire' },
-    { label: 'Chaque 2 semaine ', value: 'BiMensuelle' },
     {
       label: 'Chaque mois',
       value: 'Mensuelle'
     },
-    { label: 'Chaque 3 mois', value: 'Trimestrielle' },
+    
 
 
 

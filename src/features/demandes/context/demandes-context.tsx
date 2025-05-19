@@ -9,10 +9,8 @@ interface DemandesContextType {
   setOpenDemande: (str: DemandesDialogType | null) => void
   currentRow: Demande | null
   setCurrentRow: React.Dispatch<React.SetStateAction<Demande | null>>
-  setRefetchDemandes: (fn: () => void) => void
-  triggerRefetchDemandes: () => void
-}
 
+}
 const DemandesContext = React.createContext<DemandesContextType | null>(null)
 
 interface Props {
@@ -22,27 +20,9 @@ interface Props {
 export default function DemandesProvider({ children }: Props) {
   const [openDemande, setOpenDemande] = useDialogState<DemandesDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Demande | null>(null)
-  const [refetchFn, setRefetchFn] = useState<(() => void) | null>(null)
-
-  const setRefetchDemandes = useCallback((fn: () => void) => {
-    setRefetchFn(() => fn)
-  }, [])
-
-  const triggerRefetchDemandes = useCallback(() => {
-    if (refetchFn) {
-      refetchFn()
-    }
-  }, [refetchFn])
-
+ 
   return (
-    <DemandesContext value={{
-      openDemande,
-      setOpenDemande,
-      currentRow,
-      setCurrentRow,
-      setRefetchDemandes,
-      triggerRefetchDemandes
-    }}>
+    <DemandesContext value={{ openDemande, setOpenDemande, currentRow, setCurrentRow }}>
       {children}
     </DemandesContext>
   )

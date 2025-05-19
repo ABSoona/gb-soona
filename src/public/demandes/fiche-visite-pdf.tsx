@@ -30,5 +30,5 @@ export default function FicheVisiteDownload() {
       });
   }, [id, navigate]);
 
-  return <p>📄 Téléchargement de la fiche de visite en cours...</p>;
+  return <p>📄 Téléchargement de la demande...</p>;
 }

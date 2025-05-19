@@ -20,5 +20,21 @@ export const AIDE_FIELDS = gql`
    demande {id}
    status
    reetudier 
+   versements{id status}
+  }
+`;
+
+
+export const AIDE_FIELDS_LIGHT = gql`
+  fragment AideFields on Aide {
+    id
+    typeField
+    montant
+    dateAide
+    frequence
+    dateExpiration
+    nombreVersements
+
+ 
   }
 `;

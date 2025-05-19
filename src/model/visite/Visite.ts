@@ -1,12 +1,26 @@
 import { z } from 'zod';
-import { contactSchema } from '../contact/Contact';
+
+import { documentSchema } from '../document/Document';
+import { userSchema } from '../user/User';
+
+
+export const VisiteSatusSchema = z.union([
+  z.literal('Programee'),
+  z.literal('Realisee'),
+  z.literal('Annulee'),
+
+]);
+export type VisiteStatus= z.infer<typeof VisiteSatusSchema>;
 export const visiteSchema = z.object({
-  contact: contactSchema.omit({ visites: true }),
+
   createdAt: z.coerce.date(),
-  id: z.coerce.string(),
+  id: z.number(),
   updatedAt: z.coerce.date(),
-  dateVisite: z.coerce.date(),
-  rapportVisite: z.coerce.string(),
+  dateVisite: z.coerce.date().optional(),
+  document: documentSchema.optional(),
+  acteur : userSchema,
+  note :z.string().optional(),
+  status:VisiteSatusSchema
 })
 
 export type Visite = z.infer<typeof visiteSchema>;

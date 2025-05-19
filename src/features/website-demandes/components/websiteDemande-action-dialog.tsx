@@ -158,7 +158,7 @@ export function WebsiteDemandeActionDialog({ currentRow, open, onOpenChange }: P
               {renderField('natureDettes', 'Nature des dettes')}
               {renderField('facturesEnergie', 'Factures énergie', 'number')}
               {renderField('remarques', 'Remarques')}
-              {renderField('status', 'Statut')}
+              {renderField('status', 'Etat')}
             </form>
           </Form>
         </ScrollArea>

@@ -1,5 +1,5 @@
-import { AIDE_FIELDS } from '@/api/aide/graphql/fragment';
-import { CONTACT_FIELDS } from '@/api/contact/graphql/fragment';
+import { AIDE_FIELDS, AIDE_FIELDS_LIGHT } from '@/api/aide/graphql/fragment';
+import { CONTACT_FIELDS, CONTACT_FIELDS_LIGHT } from '@/api/contact/graphql/fragment';
 import { gql } from '@apollo/client';
 import { DEMANDE_ACTIVITY_FIELDS, DEMANDE_FIELDS } from './fragment';
 
@@ -19,8 +19,8 @@ export const GET_DEMANDES = gql`
     }
   }
   ${DEMANDE_FIELDS}
-  ${CONTACT_FIELDS}
-  ${AIDE_FIELDS}
+  ${CONTACT_FIELDS_LIGHT}
+  ${AIDE_FIELDS_LIGHT}
   ${DEMANDE_ACTIVITY_FIELDS}
 `;
 

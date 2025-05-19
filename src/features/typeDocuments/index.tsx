@@ -8,10 +8,12 @@ import { IconFile } from '@tabler/icons-react';
 import { TypeDocumentForm } from './components/type-document-form';
 import { TypeDocumentPrimaryButtons } from './components/type-document-primary-buttons';
 import TypeDocumentProvider from './context/type-demande-contaxt';
+import { notEqual } from 'assert';
 
 export default function SettingsTypeDocument() {
-  const { typeDocuments, loading, error } = useTypeDocumentService();
-
+  const { typeDocuments, loading, error } = useTypeDocumentService({where:
+    {isInternal:{equals:false}}})
+    
   if (error) {
     handleServerError(error);
   }

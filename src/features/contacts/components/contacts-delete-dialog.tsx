@@ -17,7 +17,7 @@ interface Props {
 
 export function ContactsDeleteDialog({ open, onOpenChange, currentRow }: Props) {
   const queryClient = useQueryClient();
-  const { deleteContact, isSubmitting } = useContactService({where:{id:{equels:currentRow.id}}}); // ✅ Utilisation du service
+  const { deleteContact, isSubmitting } = useContactService(); // ✅ Utilisation du service
   const [value, setValue] = useState<number | ''>('');
 
   const handleDelete = async () => {
@@ -28,7 +28,7 @@ export function ContactsDeleteDialog({ open, onOpenChange, currentRow }: Props) 
 
     try {
       await deleteContact(currentRow.id);
-      queryClient.invalidateQueries({ queryKey: ['contacts'] });
+     // queryClient.invalidateQueries({ queryKey: ['contacts'] });
       onOpenChange(false);
     } catch (error) {
       console.error('❌ Erreur de suppression:', error);

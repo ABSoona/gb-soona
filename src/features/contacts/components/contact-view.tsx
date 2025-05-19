@@ -20,6 +20,7 @@ import { Edit2, Plus } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useContacts } from '../context/contacts-context';
 import { ContactsDialogs } from './contacts-dialogs';
+import { Document } from '@/model/document/Document';
 
 import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService';
 import {
@@ -45,19 +46,16 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
   const { setRefetchAides } = useAides();
   const { aides, refetch: refetchAides, loading: loadingAides } = useAideService({ where: { contact: { id: currentRow.id } } });
   const { demandes, refetch: refetchDemandes, loading: loadingDemandes } = useDemandeService({ where: { contact: { id: currentRow.id } } });
-  const { setRefetchDemandes } = useDemandes();
-  const { documents } = useDocumentService({ where: { contact: { id: currentRow.id } } });
+
+  const { documents }:{ documents: Document[] } = useDocumentService({ where: { contact: { id: currentRow.id }, } }) ;
   const { handleFileUpload, handleDelete } = useDocumentActions({ contact: { id: currentRow.id } });
-  const { typeDocuments } = useTypeDocumentService({ where: { rattachement: 'Contact' } });
+  const { typeDocuments } :{typeDocuments:TypeDocument[]}= useTypeDocumentService({ where: { rattachement: 'Contact' }  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
   useEffect(() => {
     setRefetchAides(refetchAides);
   }, [refetchAides, setRefetchAides]);
 
-  useEffect(() => {
-    setRefetchDemandes(refetchDemandes);
-  }, [refetchDemandes, setRefetchDemandes]);
 
   const fewDemandesColumns = columns.filter(column => column.id && ['numeroDemande', 'createdAt', 'status', 'actions'].includes(column.id));
   const fewAidesColumns = aidecolumns.filter(column => column.id && ['dateAide', 'montant', 'frequence', 'verse', 'resteAVerser', 'actions'].includes(column.id));
@@ -88,7 +86,7 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="whitespace-nowrap">Informations sur le Contact</CardTitle>
             <Button variant='outline' size='sm' className="h-8" onClick={() => { setCurrentRow(currentRow); setOpen('edit'); }}>
-              <Edit2 />
+              <Edit2 /> Modifier
             </Button>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -112,7 +110,7 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="whitespace-nowrap">Hitorique des Demandes</CardTitle>
               <Button variant='outline' size='sm' className="h-8" onClick={() => setOpenDemande('add')}>
-                <Plus />
+                <Plus /> Nouvelle demande
               </Button>
             </CardHeader>
             <CardContent>
@@ -133,11 +131,11 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="h-8">
-                    <Plus className="h-4 w-4" />
+                    <Plus className="h-4 w-4" /> Ajouter
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {typeDocuments?.map((type: TypeDocument) => (
+                  {typeDocuments.filter((e)=>(e.internalCode!=='unknown_contact'))?.map((type: TypeDocument) => (
                     <DropdownMenuItem key={type.id} onClick={() => handleTypeClick(type.id)}>
                       {type.label}
                     </DropdownMenuItem>
@@ -147,7 +145,7 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
               <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
             </CardHeader>
             <CardContent>
-              <DocumentsManager contactId={currentRow.id} documents={documents} onUpload={handleFileUpload} onDelete={handleDelete} />
+              <DocumentsManager attachement={'Contact'}contactId={currentRow.id} documents={documents.filter((e)=>(e.typeDocument.rattachement=='Contact'))} onUpload={handleFileUpload} onDelete={handleDelete} />
             </CardContent>
           </Card>
         </div>
@@ -156,7 +154,7 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="whitespace-nowrap">Hitorique des Aides</CardTitle>
             <Button variant='outline' size='sm' className="h-8" onClick={() => setOpenAide('add')}>
-              <Plus />
+              <Plus /> Nouvelle aide
             </Button>
           </CardHeader>
           <CardContent>
@@ -167,7 +165,7 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
 
 
         <>
-          <DemandesDialogs />
+          <DemandesDialogs  refetch={refetchDemandes}/>
           <ContactsDialogs />
           <AidesDialogs showContactSearch={false} forContactId={currentRow.id} />
         </>
