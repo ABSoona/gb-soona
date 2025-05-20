@@ -55,8 +55,8 @@ export const categorieTypes =
   <span style='white-space: pre-wrap;'>\
   &nbsp;Je vous remercie de m'envoyer les documents suivants afin d’étudier votre demande :</span></p>\
   <ul class='list-disc list-inside'>\
-  <li value='1' class='ml-4' dir='ltr' style='text-align: start;'><span style='white-space: pre-wrap;'>carte identité ou passeport,</span></li>\
-  <li value='2' class='ml-4' dir='ltr' style='text-align: start;'><span style='white-space: pre-wrap;'>justificatif de domicile</span></li>\
+  <li value='1' class='ml-4' dir='ltr' style='text-align: start;'><span style='white-space: pre-wrap;'>Carte identité ou passeport,</span></li>\
+  <li value='2' class='ml-4' dir='ltr' style='text-align: start;'><span style='white-space: pre-wrap;'>Justificatif de domicile</span></li>\
   <li value='3' class='ml-4' dir='ltr' style='text-align: start;'><span style='white-space: pre-wrap;'>justificatifs de dettes</span></li>\
   <li value='4' class='ml-4' dir='ltr' style='text-align: start;'><span style='white-space: pre-wrap;'>Attestation de la caf</span></li>\
   <li value='5' class='ml-4' dir='ltr' style='text-align: start;'><span style='white-space: pre-wrap;'>justificatifs de revenus &nbsp;</span></li>\

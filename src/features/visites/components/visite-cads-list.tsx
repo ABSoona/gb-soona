@@ -9,9 +9,10 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuShortcut,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { CirclePlus, File, CalendarDays, PencilLine, Check } from "lucide-react";
+import { CirclePlus, File, CalendarDays, PencilLine, Check, RefreshCwOff, UserCheck } from "lucide-react";
 import { format } from "date-fns";
 import { useRef, useState } from "react";
 import { Visite } from "@/model/visite/Visite";
@@ -127,7 +128,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                                 <CalendarDays className="w-5 h-5 text-muted-foreground" />
                                 {visite.dateVisite
                                     ? `Visite du ${format(new Date(visite.dateVisite), "dd/MM/yyyy")}`
-                                    : "Visite sans date"}
+                                    : "Date a définir"}
                             </div>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -136,15 +137,20 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                    <DropdownMenuItem onClick={() => updateVisite(visite.id, { status: "Annulee" })}>
-                                        Annuler la visite
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() =>handleOpenVisiteSheet(visite)}>
-                                        Affecter à…
+                                <DropdownMenuItem  disabled={visite.status == "Annulee"} onClick={() =>handleOpenVisiteSheet(visite)}>
+                                    <UserCheck  />
+                                        Affecter la visite à…
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => updateVisite(visite.id, { status: "Realisee",dateVisite:new Date() })}>
+                                    <Check   />
                                         Marquer comme réalisée
                                     </DropdownMenuItem>
+                                    <DropdownMenuItem  disabled={visite.status == "Annulee"} onClick={() => updateVisite(visite.id, { status: "Annulee" })}>
+                                         <RefreshCwOff className="mr-2 h-4 w-4" />
+                                        Annuler la visite
+                                    </DropdownMenuItem>
+                                    
+                                    
                                     {visite.document && (
                                         <>
                                             <hr className="my-1" />

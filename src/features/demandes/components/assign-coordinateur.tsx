@@ -182,7 +182,7 @@ export default function CoordinateursMapSheet({ open, onOpenChange, contactId, o
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3.5-3.5L12 0v4a8 8 0 00-8 8z" />
                   </svg>
                 )}
-                {isAssigning ? "Attribution..." : "Attribuer la visite"}
+                {isAssigning ? "Attribution..." : "Organiser la visite"}
               </button>
             </div>
           </Card>
