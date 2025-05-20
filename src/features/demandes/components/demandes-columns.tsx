@@ -54,7 +54,7 @@ export const columns: ColumnDef<Demande>[] = [
         accessorFn: (row) => row.id,
         id: 'numeroDemande',
         header: 'N°',
-        cell: ({ row }) => row.original.id ?? 'N/A',
+        cell: ({ row }) => row.original.id ?? '-',
     },
     {
 
@@ -71,7 +71,7 @@ export const columns: ColumnDef<Demande>[] = [
                   ),
         cell: ({ row }) => {
             const date = row.getValue('createdAt') as string;
-            return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';
+            return date ? new Date(date).toLocaleDateString('fr-FR') : '-';
         },
         filterFn: dateRangeFilter, // Ajout du filtre
     },
@@ -81,7 +81,7 @@ export const columns: ColumnDef<Demande>[] = [
         accessorFn: (row) => `${row.contact?.nom ?? ''} ${row.contact?.prenom ?? ''}`,
         id: 'contactNomPrenom',
         header: 'Bénéficiaire',
-        cell: ({ row }) => { return (<span className='capitalize'>{row.original.contact?.nom ?? 'N/A'} {row.original.contact?.prenom ?? ''}</span>) },
+        cell: ({ row }) => { return (<span className='capitalize'>{row.original.contact?.nom ?? '-'} {row.original.contact?.prenom ?? ''}</span>) },
         enableHiding: true,
         filterFn: (row, id, value) => {
             const fullName = `${row.getValue(id)}`.toLowerCase(); // 🔥 Concaténer nom + prénom
@@ -97,7 +97,7 @@ export const columns: ColumnDef<Demande>[] = [
           ),
         cell: ({ row }) => {
             const categorieDemandeur: categorieDemandeur = row.getValue('categorieDemandeur');
-            return categorieTypes.find(s => s.value === categorieDemandeur)?.label ?? 'N/A';
+            return categorieTypes.find(s => s.value === categorieDemandeur)?.label ?? '-';
         },
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
@@ -111,7 +111,7 @@ export const columns: ColumnDef<Demande>[] = [
           ),
         cell: ({ row }) => {
           const acteur = row.original?.acteur;
-          const fullName = `${acteur?.firstName ?? 'N/A'} ${acteur?.lastName ?? ''}`;
+          const fullName = `${acteur?.firstName ?? '-'} ${acteur?.lastName ?? ''}`;
           const role = acteur?.role;
           const userType = userTypes.find(({ value }) => value === role);
       
@@ -182,27 +182,27 @@ export const columns: ColumnDef<Demande>[] = [
         accessorFn: (row) => row.contact?.nom,
         id: 'contactNom',
         header: 'Nom',
-        cell: ({ row }) => `${row.original.contact?.nom ?? 'N/A'} ${row.original.contact?.prenom ?? ''}`,
+        cell: ({ row }) => `${row.original.contact?.nom ?? '-'} ${row.original.contact?.prenom ?? ''}`,
         enableHiding: true,
     },
     {
         accessorFn: (row) => row.contact?.prenom,
         id: 'contactPrenom',
         header: 'Prénom',
-        cell: ({ row }) => `${row.original.contact?.prenom ?? 'N/A'} ${row.original.contact?.prenom ?? ''}`,
+        cell: ({ row }) => `${row.original.contact?.prenom ?? '-'} ${row.original.contact?.prenom ?? ''}`,
         enableHiding: true,
     },
     {
         accessorFn: (row) => row.contact?.age,
         id: 'contactAge',
         header: 'Âge',
-        cell: ({ row }) => row.original.contact?.age ?? 'N/A',
+        cell: ({ row }) => row.original.contact?.age ?? '-',
     },
     {
         accessorFn: (row) => row?.agesEnfants,
         id: 'agesEnfants',
         header: 'Âges des Enfants',
-        cell: ({ row }) => row.original?.agesEnfants ?? 'N/A',
+        cell: ({ row }) => row.original?.agesEnfants ?? '-',
     },
     {
         accessorFn: (row) => row?.nombreEnfants,
@@ -215,8 +215,8 @@ export const columns: ColumnDef<Demande>[] = [
         id: 'situationFamiliale',
         header: 'Situation Familiale',
         cell: ({ row }) => {
-            const situationF = row.original?.situationFamiliale ?? 'N/A';
-            return situationFamilleTypes.find(s => s.value === situationF)?.label ?? 'N/A';
+            const situationF = row.original?.situationFamiliale ?? '-';
+            return situationFamilleTypes.find(s => s.value === situationF)?.label ?? '-';
         }
     },
     {
@@ -225,7 +225,7 @@ export const columns: ColumnDef<Demande>[] = [
         header: 'Situation Pro',
         cell: ({ row }) => {
             const situationPro: SituationPro = row.getValue('situationProfessionnelle');
-            return situationTypes.find(s => s.value === situationPro)?.label ?? 'N/A';
+            return situationTypes.find(s => s.value === situationPro)?.label ?? '-';
         },
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
@@ -237,7 +237,7 @@ export const columns: ColumnDef<Demande>[] = [
         accessorFn: (row) => row?.revenus,
         id: 'revenus',
         header: 'Revenus',
-        cell: ({ row }) => row.original?.revenus?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 'N/A',
+        cell: ({ row }) => row.original?.revenus?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? '-',
     },
     {
         // accessorFn: (row) => row.contact?.revenus,
@@ -253,7 +253,7 @@ export const columns: ColumnDef<Demande>[] = [
         accessorFn: (row) => row?.revenusConjoint,
         id: 'revenusConjoint',
         header: 'Revenus Conjoint',
-        cell: ({ row }) => row.original?.revenusConjoint?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 'N/A',
+        cell: ({ row }) => row.original?.revenusConjoint?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? '-',
         enableHiding: true,
     },
     {
@@ -278,7 +278,7 @@ export const columns: ColumnDef<Demande>[] = [
         accessorFn: (row) => row?.loyer,
         id: 'loyer',
         header: 'Loyer',
-        cell: ({ row }) => row.original?.loyer?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 'N/A',
+        cell: ({ row }) => row.original?.loyer?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? '-',
     },
     {
         //accessorFn: (row) => row?.resteAVivre,

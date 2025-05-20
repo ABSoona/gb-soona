@@ -91,13 +91,13 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
           </CardHeader>
           <CardContent className="space-y-2">
             <DetailRow label="Nom et Prénom" capitalize={true} value={`${currentRow?.nom} ${currentRow?.prenom}`} />
-            <DetailRow label="Age" value={currentRow?.age != null ? currentRow.age + ' ans' : 'N/A'} />
-            <DetailRow label="Email" value={currentRow.email ?? 'N/A'} />
-            <DetailRow label="Tél" value={currentRow.telephone ?? 'N/A'} />
-            <DetailRow label="Adresse" value={currentRow?.adresse ?? 'N/A'} />
-            <DetailRow label="Code Postal" value={currentRow?.codePostal ?? 'N/A'} />
-            <DetailRow label="Ville" capitalize={true} value={currentRow?.ville ?? 'N/A'} />
-            <DetailMultiLineRow label="Remarques" value={currentRow.remarques ?? 'N/A'} />
+            <DetailRow label="Age" value={currentRow?.age != null ? currentRow.age + ' ans' : '-'} />
+            <DetailRow label="Email" value={currentRow.email ?? '-'} />
+            <DetailRow label="Tél" value={currentRow.telephone ?? '-'} />
+            <DetailRow label="Adresse" value={currentRow?.adresse ?? '-'} />
+            <DetailRow label="Code Postal" value={currentRow?.codePostal ?? '-'} />
+            <DetailRow label="Ville" capitalize={true} value={currentRow?.ville ?? '-'} />
+            {/* <DetailMultiLineRow label="Remarques" value={currentRow.remarques ?? '-'} /> */}
           </CardContent>
           <CardFooter></CardFooter>
         </Card>
@@ -145,7 +145,7 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
               <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
             </CardHeader>
             <CardContent>
-              <DocumentsManager attachement={'Contact'}contactId={currentRow.id} documents={documents.filter((e)=>(e.typeDocument.rattachement=='Contact'))} onUpload={handleFileUpload} onDelete={handleDelete} />
+              <DocumentsManager attachement={'Contact'} contactId={currentRow.id} documents={documents.filter((e)=>(e.typeDocument.rattachement=='Contact'))} onUpload={handleFileUpload} onDelete={handleDelete} />
             </CardContent>
           </Card>
         </div>
@@ -181,7 +181,7 @@ function DetailRow({ label, value, link, capitalize = false }: { label: string; 
       <div className="flex items-center w-4/5">
         <span className="font-medium text-gray-700 whitespace-nowrap label-style">{label}</span>
       </div>
-      <div className={`${capitalize && 'capitalize'} w-1/2 text-left whitespace-nowrap overflow-hidden truncate value-style`}>
+      <div className={`first-letter:uppercase w-1/2 text-left whitespace-nowrap overflow-hidden truncate value-style`}>
         {link ? (
           <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-500 hover:underline">
             {value}

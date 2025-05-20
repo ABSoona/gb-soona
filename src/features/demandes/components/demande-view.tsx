@@ -71,7 +71,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const pendingStatusUpdate = useRef(false);
   const nextStatusRef = useRef<DemandeStatus | null>(null);
   const fewAidesColumns = aidecolumns.filter(column =>
-    column.id && ['dateAide', 'montant', 'frequence', 'verse', 'resteAVerser'].includes(column.id)
+    column.id && ['dateAide', 'montant', 'frequence', 'status'].includes(column.id)
   );
   const totalRevenus = (currentRow?.revenus ?? 0) + (currentRow?.revenusConjoint ?? 0) + (currentRow?.apl ?? 0)
   const totalCharges = (currentRow?.loyer ?? 0) + (currentRow?.facturesEnergie ?? 0) + (currentRow?.autresCharges ?? 0)
@@ -361,14 +361,14 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                 value={
                   currentRow?.contact?.age != null
                     ? `${currentRow.contact.age} ans`
-                    : 'N/A'
+                    : '-'
                 }
               />
-              <DetailRow label="Email" value={currentRow?.contact.email ?? 'N/A'} />
-              <DetailRow label="Tél" value={currentRow?.contact.telephone ?? 'N/A'} />
-              <DetailRow label="Adresse" value={currentRow?.contact.adresse ?? 'N/A'} capitalize={true} />
-              <DetailRow label="Code Postal" value={currentRow?.contact.codePostal ?? 'N/A'} />
-              <DetailRow label="Ville" value={currentRow?.contact.ville ?? 'N/A'} capitalize={true} />
+              <DetailRow label="Email" value={currentRow?.contact.email ?? '-'} />
+              <DetailRow label="Tél" value={currentRow?.contact.telephone ?? '-'} />
+              <DetailRow label="Adresse" value={currentRow?.contact.adresse ?? '-'} capitalize={true} />
+              <DetailRow label="Code Postal" value={currentRow?.contact.codePostal ?? '-'} />
+              <DetailRow label="Ville" value={currentRow?.contact.ville ?? '-'} capitalize={true} />
             </CardContent>
           </Card>
           <div className="col-span-1">
@@ -384,25 +384,25 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                     <TabsTrigger value="Charges">Charges</TabsTrigger>
                   </TabsList>
                   <TabsContent value='Situation' className="space-y-2">
-                    <DetailRow label="Situation F." value={situationFamilleTypes.find(s => s.value === currentRow?.situationFamiliale)?.label ?? 'N/A'} />
-                    <DetailRow label="Situation Pro." value={situationTypes.find(s => s.value === currentRow?.situationProfessionnelle)?.label ?? 'N/A'} />
-                    {currentRow?.situationFamiliale === 'marié' && <DetailRow label="Situation Pro. Conjoint" value={situationTypes.find(s => s.value === currentRow?.situationProConjoint)?.label ?? 'N/A'} />}
+                    <DetailRow label="Situation F." value={situationFamilleTypes.find(s => s.value === currentRow?.situationFamiliale)?.label ?? '-'} />
+                    <DetailRow label="Situation Pro." value={situationTypes.find(s => s.value === currentRow?.situationProfessionnelle)?.label ?? '-'} />
+                    {currentRow?.situationFamiliale === 'marié' && <DetailRow label="Situation Pro. Conjoint" value={situationTypes.find(s => s.value === currentRow?.situationProConjoint)?.label ?? '-'} />}
                     {(currentRow?.nombreEnfants > 0) && <DetailRow label="Nombre d'enfants" value={currentRow?.nombreEnfants ?? '0'} />}
-                    {(currentRow?.nombreEnfants > 0) && <DetailRow label="Ages Enfants" value={currentRow?.agesEnfants ?? 'N/A'} />}
-                    <DetailRow label="Categorie" value={categorieTypes.find(s => s.value === currentRow?.categorieDemandeur)?.label ?? 'N/A'} />
+                    {(currentRow?.nombreEnfants > 0) && <DetailRow label="Ages Enfants" value={currentRow?.agesEnfants ?? '-'} />}
+                    <DetailRow label="Categorie" value={categorieTypes.find(s => s.value === currentRow?.categorieDemandeur)?.label ?? '-'} />
                   </TabsContent>
                   <TabsContent value='Revenues' className="space-y-2">
                     <DetailRow label="Revenus personnels" value={`${currentRow?.revenus?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
                     {currentRow?.situationFamiliale === 'marié' && <DetailRow label="Revenus du conjoint" value={`${currentRow?.revenusConjoint?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? '0'}`} />}
                     <DetailRow label="APL" value={`${currentRow?.apl?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? '0'}`} />
-                    <DetailMultiLineRow label="Aides diverses" value={currentRow?.autresAides ?? 'N/A'} />
+                    <DetailMultiLineRow label="Aides diverses" value={currentRow?.autresAides ?? '-'} />
                   </TabsContent>
                   <TabsContent value='Charges' className="space-y-2">
                     <DetailRow label="Loyer" value={`${currentRow?.loyer?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })} `} />
                     <DetailRow label="Factures Énergie" value={`${currentRow?.facturesEnergie?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
                     <DetailRow label="Dettes" value={`${currentRow?.dettes?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}`} />
                     < DetailRow label="Autres charges" value={`${currentRow?.autresCharges?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 0} `} />
-                    <DetailMultiLineRow label="Nature dettes" value={currentRow?.natureDettes ?? 'N/A'} />
+                    <DetailMultiLineRow label="Nature dettes" value={currentRow?.natureDettes ?? '-'} />
                   </TabsContent>
                 </Tabs>
               </CardContent>
@@ -477,7 +477,7 @@ function DetailRow({ label, value, link, capitalize = false }: { label: string; 
       <div className="flex items-center w-3/5">
         <span className="font-medium text-gray-700 whitespace-nowrap label-style">{label}</span>
       </div>
-      <div className={`${capitalize && 'capitalize'} text-right  whitespace-nowrap overflow-hidden truncate `}>
+      <div className={`first-letter:uppercase text-right  whitespace-nowrap overflow-hidden truncate `}>
         {link ? (
           <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-500 hover:underline">
             {value}

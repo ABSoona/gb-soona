@@ -64,7 +64,7 @@ export const aidesColumns: ColumnDef<Contact>[] = [
         header: ({ column }) => (
                    <DataTableColumnHeader column={column} title='Numéro' />
                  ),
-        cell: ({ row }) => row.original.id ?? 'N/A',
+        cell: ({ row }) => row.original.id ?? '-',
     },
     {
         accessorKey: 'id',
@@ -79,7 +79,7 @@ export const aidesColumns: ColumnDef<Contact>[] = [
                   ),
         cell: ({ row }) => {
             const date = row.getValue('createdAt') as string;
-            return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';
+            return date ? new Date(date).toLocaleDateString('fr-FR') : '-';
         },
         filterFn: dateRangeFilter, // Ajout du filtre
     },
@@ -87,36 +87,36 @@ export const aidesColumns: ColumnDef<Contact>[] = [
     // 👤 Informations du Contact 
 
     {
-        accessorFn: (row) => `${row.nom ?? 'N/A'} ${row.prenom ?? ''}`,
+        accessorFn: (row) => `${row.nom ?? '-'} ${row.prenom ?? ''}`,
         id: 'nom',
         header: 'Nom',
-        cell: ({ row }) => `${row.original.nom ?? 'N/A'}`,
+        cell: ({ row }) => `${row.original.nom ?? '-'}`,
         enableHiding: true,
     },
     {
         accessorFn: (row) => row.prenom,
         id: 'prenom',
         header: 'Prénom',
-        cell: ({ row }) => `${row.original?.prenom ?? 'N/A'}`,
+        cell: ({ row }) => `${row.original?.prenom ?? '-'}`,
         enableHiding: true,
     },
     {
         accessorFn: (row) => row?.age,
         id: 'age',
         header: 'Âge',
-        cell: ({ row }) => row.original?.age ?? 'N/A',
+        cell: ({ row }) => row.original?.age ?? '-',
     },
     {
         accessorFn: (row) => row?.telephone,
         id: 'telephone',
         header: 'Téléphone',
-        cell: ({ row }) => row.original?.telephone ?? 'N/A',
+        cell: ({ row }) => row.original?.telephone ?? '-',
     },
     {
         accessorFn: (row) => row?.email,
         id: 'email',
         header: 'Email',
-        cell: ({ row }) => row.original?.email ?? 'N/A',
+        cell: ({ row }) => row.original?.email ?? '-',
     },
 
 

@@ -208,7 +208,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                                             className="w-6 h-6 mt-1 cursor-pointer rounded p-1 hover:bg-muted hover:text-foreground transition"
                                         />
                                         <span className="flex-1">
-                                            <strong>Note :</strong> {visite.note}
+                                           {visite.note}
                                         </span>
                                     </div>
                                 )}
