@@ -1,7 +1,7 @@
 import LongText from '@/components/long-text';
 import { Versement, VersementStatus } from '@/model/versement/versement';
 import { ColumnDef } from '@tanstack/react-table';
-import { addMonths, isBefore, isEqual } from 'date-fns';
+import { addDays, addMonths, isBefore, isEqual } from 'date-fns';
 import { XCircleIcon } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { DateRange } from 'react-day-picker';
@@ -66,7 +66,7 @@ export const columns: ColumnDef<Versement>[] = [
         header: 'Créée le',
         cell: ({ row }) => {
             const date = row.getValue('createdAt') as string;
-            return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';
+            return date ? new Date(date).toLocaleDateString('fr-FR') : '-';
         },
         filterFn: dateRangeFilter, // Ajout du filtre
     },
@@ -84,7 +84,7 @@ export const columns: ColumnDef<Versement>[] = [
         ),
         cell: ({ row }) => {
             const date = row.getValue('dataVersement') as string;
-            return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';
+            return date ? new Date(date).toLocaleDateString('fr-FR') : '-';
         },
         filterFn: dateRangeFilter, // Ajout du filtre
         enableSorting: true,
@@ -95,7 +95,7 @@ export const columns: ColumnDef<Versement>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Montant' />
         ),
-        cell: ({ row }) => row.original?.montant?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 'N/A',
+        cell: ({ row }) => row.original?.montant?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? '-',
         enableHiding: true,
     },
 
@@ -103,7 +103,7 @@ export const columns: ColumnDef<Versement>[] = [
         accessorFn: (row) => `${row.aide.contact?.nom ?? ''} ${row.aide.contact?.prenom ?? ''}`,
         id: 'contactNomPrenom',
         header: 'Bénéficiaire',
-        cell: ({ row }) => { return (<span className='capitalize'>{row.original.aide.contact?.nom ?? 'N/A'} {row.original.aide.contact?.prenom ?? ''}</span>) },
+        cell: ({ row }) => { return (<span className='capitalize'>{row.original.aide.contact?.nom ?? '-'} {row.original.aide.contact?.prenom ?? ''}</span>) },
         enableHiding: true,
         filterFn: (row, id, value) => {
             const fullName = `${row.getValue(id)}`.toLowerCase(); // 🔥 Concaténer nom + prénom
@@ -139,12 +139,12 @@ export const columns: ColumnDef<Versement>[] = [
         header: '',
         cell: ({ row }) => {
             return (
-                (new Date(row.original.dataVersement) < new Date() && row.original.status === 'AVerser') ? <Badge variant="outline" className='bg-red-100/30 text-red-900 dark:text-red-200 border-red-200'>En retard</Badge> : '')
+                (new Date(row.original.dataVersement) < addDays(new Date(),1) && row.original.status === 'AVerser') ? <Badge variant="outline" className='bg-red-100/30 text-red-900 dark:text-red-200 border-red-200'>En retard</Badge> : '')
         },
 
         enableHiding: true,
         filterFn: (row, id, value) => {
-            return row.original.dataVersement < new Date() && row.original.status === 'AVerser'
+            return new Date(row.original.dataVersement) < addDays(new Date(),1) && row.original.status === 'AVerser'
         },
 
     },

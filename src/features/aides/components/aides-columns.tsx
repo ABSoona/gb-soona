@@ -50,7 +50,7 @@ export const columns: ColumnDef<Aide>[] = [
         accessorFn: (row) => `${row.contact?.nom ?? ''} ${row.contact?.prenom ?? ''}`,
         id: 'contactNomPrenom',
         header: 'Bénéficiaire',
-        cell: ({ row }) => { return (<span className='capitalize'>{row.original.contact?.nom ?? 'N/A'} {row.original.contact?.prenom ?? ''}</span>) },
+        cell: ({ row }) => { return (<span className='capitalize'>{row.original.contact?.nom ?? '-'} {row.original.contact?.prenom ?? ''}</span>) },
         enableHiding: true,
         filterFn: (row, id, value) => {
             const fullName = `${row.getValue(id)}`.toLowerCase(); // 🔥 Concaténer nom + prénom
@@ -74,7 +74,7 @@ export const columns: ColumnDef<Aide>[] = [
         header: 'Créée le',
         cell: ({ row }) => {
             const date = row.getValue('createdAt') as string;
-            return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';
+            return date ? new Date(date).toLocaleDateString('fr-FR') : '-';
         },
         filterFn: dateRangeFilter, // Ajout du filtre
     },
@@ -84,14 +84,14 @@ export const columns: ColumnDef<Aide>[] = [
         accessorFn: (row) => row.typeField,
         id: 'typeField',
         header: 'Type',
-        cell: ({ row }) => typeAideTypes.find(e => e.value === row.original?.typeField)?.label ?? 'N/A',
+        cell: ({ row }) => typeAideTypes.find(e => e.value === row.original?.typeField)?.label ?? '-',
         enableHiding: true,
     },
     {
         accessorFn: (row) => row.montant,
         id: 'montant',
         header: 'montant',
-        cell: ({ row }) => row.original?.montant?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 'N/A',
+        cell: ({ row }) => row.original?.montant?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? '-',
         enableHiding: true,
     },
 
@@ -120,7 +120,7 @@ export const columns: ColumnDef<Aide>[] = [
         header: 'Date de début',
         cell: ({ row }) => {
             const date = row.getValue('dateAide') as string;
-            return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';
+            return date ? new Date(date).toLocaleDateString('fr-FR') : '-';
         },
         filterFn: dateRangeFilter, // Ajout du filtre
     },
@@ -248,7 +248,7 @@ export const columns: ColumnDef<Aide>[] = [
          header: 'Expire le',
          cell: ({ row }) => {
              const date = row.getValue('dateExpiration') as string;
-             return date ? new Date(date).toLocaleDateString('fr-FR') : 'N/A';
+             return date ? new Date(date).toLocaleDateString('fr-FR') : '-';
          },
          filterFn: dateRangeFilter, // Ajout du filtre
      },*/

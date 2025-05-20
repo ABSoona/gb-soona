@@ -34,6 +34,7 @@ export const AIDE_FIELDS_LIGHT = gql`
     frequence
     dateExpiration
     nombreVersements
+    status
 
  
   }
