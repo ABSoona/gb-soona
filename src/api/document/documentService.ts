@@ -75,7 +75,7 @@ export function useDocumentService(variables?: any) {
       const { data: createRes } = await createDocument({
         variables: {
           data: {
-            contact: !contactId && contactId!=0 ? { id: contactId } : null,
+            contact: contactId && contactId!=0 ? { id: contactId } : null,
             contenu: "{}",
             demande: demandeId ? { id: demandeId } : null,
             typeDocument: { id: typeId },
