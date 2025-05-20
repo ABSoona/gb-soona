@@ -36,6 +36,7 @@ import { FicheVisiteShareSheet } from './shareFicheVisite'
 import { useVisiteService } from '@/api/visite/invitationService'
 import { Visite } from '@/model/visite/Visite'
 import { DemandeSuiviActions } from './DemandeSuiviActions'
+import { EntretienSuiviSheet } from './EntretienSuiviSheet copy'
 
 
 interface Props {
@@ -59,6 +60,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const { handleFileUpload, handleDelete } = useDocumentActions({ demande: { id: currentRow.id } });
   const { createDemandeActivity, updateDemande } = useDemandeService({ where: { id: { equals: currentRow.id } } });
   const [openNoteSheet, setOpenNoteSheet] = useState(false);
+  const [openEntretienSheet, setOpenEntretienSheet] = useState(false);
   const [openShareFicheVisite, setOpenShareFicheVisite] = useState(false);
 
   const [openDocsRequestSheet, setOpenDocsRequestSheet] = useState(false);
@@ -139,15 +141,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     });
   }
 
-  const handleSuccessContact = async () => {
-    await createDemandeActivity({
-      titre: "Entretien avec le bénéficiaire",
-      message: "Le bénéficiaire été contacté.",
-      typeField: "priseContactReussie", // ici très important
-      demandeId: currentRow.id,
-      userId: userId!,
-    });
-  }
+
   const handleRefuserDemande = async () => {
     nextStatusRef.current = "refusée";
     await updateDemande(currentRow.id, { status: nextStatusRef.current });
@@ -174,6 +168,16 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       userId: userId!,
     });
   };
+  const handleSubmitEntretien = async ({  message }: { message: string }) => {
+    await createDemandeActivity({
+      titre: "Entretien avec le bénéficiaire",
+      message: message,
+      typeField: "priseContactReussie", // ici très important
+      demandeId: currentRow.id,
+      userId: userId!,
+    });
+  };
+
 
   const handleSubmitFicheVisite = async ({ userId }: { userId: string; message: string }) => {
     await shareFicheVisite({ demandeId: currentRow.id, userId: userId, subordoneId: userId });
@@ -292,7 +296,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       handleAcceptDemande={handleAcceptDemande}
       handleRefuserDemande={handleRefuserDemande}
       handleEchecContact={handleEchecContact}
-      handleSuccessContact={handleSuccessContact}
+      handleSuccessContact={setOpenEntretienSheet}
       setOpenNoteSheet={setOpenNoteSheet}
       handleOpenAssigSheet={handleOpenAssigSheet}
       handleDocsRequest={handleDocsRequest}
@@ -307,6 +311,12 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         open={openNoteSheet}
         onOpenChange={setOpenNoteSheet}
         onSubmit={handleSubmitNote}
+      />
+
+    <EntretienSuiviSheet
+        open={openEntretienSheet}
+        onOpenChange={setOpenEntretienSheet}
+        onSubmit={handleSubmitEntretien}
       />
       <FicheVisiteShareSheet
         open={openShareFicheVisite}

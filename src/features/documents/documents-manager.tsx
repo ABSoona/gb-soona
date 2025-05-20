@@ -48,9 +48,7 @@ export function DocumentsManager({ contactId, documents, nbColumns, onUpload, on
   const [document, setDocument] = useState<Document | null>(null);
   const [previewType, setPreviewType] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
-  const className = nbColumns ? `grid grid-cols-${nbColumns}  gap-4 max-w-[500px] `
-    : "grid grid-cols-4 md:grid-cols-3 sm:grid-cols-1 gap-4 max-w-[500px] "
-
+  const className = "grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(120px,150px))]";
 
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const goTo = async (index: number) => {

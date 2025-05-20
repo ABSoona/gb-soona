@@ -26,7 +26,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     handleAcceptDemande: () => void;
     handleRefuserDemande: () => void;
     handleEchecContact: () => void;
-    handleSuccessContact: () => void;
+    handleSuccessContact: (open :boolean) => void;
     setOpenNoteSheet: (open: boolean) => void;
     handleOpenAssigSheet: () => void;
     handleDocsRequest: () => void;
@@ -86,7 +86,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
                   <PhoneMissed className="mr-2 h-4 w-4" />
                   Prise de contact échouée
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSuccessContact}>
+                <DropdownMenuItem onClick={()=>handleSuccessContact(true)}>
                   <PhoneCall className="mr-2 h-4 w-4" />
                   Entretien avec le bénéficiaire
                 </DropdownMenuItem>

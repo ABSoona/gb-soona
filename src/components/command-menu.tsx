@@ -39,7 +39,7 @@ export function CommandMenu() {
       <CommandInput placeholder='Entrez une commande ou rechercher...' />
       <CommandList>
         <ScrollArea type='hover' className='h-72 pr-1'>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>Aucun resultat.</CommandEmpty>
           {navGroups .map((group) => (
             <CommandGroup key={group.title} heading={group.title}>
               {group.items.map((navItem, i) => {
@@ -59,20 +59,22 @@ export function CommandMenu() {
                     </CommandItem>
                   )
 
-                return navItem.items?.map((subItem, i) => (
-                  <CommandItem
-                    key={`${subItem.url}-${i}`}
-                    value={subItem.title}
-                    onSelect={() => {
-                      runCommand(() => navigate({ to: subItem.url }))
-                    }}
-                  >
-                    <div className='mr-2 flex h-4 w-4 items-center justify-center'>
-                      <IconArrowRightDashed className='size-2 text-muted-foreground/80' />
-                    </div>
-                    {subItem.title}
-                  </CommandItem>
-                ))
+                  return navItem.items?.map((subItem, i) => (
+                    <CommandItem
+                      key={`${subItem.url}-${i}`}
+                      value={`${navItem.title} - ${subItem.title}`}
+                      onSelect={() => {
+                        runCommand(() => navigate({ to: subItem.url }))
+                      }}
+                    >
+                      <div className='mr-2 flex h-4 w-4 items-center justify-center'>
+                        <IconArrowRightDashed className='size-2 text-muted-foreground/80' />
+                      </div>
+                      <span className="text-muted-foreground">{navItem.title}</span>
+                      <span className="mx-1 text-muted-foreground">/</span>
+                      <span>{subItem.title}</span>
+                    </CommandItem>
+                  ))
               })}
             </CommandGroup>
           ))}
