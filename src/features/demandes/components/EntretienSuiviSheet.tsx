@@ -31,13 +31,13 @@ export const EntretienSuiviSheet: React.FC<EntretienSuiviSheetProps> = ({ open, 
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="space-y-4 p-6">
         <SheetHeader>
-          <SheetTitle>Réumé de l'entretien</SheetTitle>
+          <SheetTitle>Synthèse de l’échange</SheetTitle>
         </SheetHeader>
 
         <div className="space-y-4">
      
           <Textarea
-            placeholder="Ecrire ici un resumé de l'entretien avec le bénéficiaire "
+            placeholder="Ecrire ce qu’il faut retenir de l'entretien avec le bénéficiaire "
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={15}

@@ -10,28 +10,26 @@ export function DataTableExport<TData>({ table }: DataTableExportProps<TData>) {
 
   // Fonction d'export en CSV
   const exportToCSV = () => {
-    const rows = table.getRowModel().rows; // Récupérer les lignes affichées
+    const rows = table.getFilteredRowModel().rows; // ✅ toutes les lignes, pas juste celles de la page visible
+  
     if (rows.length === 0) {
       alert("Aucune donnée à exporter !");
       return;
     }
-
+  
     const headers = table.getAllColumns()
-      .filter(col => col.getIsVisible) // Filtrer les colonnes affichables
-      .map(col => col.id); // Récupérer les noms des colonnes
-
+      .filter(col => col.getIsVisible?.()) // ✅ appeler la fonction pour vérifier la visibilité
+      .map(col => col.id);
+  
     const csvContent = [
-      headers.join(','), // Ajouter les en-têtes
+      headers.join(','),
       ...rows.map(row =>
         headers.map(header => JSON.stringify(row.getValue(header) ?? '')).join(',')
-      ) // Ajouter les données des lignes
+      )
     ].join('\n');
-
-    // Créer un objet Blob pour le téléchargement
+  
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-
-    // Créer un lien de téléchargement
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', 'export_versements.csv');

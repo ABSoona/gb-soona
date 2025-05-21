@@ -36,7 +36,7 @@ import { FicheVisiteShareSheet } from './shareFicheVisite'
 import { useVisiteService } from '@/api/visite/invitationService'
 import { Visite } from '@/model/visite/Visite'
 import { DemandeSuiviActions } from './DemandeSuiviActions'
-import { EntretienSuiviSheet } from './EntretienSuiviSheet copy'
+import { EntretienSuiviSheet } from './EntretienSuiviSheet'
 
 
 interface Props {
@@ -477,7 +477,7 @@ function DetailRow({ label, value, link, capitalize = false }: { label: string; 
       <div className="flex items-center w-3/5">
         <span className="font-medium text-gray-700 whitespace-nowrap label-style">{label}</span>
       </div>
-      <div className={`first-letter:uppercase text-right  whitespace-nowrap overflow-hidden truncate `}>
+      <div className={`text-right  whitespace-nowrap overflow-hidden truncate ${capitalize && `first-letter:uppercase`}`}>
         {link ? (
           <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-500 hover:underline">
             {value}

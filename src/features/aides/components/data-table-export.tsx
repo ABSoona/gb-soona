@@ -10,7 +10,7 @@ export function DataTableExport<TData>({ table }: DataTableExportProps<TData>) {
 
   // Fonction d'export en CSV
   const exportToCSV = () => {
-    const rows = table.getRowModel().rows; // Récupérer les lignes affichées
+    const rows = table.getFilteredRowModel().rows; // Récupérer les lignes affichées
     if (rows.length === 0) {
       alert("Aucune donnée à exporter !");
       return;
