@@ -12,7 +12,7 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { CirclePlus, File, CalendarDays, PencilLine, Check, RefreshCwOff, UserCheck } from "lucide-react";
+import { CirclePlus, File, CalendarDays, PencilLine, Check, RefreshCwOff, UserCheck, FileX, FileX2, FileText } from "lucide-react";
 import { format } from "date-fns";
 import { useRef, useState } from "react";
 import { Visite } from "@/model/visite/Visite";
@@ -146,7 +146,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                                         Marquer comme réalisée
                                     </DropdownMenuItem>
                                     <DropdownMenuItem  disabled={visite.status == "Annulee"} onClick={() => updateVisite(visite.id, { status: "Annulee" })}>
-                                         <RefreshCwOff className="mr-2 h-4 w-4" />
+                                         <RefreshCwOff />
                                         Annuler la visite
                                     </DropdownMenuItem>
                                     
@@ -155,6 +155,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                                         <>
                                             <hr className="my-1" />
                                             <DropdownMenuItem onClick={(e) => handleDeleteDocument(e as any, visite.document!.id)}>
+                                            <FileX2 />
                                                 Retirer le rapport de visite
                                             </DropdownMenuItem>
                                         </>
@@ -221,7 +222,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                                         onClick={() => visite.document && openPreview(visite.document)}
                                         className="relative h-[120px] border  rounded-lg bg-white shadow hover:shadow-md transition flex flex-col items-center justify-center cursor-pointer"
                                     >
-                                        <File className="h-6 w-6 text-primary mb-1 " />
+                                        <FileText  className="h-6 w-6 text-primary mb-1 " />
                                         <p className="text-sm font-medium  max-w-[100px] text-center ">
                                             {visite.document.typeDocument.label}
                                         </p>

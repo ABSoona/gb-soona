@@ -139,12 +139,12 @@ export const columns: ColumnDef<Versement>[] = [
         header: '',
         cell: ({ row }) => {
             return (
-                (new Date(row.original.dataVersement) < addDays(new Date(),1) && row.original.status === 'AVerser') ? <Badge variant="outline" className='bg-red-100/30 text-red-900 dark:text-red-200 border-red-200'>En retard</Badge> : '')
+                (new Date(row.original.dataVersement) < addDays(new Date(),-1) && row.original.status === 'AVerser') ? <Badge variant="outline" className='bg-red-100/30 text-red-900 dark:text-red-200 border-red-200'>En retard</Badge> : '')
         },
 
         enableHiding: true,
         filterFn: (row, id, value) => {
-            return new Date(row.original.dataVersement) < addDays(new Date(),1) && row.original.status === 'AVerser'
+            return new Date(row.original.dataVersement) < addDays(new Date(),-1) && row.original.status === 'AVerser'
         },
 
     },

@@ -20,7 +20,7 @@ export default function Versements({status,before,after }:{status?: VersementSta
         where.dataVersement = {lt: before}
     }
     if(after){
-        where.dataVersement = {gt: after}
+        where.dataVersement = {gte: after}
     }
     // ✅ Utilisation du service pour récupérer les versements
     const { versements, loading: isLoading, error } = useVersementService({where,orderBy:[{ dataVersement: "Asc" }],docRibId: 1});
