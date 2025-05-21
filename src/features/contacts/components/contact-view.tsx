@@ -91,7 +91,7 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
           </CardHeader>
           <CardContent className="space-y-2">
             <DetailRow label="Nom et Prénom" capitalize={true} value={`${currentRow?.nom} ${currentRow?.prenom}`} />
-            <DetailRow label="Age" value={currentRow?.age != null ? currentRow.age + ' ans' : '-'} />
+            <DetailRow label="Age" value={currentRow?.age != null ? `${ new Date().getFullYear() - currentRow.age} ans`: '-'} />
             <DetailRow label="Email" value={currentRow.email ?? '-'} />
             <DetailRow label="Tél" value={currentRow.telephone ?? '-'} />
             <DetailRow label="Adresse" value={currentRow?.adresse ?? '-'} />

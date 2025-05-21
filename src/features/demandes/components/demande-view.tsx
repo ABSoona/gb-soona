@@ -360,7 +360,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                 label="Âge"
                 value={
                   currentRow?.contact?.age != null
-                    ? `${currentRow.contact.age} ans`
+                    ? `${new Date().getFullYear() - currentRow.contact.age} ans`
                     : '-'
                 }
               />

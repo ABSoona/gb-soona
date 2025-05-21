@@ -196,7 +196,7 @@ export const columns: ColumnDef<Demande>[] = [
         accessorFn: (row) => row.contact?.age,
         id: 'contactAge',
         header: 'Âge',
-        cell: ({ row }) => row.original.contact?.age ?? '-',
+        cell: ({ row }) => row.original.contact?.age ? new Date().getFullYear() - row.original.contact.age : '-'
     },
     {
         accessorFn: (row) => row?.agesEnfants,

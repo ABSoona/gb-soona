@@ -104,7 +104,7 @@ export const aidesColumns: ColumnDef<Contact>[] = [
         accessorFn: (row) => row?.age,
         id: 'age',
         header: 'Âge',
-        cell: ({ row }) => row.original?.age ?? '-',
+        cell: ({ row }) => row.original?.age ? new Date().getFullYear() - row.original.age : '-'
     },
     {
         accessorFn: (row) => row?.telephone,
