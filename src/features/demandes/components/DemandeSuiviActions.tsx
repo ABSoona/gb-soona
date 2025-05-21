@@ -49,7 +49,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     handleOpenAssigSheet,
     handleDocsRequest,
     handleOpenVisiteSheet,
-    setOpenShareFicheVisite,
+    setOpenShareFicheVisite: setOpenShareDemande,
     handleAbandonnerDemande,
     onRapportAdded,
   }: Props) {
@@ -108,7 +108,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
                   <MapPin className="mr-2 h-4 w-4" />
                   Organiser une visite
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setOpenShareFicheVisite(true)} disabled={["recue", "EnAttente"].includes(currentRow.status) || !hasContactAttempts || !hasDocument}>
+                <DropdownMenuItem onClick={() => setOpenShareDemande(true)}>
                   <ExternalLink className="mr-2 h-4 w-4" />
                   Partager la demande (PDF)
                 </DropdownMenuItem>

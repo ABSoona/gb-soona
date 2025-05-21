@@ -184,7 +184,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     setOpenShareFicheVisite(false);
   };
   const handDownloadFicheVisite = async () => {
-    navigate({ to: `/demandes/${currentRow.id}/fiche-visite-pdf` });
+    navigate({ to: `/demandes/${currentRow.id}/pdf` });
   }
 
   const handleSubmitDocsRequest = async ({
