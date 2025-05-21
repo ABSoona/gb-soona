@@ -195,7 +195,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                      Age
+                      Année de naissance
                     </FormLabel>
                     <FormControl>
                       <Input
