@@ -105,6 +105,9 @@ const AuthenticatedContactsIdLazyImport = createFileRoute(
 const AuthenticatedDemandesIdIndexLazyImport = createFileRoute(
   '/_authenticated/demandes/$id/',
 )()
+const AuthenticatedDemandesIdPdfLazyImport = createFileRoute(
+  '/_authenticated/demandes/$id/pdf',
+)()
 
 // Create/Update Routes
 
@@ -461,6 +464,17 @@ const AuthenticatedDemandesIdIndexLazyRoute =
     ),
   )
 
+const AuthenticatedDemandesIdPdfLazyRoute =
+  AuthenticatedDemandesIdPdfLazyImport.update({
+    id: '/demandes/$id/pdf',
+    path: '/demandes/$id/pdf',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/demandes/$id/pdf.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
 const authDemandesIdFicheVisitePdfRoute =
   authDemandesIdFicheVisitePdfImport.update({
     id: '/(auth)/demandes/$id/fiche-visite-pdf',
@@ -738,6 +752,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authDemandesIdFicheVisitePdfImport
       parentRoute: typeof rootRoute
     }
+    '/_authenticated/demandes/$id/pdf': {
+      id: '/_authenticated/demandes/$id/pdf'
+      path: '/demandes/$id/pdf'
+      fullPath: '/demandes/$id/pdf'
+      preLoaderRoute: typeof AuthenticatedDemandesIdPdfLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/demandes/$id/': {
       id: '/_authenticated/demandes/$id/'
       path: '/demandes/$id'
@@ -796,6 +817,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedUsersIndexLazyRoute: typeof AuthenticatedUsersIndexLazyRoute
   AuthenticatedVersementsIndexLazyRoute: typeof AuthenticatedVersementsIndexLazyRoute
   AuthenticatedWebsiteDemandesIndexLazyRoute: typeof AuthenticatedWebsiteDemandesIndexLazyRoute
+  AuthenticatedDemandesIdPdfLazyRoute: typeof AuthenticatedDemandesIdPdfLazyRoute
   AuthenticatedDemandesIdIndexLazyRoute: typeof AuthenticatedDemandesIdIndexLazyRoute
 }
 
@@ -829,6 +851,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedVersementsIndexLazyRoute: AuthenticatedVersementsIndexLazyRoute,
   AuthenticatedWebsiteDemandesIndexLazyRoute:
     AuthenticatedWebsiteDemandesIndexLazyRoute,
+  AuthenticatedDemandesIdPdfLazyRoute: AuthenticatedDemandesIdPdfLazyRoute,
   AuthenticatedDemandesIdIndexLazyRoute: AuthenticatedDemandesIdIndexLazyRoute,
 }
 
@@ -873,6 +896,7 @@ export interface FileRoutesByFullPath {
   '/versements': typeof AuthenticatedVersementsIndexLazyRoute
   '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
+  '/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
   '/demandes/$id': typeof AuthenticatedDemandesIdIndexLazyRoute
 }
 
@@ -912,6 +936,7 @@ export interface FileRoutesByTo {
   '/versements': typeof AuthenticatedVersementsIndexLazyRoute
   '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
+  '/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
   '/demandes/$id': typeof AuthenticatedDemandesIdIndexLazyRoute
 }
 
@@ -955,6 +980,7 @@ export interface FileRoutesById {
   '/_authenticated/versements/': typeof AuthenticatedVersementsIndexLazyRoute
   '/_authenticated/website-demandes/': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/(auth)/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
+  '/_authenticated/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
   '/_authenticated/demandes/$id/': typeof AuthenticatedDemandesIdIndexLazyRoute
 }
 
@@ -998,6 +1024,7 @@ export interface FileRouteTypes {
     | '/versements'
     | '/website-demandes'
     | '/demandes/$id/fiche-visite-pdf'
+    | '/demandes/$id/pdf'
     | '/demandes/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -1036,6 +1063,7 @@ export interface FileRouteTypes {
     | '/versements'
     | '/website-demandes'
     | '/demandes/$id/fiche-visite-pdf'
+    | '/demandes/$id/pdf'
     | '/demandes/$id'
   id:
     | '__root__'
@@ -1077,6 +1105,7 @@ export interface FileRouteTypes {
     | '/_authenticated/versements/'
     | '/_authenticated/website-demandes/'
     | '/(auth)/demandes/$id/fiche-visite-pdf'
+    | '/_authenticated/demandes/$id/pdf'
     | '/_authenticated/demandes/$id/'
   fileRoutesById: FileRoutesById
 }
@@ -1163,6 +1192,7 @@ export const routeTree = rootRoute
         "/_authenticated/users/",
         "/_authenticated/versements/",
         "/_authenticated/website-demandes/",
+        "/_authenticated/demandes/$id/pdf",
         "/_authenticated/demandes/$id/"
       ]
     },
@@ -1307,6 +1337,10 @@ export const routeTree = rootRoute
     },
     "/(auth)/demandes/$id/fiche-visite-pdf": {
       "filePath": "(auth)/demandes.$id.fiche-visite-pdf.tsx"
+    },
+    "/_authenticated/demandes/$id/pdf": {
+      "filePath": "_authenticated/demandes/$id/pdf.lazy.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/demandes/$id/": {
       "filePath": "_authenticated/demandes/$id/index.lazy.tsx",

@@ -232,7 +232,20 @@ export const downloadFicheVisitePdf = async (demandeId: number, token: string): 
   const blob = response.data;
   const link = document.createElement('a');
   link.href = window.URL.createObjectURL(blob);
-  link.download = `fiche-visite-${demandeId}.pdf`;
+  link.download = `demande-${demandeId}.pdf`;
+  link.click();
+  window.URL.revokeObjectURL(link.href);
+};
+
+export const downloadDemande = async (demandeId: number): Promise<void> => {
+  const response = await axiosInstance.get(`/demandes/${demandeId}/authenticated-pdf`, {
+    responseType: 'blob',
+  });
+
+  const blob = response.data;
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.download = `demande-${demandeId}.pdf`;
   link.click();
   window.URL.revokeObjectURL(link.href);
 };
