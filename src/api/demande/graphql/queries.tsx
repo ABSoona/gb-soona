@@ -138,3 +138,56 @@ export const GET_DEMANDE_STATS = gql`
     }
   }
 `;
+
+export const GET_DASHBOARD_STATS = gql`
+  query CountDemandesDashboardStats($beginDate:  DateTime!,$endDate:  DateTime! ) {
+    total: _demandesMeta {
+      count
+    }
+
+    suivies: demandes(
+      where: {
+        status: { in: ["recue","en_commision", "en_visite", "EnAttenteDocs"] }, createdAt : {lt : $endDate, gt : $beginDate}
+      }
+    ) {
+      id
+      demandeActivities {
+        id
+      }
+    }
+
+    enVisite: _demandesMeta(
+      where: {
+        status: { equals: "en_visite" }, createdAt : {lt : $endDate, gt : $beginDate}
+      }
+    ) {
+      count
+    }
+    enAttente: _demandesMeta(
+      where: {
+        status: { equals: "EnAttente" }, createdAt : {lt : $endDate, gt : $beginDate}
+      }
+    ) {
+      count
+    }
+
+    enCommite: _demandesMeta(
+      where: {
+        status: { equals: "en_commision" }, createdAt : {lt : $endDate, gt : $beginDate}
+      }
+    ) {
+      count
+    }
+      
+    recue: demandes(
+      where: {
+        status: { equals: "recue" }, createdAt : {lt : $endDate, gt : $beginDate}
+      }
+    ) {
+      id
+      demandeActivities {
+        id
+      }
+    }
+  }
+`;

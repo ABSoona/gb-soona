@@ -141,11 +141,12 @@ export default function CoordinateursMapSheet({ open, onOpenChange, contactId, o
                           </div>
                         )}
                         <div className="flex gap-2 mt-1">
-                          {visiteur.role === "coordinateur" && (
-                            <Badge variant="secondary">Membre</Badge>
-                          )}
+                         
                           {visiteur.distanceKm != null && (
                             <Badge variant="outline">{visiteur.distanceKm.toFixed(1)} km</Badge>
+                          )}
+                           {visiteur.role === "coordinateur" && (
+                            <Badge variant="secondary">Membre</Badge>
                           )}
                         </div>
                       </div>

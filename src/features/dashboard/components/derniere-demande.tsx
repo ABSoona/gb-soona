@@ -12,7 +12,7 @@ import { handleServerError } from '@/utils/handle-server-error';
 
 export function DernieresDemandes() {
   // Utilisation du hook personnalisé pour les demandes
-  const { demandes, loading: isLoading, error } = useDemandeService({ where: { status: { equals: 'recue' } },take:8});
+  const { demandes, loading: isLoading, error } = useDemandeService({ where: { status: { equals: 'recue' } },take:10});
   const fewDemandesColumns = columns.filter(column => column.id && ['numeroDemande', 'contactNomPrenom', 'createdAt', 'status'].includes(column.id));
   if (error) {
     handleServerError(error);
@@ -31,7 +31,7 @@ export function DernieresDemandes() {
           <p>Aucune demande trouvée.</p>
         </div>
       ) : (
-        <DemandesTable data={demandes ?? []} columns={fewDemandesColumns} hideTools={true} />
+        <DemandesTable data={demandes.filter((e) => (!(e.demandeActivities.length > 1))) ?? []} columns={fewDemandesColumns} hideTools={true} />
       )}
 
     </DemandesProvider>

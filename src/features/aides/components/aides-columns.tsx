@@ -147,7 +147,7 @@ export const columns: ColumnDef<Aide>[] = [
       
           return (
             <div className="relative w-full max-w-[180px]">
-              <Progress value={progress} />
+              <Progress className='hsl(var(--chart-2))' value={progress} />
               <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white font-medium pointer-events-none">
                 {effectues} / {total}
               </span>

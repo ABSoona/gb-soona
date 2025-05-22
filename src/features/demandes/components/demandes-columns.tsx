@@ -80,7 +80,10 @@ export const columns: ColumnDef<Demande>[] = [
     {
         accessorFn: (row) => `${row.contact?.nom ?? ''} ${row.contact?.prenom ?? ''}`,
         id: 'contactNomPrenom',
-        header: 'Bénéficiaire',
+
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Bénéficiaire' />
+          ),
         cell: ({ row }) => { return (<span className='capitalize'>{row.original.contact?.nom ?? '-'} {row.original.contact?.prenom ?? ''}</span>) },
         enableHiding: true,
         filterFn: (row, id, value) => {
@@ -299,7 +302,10 @@ export const columns: ColumnDef<Demande>[] = [
     // 💰 Aides Associées
     {
         id: 'aides',
-        header: 'Aides Antérieures',
+     
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Aides Antérieures' /> 
+          ),
         cell: ({ row }) => {
             const aides = row.original.contact?.aides ?? [];
             const totalAides = aides.reduce((total, aide) => total + (aide.montant ?? 0), 0);
