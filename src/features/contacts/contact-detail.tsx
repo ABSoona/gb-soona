@@ -50,15 +50,15 @@ export default function ContactDetail() {
             <Button variant="ghost" onClick={() => navigate({ to: '..' })} size="icon">
               <ChevronLeft />
             </Button>
-            <h2 className="text-2xl font-bold tracking-tight">Contact N° {id}</h2>
+            <h2 className="text-xl font-bold tracking-tight">Contact N° {id}</h2>
           </div>
           <div>
-            <Button variant="outline" onClick={() => {
+          {/*   <Button variant="outline" onClick={() => {
               setCurrentRow(contact)
               setOpen('timeline')
             }}>
               <IconLayoutSidebarRightExpand size='42' /> Time line
-            </Button>
+            </Button> */}
 
           </div>
         </div>

@@ -14,6 +14,7 @@ import { ChevronLeft } from 'lucide-react';
 import AidesProvider from '../aides/context/aides-context';
 import { DemandeView } from './components/demande-view';
 import { demandeStatusColor, demandeStatusTypes } from './data/data';
+import AppLayout from '@/components/layout/app-layout';
 
 interface Props {
   showContact?: boolean
@@ -46,21 +47,15 @@ export default function DemandeDetail({ showContact = true }: Props) {
   }
 
   return (
-    <>
-      <Header fixed>
-        <Search />
-        <div className="ml-auto flex items-center space-x-4">
-          <ThemeSwitch />
-          <ProfileDropdown />
-        </div>
-      </Header>
-      <Main>
+    <AppLayout>
+          
+      
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button variant="ghost" onClick={handleRetour} size="icon">
               <ChevronLeft />
             </Button>
-            <h2 className="text-2xl font-bold tracking-tight">Demande N° {id}</h2>
+            <h2 className="text-xl font-bold tracking-tight">Demande N° {id}</h2>
           </div>
 
           <Badge
@@ -91,9 +86,9 @@ export default function DemandeDetail({ showContact = true }: Props) {
             </AidesProvider>
           )}
         </div>
-      </Main>
+     
 
 
-    </>
+      </AppLayout>
   );
 }

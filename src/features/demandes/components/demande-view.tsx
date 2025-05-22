@@ -24,7 +24,7 @@ import { User } from '@/model/user/User'
 import { TabsContent } from '@radix-ui/react-tabs'
 import { useNavigate } from '@tanstack/react-router'
 import { addMonths } from 'date-fns'
-import {  Files,  Plus} from 'lucide-react'
+import {  ChevronDown, Files,  Plus} from 'lucide-react'
 import { useRef, useState } from 'react'
 import { categorieTypes } from '../data/data'
 import CoordinateursMapSheet from './assign-coordinateur'
@@ -432,8 +432,8 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                 <CardTitle>Justificatifs du bénéficiaire</CardTitle>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8">
-                      <Plus className="h-4 w-4" /> Ajouter
+                    <Button variant='outline' size="sm" >
+                    Ajouter <ChevronDown className="h-4 w-4"/>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>

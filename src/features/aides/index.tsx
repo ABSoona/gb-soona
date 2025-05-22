@@ -25,7 +25,7 @@ export default function Aides() {
             <AppLayout>
                 <div className="mb-2 flex flex-wrap items-center justify-between space-y-2">
                     <div>
-                        <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                        <h2 className="text-xl font-bold tracking-tight flex items-center gap-2">
                             <IconHeartHandshake className="h-6 w-6 text-primary" />
                             Liste des Aides
                         </h2>
