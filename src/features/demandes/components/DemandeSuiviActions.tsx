@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-  import { Plus, CheckCircle, PauseCircle, PhoneMissed, PhoneCall, StickyNote, UserCheck, FilePlus2, MapPin, ExternalLink, RefreshCwOff } from 'lucide-react';
+  import { Plus, CheckCircle, PauseCircle, PhoneMissed, PhoneCall, StickyNote, UserCheck, FilePlus2, MapPin, ExternalLink, RefreshCwOff, ChevronDown } from 'lucide-react';
   import { TabsContent } from '@radix-ui/react-tabs';
   import { Button } from '@/components/ui/button';
   import { DemandeActivityTimeline } from './DemandeActivityTimeline';
@@ -62,8 +62,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
           {!['clôturée', 'Abandonnée',  'refusée'].includes(currentRow.status) && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8">
-                  <Plus className="h-4 w-4" /> Ajouter
+                <Button variant="outline" size="sm" >
+                 Ajouter <ChevronDown className="h-4 w-4"/>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>

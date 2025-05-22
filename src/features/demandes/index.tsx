@@ -47,11 +47,11 @@ export default function Demandes({ acteurId, status,title,description, newOlny,e
 
                 <div className="mb-2 flex flex-wrap items-center justify-between space-y-2">
                     <div>
-                        <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                        <h2 className="text-xl font-bold tracking-tight flex items-center gap-2">
                             <IconMailDown className="h-6 w-6 text-primary" />
                             {title?title : "Liste de toutes les Demandes"}</h2>
                         <p className="text-muted-foreground">
-                            {description?description:"Gérez vos demandes et leurs statuts ici"}
+                            {description?description:"Gérer toutes les demandes quelque soit leurs état"}
                         </p>
                     </div>
                     <DemandesPrimaryButtons />
