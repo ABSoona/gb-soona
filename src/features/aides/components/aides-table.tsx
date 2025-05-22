@@ -160,7 +160,7 @@ export function AidesTable({ columns, data, hideTools = false, hideActions = fal
                 </Table>
             </div>
             {/* Afficher la Pagination seulement si hideTools est false */}
-            {!hideTools && <DataTablePagination table={table} />}
+           <DataTablePagination table={table} />
         </div>
     );
 }

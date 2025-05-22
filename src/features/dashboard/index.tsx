@@ -15,13 +15,18 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { formatMontant } from '@/utils/misc'
 import { IconAlertSquare, IconPercentage20 } from '@tabler/icons-react'
 import { endOfMonth, endOfYear, startOfMonth, startOfYear, subMonths, subYears } from 'date-fns'
-import { ClockArrowUp, HandshakeIcon, ScanEye } from 'lucide-react'
+import { ClockArrowUp, HandshakeIcon, Mailbox, MapPinHouse, ScanEye, ScanSearch } from 'lucide-react'
 import { useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import { DernieresDemandes } from './components/derniere-demande'
 import { Overview } from './components/overview'
 import { StatusDemandes } from './components/status-demandes'
-import { useDashboardStats } from './data-service'
+import { useDashboardStats } from '@/api/demande/demandeStatsService'
+import Aides from '../aides'
+import { AidesTable } from '../aides/components/aides-table'
+import { columns } from '../aides/components/aides-columns'
+import AidesProvider from '../aides/context/aides-context'
+import { useAideService } from '@/api/aide/aideService'
 
 export default function Dashboard() {
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -31,7 +36,7 @@ export default function Dashboard() {
 
   const [activePeriod, setActivePeriod] = useState<'mois' | 'moisPrecedent' | 'annee' | 'anneePrecedente' | 'custom'>('mois');
   const [showCustomPicker, setShowCustomPicker] = useState(false);
-
+  const {aides} = useAideService({where:{status:'EnCours', frequence :"Mensuelle"/* , dateAide : {lt:dateRange.to,gt:dateRange.from} */}})
   const handlePeriodChange = (period: typeof activePeriod) => {
     setActivePeriod(period);
 
@@ -60,7 +65,7 @@ export default function Dashboard() {
     }
   };
 
-  const stats = dateRange.from && dateRange.to
+  const data = dateRange.from && dateRange.to
     ? useDashboardStats({ from: dateRange.from, to: dateRange.to })
     : null;
 
@@ -105,34 +110,37 @@ export default function Dashboard() {
           <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-5'>
             {[{
               title: 'Nouvelles demandes',
-              icon: <IconAlertSquare className='h-7 w-7 text-muted-foreground' />,
-              value: stats ? stats.nouvellesDemandes : null
+              icon: <Mailbox className='h-7 w-7 text-muted-foreground' />,
+              value: data ? data.dashBoardStats.nouvelles : null
             },
             {
-              title: 'Demandes en commmission',
-              icon: <ScanEye className='h-7 w-7 text-muted-foreground' />,
-              value: stats ? stats.DemandesEncommission : null
-            },
-            {
-              title: 'Demandes en attente',
-              icon: <ClockArrowUp className='h-7 w-7 text-muted-foreground' />,
-              value: stats ? stats.DemandesEnAttente : null
+              title: 'Demandes suivies',
+              icon: <ScanSearch  className='h-7 w-7 text-muted-foreground' />,
+              value: data ? data.dashBoardStats.suivies : null
             },
             {
               title: 'Demandes en visite',
-              icon: <HandshakeIcon className='h-7 w-7 text-muted-foreground' />,
-              value: stats ? stats.DemandesEnVisite : null
+              icon: <MapPinHouse  className='h-7 w-7 text-muted-foreground' />,
+              value: data ? data.dashBoardStats.enVisite : null
             },
+            {
+              title: 'Demandes en comité',
+              icon: <ScanEye className='h-7 w-7 text-muted-foreground' />,
+              value: data?data.dashBoardStats.enCommite : null
+            },
+            
+            {
+              title: 'Demandes en attente',
+              icon: <ClockArrowUp className='h-7 w-7 text-muted-foreground' />,
+              value: data ? data.dashBoardStats.enAttente : null
+            },
+           
 
              /*  {
               title: 'Aides versés',
               icon: <IconHeartHandshake className='h-7 w-7 text-muted-foreground' />,
               value: stats ? formatMontant(stats.totalVerse) : null
-            }, */ {
-              title: 'Reste à verser',
-              icon: <IconPercentage20 className='h-7 w-7 text-muted-foreground' />,
-              value: stats ? formatMontant(stats.totalReste) : null
-            },
+            }, */ 
            /*  {
               title: 'Personnes aidées',
               icon: <IconUsers className='h-7 w-7 text-muted-foreground' />,
@@ -145,9 +153,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className='text-2xl font-bold'>
-                    {!stats?.loading ? value : <div className="space-y-2 w-full">
-
-
+                    {!data?.loading ? value : <div className="space-y-2 w-full">
 
                       {/* Simule 6 lignes */}
                       {[...Array(1)].map((_, index) => (
@@ -165,17 +171,18 @@ export default function Dashboard() {
 
           </div>
           <div className='grid grid-cols-1 gap-4 lg:grid-cols-7'>
-            <Card className='col-span-1 lg:col-span-3'>
+            <Card className='col-span-1 lg:col-span-4'>
               <CardHeader>
-                <CardTitle>Etats des demandes</CardTitle>
+                <CardTitle>Aides mensuelles en cours</CardTitle>
               </CardHeader>
               <CardContent className='pl-2'>
 
-                <StatusDemandes dateRange={{ from: dateRange.from!, to: dateRange.to! }} />
+               {/*  <StatusDemandes dateRange={{ from: dateRange.from!, to: dateRange.to! }} /> */}
+               <AidesProvider><AidesTable hideTools={true} columns={columns.filter((e)=> ["dateAide","montant","progressionVersements","nombreVersements"].includes(e?.id?e?.id:''))} data={aides}/></AidesProvider>
 
               </CardContent>
             </Card>
-            <Card className='col-span-1 lg:col-span-4'>
+            <Card className='col-span-1 lg:col-span-3'>
 
               <CardHeader>
                 <CardTitle>Nouvelles demandes</CardTitle>
