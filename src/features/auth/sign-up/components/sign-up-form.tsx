@@ -54,7 +54,8 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
       email: '',
       password: '',
       confirmPassword: '',
-      role: ''
+      role: '',
+
     },
   })
 
@@ -85,7 +86,8 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
         token: token, // essentiel pour valider le lien
         username: data.email,
         roles: [role],
-        role: role
+        role: role,
+        hasAccess:true
       })
       toast({ title: '🎉 Compte créé avec succès !' })
       form.reset()

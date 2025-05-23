@@ -62,6 +62,7 @@ export const userSchema = z.object({
   adresseCodePostal : z.string().optional(),
   adresseRue : z.string().optional(),
   adresseVille :z.string().optional(),
+  hasAccess:z.boolean().optional()
 
 
 });

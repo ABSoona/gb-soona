@@ -148,7 +148,7 @@ export default function Dashboard() {
             } */].map(({ title, icon, value }, index) => (
               <Card key={index}>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>{title}</CardTitle>
+                  <CardTitle className='text-md font-medium'>{title}</CardTitle>
                   {icon}
                 </CardHeader>
                 <CardContent>

@@ -1,3 +1,4 @@
+import { onError } from '@apollo/client/link/error';
 import { toast } from '@/hooks/use-toast';
 import { handleServerError } from '@/utils/handle-server-error';
 import { useMutation, useQuery } from '@apollo/client';
@@ -52,7 +53,8 @@ export function useDemandeService(variables?: DemandeServiceParams): {
     fetchPolicy: 'network-only',
     onCompleted: (newData) => {
       console.log("✅ DEMANDES chargées :", newData);
-    }
+    },
+  
   });
   const userId = getUserId();
 
