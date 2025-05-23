@@ -1,15 +1,16 @@
 import { toast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/stores/authStore';
 import { ApolloError } from '@apollo/client';
+import { createBrowserHistory, useNavigate } from '@tanstack/react-router';
 import { AxiosError } from 'axios';
 
 export function handleServerError(error: unknown) {
 
 
     let errMsg = 'Une erreur est survenue !';
-
+    const history = createBrowserHistory();
     // 👉 Gestion des erreurs Axios
-    if (error instanceof AxiosError) {
+    if (error instanceof AxiosError || error instanceof AxiosError) {
         errMsg = error.response?.data?.title || error.message;
 
         switch (error.response?.status) {
@@ -19,6 +20,7 @@ export function handleServerError(error: unknown) {
             case 401:
                 errMsg = 'Session expirée. Veuillez vous reconnecter.';
                 useAuthStore.getState().auth.reset();
+                history.push('/login'); 
                 break;
             case 403:
                 errMsg = 'Accès refusé.';
@@ -36,17 +38,16 @@ export function handleServerError(error: unknown) {
         toast({ variant: 'destructive', title: errMsg });
         return;
     }
-
+    
     // 👉 Gestion des erreurs Apollo (GraphQL)
     if (error instanceof ApolloError) {
         if (error.graphQLErrors.length > 0) {
             error.graphQLErrors.forEach((graphQLError) => {
-
-
                 switch (graphQLError.extensions?.code) {
                     case 'UNAUTHENTICATED':
-                        errMsg = 'Authentification requise !';
+                       errMsg = 'Authentification requise !';
                         useAuthStore.getState().auth.reset();
+                        history.push('/sign-in'); 
                         break;
                     case 'FORBIDDEN':
                         errMsg = 'Accès interdit !';
