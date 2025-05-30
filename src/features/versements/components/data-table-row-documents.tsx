@@ -59,7 +59,7 @@ export function DataTableRowDocuments({ row }: DataTableRowDocumentsProps) {
             <span className='sr-only'>Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align='end' className='w-[200px]'>
+        <DropdownMenuContent align='end' className='w-[250px]'>
           <DropdownMenuItem
             onClick={async () => {
               const contactId = row.original.aide?.contact?.id
@@ -83,14 +83,14 @@ export function DataTableRowDocuments({ row }: DataTableRowDocumentsProps) {
               }
             }}
           >
-            Rib du bénéficiaire
+            Voir le Rib du bénéficiaire
             <DropdownMenuShortcut>
               <Landmark size={16} />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem disabled={!preuve} onClick={() => preuve && openPreview(preuve)}>
-            Preuve de virement
+            Voir la preuve de virement
             <DropdownMenuShortcut>
               <FileCheck size={16} />
             </DropdownMenuShortcut>

@@ -90,10 +90,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
                   <PhoneCall className="mr-2 h-4 w-4" />
                   Entretien avec le bénéficiaire
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setOpenNoteSheet(true)}>
-                  <StickyNote className="mr-2 h-4 w-4" />
-                  Note de suivi
-                </DropdownMenuItem>
+                
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem onClick={handleOpenAssigSheet}>
@@ -115,6 +112,10 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
                 <DropdownMenuItem onClick={handleAbandonnerDemande}>
                   <RefreshCwOff className="mr-2 h-4 w-4" />
                   Abandonner la demande
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setOpenNoteSheet(true)}>
+                  <StickyNote className="mr-2 h-4 w-4" />
+                  Ajouter une Note de suivi
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

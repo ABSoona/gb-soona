@@ -8,6 +8,7 @@ import { Document } from "@/model/document/Document";
 import { useTypeDocumentService } from "@/api/typeDocument/typeDocumentService";
 import { useDocumentService } from "@/api/document/documentService";
 import { AttachmentType, TypeDocument } from "@/model/typeDocument/typeDocument";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Props {
   open: boolean;
@@ -130,10 +131,10 @@ export default function DocumentPreviewSheet({
 
           <div className="flex justify-between items-center mt-2">
             <Button onClick={onPrev} disabled={!canPrev} variant="outline">
-              ← Précédent
+            <ChevronLeft/> Précédent
             </Button>
             <Button onClick={onNext} disabled={!canNext} variant="outline">
-              Suivant →
+              Suivant <ChevronRight/>
             </Button>
           </div>
         </SheetHeader>

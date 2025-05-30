@@ -61,7 +61,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[200px]">
+        <DropdownMenuContent  className="w-[250px]">
           <DropdownMenuItem
             onClick={() => inputRef.current?.click()}
           >

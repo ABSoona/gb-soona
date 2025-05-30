@@ -87,35 +87,46 @@ export const aidesColumns: ColumnDef<Contact>[] = [
     // 👤 Informations du Contact 
 
     {
-        accessorFn: (row) => `${row.nom ?? '-'} ${row.prenom ?? ''}`,
+        accessorFn: (row) => row.nom,
         id: 'nom',
-        header: 'Nom',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Nom' />
+          ),
         cell: ({ row }) => `${row.original.nom ?? '-'}`,
         enableHiding: true,
     },
     {
         accessorFn: (row) => row.prenom,
         id: 'prenom',
-        header: 'Prénom',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Prénom' />
+          ),
         cell: ({ row }) => `${row.original?.prenom ?? '-'}`,
         enableHiding: true,
     },
     {
         accessorFn: (row) => row?.age,
         id: 'age',
-        header: 'Âge',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Age' />
+          ),
         cell: ({ row }) => row.original?.age ? new Date().getFullYear() - row.original.age : '-'
     },
     {
         accessorFn: (row) => row?.telephone,
         id: 'telephone',
-        header: 'Téléphone',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Téléphone' />
+          ),
         cell: ({ row }) => row.original?.telephone ?? '-',
     },
     {
         accessorFn: (row) => row?.email,
         id: 'email',
-        header: 'Email',
+
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Email' />
+          ),
         cell: ({ row }) => row.original?.email ?? '-',
     },
 

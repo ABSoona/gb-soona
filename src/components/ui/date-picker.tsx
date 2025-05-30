@@ -27,7 +27,8 @@ export function DatePicker({ date, onDateChange }: { date?: Date, onDateChange?:
           mode="single"
           selected={date}
           onSelect={onDateChange}  // ✅ Correction ici
-          initialFocus
+          initialFocus        
+          disabled={false}
         />
       </PopoverContent>
     </Popover>
