@@ -2,7 +2,8 @@ import LongText from '@/components/long-text';
 import { Versement, VersementStatus } from '@/model/versement/versement';
 import { ColumnDef } from '@tanstack/react-table';
 import { addDays, addMonths, isBefore, isEqual } from 'date-fns';
-import { XCircleIcon } from 'lucide-react';
+import {  XCircleIcon } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
 import { Badge } from "@/components/ui/badge";
 import { DateRange } from 'react-day-picker';
 import { DataTableRowActions } from './data-table-row-actions';
@@ -103,14 +104,27 @@ export const columns: ColumnDef<Versement>[] = [
         accessorFn: (row) => `${row.aide.contact?.nom ?? ''} ${row.aide.contact?.prenom ?? ''}`,
         id: 'contactNomPrenom',
         header: 'Bénéficiaire',
-        cell: ({ row }) => { return (<span className='capitalize'>{row.original.aide.contact?.nom ?? '-'} {row.original.aide.contact?.prenom ?? ''}</span>) },
+        cell: ({ row }) => {
+          const contact = row.original.aide.contact;
+          const fullName = `${contact?.nom ?? '-'} ${contact?.prenom ?? ''}`;
+          return contact ? (
+            <Link
+              to="/contacts/$id"
+              params={{ id: contact.id.toString() }}
+              className="text-blue-600 hover:underline capitalize"
+            >
+              {fullName}
+            </Link>
+          ) : (
+            <span className='capitalize'>{fullName}</span>
+          );
+        },
         enableHiding: true,
         filterFn: (row, id, value) => {
-            const fullName = `${row.getValue(id)}`.toLowerCase(); // 🔥 Concaténer nom + prénom
-            return fullName.includes(value.toLowerCase()); // 🔍 Vérifie si une partie du texte correspond
+          const fullName = `${row.getValue(id)}`.toLowerCase();
+          return fullName.includes(value.toLowerCase());
         },
-
-    },
+      },
 
     {
         id: 'status',

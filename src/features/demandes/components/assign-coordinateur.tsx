@@ -30,10 +30,10 @@ interface CoordinateursMapSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   contactId: number;
-  onAssign: (data: { visiteur: User },visite?:Visite) => void;
+  onAssign: (data: { visiteur: User }, visite?: Visite) => void;
   visite?: Visite;
 }
-export default function CoordinateursMapSheet({ open, onOpenChange, contactId, onAssign,visite }: CoordinateursMapSheetProps) {
+export default function CoordinateursMapSheet({ open, onOpenChange, contactId, onAssign, visite }: CoordinateursMapSheetProps) {
   const [selectedVisiteurId, setSelectedVisiteurId] = useState<string | null>(null);
   const [geocodedVisiteurs, setGeocodedVisiteurs] = useState<any[]>([]);
 
@@ -141,11 +141,11 @@ export default function CoordinateursMapSheet({ open, onOpenChange, contactId, o
                           </div>
                         )}
                         <div className="flex gap-2 mt-1">
-                         
+
                           {visiteur.distanceKm != null && (
                             <Badge variant="outline">{visiteur.distanceKm.toFixed(1)} km</Badge>
                           )}
-                           {visiteur.role === "coordinateur" && (
+                          {visiteur.role === "coordinateur" && (
                             <Badge variant="secondary">Membre</Badge>
                           )}
                         </div>
@@ -168,7 +168,7 @@ export default function CoordinateursMapSheet({ open, onOpenChange, contactId, o
                       setIsAssigning(true);
                       try {
                         await onAssign({
-                          visiteur,                                                  
+                          visiteur,
                         }, visite);
                       } finally {
                         setIsAssigning(false);
@@ -190,42 +190,41 @@ export default function CoordinateursMapSheet({ open, onOpenChange, contactId, o
 
 
           {/* Carte */}
-          <div className="flex-1">
-            {isLoaded && (
-              <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={beneficiaireCoords ?? defaultCenter}
-                zoom={11}
-              >
-                {geocodedVisiteurs.map((v) => (
-                  <Marker
-                    key={v.id}
-                    position={v.coords}
-                    icon={{
-                      url:
-                        selectedVisiteurId === v.id
-                          ? "/images/icons8-location-30.png"
-                          : "/images/icons8-location-gray-30.png",
-                      scaledSize: new window.google.maps.Size(36, 36),
-                    }}
-                  /* label={{
-                    text: `${v.firstName} ${v.lastName}`,
-                    className: "text-sm text-black font-medium",
-                  }} */
-                  />
-                ))}
-                {beneficiaireCoords && (
-                  <Marker
-                    position={beneficiaireCoords}
-                    icon={{
-                      url: "/images/home.png",
-                      scaledSize: new window.google.maps.Size(36, 36),
-                    }}
-                  />
-                )}
-              </GoogleMap>
-            )}
-          </div>
+          <Card className="flex-1 h-full overflow-hidden">
+            
+            <CardContent className="h-full p-0">
+              {isLoaded && (
+                <GoogleMap
+                  mapContainerStyle={{ width: "100%", height: "100%" }}
+                  center={beneficiaireCoords ?? defaultCenter}
+                  zoom={11}
+                >
+                  {geocodedVisiteurs.map((v) => (
+                    <Marker
+                      key={v.id}
+                      position={v.coords}
+                      icon={{
+                        url:
+                          selectedVisiteurId === v.id
+                            ? "/images/icons8-location-30.png"
+                            : "/images/icons8-location-gray-30.png",
+                        scaledSize: new window.google.maps.Size(36, 36),
+                      }}
+                    />
+                  ))}
+                  {beneficiaireCoords && (
+                    <Marker
+                      position={beneficiaireCoords}
+                      icon={{
+                        url: "/images/home.png",
+                        scaledSize: new window.google.maps.Size(36, 36),
+                      }}
+                    />
+                  )}
+                </GoogleMap>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </SheetContent>
     </Sheet>

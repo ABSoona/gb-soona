@@ -28,7 +28,7 @@ export function Combobox({
         value={value} // 🔥 Assure que l'input reçoit bien la valeur
         onChange={onInputChange}
         placeholder={placeholder}
-        className="w-full rounded-md border px-3 py-2  shadow-sm capitalize"
+        className="w-full rounded-md border px-3 py-2  shadow-sm"
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 200)}
       />

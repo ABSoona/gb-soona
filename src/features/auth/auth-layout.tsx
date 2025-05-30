@@ -13,7 +13,7 @@ export default function AuthLayout({ children }: Props) {
           <div className="transition-transform duration-300 ease-in-out hover:scale-110">
             <img
               src={logo}
-              alt="Logo GB soona"
+              alt="Logo GBSoona"
               width={80}
               height={80}
               className="h-20 w-40 object-contain"
