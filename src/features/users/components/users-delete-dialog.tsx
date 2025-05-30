@@ -60,13 +60,13 @@ export function UsersDeleteDialog({
       desc={
         <div className='space-y-4'>
           <p>
-            Are you sure you want to delete{' '}
-            <span className='font-bold'>{currentRow.username}</span>? This action
-            is irreversible.
+          Êtes-vous sûr de vouloir supprimer l'utilisateur{' '}
+            <span className='font-bold'>{currentRow.username}</span>?Cette action est
+            irréversible.
           </p>
 
           <Label>
-            Confirm by typing the username:
+          Confirmez en tapant l'adresse mail de l'utilisataur :
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
@@ -75,9 +75,9 @@ export function UsersDeleteDialog({
           </Label>
 
           <Alert variant='destructive'>
-            <AlertTitle>Warning!</AlertTitle>
+            <AlertTitle>Avertissement !</AlertTitle>
             <AlertDescription>
-              Once deleted, this user cannot be recovered.
+            Une fois supprimée, cet utilisateur ne pourra pas être restaurée.
             </AlertDescription>
           </Alert>
         </div>
