@@ -11,6 +11,7 @@ export const VERSEMENT_FIELDS = gql`
         nom
         prenom
       }
+        frequence
     }
     status
     dataVersement

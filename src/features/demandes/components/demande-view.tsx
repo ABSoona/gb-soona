@@ -278,7 +278,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     await createVisite({ acteur: { id: data.visiteur.id }, demande: { id: currentRow.id }, status: 'Programee' })
     await updateDemande(currentRow.id, {
       status: "en_visite",
-      acteur: { id: coordinateur.id }
+    /*   acteur: { id: coordinateur.id } */
     });
 
     setOpenVisiteSheet(false);
@@ -345,7 +345,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
           <InfoCard title="Revenus" value={`${totalRevenus?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
           <InfoCard title="Charges" value={`${totalCharges?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
           <InfoCard title="Dettes" value={`${totalDettes?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
-          <InfoCard title="Aides Reçues" value={`${totalAides?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
+          <InfoCard title="Historique Aides" value={`${totalAides?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
           <InfoCard title="Reste à Vivre" value={`${resteAVivre?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
         </div>
 
@@ -413,7 +413,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
           {showAides &&
             <Card>
               <CardHeader>
-                <CardTitle>Aides Reçues par le bénéficiaire</CardTitle>
+                <CardTitle>Historique des aides Reçues</CardTitle>
               </CardHeader>
               <CardContent>
                 {currentRow?.contact.aides && currentRow?.contact.aides.length > 0 ? (

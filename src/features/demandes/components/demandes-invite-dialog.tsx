@@ -129,7 +129,7 @@ export function DemandesInviteDialog({ open, onOpenChange }: Props) {
                   <FormControl>
                     <Textarea
                       className='resize-none'
-                      placeholder='Add a personal note to your invitation (optional)'
+                      placeholder='Ajouter une note'
                       {...field}
                     />
                   </FormControl>
