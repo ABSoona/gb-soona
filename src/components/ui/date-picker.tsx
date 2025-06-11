@@ -6,7 +6,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils"
 import { fr } from 'date-fns/locale'
 
-export function DatePicker({ date, onDateChange }: { date?: Date, onDateChange?: (date?: Date) => void }) {
+interface DatePickerProps {
+  date?: Date;
+  onDateChange?: (date?: Date) => void;
+  className?: string; // ✅ ajout de className ici
+}
+export function DatePicker({ date, onDateChange, className }: DatePickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -14,7 +19,8 @@ export function DatePicker({ date, onDateChange }: { date?: Date, onDateChange?:
           variant={"outline"}
           className={cn(
             "w-[300px] justify-start text-left font-normal",
-            !date && "text-muted-foreground"
+            !date && "text-muted-foreground",
+            className 
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />

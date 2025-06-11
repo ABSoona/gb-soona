@@ -29,6 +29,7 @@ import { useTypeDocumentService } from "@/api/typeDocument/typeDocumentService";
 import { toast } from "@/hooks/use-toast";
 import { User } from "@/model/user/User";
 import CoordinateursMapSheet from "@/features/demandes/components/assign-coordinateur";
+import { DatePicker } from "@/components/ui/date-picker";
 
 interface VisiteListProps {
     demandeId: number;
@@ -38,9 +39,9 @@ interface VisiteListProps {
 
 export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteListProps) => {
     const { visites, updateVisite, refetch, isSubmitting } = useVisiteService({
-        where: { demande: { id: demandeId } },
+        where: { demande: { id: demandeId } },orderBy:{createdAt:'Asc'}
     });
-      const [openVisiteSheet, setOpenVisiteSheet] = useState(false);
+    const [openVisiteSheet, setOpenVisiteSheet] = useState(false);
     const { handleFileUpload } = useDocumentActions({});
     const { deleteDocument } = useDocumentService();
 
@@ -48,14 +49,17 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
         where: { internalCode: { equals: "rapport_visite" } },
     });
 
-   
+    const [editingDateId, setEditingDateId] = useState<number | null>(null);
+    const [editedDate, setEditedDate] = useState<Date | undefined>(undefined);
+
+
     const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
     const [editedNote, setEditedNote] = useState<string>('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [document, setDocument] = useState<Document | null>(null);
     const [previewType, setPreviewType] = useState<string | null>(null);
     const [open, setOpen] = useState(false);
-      const [currentVisite, setCurrentVisite] = useState<Visite | null>(null);
+    const [currentVisite, setCurrentVisite] = useState<Visite | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const openPreview = async (doc: Document) => {
@@ -80,7 +84,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
             }
             await handleFileUpload(0, file, typeDocId, 0, 0, 0, currentVisite.id);
             await refetch();
-            await updateVisite(currentVisite.id, { status: 'Realisee',dateVisite:new Date() })
+            await updateVisite(currentVisite.id, { status: 'Realisee', dateVisite: new Date() })
             onRapportAdded?.();
         }
     };
@@ -100,22 +104,22 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
         return <p className="text-muted-foreground">Aucune visite enregistrée.</p>;
     }
 
-    const handleOpenVisiteSheet = async (visite:Visite) => {
+    const handleOpenVisiteSheet = async (visite: Visite) => {
         setCurrentVisite(visite);
         setOpenVisiteSheet(true); // Ouvre la Sheet
-      };
+    };
 
-      const handleAssign = async (data: { visiteur: User },visite? :Visite) => {
-          console.log("Assignation déclenchée côté parent avec :", data.visiteur.id);
-          const coordinateur = data.visiteur.superieur ?? data.visiteur;
-          visite && await updateVisite(visite.id,{ acteur: { id: data.visiteur.id }})
+    const handleAssign = async (data: { visiteur: User }, visite?: Visite) => {
+        console.log("Assignation déclenchée côté parent avec :", data.visiteur.id);
+        const coordinateur = data.visiteur.superieur ?? data.visiteur;
+        visite && await updateVisite(visite.id, { acteur: { id: data.visiteur.id } })
         /*  await updateDemande(currentRow.id, {
             status: "en_visite",
             acteur: { id: coordinateur.id }
           });*/
-      
-          setOpenVisiteSheet(false);
-        };
+
+        setOpenVisiteSheet(false);
+    };
 
     return (
         <>
@@ -125,10 +129,43 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                         {/* Ligne 1 : Date + menu */}
                         <div className="flex justify-between items-start">
                             <div className="flex items-center gap-2 text-base font-semibold">
-                                <CalendarDays className="w-5 h-5 text-muted-foreground" />
-                                {visite.dateVisite
-                                    ? `Visite du ${format(new Date(visite.dateVisite), "dd/MM/yyyy")}`
-                                    : "Date a définir"}
+                               
+                                {editingDateId === visite.id ? (
+                                    <div className="flex items-center gap-2">
+                                        <DatePicker
+                                            date={editedDate}
+                                            className="w-[200px]"
+                                            onDateChange={(newDate) => setEditedDate(newDate)}
+                                            
+                                        />
+                                        <Button
+                                            size="icon"
+                                            variant="outline"
+                                            disabled={isSubmitting}
+                                            onClick={async () => {
+                                                if (editedDate) {
+                                                    await updateVisite(visite.id, { dateVisite: editedDate });
+                                                    setEditingDateId(null);
+                                                }
+                                            }}
+                                        >
+                                            <Check />
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div
+                                        className="cursor-pointer hover:underline flex items-center gap-2"
+                                        onClick={() => {
+                                            setEditingDateId(visite.id);
+                                            setEditedDate(visite.dateVisite ? new Date(visite.dateVisite) : undefined);
+                                        }}
+                                    >
+                                        <CalendarDays className="w-5 h-5 text-muted-foreground" />
+                                        {visite.dateVisite
+                                            ? `Visite du ${format(new Date(visite.dateVisite), "dd/MM/yyyy")}`
+                                            : "Date à définir"}
+                                    </div>
+                                )}
                             </div>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -137,25 +174,25 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                <DropdownMenuItem  disabled={visite.status == "Annulee"} onClick={() =>handleOpenVisiteSheet(visite)}>
-                                    <UserCheck  />
+                                    <DropdownMenuItem disabled={visite.status == "Annulee"} onClick={() => handleOpenVisiteSheet(visite)}>
+                                        <UserCheck />
                                         Affecter la visite à…
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => updateVisite(visite.id, { status: "Realisee",dateVisite:new Date() })}>
-                                    <Check   />
+                                    <DropdownMenuItem onClick={() => updateVisite(visite.id, { status: "Realisee", dateVisite: new Date() })}>
+                                        <Check />
                                         Marquer comme réalisée
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem  disabled={visite.status == "Annulee"} onClick={() => updateVisite(visite.id, { status: "Annulee" })}>
-                                         <RefreshCwOff />
+                                    <DropdownMenuItem disabled={visite.status == "Annulee"} onClick={() => updateVisite(visite.id, { status: "Annulee" })}>
+                                        <RefreshCwOff />
                                         Annuler la visite
                                     </DropdownMenuItem>
-                                    
-                                    
+
+
                                     {visite.document && (
                                         <>
                                             <hr className="my-1" />
                                             <DropdownMenuItem onClick={(e) => handleDeleteDocument(e as any, visite.document!.id)}>
-                                            <FileX2 />
+                                                <FileX2 />
                                                 Retirer le rapport de visite
                                             </DropdownMenuItem>
                                         </>
@@ -209,7 +246,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                                             className="w-6 h-6 mt-1 cursor-pointer rounded p-1 hover:bg-muted hover:text-foreground transition"
                                         />
                                         <span className="flex-1">
-                                           {visite.note}
+                                            {visite.note}
                                         </span>
                                     </div>
                                 )}
@@ -222,7 +259,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                                         onClick={() => visite.document && openPreview(visite.document)}
                                         className="relative h-[120px] border  rounded-lg bg-white shadow hover:shadow-md transition flex flex-col items-center justify-center cursor-pointer"
                                     >
-                                        <FileText  className="h-6 w-6 text-primary mb-1 " />
+                                        <FileText className="h-6 w-6 text-primary mb-1 " />
                                         <p className="text-sm font-medium  max-w-[100px] text-center ">
                                             {visite.document.typeDocument.label}
                                         </p>
@@ -236,7 +273,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                                         className="w-full h-[120px] flex flex-col items-center justify-center"
                                         onClick={() => handleTypeClick(visite)}
                                     >
-                                        <CirclePlus className="w-10 h-10 text-muted-foreground"  />
+                                        <CirclePlus className="w-10 h-10 text-muted-foreground" />
                                         <span className="text-xs text-center text-muted-foreground">
                                             <strong>Ajouter le Rapport</strong>
                                         </span>
@@ -260,13 +297,13 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                     showType={false}
                 />
             )}
-              <CoordinateursMapSheet
-                     open={openVisiteSheet}
-                     onOpenChange={setOpenVisiteSheet}
-                     contactId={0}
-                     onAssign={handleAssign}
-                     visite={currentVisite ?? undefined}
-                   />
+            <CoordinateursMapSheet
+                open={openVisiteSheet}
+                onOpenChange={setOpenVisiteSheet}
+                contactId={0}
+                onAssign={handleAssign}
+                visite={currentVisite ?? undefined}
+            />
         </>
     );
 };

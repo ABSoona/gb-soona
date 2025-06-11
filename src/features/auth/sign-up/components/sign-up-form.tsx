@@ -18,6 +18,8 @@ import { userTypes } from '@/features/users/data/data'
 import { toast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import { UserRole } from '@/model/user/User'
+import { getInvitationWithToken } from '@/api/invitation/invitationService2'
+import { Invitation } from '@/model/invitation/Invitation'
 
 type SignUpFormProps = HTMLAttributes<HTMLDivElement>
 
@@ -36,15 +38,14 @@ const formSchema = z.object({
 
 export function SignUpForm({ className, ...props }: SignUpFormProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [invitation, setInvitation] = useState<Invitation | null>(null); // 👈 ajoute cet état
 
   const searchParams: { token: string } = useSearch({ from: '/(auth)/sign-up' })
   const token = searchParams.token
 
-  const { invitations } = useInvitationService({
-    where: { token: { equals: token } },
-  })
+ 
   const navigate = useNavigate()
-  const invitation = invitations[0]
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,6 +68,27 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
       form.setValue('role', invitation.role)
     }
   }, [invitation, form])
+
+  useEffect(() => {
+    const fetchInvitation = async () => {
+      try {
+        const inv = await getInvitationWithToken(token);
+        setInvitation(inv);
+
+        if (inv?.email) {
+          form.setValue('email', inv.email);
+        }
+        if (inv?.role) {
+          form.setValue('role', inv.role);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement de l’invitation :', error);
+        toast({ title: 'Invitation invalide', variant: 'destructive' });
+      }
+    };
+
+    fetchInvitation();
+  }, [token, form]);
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     if (!invitation) {

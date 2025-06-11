@@ -4,7 +4,7 @@ import { VISITE_FIELDS } from './fragment';
 
 export const GET_VISITES = gql`
   query GetVisites($skip: Float, $take: Float, $where : VisiteWhereInput) {
-    visites(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Asc }]) {
+    visites(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Desc }]) {
       ...VisiteFields
      
     }
