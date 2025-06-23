@@ -38,7 +38,26 @@ import { User } from '@/model/user/User';
 // 📌 Schéma de validation du formulaire avec Zod
 const formSchema = demandeSchema
   .omit({ id: true, contact: true, createdAt: true, demandeActivities: true,acteur :true,proprietaire:true }) // Supprime les champs "id" et "contact"
-  .extend({ contactId: z.any(), acteurId: z.any()});  // Ajoute "contactId"
+  .extend({ contactId: z.any(), acteurId: z.any()}) 
+  .superRefine((data, ctx) => {
+    if (data.situationFamiliale === 'marié') {
+      if (!data.situationProConjoint) {
+        ctx.addIssue({
+          path: ['situationProConjoint'],
+          code: z.ZodIssueCode.custom,
+          message: 'Champ requis si la personne est mariée',
+        });
+      }
+      if (data.revenusConjoint === undefined || isNaN(data.revenusConjoint)) {
+        ctx.addIssue({
+          path: ['revenusConjoint'],
+          code: z.ZodIssueCode.custom,
+          message: 'Champ requis si la personne est mariée',
+        });
+      }
+    }
+  }); // Ajoute "contactId"
+  
 
 type DemandeForm = z.infer<typeof formSchema>;
 

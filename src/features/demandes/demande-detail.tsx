@@ -15,6 +15,11 @@ import AidesProvider from '../aides/context/aides-context';
 import { DemandeView } from './components/demande-view';
 import { demandeStatusColor, demandeStatusTypes } from './data/data';
 import AppLayout from '@/components/layout/app-layout';
+import { DemandesPrimaryButtons } from './components/demandes-primary-buttons';
+import { useDemandes } from './context/demandes-context';
+import { DemandesDialogs } from './components/demandes-dialogs';
+import { IconPencil } from '@tabler/icons-react';
+
 
 interface Props {
   showContact?: boolean
@@ -27,10 +32,11 @@ export default function DemandeDetail({ showContact = true }: Props) {
   });
 
   const navigate = useNavigate();
-  const { demandes, loading: isLoading, error } = useDemandeService({ where: { id: { equals: Number(id) } } });
+  const { demandes, refetch,loading: isLoading, error } = useDemandeService({ where: { id: { equals: Number(id) } } });
  const demande = demandes[0]!;
   const searchParams = new URLSearchParams(location.search);
   const from = searchParams.get('from');
+    const { setOpenDemande: setOpen, setCurrentRow } = useDemandes()
 
 
   // Récupération du contexte pour gérer les actions sur les demandes
@@ -47,23 +53,34 @@ export default function DemandeDetail({ showContact = true }: Props) {
   }
 
   return (
+
     <AppLayout>
           
-      
+         
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button variant="ghost" onClick={handleRetour} size="icon">
               <ChevronLeft />
             </Button>
             <h2 className="text-xl font-bold tracking-tight">Demande N° {id}</h2>
-          </div>
 
-          <Badge
+            <Badge
             variant="outline"
             className={`${cn(demandeStatusColor.get(demande?.status))} text-sm`}
           >
             {demandeStatusTypes.find(s => s.value === demande?.status)?.label ?? 'Inconnu'}
           </Badge>
+          </div>
+
+          
+          
+          <Button className='space-x-1'  onClick={() => {
+              setCurrentRow(demande)
+              setOpen('edit')
+            }}>
+         <span>Modifier</span> <IconPencil size={18} />
+      </Button>
+         <DemandesDialogs refetch={refetch}/>
         </div>
 
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
@@ -82,13 +99,17 @@ export default function DemandeDetail({ showContact = true }: Props) {
             </div>
           ) : (
             <AidesProvider>
+             
               <DemandeView currentRow={demande} showContact={showContact} />
+            
+              
             </AidesProvider>
           )}
         </div>
      
-
+        
 
       </AppLayout>
+
   );
 }

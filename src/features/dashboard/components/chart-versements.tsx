@@ -92,19 +92,12 @@ export function ChartVersement({chartData}:ChartVersementProps) {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              minTickGap={32}
-              tickFormatter={(value) => {
-                const date = new Date(value)
-                return date.toLocaleDateString("fr-FR", {
-                  month: "short",
-                  day: "numeric",
-                })
-              }}
-            />
+  dataKey="date"
+  tickLine={false}
+  axisLine={false}
+  tickMargin={8}
+  minTickGap={32}
+/>
             <ChartTooltip
               content={
                 <ChartTooltipContent

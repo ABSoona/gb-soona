@@ -41,9 +41,10 @@ interface DataTableProps {
     hideTools?: boolean;
     showDetailIn?: detailOpenOption;
     hideActions?: boolean
+    ShowPagination?:boolean
 }
 
-export function DemandesTable({ columns, data, hideTools = false, hideActions = false, showDetailIn = detailOpenOption.page }: DataTableProps) {
+export function DemandesTable({ columns, data, hideTools = false, ShowPagination = true, showDetailIn = detailOpenOption.page }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({});
     const navigate = useNavigate();
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -181,7 +182,7 @@ export function DemandesTable({ columns, data, hideTools = false, hideActions = 
                 </Table>
             </div>
             {/* Afficher la Pagination seulement si hideTools est false */}
-            {!hideTools && <DataTablePagination table={table} />}
+            {ShowPagination && <DataTablePagination table={table} />}
         </div>
     );
 }
