@@ -243,7 +243,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const hasContactAttempts: boolean = (currentRow.demandeActivities.filter((e) => (e.typeField === "priseContactReussie"))).length > 0
   const hasPedingVisite : boolean = visites.filter((e:Visite) =>(e.status==='Programee')).length>0
 
-  async function onRapportAdded() {
+  async function handleChnageToEnComite() {
     await createDemandeActivity({
       titre: "Rapport de visite ajouté",
       message: "Un rapport de visite a été ajouté à la demande.",
@@ -270,6 +270,14 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         { confirmText: "Confirmer", cancelBtnText: "Annuler", destructive: false }
       );
     }
+  }
+
+  async function onRapportAdded() {
+    handleChnageToEnComite()
+  } 
+
+  async function onVisitDone(){
+    handleChnageToEnComite()
   }
 
   const handleAssign = async (data: { visiteur: User }) => {
@@ -304,6 +312,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       setOpenShareFicheVisite={setOpenShareFicheVisite}
       handleAbandonnerDemande={handleAbandonnerDemande}
       onRapportAdded={onRapportAdded}
+      onVisitDone={onVisitDone}
     />
   </div>
 )}

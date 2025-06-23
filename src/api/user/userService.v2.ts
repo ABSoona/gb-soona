@@ -1,16 +1,33 @@
 import { toast } from '@/hooks/use-toast';
 import { handleServerError } from '@/utils/handle-server-error';
 import { useMutation, useQuery } from '@apollo/client';
-import { useState } from 'react';
-import { CREATE_USER, DELETE_USER, GET_USERS, SEARCH_USERS, UPDATE_USER } from './graphql/queries';
+import { useMemo, useState } from 'react';
+import { CREATE_USER, DELETE_USER, GET_USERS, SEARCH_USERS, SEARCH_USERS_BY_FIRSTNAME, SEARCH_USERS_BY_LASTNAME, UPDATE_USER } from './graphql/queries';
+
 
 export function useUsersSearch(search: string) {
-  const { data, loading, error } = useQuery(SEARCH_USERS, { variables: { search }, skip: !search });
+  const skip = !search;
+
+  const { data: dataFirst, loading: loadingFirst } = useQuery(SEARCH_USERS_BY_FIRSTNAME, {
+    variables: { search },
+    skip,
+  });
+
+  const { data: dataLast, loading: loadingLast } = useQuery(SEARCH_USERS_BY_LASTNAME, {
+    variables: { search },
+    skip,
+  });
+
+  const users = useMemo(() => {
+    const merged = [...(dataFirst?.users || []), ...(dataLast?.users || [])];
+    const uniqueUsers = Array.from(new Map(merged.map((u) => [u.id, u])).values());
+    return uniqueUsers;
+  }, [dataFirst, dataLast]);
 
   return {
-    users: data?.users || [],
-    loading,
-    error,
+    users,
+    loading: loadingFirst || loadingLast,
+    error: null, // gère les erreurs si besoin
   };
 }
 

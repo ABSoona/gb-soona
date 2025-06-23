@@ -82,10 +82,14 @@ export const demandeSchema = z.object({
   situationFamiliale: situationFamSchema,
   nombreEnfants: z.coerce.number().min(-1).max(10),
   agesEnfants: z.string().optional().or(z.literal('')),
-  situationProfessionnelle: situationProSchema,
-  situationProConjoint: situationProSchema.optional(),
+  situationProfessionnelle: situationProSchema.optional(),
+  situationProConjoint: z
+  .string()
+  .optional()
+  .or(z.literal('').transform(() => undefined)),
   revenus: z.coerce.number(),
-  revenusConjoint: z.coerce.number().optional(),
+  revenusConjoint: z
+  .preprocess((val) => (val === '' ? undefined : Number(val)), z.number().optional()),
   loyer: z.coerce.number(),
   facturesEnergie: z.coerce.number(),
   autresCharges: z.coerce.number(),

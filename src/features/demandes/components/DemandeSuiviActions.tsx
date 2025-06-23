@@ -34,6 +34,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     setOpenShareFicheVisite: (open: boolean) => void;
     handleAbandonnerDemande: () => void;
     onRapportAdded: () => void;
+    onVisitDone: () => void;
   }
   
   export function DemandeSuiviActions({
@@ -52,6 +53,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     setOpenShareFicheVisite: setOpenShareDemande,
     handleAbandonnerDemande,
     onRapportAdded,
+    onVisitDone,
   }: Props) {
     if (!currentRow) return null;
   
@@ -131,7 +133,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
               <DemandeActivityTimeline demandeId={currentRow.id} activities={currentRow.demandeActivities} />
             </TabsContent>
             <TabsContent value="Visites">
-              <VisiteList demandeId={currentRow.id} onRapportAdded={onRapportAdded} />
+              <VisiteList demandeId={currentRow.id} onRapportAdded={onRapportAdded} onVisitDone={onVisitDone}/>
             </TabsContent>
           </Tabs>
         </CardContent>

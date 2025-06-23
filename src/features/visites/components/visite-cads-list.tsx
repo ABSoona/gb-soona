@@ -34,10 +34,11 @@ import { DatePicker } from "@/components/ui/date-picker";
 interface VisiteListProps {
     demandeId: number;
     onRapportAdded?: () => void;
+    onVisitDone?:() => void
     onAffecterA?: () => void
 }
 
-export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteListProps) => {
+export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA,onVisitDone }: VisiteListProps) => {
     const { visites, updateVisite, refetch, isSubmitting } = useVisiteService({
         where: { demande: { id: demandeId } },orderBy:{createdAt:'Asc'}
     });
@@ -178,10 +179,15 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA }: VisiteLis
                                         <UserCheck />
                                         Affecter la visite à…
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => updateVisite(visite.id, { status: "Realisee", dateVisite: new Date() })}>
-                                        <Check />
-                                        Marquer comme réalisée
-                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                    onClick={() => {                                        
+                                        onVisitDone?.();
+                                        updateVisite(visite.id, { status: "Realisee", dateVisite: new Date() })
+                                    }}
+                                    >
+  <Check />
+  Marquer comme réalisée
+</DropdownMenuItem>
                                     <DropdownMenuItem disabled={visite.status == "Annulee"} onClick={() => updateVisite(visite.id, { status: "Annulee" })}>
                                         <RefreshCwOff />
                                         Annuler la visite

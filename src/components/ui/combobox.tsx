@@ -5,7 +5,7 @@ import { useState } from 'react';
 interface ComboboxProps {
   value: string;
   onValueChange: (value: string) => void;
-  items: { value: string; label: string, label2: string, label3: string }[];
+  items: { value: string; label:  React.ReactNode, label2?:  React.ReactNode, label3?:  React.ReactNode }[];
   placeholder?: string;
   isLoading?: boolean;
   onInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -54,10 +54,10 @@ export function Combobox({
                       {item.label}
                     </div>
                     <div className="text-xs text-muted-foreground group-hover:text-sm">
-                      {item.label2}
+                      {item?.label2}
                     </div>
                     <div className="text-xs text-muted-foreground group-hover:text-sm">
-                      {item.label3}
+                      {item?.label3}
                     </div>
                   </div>
                 </div>

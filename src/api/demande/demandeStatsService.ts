@@ -48,9 +48,9 @@ export function useDemandeStatsService() {
   };
 }
 
-export function useDashboardStats(dateRange: { from: Date; to: Date }) {
+export function useDashboardStats() {
   const { data, loading, error, refetch } = useQuery(GET_DASHBOARD_STATS, {
-    variables: { beginDate:dateRange.from, endDate:dateRange.to}
+   // variables: { beginDate:dateRange.from, endDate:dateRange.to}
   });
   const dashBoardStats: DashBoardDemandeStats = {
 

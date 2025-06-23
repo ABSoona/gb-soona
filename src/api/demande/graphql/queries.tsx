@@ -140,14 +140,14 @@ export const GET_DEMANDE_STATS = gql`
 `;
 
 export const GET_DASHBOARD_STATS = gql`
-  query CountDemandesDashboardStats($beginDate:  DateTime!,$endDate:  DateTime! ) {
+  query CountDemandesDashboardStats  {
     total: _demandesMeta {
       count
     }
 
     suivies: demandes(
       where: {
-        status: { in: ["recue","en_commision", "en_visite", "EnAttenteDocs"] }, createdAt : {lt : $endDate, gt : $beginDate}
+        status: { in: ["recue","en_commision", "en_visite", "EnAttenteDocs"] }
       }
     ) {
       id
@@ -158,14 +158,14 @@ export const GET_DASHBOARD_STATS = gql`
 
     enVisite: _demandesMeta(
       where: {
-        status: { equals: "en_visite" }, createdAt : {lt : $endDate, gt : $beginDate}
+        status: { equals: "en_visite" }
       }
     ) {
       count
     }
     enAttente: _demandesMeta(
       where: {
-        status: { equals: "EnAttente" }, createdAt : {lt : $endDate, gt : $beginDate}
+        status: { equals: "EnAttente" }
       }
     ) {
       count
@@ -173,7 +173,7 @@ export const GET_DASHBOARD_STATS = gql`
 
     enCommite: _demandesMeta(
       where: {
-        status: { equals: "en_commision" }, createdAt : {lt : $endDate, gt : $beginDate}
+        status: { equals: "en_commision" }
       }
     ) {
       count
@@ -181,7 +181,7 @@ export const GET_DASHBOARD_STATS = gql`
       
     recue: demandes(
       where: {
-        status: { equals: "recue" }, createdAt : {lt : $endDate, gt : $beginDate}
+        status: { equals: "recue" }
       }
     ) {
       id

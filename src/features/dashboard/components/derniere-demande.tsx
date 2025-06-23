@@ -31,7 +31,7 @@ export function DernieresDemandes() {
           <p>Aucune demande trouvée.</p>
         </div>
       ) : (
-        <DemandesTable data={demandes.filter((e) => (!(e.demandeActivities.length > 1))) ?? []} columns={fewDemandesColumns} hideTools={true} />
+        <DemandesTable data={demandes.filter((e) => (!(e.demandeActivities.length > 1))) ?? []} columns={fewDemandesColumns} hideTools={true} ShowPagination={true}  />
       )}
 
     </DemandesProvider>

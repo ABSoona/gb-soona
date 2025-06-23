@@ -40,6 +40,7 @@ export function UserSearchCombobox({ onSelect, defaultUser }: UserSearchCombobox
     console.log("📦 combobox items:", users.map((user:User) => ({
       value: user.id,
       label: `${user.firstName} ${user.lastName} - N° ${user.email}`,
+     
     })));
   return (
     <div className="relative">
@@ -93,7 +94,9 @@ export function UserSearchCombobox({ onSelect, defaultUser }: UserSearchCombobox
                   <span className="text-xs text-muted-foreground">{user.email}</span>
                 </div>
               </div>
-            )
+            ),
+            label2:"",
+            label3:""
           }))}
           placeholder="Rechercher un collègue..."
           isLoading={loading}
