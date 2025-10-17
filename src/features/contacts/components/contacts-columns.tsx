@@ -48,7 +48,7 @@ export const aidesColumns: ColumnDef<Contact>[] = [
     {
         id: 'search',
         header: 'Recherche',
-        accessorFn: row => `${row.nom ?? ''} ${row.prenom ?? ''} ${row.email ?? ''} ${row.telephone ?? ''}  ${row.codePostal ?? ''} ${row.numBeneficiaire ?? ''}`,
+        accessorFn: row => `${row.nom ?? ''} ${row.prenom ?? ''} ${row.nom ?? ''} ${row.email ?? ''} ${row.telephone ?? ''}  ${row.codePostal ?? ''} ${row.numBeneficiaire ?? ''}`,
 
         filterFn: (row, id, value) => {
             const v = (value as string)?.toLowerCase?.() ?? '';
@@ -110,7 +110,8 @@ export const aidesColumns: ColumnDef<Contact>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Age' />
           ),
-        cell: ({ row }) => row.original?.age ? new Date().getFullYear() - row.original.age : '-'
+       // cell: ({ row }) => row.original?.age ? new Date().getFullYear() - row.original.age : '-'
+       cell: ({ row }) => row.original?.age 
     },
     {
         accessorFn: (row) => row?.telephone,
@@ -135,7 +136,7 @@ export const aidesColumns: ColumnDef<Contact>[] = [
     {
         accessorKey: 'status',
          header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title='Etat' />
+                    <DataTableColumnHeader column={column} title='Statut' />
                   ),
         cell: ({ row }) => {
             const status: ContactStatus = row.getValue('status');

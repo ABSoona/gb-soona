@@ -65,7 +65,7 @@ export function ContactSearchCombobox({ onSelect, defaultContact }: ContactSearc
             label2: ` ${contact.telephone}`,
             label3: ` ${contact.email}`
           }))}
-          placeholder="Rechercher un contact..."
+          placeholder="Rechercher un bénéficiaire..."
           isLoading={loading}
           onInputChange={(e) => setSearch(e.target.value)}
         />

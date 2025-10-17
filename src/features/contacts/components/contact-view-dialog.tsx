@@ -43,7 +43,7 @@ export function ContactViewDialog({ currentRow, open, onOpenChange }: Props) {
           <Button onClick={() => {
             setCurrentRow(currentRow)
             setOpen('edit')
-          }}>Modifier la Contact</Button>
+          }}>Modifier le bénéficiaire</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

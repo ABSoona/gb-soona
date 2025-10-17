@@ -46,6 +46,6 @@ export const aideCredieteurTypes =
 export const typeAideTypes =
   [
     { label: 'Financière', value: 'FinanciRe' },
-    { label: 'Assitance Administrative', value: 'AssistanceAdministrative' },
+    { label: 'Assistance Administrative', value: 'AssistanceAdministrative' },
 
   ] as const

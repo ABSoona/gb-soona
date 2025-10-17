@@ -241,7 +241,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   };
 
   const hasContactAttempts: boolean = (currentRow.demandeActivities.filter((e) => (e.typeField === "priseContactReussie"))).length > 0
-  const hasPedingVisite : boolean = visites.filter((e:Visite) =>(e.status==='Programee')).length>0
+  const hasPedingVisite : boolean = visites.filter((e:Visite) =>(e.status==='Programee' || e.status==='Planifiee' )).length>0
 
   async function handleChnageToEnComite() {
     await createDemandeActivity({
@@ -286,8 +286,8 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     await createVisite({ acteur: { id: data.visiteur.id }, demande: { id: currentRow.id }, status: 'Programee' })
     await updateDemande(currentRow.id, {
       status: "en_visite",
-    /*   acteur: { id: coordinateur.id } */
-    });
+ 
+    }); 
 
     setOpenVisiteSheet(false);
   };
@@ -361,7 +361,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card className="h-full">
             <CardHeader>
-              <CardTitle>Informations sur le Contact</CardTitle>
+              <CardTitle>Informations sur le Bénéficiaire</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <DetailRow label="Nom et Prénom" value={`${currentRow?.contact?.nom} ${currentRow?.contact?.prenom}`} link={`/contacts/${currentRow.contact.id}`} capitalize={true} />

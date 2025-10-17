@@ -40,7 +40,7 @@ export function useSidebarData(): SidebarData {
               badge: stats.total >0? String(stats.total) : undefined,
             },
             {
-              title: 'Affectées à moi',
+              title: 'Mes demandes',
               url: '/demandes/mes-demandes',
               icon: Squircle,
               badge: stats.affecteAMoi > 0 ? String(stats.affecteAMoi) : undefined,

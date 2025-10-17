@@ -127,7 +127,7 @@ export const columns: ColumnDef<Aide>[] = [
     {
         accessorFn: (row) => row.crediteur,
         id: 'crediteur',
-        header: 'Crédieteur',
+        header: 'Destinataire',
         cell: ({ row }) => {
 
             return aideCredieteurTypes.find(s => s.value === row.getValue('crediteur'))?.label ?? '';
@@ -159,7 +159,7 @@ export const columns: ColumnDef<Aide>[] = [
       {
         accessorFn: (row) => row.status,
         id: 'status',
-        header: 'Etat',
+        header: 'Statut',
         cell: ({ row }) => {
 
             return aideStatusTypes.find(s => s.value === row.getValue('status'))?.label ?? '';
