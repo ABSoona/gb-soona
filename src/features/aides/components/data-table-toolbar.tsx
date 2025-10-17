@@ -128,7 +128,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                     {table.getColumn('crediteur') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('crediteur')}
-                            title="Créditeur"
+                            title="Destinataire"
                             options={aideCredieteurTypes.map((t) => ({ ...t }))}
                         />
                     )}

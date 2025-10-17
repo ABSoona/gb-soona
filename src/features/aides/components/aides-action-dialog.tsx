@@ -230,6 +230,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
   const dernierVersement = calculerDateDernierVersement(dateAide, frequence, Number(nombreVersements || 1));
   return (
     <Sheet
+    modal={false}
       open={open}
       onOpenChange={(state) => {
         onOpenChange(state);
@@ -346,7 +347,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
               {typeAide === "FinanciRe" &&
                 <FormField control={form.control} name="crediteur" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Créditeur</FormLabel>
+                    <FormLabel>Destinataire</FormLabel>
                     <SelectDropdown defaultValue={field.value} onValueChange={field.onChange} items={[...aideCredieteurTypes]} />
                     <FormMessage />
                   </FormItem>

@@ -108,7 +108,7 @@ export function TasksMutateDrawer({ open, onOpenChange, currentRow }: Props) {
               name='status'
               render={({ field }) => (
                 <FormItem className='space-y-1'>
-                  <FormLabel>Etat</FormLabel>
+                  <FormLabel>Statut</FormLabel>
                   <SelectDropdown
                     defaultValue={field.value}
                     onValueChange={field.onChange}

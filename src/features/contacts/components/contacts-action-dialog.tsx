@@ -123,6 +123,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
   return (
 
     <Sheet
+    modal={false}
       open={open}
       onOpenChange={(state) => {
         form.reset();
@@ -131,9 +132,9 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
     >
       <SheetContent className="flex flex-col">
         <SheetHeader className="text-left">
-          <SheetTitle>{isEdit ? 'Modifier le Contact N° ' + currentRow?.id : 'Ajouter une Contact'}</SheetTitle>
+          <SheetTitle>{isEdit ? 'Modifier le Contact N° ' + currentRow?.id : 'Ajouter un bénéficiaire'}</SheetTitle>
           <SheetDescription>
-            {isEdit ? 'Mettez à jour la contact ici.' : 'Créez une nouvelle contact ici.'} Cliquez sur "Enregistrer" lorsque vous avez terminé.
+            {isEdit ? 'Mettez à jour la contact ici.' : 'Créez un nouveau bénéficiaire ici.'} Cliquez sur "Enregistrer" lorsque vous avez terminé.
           </SheetDescription>
         </SheetHeader>
         <ScrollArea className="h-full w-full py-1 pr-4">
@@ -330,7 +331,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
                 name="status"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel>Etat</FormLabel>
+                    <FormLabel>Statut</FormLabel>
                     <SelectDropdown
                       defaultValue={field.value}
                       onValueChange={field.onChange}

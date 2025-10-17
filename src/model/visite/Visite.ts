@@ -8,6 +8,7 @@ export const VisiteSatusSchema = z.union([
   z.literal('Programee'),
   z.literal('Realisee'),
   z.literal('Annulee'),
+  z.literal('Planifiee'),
 
 ]);
 export type VisiteStatus= z.infer<typeof VisiteSatusSchema>;

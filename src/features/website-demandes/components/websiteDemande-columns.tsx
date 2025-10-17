@@ -40,7 +40,7 @@ export const websiteDemandeColumns: ColumnDef<WebsiteDemande>[] = [
   {
     id: 'status',
     accessorKey: 'status',
-    header: 'Etat',
+    header: 'Statut',
     cell: ({ row }) => {
       const status: WsDemandeStatus = row.getValue('status');
       const statusLabel = wsDemandeStatusTypes.find(s => s.value === status)?.label ?? 'Inconnu';

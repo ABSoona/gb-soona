@@ -63,7 +63,7 @@ export function AidesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value === '' ? '' : Number(e.target.value))} // ✅ Gestion du champ vide
-              placeholder='Entrez le N° pour confirmer la suppression'
+              placeholder='Entrez le montant pour confirmer la suppression'
             />
           </Label>
 

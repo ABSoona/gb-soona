@@ -8,12 +8,12 @@ import {
 
 export const contactStatusTypes = [
   {
-    label: 'Active',
+    label: 'Actif',
     value: 'active',
     icon: IconShield,
   },
   {
-    label: 'Balcklisté',
+    label: 'Black-listé',
     value: 'blacklisté',
     icon: IconUsersGroup,
   },

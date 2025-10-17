@@ -111,7 +111,7 @@ export function NotificationsForm() {
         </Section>
 
         <Section title='Bénéficiaire'>
-          <PrefSwitch form={form} name='contactBlackL' label='Bénéficiaire blacklisté' description='Quand un contact est blacklisté.' />
+          <PrefSwitch form={form} name='contactBlackL' label='Bénéficiaire blacklisté' description='Quand un contact est black-listé.' />
         </Section>
 
         <Section title='Aides'>

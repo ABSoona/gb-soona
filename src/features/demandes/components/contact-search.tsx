@@ -102,7 +102,7 @@ export function ContactSearchCombobox({
               </div>
             )
           }))}
-          placeholder="Rechercher un contact..."
+          placeholder="Rechercher un bénéficiaire..."
           isLoading={loading}
         />
       )}

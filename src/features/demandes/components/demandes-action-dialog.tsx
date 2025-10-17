@@ -181,13 +181,14 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
   return (
 
     <Sheet
+   
       open={open}
       onOpenChange={(state) => {
         form.reset();
         onOpenChange(state);
       }}
     >
-      <SheetContent className="flex flex-col">
+      <SheetContent className="flex flex-col" >
         <SheetHeader className="text-left">
           <SheetTitle>{isEdit ? 'Modifier la Demande' : 'Ajouter une Demande'}</SheetTitle>
           <SheetDescription>
@@ -207,7 +208,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
                 name="contactId"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel>Contact</FormLabel>
+                    <FormLabel>Bénéficiaire</FormLabel>
                     <FormControl>
                       <ContactSearchCombobox
                         onSelect={(contactId) => {

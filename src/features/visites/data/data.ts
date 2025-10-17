@@ -16,8 +16,9 @@ export const visiteStatusColor = new Map<VisiteStatus, string>([
 
 export const visiteStatusTypes =
   [
-    { label: 'Programmée', value: 'Programee' },
+    { label: 'Attribuée', value: 'Programee' },
     { label: 'Réalisée', value: 'Realisee' },
     { label: 'Annulée', value: 'Annulee' },
+    { label: 'Planifiée', value: 'Planifiee' },
 
   ] as const

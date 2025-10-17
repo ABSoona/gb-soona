@@ -113,7 +113,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA,onVisitDone 
     const handleAssign = async (data: { visiteur: User }, visite?: Visite) => {
         console.log("Assignation déclenchée côté parent avec :", data.visiteur.id);
         const coordinateur = data.visiteur.superieur ?? data.visiteur;
-        visite && await updateVisite(visite.id, { acteur: { id: data.visiteur.id } })
+        visite && await updateVisite(visite.id, {  acteur: { id: data.visiteur.id }})
         /*  await updateDemande(currentRow.id, {
             status: "en_visite",
             acteur: { id: coordinateur.id }
@@ -145,7 +145,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA,onVisitDone 
                                             disabled={isSubmitting}
                                             onClick={async () => {
                                                 if (editedDate) {
-                                                    await updateVisite(visite.id, { dateVisite: editedDate });
+                                                    await updateVisite(visite.id, { dateVisite: editedDate, status: "Planifiee"   });
                                                     setEditingDateId(null);
                                                 }
                                             }}
