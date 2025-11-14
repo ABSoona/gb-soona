@@ -120,7 +120,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                     {table.getColumn('status') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('status')}
-                            title="Etat"
+                            title="Statut"
                             options={demandeStatusTypes.map((t) => ({ ...t }))}
                         />
                     )}

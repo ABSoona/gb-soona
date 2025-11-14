@@ -26,6 +26,7 @@ export const contactSchema = z.object({
   nom: z.string(),
   prenom: z.string(),
   age: z.coerce.number(),
+  dateNaissance: z.coerce.date(),
   email: z.string(),
   telephone: z.string(),
   adresse: z.string().optional(),

@@ -44,7 +44,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'status',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Etat' />
+      <DataTableColumnHeader column={column} title='Statut' />
     ),
     cell: ({ row }) => {
       const { status } = row.original

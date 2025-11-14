@@ -30,6 +30,11 @@ export function DatePicker({ date, onDateChange, className }: DatePickerProps) {
       <PopoverContent className="w-auto p-0">
         <Calendar
           locale={fr}
+          
+          captionLayout="dropdown"
+          fromYear={1900}   // 👈 début de la plage
+          toYear={2030}   
+            // 👈 fin de la plage
           mode="single"
           selected={date}
           onSelect={onDateChange}  // ✅ Correction ici

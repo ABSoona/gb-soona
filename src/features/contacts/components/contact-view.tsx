@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useDocumentActions } from '@/features/documents/useDocumentActions';
 import { TypeDocument } from '@/model/typeDocument/typeDocument';
+import { format } from 'date-fns';
 
 interface Props {
   currentRow: Contact,
@@ -92,7 +93,8 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
           <CardContent className="space-y-2">
             <DetailRow label="Nom et Prénom" capitalize={true} value={`${currentRow?.nom} ${currentRow?.prenom}`} />
             {/* <DetailRow label="Age" value={currentRow?.age != null ? `${ new Date().getFullYear() - currentRow.age} ans`: '-'} /> */}
-            <DetailRow label="Age" value={currentRow?.age != null ? `${currentRow.age} ans`: '-'} />
+            {/* <DetailRow label="Age" value={currentRow?.age != null ? `${currentRow.age} ans`: '-'} /> */}
+            <DetailRow label="Date Naissance" value={currentRow?.dateNaissance != null ? `${format(currentRow.dateNaissance, "dd/MM/yyyy")}`: '-'} />
             <DetailRow label="Email" value={currentRow.email ?? '-'} />
             <DetailRow label="Tél" value={currentRow.telephone ?? '-'} />
             <DetailRow label="Adresse" value={currentRow?.adresse ?? '-'} />

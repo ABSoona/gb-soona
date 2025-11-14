@@ -10,6 +10,7 @@ export const SEARCH_CONTACTS = gql`
       nom 
       prenom
       age
+      dateNaissance
       email
       telephone
       adresse
