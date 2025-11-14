@@ -29,6 +29,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { contactStatusTypes } from '../data/data';
+import { DatePicker } from '@/components/ui/date-picker';
 
 
 // 📌 Schéma de validation du formulaire avec Zod
@@ -91,6 +92,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
       remarques: values.remarques,
       nom: values.nom,
       prenom: values.prenom,
+      dateNaissance : values.dateNaissance,
       email: values.email,
       telephone: values.telephone,
       ville: values.ville,
@@ -192,20 +194,18 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
               />
               <FormField
                 control={form.control}
-                name='age'
+                name='dateNaissance'
                 render={({ field }) => (
                   <FormItem className='space-y-1'>
                     <FormLabel>
-                      Année de naissance
+                      Date de naissance
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder='Age du contact'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-
-                      />
+                      <DatePicker
+                     
+                                           date={field.value}
+                                           onDateChange={field.onChange}
+                                         />
                     </FormControl>
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>

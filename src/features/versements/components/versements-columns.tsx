@@ -130,7 +130,7 @@ export const columns: ColumnDef<Versement>[] = [
         id: 'status',
         accessorKey: 'status',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Etat' />
+            <DataTableColumnHeader column={column} title='Statut' />
         ),
         cell: ({ row }) => {
             const status: VersementStatus = row.getValue('status');

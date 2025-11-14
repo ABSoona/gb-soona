@@ -6,6 +6,7 @@ export const CONTACT_FIELDS = gql`
     nom
     prenom
     age
+    dateNaissance
     remarques    
     status
     updatedAt

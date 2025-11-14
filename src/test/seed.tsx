@@ -38,7 +38,7 @@ export function GenerateFakeData() {
         numBeneficiaire: faker.string.alphanumeric(10),
         remarques: faker.lorem.sentence(),
         status: 'active',
-        dateCreation: faker.date.past().toISOString(),
+       // dateCreation: faker.date.past().toISOString(),
       };
 
       const contactRes = await createContact(contactData);
