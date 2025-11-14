@@ -105,10 +105,10 @@ export const aidesColumns: ColumnDef<Contact>[] = [
         enableHiding: true,
     },
     {
-        accessorFn: (row) => row?.age,
-        id: 'age',
+        accessorFn: (row) => row?.dateNaissance,
+        id: 'dateNaissance',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Age' />
+            <DataTableColumnHeader column={column} title='D.Naissance' />
           ),
        // cell: ({ row }) => row.original?.age ? new Date().getFullYear() - row.original.age : '-'
        cell: ({ row }) => row.original?.age 
