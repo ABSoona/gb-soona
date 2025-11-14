@@ -8,6 +8,7 @@ import { Contact, ContactStatus } from '@/model/contact/Contact';
 import { DateRange } from 'react-day-picker';
 import { contactStatusColor, contactStatusTypes } from '../data/data';
 import { DataTableColumnHeader } from './data-table-column-header';
+import { format } from 'date-fns';
 
 const dateRangeFilter: ColumnDef<Contact>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
     if (!filterValue || (!filterValue.from && !filterValue.to)) {
@@ -105,13 +106,13 @@ export const aidesColumns: ColumnDef<Contact>[] = [
         enableHiding: true,
     },
     {
-        accessorFn: (row) => row?.age,
-        id: 'age',
+        accessorFn: (row) => row?.dateNaissance,
+        id: 'dateNaissance',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Age' />
+            <DataTableColumnHeader column={column} title='D. Naissance' />
           ),
        // cell: ({ row }) => row.original?.age ? new Date().getFullYear() - row.original.age : '-'
-       cell: ({ row }) => row.original?.age 
+       cell: ({ row }) => row.original?.dateNaissance != null ? `${format(row.original?.dateNaissance, "dd/MM/yyyy")}`: '-'
     },
     {
         accessorFn: (row) => row?.telephone,
