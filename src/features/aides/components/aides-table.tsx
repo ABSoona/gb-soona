@@ -96,7 +96,7 @@ export function AidesTable({ columns, data, hideTools = false, hideActions = fal
             {!hideTools && <DataTableToolbar table={table} />}
 
             <div className="rounded-md border">
-                <Table>
+                <Table className='text-xs'>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id} className="group/row">

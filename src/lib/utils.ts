@@ -34,3 +34,17 @@ export async function geocodeAddress(address: string): Promise<{ lat: number; ln
     return null;
   }
 }
+export function calculerAge(dateNaissance: string | Date) {
+  const birth = new Date(dateNaissance);
+  const today = new Date();
+
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+
+  // si l’anniversaire n'est pas encore passé cette année
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+
+  return age;
+}

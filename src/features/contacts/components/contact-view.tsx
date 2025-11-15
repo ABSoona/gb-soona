@@ -111,7 +111,7 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
-              <CardTitle className="whitespace-nowrap">Hitorique des Demandes</CardTitle>
+              <CardTitle className="whitespace-nowrap">Historique des Demandes</CardTitle>
               <Button variant='outline' size='sm' className="h-8" onClick={() => setOpenDemande('add')}>
                 <Plus /> Nouvelle demande
               </Button>
@@ -119,11 +119,13 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
             <CardContent>
               {loadingDemandes ? <TableSkeleton rows={3} columns={4} /> : (
                 <DemandesTable
+              
                   data={demandes || []}
                   columns={fewDemandesColumns}
                   hideTools={true}
                   hideActions={false}
                   showDetailIn={showDetailIn}
+                  ShowPagination={false}
                 />
               )}
             </CardContent>
@@ -181,10 +183,10 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
 function DetailRow({ label, value, link, capitalize = false }: { label: string; value: React.ReactNode; link?: string; capitalize?: boolean }) {
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center w-4/5">
-        <span className="font-medium text-gray-700 whitespace-nowrap label-style">{label}</span>
+      <div className="flex items-center w-2/5">
+        <span className="f whitespace-nowrap label-style">{label}</span>
       </div>
-      <div className={`first-letter:uppercase w-1/2 text-left whitespace-nowrap overflow-hidden truncate value-style`}>
+      <div className={`first-letter:uppercase w-3/5 text-left whitespace-nowrap overflow-hidden truncate value-style`}>
         {link ? (
           <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-500 hover:underline">
             {value}

@@ -13,8 +13,8 @@ export function GenerateFakeData() {
   const [loading, setLoading] = useState(false);
 
   const demandeStatusTypes = ['recue', 'en_visite', 'en_commision', 'clôturée', 'refusée', 'EnCours'] as const;
-  const situationsPro = ['sans_emploi', 'employé', 'indépendant', 'retraité'] as const;
-  const situationsFam = ['marié', 'divorcé', 'veuf', 'célibataire'] as const;
+  const situationsPro = ['sans_emploi', 'employé', 'indépendant', 'retraité',"Inconnu"] as const;
+  const situationsFam = ['marié', 'divorcé', 'veuf', 'célibataire',"Inconnu"] as const;
 
   const handleGenerate = async () => {
     setLoading(true);

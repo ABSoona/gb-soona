@@ -144,7 +144,7 @@ export const aidesColumns: ColumnDef<Contact>[] = [
             const statusLabel = contactStatusTypes.find(s => s.value === status)?.label ?? 'Inconnu';
 
             return (
-                <Badge variant="outline" className={cn('capitalize', contactStatusColor.get(status))}>
+                <Badge variant="outline" className={cn('capitalize','text-xs', contactStatusColor.get(status))}>
                     {statusLabel}
                 </Badge>
             );
