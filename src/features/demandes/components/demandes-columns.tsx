@@ -107,6 +107,30 @@ export const columns: ColumnDef<Demande>[] = [
         },
     },
     {
+        accessorFn: (row) => {
+          const cp = row?.contact.codePostal
+          if (!cp) return null
+      
+          // Convertir en string et prendre les 2 premiers caractères
+          const dep = cp.toString().slice(0, 2)
+          return dep
+        },
+        id: "departement",
+      
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Département" />
+        ),
+      
+        cell: ({ row }) => {
+          const dep = row.getValue("departement")
+          return dep ? dep : "-"
+        },
+      
+        filterFn: (row, id, value) => {
+          return value.includes(row.getValue(id))
+        },
+      },
+    {
         accessorFn: (row) => `${row?.acteur?.firstName ?? ''} ${row?.acteur?.lastName ?? ''}`,
         id: 'acteur',
         header: ({ column }) => (
