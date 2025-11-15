@@ -24,6 +24,7 @@ const situationProSchema = z.union([
   z.literal('employé'),
   z.literal('indépendant'),
   z.literal('retraité'),
+  z.literal('Inconnu'),
 ]);
 
 const situationFamSchema = z.union([
@@ -31,6 +32,7 @@ const situationFamSchema = z.union([
   z.literal('divorcé'),
   z.literal('veuf'),
   z.literal('célibataire'),
+  z.literal('Inconnu'),
 ]);
 const categorieSchema = z.union([
   z.literal('LourdementEndett'),
@@ -135,6 +137,11 @@ export const situationFamilleTypes = [
     value: 'veuf',
     icon: IconExternalLink,
   },
+  {
+    label: 'Inconnue',
+    value: 'Inconnu',
+    icon: IconExternalLink,
+  },
 ] as const;
 //A deplacer plus tard dans Contact/data
 export const situationTypes = [
@@ -156,6 +163,11 @@ export const situationTypes = [
   {
     label: 'Retraité',
     value: 'retraité',
+    icon: IconExternalLink,
+  },
+  {
+    label: 'Inconnue',
+    value: 'Inconnu',
     icon: IconExternalLink,
   },
 ] as const

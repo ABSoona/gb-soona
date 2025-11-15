@@ -33,6 +33,7 @@ export const CONTACT_FIELDS_LIGHT = gql`
     remarques    
     status
     updatedAt
+    dateNaissance
     createdAt
     email
     telephone

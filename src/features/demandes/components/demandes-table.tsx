@@ -115,7 +115,7 @@ export function DemandesTable({ columns, data, hideTools = false, ShowPagination
             {!hideTools && <DataTableToolbar table={table} />}
 
             <div className="rounded-md border">
-                <Table>
+                <Table className='text-xs'>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id} className="group/row">

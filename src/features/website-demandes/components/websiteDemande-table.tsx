@@ -92,7 +92,7 @@ export function WebsiteDemandeTable({ columns, data, hideTools = false, hideActi
       {!hideTools && <DataTableToolbar table={table} />}
 
       <div className="rounded-md border">
-        <Table>
+        <Table className='text-xs'>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

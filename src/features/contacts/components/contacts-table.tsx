@@ -126,7 +126,7 @@ export function ContactsTable({ columns, data, hideTools = false }: DataTablePro
             <DataTableToolbar table={table} />
 
             <div className="rounded-md border">
-                <Table>
+                <Table className='text-xs'>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id} className="group/row">

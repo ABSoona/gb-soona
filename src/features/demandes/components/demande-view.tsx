@@ -37,6 +37,7 @@ import { useVisiteService } from '@/api/visite/invitationService'
 import { Visite } from '@/model/visite/Visite'
 import { DemandeSuiviActions } from './DemandeSuiviActions'
 import { EntretienSuiviSheet } from './EntretienSuiviSheet'
+import { calculerAge } from '@/lib/utils'
 
 
 interface Props {
@@ -366,13 +367,13 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
             <CardContent className="space-y-2">
               <DetailRow label="Nom et Prénom" value={`${currentRow?.contact?.nom} ${currentRow?.contact?.prenom}`} link={`/contacts/${currentRow.contact.id}`} capitalize={true} />
               <DetailRow
-                label="Âge"
-                value={
-                  currentRow?.contact?.age != null
-                    ? `${new Date().getFullYear() - currentRow.contact.age} ans`
-                    : '-'
-                }
-              />
+              label="Âge"
+              value={
+                currentRow?.contact?.dateNaissance
+                  ? `${calculerAge(currentRow.contact.dateNaissance)} ans`
+                  : '-'
+              }
+            />
               <DetailRow label="Email" value={currentRow?.contact.email ?? '-'} />
               <DetailRow label="Tél" value={currentRow?.contact.telephone ?? '-'} />
               <DetailRow label="Adresse" value={currentRow?.contact.adresse ?? '-'} capitalize={true} />
@@ -484,9 +485,9 @@ function DetailRow({ label, value, link, capitalize = false }: { label: string; 
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center w-3/5">
-        <span className="font-medium text-gray-700 whitespace-nowrap label-style">{label}</span>
+        <span className=" whitespace-nowrap label-style">{label}</span>
       </div>
-      <div className={`text-right  whitespace-nowrap overflow-hidden truncate ${capitalize && `first-letter:uppercase`}`}>
+      <div className={`text-right value-style whitespace-nowrap overflow-hidden truncate ${capitalize && `first-letter:uppercase`}`}>
         {link ? (
           <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-500 hover:underline">
             {value}
