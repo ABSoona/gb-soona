@@ -89,13 +89,13 @@ export const DemandeActivityTimeline: React.FC<Props> = ({ activities,demandeId 
               {new Date(activity.createdAt).toLocaleString()}
             </time>
             {activity.user && (
-              <p className="text-sm text-gray-400 italic mt-1 capitalize">
+              <p className="text-xs text-gray-400 italic mt-1 capitalize">
                 Par {activity.user.firstName} {activity.user.lastName}
               </p>
             )}
 
             <div className="flex justify-between items-start">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center">
                 {getIconForType(activity.typeField)}
                 {activity.titre}
               </h3>
@@ -122,7 +122,7 @@ export const DemandeActivityTimeline: React.FC<Props> = ({ activities,demandeId 
               </DropdownMenu>
             </div>
 
-            <div className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400 flex flex-col gap-1">
+            <div className="mb-4 text-sm font-normal text-gray-500 dark:text-gray-400 flex flex-col gap-1">
               {editingId === activity.id ? (
                 <textarea
                   ref={(el) => { textareaRefs.current[activity.id] = el; }}

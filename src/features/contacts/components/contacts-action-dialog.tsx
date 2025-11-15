@@ -66,6 +66,9 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
         ville: currentRow?.ville,
         codePostal: currentRow?.codePostal,
         adresse: currentRow?.adresse,
+        dateNaissance: currentRow?.dateNaissance
+  ? new Date(currentRow.dateNaissance)
+  : undefined
 
 
       }
@@ -125,7 +128,7 @@ export function ContactsActionDialog({ currentRow, open, onOpenChange }: Props) 
   return (
 
     <Sheet
-    modal={false}
+    /*modal={false}*/
       open={open}
       onOpenChange={(state) => {
         form.reset();

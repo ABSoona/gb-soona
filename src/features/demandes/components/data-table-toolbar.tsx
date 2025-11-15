@@ -14,7 +14,10 @@ import { DataTableViewOptions } from './data-table-view-options';
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
 }
-
+export const departementOptions = Array.from({ length: 95 }, (_, i) => {
+    const code = (i + 1).toString().padStart(2, "0")
+    return { label: code, value: code }
+  })
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -115,7 +118,13 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                             onChange={handleDateRangeChange} // ✅ Mise à jour avec `localStorage`
                         />
                     )}
-
+                    {table.getColumn('departement') && (
+                    <DataTableFacetedFilter
+                        column={table.getColumn('departement')}
+                        title="Département"
+                        options={departementOptions}
+                    />
+                    )}
                     {/* 📌 Filtre par Etat */}
                     {table.getColumn('status') && (
                         <DataTableFacetedFilter
@@ -126,21 +135,21 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                     )}
 
                     {/* 📌 Filtre par Situation Professionnelle */}
-                    {table.getColumn('situationProfessionnelle') && (
+                    {/* {table.getColumn('situationProfessionnelle') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('situationProfessionnelle')}
                             title="Situation Pro."
                             options={situationTypes.map((t) => ({ ...t }))}
                         />
-                    )}
+                    )} */}
                     {/* 📌 Filtre par Situation Professionnelle */}
-                    {table.getColumn('situationFamiliale') && (
+                    {/* table.getColumn('situationFamiliale') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('situationFamiliale')}
                             title="Situation Famil."
                             options={situationFamilleTypes.map((t) => ({ ...t }))}
                         />
-                    )}
+                    ) */}
                     {/* 📌 Filtre par categorie */}
                     {table.getColumn('categorieDemandeur') && (
                         <DataTableFacetedFilter
