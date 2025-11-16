@@ -53,7 +53,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     try {
       // Appel à l'API avec les données du formulaire (username et password)
-      const userData = await login(data.email, data.password);
+      const userData = await login(data.email.toLowerCase(), data.password);
 
       // Stockage des données utilisateur dans le localStorage
       localStorage.setItem('token', userData.accessToken);

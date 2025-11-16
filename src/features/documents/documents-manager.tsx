@@ -21,12 +21,13 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { IconDownload, IconTrash } from "@tabler/icons-react";
 import { format } from "date-fns";
 import { CalendarDays, File } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DocumentPreviewSheet from './ocumentPreviewSheet';
 import { AttachmentType } from '@/model/typeDocument/typeDocument';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { AvatarFallback } from '@radix-ui/react-avatar';
+import { Spinner } from '@/components/ui/spinner';
 
 
 
@@ -49,7 +50,7 @@ export function DocumentsManager({ contactId, documents, nbColumns, onUpload, on
   const [previewType, setPreviewType] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const className = "grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(120px,150px))]";
-
+  const [isLoadingDocuments, setIsLoadingDocuments] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const goTo = async (index: number) => {
     const doc = documents[index];
@@ -60,7 +61,21 @@ export function DocumentsManager({ contactId, documents, nbColumns, onUpload, on
     setDocument(doc);
     setPreviewType(type || 'unsupported');
   };
-
+  useEffect(() => {
+    // Dès que les documents arrivent, on enlève le loader
+    if (documents && documents.length >= 0) {
+      setIsLoadingDocuments(false);
+    }
+  }, [documents]);
+   // 🔥 Spinner pendant le chargement
+   if (!documents) {
+    return (
+      <div className="flex items-center justify-center py-10">
+        <Spinner size="large" />
+      </div>
+    );
+  }
+  
   const goNext = () => {
     if (currentIndex !== null && currentIndex < documents.length - 1) {
       void goTo(currentIndex + 1);

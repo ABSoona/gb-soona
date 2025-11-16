@@ -109,7 +109,8 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
         username: data.email,
         roles: [role],
         role: role,
-        hasAccess:true
+        hasAccess:true,
+        status:"active"
       })
       toast({ title: '🎉 Compte créé avec succès !' })
       form.reset()
