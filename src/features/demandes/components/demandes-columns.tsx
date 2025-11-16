@@ -187,7 +187,7 @@ export const columns: ColumnDef<Demande>[] = [
           return `${formatDistanceToNow(date, { addSuffix: true, locale: fr })}`;
         },
         filterFn: dateRangeFilter,
-      },
+    },
       {
         accessorFn: (row) => row?.nombreRelances,
         id: 'nombreRelances',
@@ -203,6 +203,13 @@ export const columns: ColumnDef<Demande>[] = [
         },
       },
     
+    {
+        accessorFn: (row) => row.contact?.nom,
+        id: 'contactNom',
+        header: 'Nom',
+        cell: ({ row }) => `${row.original.contact?.nom ?? '-'} ${row.original.contact?.prenom ?? ''}`,
+        enableHiding: true,
+    },
     
    
     {

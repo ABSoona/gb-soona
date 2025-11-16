@@ -30,6 +30,7 @@ import { toast } from "@/hooks/use-toast";
 import { User } from "@/model/user/User";
 import CoordinateursMapSheet from "@/features/demandes/components/assign-coordinateur";
 import { DatePicker } from "@/components/ui/date-picker";
+import { useDemandeService } from "@/api/demande/demandeService";
 
 interface VisiteListProps {
     demandeId: number;
@@ -42,6 +43,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA,onVisitDone 
     const { visites, updateVisite, refetch, isSubmitting } = useVisiteService({
         where: { demande: { id: demandeId } },orderBy:{createdAt:'Asc'}
     });
+      const { updateDemande } = useDemandeService({ where: { id: { equals: demandeId } } });
     const [openVisiteSheet, setOpenVisiteSheet] = useState(false);
     const { handleFileUpload } = useDocumentActions({});
     const { deleteDocument } = useDocumentService();
@@ -114,10 +116,10 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA,onVisitDone 
         console.log("Assignation déclenchée côté parent avec :", data.visiteur.id);
         const coordinateur = data.visiteur.superieur ?? data.visiteur;
         visite && await updateVisite(visite.id, {  acteur: { id: data.visiteur.id }})
-        /*  await updateDemande(currentRow.id, {
-            status: "en_visite",
+         await updateDemande(demandeId, {
+          
             acteur: { id: coordinateur.id }
-          });*/
+          });
 
         setOpenVisiteSheet(false);
     };
