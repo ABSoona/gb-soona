@@ -47,7 +47,7 @@ export function useDocumentService(variables?: any) {
   const [deleteDocumentMutation] = useMutation(DELETE_DOCUMENT);
   const [updateDocumentMutation] = useMutation(UPDATE_DOCUMENT);
 
-  const { data, refetch } = useQuery(GET_DOCUMENTS, {
+  const { data, loading ,refetch } = useQuery(GET_DOCUMENTS, {
 
     variables: variables || {},
     fetchPolicy: 'network-only',
@@ -152,6 +152,7 @@ export function useDocumentService(variables?: any) {
 
   return {
     documents: data?.documents || [],
+    loading,
     createAndUploadDocument,
     deleteDocument,
     updateDocument,

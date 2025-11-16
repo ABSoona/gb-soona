@@ -38,6 +38,7 @@ import { Visite } from '@/model/visite/Visite'
 import { DemandeSuiviActions } from './DemandeSuiviActions'
 import { EntretienSuiviSheet } from './EntretienSuiviSheet'
 import { calculerAge } from '@/lib/utils'
+import { Spinner } from '@/components/ui/spinner'
 
 
 interface Props {
@@ -54,7 +55,9 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     return null
   }
 
-  const { documents } = useDocumentService({ where: { demande: { id: currentRow.id } } });
+  const { documents, loading: isLoadingDocuments } = useDocumentService({
+    where: { demande: { id: currentRow.id } }
+  });
 
   const suiviDdemandeur = documents.filter((doc: Document) => doc.typeDocument?.rattachement === "Demande");
   const userId = getUserId();
@@ -469,8 +472,20 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                 />
               </CardHeader>
               <CardContent className="text-2xl font-bold">
-                <DocumentsManager attachement={"Demande"} documents={suiviDdemandeur} contactId={currentRow?.contact.id} onUpload={handleFileUpload} onDelete={handleDelete} />
-              </CardContent>
+  {isLoadingDocuments ? (
+    <div className="flex justify-center py-6">
+      <Spinner size="large" />
+    </div>
+  ) : (
+    <DocumentsManager
+      attachement="Demande"
+      documents={suiviDdemandeur}
+      contactId={currentRow?.contact.id}
+      onUpload={handleFileUpload}
+      onDelete={handleDelete}
+    />
+  )}
+</CardContent>
             </Card>
           }
         </div>
