@@ -11,7 +11,7 @@ export const DEMANDE_FIELDS = gql`
     autresCharges
     apl
     facturesEnergie
-    loyer    
+    loyer   
     nombreEnfants
     revenus
     revenusConjoint
@@ -31,7 +31,6 @@ export const DEMANDE_FIELDS = gql`
       firstName
       lastName
       role
-
     }
     contact {
       id
