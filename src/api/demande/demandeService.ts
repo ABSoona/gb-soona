@@ -48,9 +48,13 @@ export function useDemandeService(variables?: DemandeServiceParams): {
     nouvelles: number;
   };
 } {
+  const shouldSkip = !variables || Object.keys(variables).length === 0;
+
+
   const { data, loading, error, refetch } = useQuery(GET_DEMANDES, {
     variables: variables || {},
     fetchPolicy: 'network-only',
+    skip: shouldSkip,
     onCompleted: (newData) => {
       console.log("✅ DEMANDES chargées :", newData);
     },
