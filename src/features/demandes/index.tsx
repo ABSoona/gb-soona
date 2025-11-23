@@ -39,7 +39,7 @@ export default function Demandes({ acteurId, status,title,description, newOlny,e
     if (error) {
         handleServerError(error);
     }
-    refetch()
+  
     return (
 
         <DemandesProvider>
