@@ -154,13 +154,23 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const handleAcceptDemande = async () => {
     nextStatusRef.current = "EnCours";
     openConfirmDialog(
-      "Ajouter un aide ?",
+      "Ajouter une aide ?",
       "Souhaitez-vous ajouter une aide maintenant ?",
       handleAddAide,
       { confirmText: "Oui", cancelBtnText: "Annuler" }
     );
     const firstTresorier: User | undefined = users.length > 0 ? users[0] : undefined;
     await updateDemande(currentRow.id, { status: nextStatusRef.current, ...(firstTresorier && { acteur: { id: firstTresorier.id } }), });
+  }
+
+  const handleAskAgainAide = async ()=>{
+    openConfirmDialog(
+      "Ajouter une autre aide ?",
+      "Souhaitez-vous ajouter une autre aide ?",
+      handleAddAide,
+      { confirmText: "Oui", cancelBtnText: "Annuler" }
+    );
+
   }
 
   const handleSubmitNote = async ({ titre, message }: { titre: string; message: string }) => {
@@ -219,9 +229,9 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   };
 
   const handleAddAide = async () => {
-    if (nextStatusRef.current) {
+   
       setOpenAide('add');
-    }
+
     nextStatusRef.current = null;
   };
 
@@ -317,6 +327,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       handleAbandonnerDemande={handleAbandonnerDemande}
       onRapportAdded={onRapportAdded}
       onVisitDone={onVisitDone}
+
     />
   </div>
 )}
@@ -491,7 +502,9 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         </div>
       </div>
       {ConfirmDialogComponent}
-      <AidesDialogs showContactSearch={false} forContactId={currentRow.contact.id} forDemandeId={currentRow.id} showDemandeSearch={false} />
+      <AidesDialogs showContactSearch={false} forContactId={currentRow.contact.id} forDemandeId={currentRow.id} showDemandeSearch={false} 
+      onSuccess={handleAskAgainAide}
+     />
     </div>
   )
 }

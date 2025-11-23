@@ -61,10 +61,11 @@ interface Props {
   showDemandeSearch?: boolean;
   forContactId?: number;
   forDemandeId?: number;
+  onSuccess?: () => void;
 }
 
 
-export function AidesActionDialog({ currentRow, open, onOpenChange, showContactSearch = true, showDemandeSearch = true, forContactId, forDemandeId }: Props) {
+export function AidesActionDialog({ currentRow, open, onOpenChange, showContactSearch = true, showDemandeSearch = true, forContactId, forDemandeId,  onSuccess}: Props) {
 
 
   const { createAide, updateAide, refetch, isSubmitting } = useAideService();
@@ -172,7 +173,11 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       } else {
         await createAide(aidePayload);
         toast({ title: 'Nouvelle aide créée avec succès !' });
+        if ( onSuccess) {
+          onSuccess();
+        }
       }
+     
     /*   if (demandeId && !values.reetudier && values.frequence === 'UneFois')
         await updateDemande(Number(demandeId), { status: "clôturée" }); */
       triggerRefetchAides();
