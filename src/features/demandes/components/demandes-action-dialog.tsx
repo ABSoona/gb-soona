@@ -33,8 +33,17 @@ import { categorieTypes, demandeStatusTypes } from '../data/data';
 import { ContactSearchCombobox } from './contact-search';
 import { useUserServicev2 } from '@/api/user/userService.v2';
 import { User } from '@/model/user/User';
+import { useMemo } from 'react';
+import { Plus } from 'lucide-react';
 
 
+const situationBase = {
+  célibataire: 1,
+  marié: 2,
+  divorcé: 1, // <-- corrigé avec accent
+  veuf: 1,
+  Inconnu:1
+} as const;
 // 📌 Schéma de validation du formulaire avec Zod
 const formSchema = demandeSchema
   .omit({ id: true, contact: true, createdAt: true, demandeActivities: true,acteur :true,proprietaire:true }) // Supprime les champs "id" et "contact"
@@ -89,6 +98,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
         status: currentRow?.status ?? 'recue',
         remarques: currentRow?.remarques ?? '',
         nombreEnfants: currentRow?.nombreEnfants ?? 0,
+        nombrePersonnes: currentRow?.nombrePersonnes,
         agesEnfants: currentRow?.agesEnfants ?? '',
         situationFamiliale: currentRow?.situationFamiliale ?? undefined,
         situationProfessionnelle: currentRow?.situationProfessionnelle ?? undefined,
@@ -131,6 +141,14 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
   const situationFamiliale = form.watch("situationFamiliale");
   const dettes = form.watch("dettes");
   const nombreEnfants = form.watch("nombreEnfants");
+
+  const suggestion = useMemo(() => {
+    if (!situationFamiliale) return null;
+
+    const base = situationBase[situationFamiliale] ?? 1;
+    return base + (nombreEnfants || 0);
+  }, [situationFamiliale, nombreEnfants]);
+
   const onSubmit = async (values: DemandeForm) => {
     console.log("erreur de validation: ");
     const demandePayload = {
@@ -140,6 +158,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
       remarques: values.remarques,
       revenus: Number(values.revenus),
       nombreEnfants: Number(values.nombreEnfants),
+      nombrePersonnes : Number(values.nombrePersonnes),
       agesEnfants: values.agesEnfants,
       situationFamiliale: values.situationFamiliale,
       situationProfessionnelle: values.situationProfessionnelle,
@@ -270,6 +289,41 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
                 )}
 
               />
+                {/* --- CHAMP NOMBRE DE PERSONNES --- */}
+      <FormField
+        control={form.control}
+        name="nombrePersonnes"
+        render={({ field }) => (
+          <FormItem className="space-y-1">
+            <FormLabel>Nb. de personnes dans le foyer</FormLabel>
+            <FormControl>
+              <div className="flex items-center gap-2">
+                <Input
+                  placeholder="de 1 à 20"
+                  type="number"
+                  className="col-span-4"
+                  {...field}
+                  onChange={(e) => {
+                    const v = parseInt(e.target.value, 10);
+                    field.onChange(v < 0 ? 0 : v);
+                  }}
+                />
+
+                
+              </div>
+            </FormControl>
+
+            {/* --- Texte suggestion --- */}
+            {suggestion && (
+              <p className="text-sm text-muted-foreground mt-1">
+                Suggestion : {suggestion} personne{suggestion > 1 ? "s" : ""} 
+              </p>
+            )}
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />
               {
                 nombreEnfants > 0 && <FormField
                   control={form.control}

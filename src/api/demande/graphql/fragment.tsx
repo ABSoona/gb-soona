@@ -25,6 +25,7 @@ export const DEMANDE_FIELDS = gql`
     dernierContact
     derniereRelance
     nombreRelances
+    nombrePersonnes
     recommandation
     acteur {
       id

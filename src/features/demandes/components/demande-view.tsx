@@ -82,6 +82,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const totalDettes = currentRow?.dettes ?? 0
   const totalAides = currentRow?.contact?.aides?.reduce((acc, aide) => acc + (aide.montant ?? 0), 0) ?? 0
   const resteAVivre = totalRevenus - totalCharges
+  const resteAVivreParPersonne = resteAVivre > 0 && resteAVivre/currentRow.nombrePersonnes/30
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileInputMultiRef = useRef<HTMLInputElement>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
@@ -370,9 +371,10 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
           <InfoCard title="Charges" value={`${totalCharges?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
           <InfoCard title="Dettes" value={`${totalDettes?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
           <InfoCard title="Historique Aides" value={`${totalAides?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
-          <InfoCard title="Reste à Vivre" value={`${resteAVivre?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
+          <InfoCard title="Reste à Vivre" subtitle={ resteAVivreParPersonne ?`${resteAVivreParPersonne?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}  par j/pers`:""}
+          value={`${resteAVivre?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
         </div>
-
+        
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card className="h-full">
             <CardHeader>
@@ -540,15 +542,32 @@ function DetailMultiLineRow({ label, value }: { label: string; value: React.Reac
   )
 }
 
-function InfoCard({ title, value }: { title: string; value: string }) {
+function InfoCard({
+  title,
+  value,
+  subtitle,
+}: {
+  title: string;
+  value: string;
+  subtitle?: string;
+}) {
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-md whitespace-nowrap overflow-hidden truncate">{title}</CardTitle>
+        <CardTitle className="text-md whitespace-nowrap overflow-hidden truncate">
+          {title}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="text-2xl font-bold whitespace-nowrap overflow-hidden truncate ">
-        {value}
+
+      <CardContent className="whitespace-nowrap overflow-hidden truncate">
+        <div className="text-2xl font-bold truncate">{value}</div>
+
+        {subtitle && (
+          <div className="text-sm text-muted-foreground mt-1 truncate">
+            {subtitle}
+          </div>
+        )}
       </CardContent>
     </Card>
-  )
+  );
 }
