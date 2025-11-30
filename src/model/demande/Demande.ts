@@ -83,6 +83,7 @@ export const demandeSchema = z.object({
   createdAt: z.coerce.date(),
   situationFamiliale: situationFamSchema,
   nombreEnfants: z.coerce.number().min(-1).max(10),
+  nombrePersonnes: z.coerce.number().min(-1).max(10),
   agesEnfants: z.string().optional().or(z.literal('')),
   situationProfessionnelle: situationProSchema.optional(),
   situationProConjoint: z
