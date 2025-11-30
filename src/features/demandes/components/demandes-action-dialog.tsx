@@ -33,7 +33,7 @@ import { categorieTypes, demandeStatusTypes } from '../data/data';
 import { ContactSearchCombobox } from './contact-search';
 import { useUserServicev2 } from '@/api/user/userService.v2';
 import { User } from '@/model/user/User';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
 
 
@@ -80,18 +80,47 @@ interface Props {
 }
 
 export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }: Props) {
+  type Charge = { id: number; value: string };
+  const [charges, setCharges] = useState([{ id: Date.now(), value: '' }]);
+  const [total, setTotal] = useState('');
 
+  const handleAddCharge = () => {
+    setCharges([...charges, { id: Date.now(), value: '' }]);
+  };
 
-  
+  const handleChange = (id: number, newValue: string) => {
+    setCharges(prev =>
+      prev.map(c => (c.id === id ? { ...c, value: newValue } : c))
+    );
+  };
   const { users } = useUserServicev2(
      { where: { role: { not: "visiteur" } } } 
   );
 
   const isEdit = !!currentRow;
+  useEffect(() => {
+    if (isEdit && currentRow?.autresCharges !== undefined) {
+      // Afficher la valeur existante dans un champ dynamique
+      setCharges([{ id: Date.now(), value: currentRow.autresCharges.toString() }]);
+    } else {
+      // Mode création → champ vide par défaut
+      setCharges([{ id: Date.now(), value: "" }]);
+    }
+  }, [isEdit, currentRow]);
+  useEffect(() => {
+    const totalAutesCharges = charges.reduce((acc: number, c) => acc + Number(c.value || 0), 0)
+    setTotal(totalAutesCharges.toString())
+  
+    // ⚠️ Et on met aussi à jour React Hook Form ici :
+    form.setValue("autresCharges", totalAutesCharges)
+  }, [charges])
+
+  
   const whereClause = isEdit ? {where:{id : {equals:currentRow.id}}}:{where:{id:{equals:0}}} 
   const { createDemande, updateDemande,  isSubmitting } = useDemandeService();
   const form = useForm<DemandeForm>({
     resolver: zodResolver(formSchema),
+    
     defaultValues: isEdit
     ? {
         contactId: currentRow?.contact?.id ?? '',
@@ -110,7 +139,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
         dettes: currentRow?.dettes ?? 0,
         natureDettes: currentRow?.natureDettes ?? '',
         autresAides: currentRow?.autresAides ?? '',
-        autresCharges: currentRow?.autresCharges ?? 0,
+        autresCharges:currentRow?.autresCharges ?? 0,
         apl: currentRow?.apl ?? 0,
         categorieDemandeur: currentRow?.categorieDemandeur ?? undefined,
         acteurId: currentRow?.acteur?.id ?? undefined,
@@ -530,27 +559,48 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
                 )}
 
               />
-              <FormField
-                control={form.control}
-                name='autresCharges'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel>
-                      Autres charges (€)
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Sans centimes, sans singe €'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
+               <div className="space-y-4">
 
-              />
+                <FormField
+                  control={form.control}
+                  name="autresCharges"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel>Autres charges (€)</FormLabel>
+
+                      <div className="space-y-2">
+                        {charges.map((charge) => (
+                          <FormControl key={charge.id}>
+                            <div className="flex gap-2">
+                              <Input
+                                type="number"
+                                placeholder="Sans centimes, sans signe €"
+                                value={charge.value}
+                                onChange={(e) => handleChange(charge.id, e.target.value)}
+                                autoComplete="off"
+                              />
+                              <Button type="button" variant="secondary" onClick={handleAddCharge}  className="px-3">
+                                +
+                              </Button>
+                            </div>
+                          </FormControl>
+                        ))}
+                      </div>
+
+                      {/* Champ caché pour RHF */}
+                      <Input type="hidden" {...field} />
+
+                      {/* 🔥 Texte du total mis à jour en live */}
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Total des charges : <span className="font-medium">{total} €</span>
+                      </p>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+</div>
 
               <FormField
                 control={form.control}
