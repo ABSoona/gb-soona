@@ -11,6 +11,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Sheet,
@@ -20,10 +22,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import { Switch } from '@/components/ui/switch';
+import { ContactSearchCombobox } from '@/features/aides/components/contact-search';
 import { toast } from '@/hooks/use-toast';
 import { WebsiteDemande, websiteDemandeSchema } from '@/model/website-demandes/website-demandes.ts';
 import { handleServerError } from '@/utils/handle-server-error';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -39,7 +44,7 @@ interface Props {
 export function WebsiteDemandeActionDialog({ currentRow, open, onOpenChange }: Props) {
   const { createWebsiteDemande, updateWebsiteDemande, isSubmitting, refetch } = useWebsiteDemandeService();
   const isEdit = !!currentRow;
-
+  
   const form = useForm<WebsiteDemandeForm>({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
@@ -50,7 +55,7 @@ export function WebsiteDemandeActionDialog({ currentRow, open, onOpenChange }: P
       : {
         nomDemandeur: '',
         prenomDemandeur: '',
-        ageDemandeur: 0,
+      
         telephoneDemandeur: '',
         emailDemandeur: '',
         adresseDemandeur: '',
@@ -71,18 +76,34 @@ export function WebsiteDemandeActionDialog({ currentRow, open, onOpenChange }: P
         facturesEnergie: 0,
         remarques: '',
         status: 'EnCours',
+        forceNewContact: false,
+        modeBeneficiaire: "nouveau",
 
       },
   });
 
+  const contactId = form.watch("contactId");
+  const mode = form.watch("modeBeneficiaire");
+  useEffect(() => {
+    if (mode === "nouveau") {
+      form.setValue("contactId", undefined);   // ou "" selon ton schéma
+    }
+  }, [mode, form]);
+
   const onSubmit = async (values: WebsiteDemandeForm) => {
     try {
       console.log('mise jour')
+      const { modeBeneficiaire, ...rest } = values;
+
+      const payload = {
+        ...rest,
+        forceNewContact: modeBeneficiaire === "nouveau",
+      };
       if (isEdit && currentRow?.id) {
-        await updateWebsiteDemande(currentRow.id, values);
+        await updateWebsiteDemande(currentRow.id, payload);
         toast({ title: 'Demande mise à jour avec succès !' });
       } else {
-        await createWebsiteDemande(values);
+        await createWebsiteDemande(payload);
         toast({ title: 'Nouvelle demande créée avec succès !' });
       }
       await refetch();
@@ -94,17 +115,52 @@ export function WebsiteDemandeActionDialog({ currentRow, open, onOpenChange }: P
     }
   };
 
-  const renderField = (name: keyof WebsiteDemandeForm, label: string, type: string = 'text') => (
+  const renderField = <T extends keyof WebsiteDemandeForm>(
+    name: T extends any ? (WebsiteDemandeForm[T] extends boolean ? never : T) : never,
+    label: string,
+    type: string = "text",
+    disabled : boolean = false
+  ) => (
     <FormField
       control={form.control}
-      name={name}
+      name={name as any}
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input type={type} {...field} />
+          <Input disabled={disabled}
+            type={type}
+            {...field}
+            onChange={(e) => {
+              if (type === "number") {
+                field.onChange(e.target.value === "" ? undefined : Number(e.target.value));
+              } else {
+                field.onChange(e.target.value);
+              }
+            }}
+          />
           </FormControl>
           <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+
+  const renderSwitch = (name: keyof WebsiteDemandeForm, label: string ,disabled : boolean=false) => (
+    <FormField
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+          <div className="space-y-0.5">
+            <FormLabel>{label}</FormLabel>
+          </div>
+          <FormControl>
+          <Switch disabled={disabled}
+  checked={!!field.value}
+  onCheckedChange={field.onChange}
+/>
+          </FormControl>
         </FormItem>
       )}
     />
@@ -136,14 +192,61 @@ export function WebsiteDemandeActionDialog({ currentRow, open, onOpenChange }: P
               }}
               className="space-y-4 p-0.5"
             >
-              {renderField('nomDemandeur', 'Nom')}
-              {renderField('prenomDemandeur', 'Prénom')}
-              {renderField('ageDemandeur', 'Âge', 'number')}
-              {renderField('telephoneDemandeur', 'Téléphone')}
-              {renderField('emailDemandeur', 'Email')}
-              {renderField('adresseDemandeur', 'Adresse')}
-              {renderField('codePostalDemandeur', 'Code postal', 'number')}
-              {renderField('villeDemandeur', 'Ville')}
+       <FormField
+  control={form.control}
+  name="modeBeneficiaire"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Choix du bénéficiaire</FormLabel>
+      <FormControl>
+        <RadioGroup defaultValue='nouveau'
+          value={field.value}
+          onValueChange={field.onChange}
+          className="space-y-2"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="nouveau" id="nouveau" />
+            <Label htmlFor="nouveau">Créer un nouveau bénéficiaire</Label>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="existant" id="existant" />
+            <Label htmlFor="existant">Associer à un bénéficiaire existant</Label>
+          </div>
+        </RadioGroup>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+              {mode === "existant" && (<FormField
+                              control={form.control}
+                              name="contactId"
+                              render={({ field }) => (
+                                <FormItem className="space-y-1">
+                                  <FormLabel>Remplacer le bébéficiaire par</FormLabel>
+                                  <FormControl>
+                                    <ContactSearchCombobox 
+                                      onSelect={(contactId) => {
+                                        console.log('🔄 Nouveau contact sélectionné :', contactId); // ✅ Vérification
+                                        field.onChange(contactId); // ✅ Met à jour correctement `form`
+                                      }}
+                                    
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />)}
+            
+              {renderField('nomDemandeur', 'Nom',"text",contactId!=null)}
+              {renderField('prenomDemandeur', 'Prénom',"text",contactId!=null)}
+              
+              {renderField('telephoneDemandeur', 'Téléphone',"text",contactId!=null)}
+              {renderField('emailDemandeur', 'Email',"text",contactId!=null)}
+              {renderField('adresseDemandeur', 'Adresse',"text",contactId!=null)}
+              {renderField('codePostalDemandeur', 'Code postal', 'number',contactId!=null)}
+              {renderField('villeDemandeur', 'Ville',"text",contactId!=null)}
               {renderField('situationProfessionnelle', 'Situation professionnelle')}
               {renderField('situationFamiliale', 'Situation familiale')}
               {renderField('revenus', 'Revenus', 'number')}

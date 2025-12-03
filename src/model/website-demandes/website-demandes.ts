@@ -12,13 +12,14 @@ export type WsDemandeStatus = z.infer<typeof wsDemandeStatusSchema>;
 
 export const websiteDemandeSchema = z.object({
   id: z.string(),
+  contactId: z.number().optional(),
   nomDemandeur: z.string(),
   prenomDemandeur: z.string(),
-  ageDemandeur: z.number(),
+  forceNewContact :z.boolean().default(false),
   telephoneDemandeur: z.string(),
   emailDemandeur: z.string().email(),
   adresseDemandeur: z.string(),
-  codePostalDemandeur: z.number(),
+  codePostalDemandeur: z.number().or(z.literal("")).transform(val => Number(val)),
   villeDemandeur: z.string(),
   situationProfessionnelle: z.string(),
   situationFamiliale: z.string(),
@@ -37,6 +38,7 @@ export const websiteDemandeSchema = z.object({
   status: wsDemandeStatusSchema,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  modeBeneficiaire: z.enum(["nouveau", "existant"]).optional().default("nouveau"),
 });
 
 export type WebsiteDemande = z.infer<typeof websiteDemandeSchema>;
