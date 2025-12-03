@@ -9,6 +9,7 @@ interface ComboboxProps {
   placeholder?: string;
   isLoading?: boolean;
   onInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?:boolean
 }
 
 export function Combobox({
@@ -18,13 +19,14 @@ export function Combobox({
   placeholder = 'Sélectionner...',
   isLoading = false,
   onInputChange,
+  disabled = false
 }: ComboboxProps) {
   const [open, setOpen] = useState(false);
 
   return (
     <div className="relative">
       {/* Champ de saisie */}
-      <Input
+      <Input disabled={disabled}
         value={value} // 🔥 Assure que l'input reçoit bien la valeur
         onChange={onInputChange}
         placeholder={placeholder}

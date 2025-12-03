@@ -7,9 +7,9 @@ import { useEffect, useRef, useState } from 'react';
 interface ContactSearchComboboxProps {
   onSelect: (contactId: number | null) => void;
   defaultContact?: { id: number; nom: string; prenom: string };
-}
+  disabled? :boolean }
 
-export function ContactSearchCombobox({ onSelect, defaultContact }: ContactSearchComboboxProps) {
+export function ContactSearchCombobox({ onSelect, defaultContact,disabled=false }: ContactSearchComboboxProps) {
   const [search, setSearch] = useState('');
   const { contacts, loading } = useContactSearch(search);
   const [selectedContact, setSelectedContact] = useState(defaultContact || null);
@@ -47,7 +47,7 @@ export function ContactSearchCombobox({ onSelect, defaultContact }: ContactSearc
         </div>
       ) : (
         // ✅ Input de recherche si aucun contact n'est sélectionné
-        <Combobox
+        <Combobox disabled={disabled}
           value={search}
           onValueChange={(contactId) => {
             const contact = contacts.find((c: { id: number; }) => c.id === Number(contactId));
