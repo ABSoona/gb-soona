@@ -18,6 +18,7 @@ import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index
 import { Route as authSignInImport } from './routes/(auth)/sign-in'
 import { Route as authOtpImport } from './routes/(auth)/otp'
 import { Route as auth500Import } from './routes/(auth)/500'
+import { Route as AuthenticatedDemandesIdIndexImport } from './routes/_authenticated/demandes/$id/index'
 import { Route as authDemandesIdFicheVisitePdfImport } from './routes/(auth)/demandes.$id.fiche-visite-pdf'
 
 // Create Virtual Routes
@@ -101,9 +102,6 @@ const AuthenticatedDemandesEnCommissionLazyImport = createFileRoute(
 )()
 const AuthenticatedContactsIdLazyImport = createFileRoute(
   '/_authenticated/contacts/$id',
-)()
-const AuthenticatedDemandesIdIndexLazyImport = createFileRoute(
-  '/_authenticated/demandes/$id/',
 )()
 const AuthenticatedDemandesIdPdfLazyImport = createFileRoute(
   '/_authenticated/demandes/$id/pdf',
@@ -453,8 +451,8 @@ const AuthenticatedContactsIdLazyRoute =
     import('./routes/_authenticated/contacts/$id.lazy').then((d) => d.Route),
   )
 
-const AuthenticatedDemandesIdIndexLazyRoute =
-  AuthenticatedDemandesIdIndexLazyImport.update({
+const AuthenticatedDemandesIdIndexRoute =
+  AuthenticatedDemandesIdIndexImport.update({
     id: '/demandes/$id/',
     path: '/demandes/$id/',
     getParentRoute: () => AuthenticatedRouteRoute,
@@ -763,7 +761,7 @@ declare module '@tanstack/react-router' {
       id: '/_authenticated/demandes/$id/'
       path: '/demandes/$id'
       fullPath: '/demandes/$id'
-      preLoaderRoute: typeof AuthenticatedDemandesIdIndexLazyImport
+      preLoaderRoute: typeof AuthenticatedDemandesIdIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
   }
@@ -818,7 +816,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedVersementsIndexLazyRoute: typeof AuthenticatedVersementsIndexLazyRoute
   AuthenticatedWebsiteDemandesIndexLazyRoute: typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   AuthenticatedDemandesIdPdfLazyRoute: typeof AuthenticatedDemandesIdPdfLazyRoute
-  AuthenticatedDemandesIdIndexLazyRoute: typeof AuthenticatedDemandesIdIndexLazyRoute
+  AuthenticatedDemandesIdIndexRoute: typeof AuthenticatedDemandesIdIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -852,7 +850,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedWebsiteDemandesIndexLazyRoute:
     AuthenticatedWebsiteDemandesIndexLazyRoute,
   AuthenticatedDemandesIdPdfLazyRoute: AuthenticatedDemandesIdPdfLazyRoute,
-  AuthenticatedDemandesIdIndexLazyRoute: AuthenticatedDemandesIdIndexLazyRoute,
+  AuthenticatedDemandesIdIndexRoute: AuthenticatedDemandesIdIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -897,7 +895,7 @@ export interface FileRoutesByFullPath {
   '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
   '/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
-  '/demandes/$id': typeof AuthenticatedDemandesIdIndexLazyRoute
+  '/demandes/$id': typeof AuthenticatedDemandesIdIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -937,7 +935,7 @@ export interface FileRoutesByTo {
   '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
   '/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
-  '/demandes/$id': typeof AuthenticatedDemandesIdIndexLazyRoute
+  '/demandes/$id': typeof AuthenticatedDemandesIdIndexRoute
 }
 
 export interface FileRoutesById {
@@ -981,7 +979,7 @@ export interface FileRoutesById {
   '/_authenticated/website-demandes/': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/(auth)/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
   '/_authenticated/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
-  '/_authenticated/demandes/$id/': typeof AuthenticatedDemandesIdIndexLazyRoute
+  '/_authenticated/demandes/$id/': typeof AuthenticatedDemandesIdIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -1343,7 +1341,7 @@ export const routeTree = rootRoute
       "parent": "/_authenticated"
     },
     "/_authenticated/demandes/$id/": {
-      "filePath": "_authenticated/demandes/$id/index.lazy.tsx",
+      "filePath": "_authenticated/demandes/$id/index.tsx",
       "parent": "/_authenticated"
     }
   }
