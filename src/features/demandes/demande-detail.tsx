@@ -31,6 +31,7 @@ export default function DemandeDetail({ showContact = true }: Props) {
     select: (params) => params?.id,
   });
 
+
   const navigate = useNavigate();
   const { demandes, refetch,loading: isLoading, error } = useDemandeService({ where: { id: { equals: Number(id) } } });
  const demande = demandes[0]!;
@@ -43,10 +44,13 @@ export default function DemandeDetail({ showContact = true }: Props) {
   //const { setOpenDemande: setOpen, setCurrentRow } = useDemandes(); // ✅ Fonctionne car le provider est défini dans un composant parent
 
   const handleRetour = () => {
-   
-      navigate({ to: '..' });
-   
+    if (from) {
+      navigate({ to: from });
+    } else {
+      navigate({ to: '/demandes' });
+    }
   };
+  
   // Gestion des erreurs
   if (error) {
     handleServerError(error);
