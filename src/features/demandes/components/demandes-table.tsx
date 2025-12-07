@@ -151,11 +151,10 @@ export function DemandesTable({ columns, data, hideTools = false, ShowPagination
                                                     if (showDetailIn == detailOpenOption.page) {
 
                                                         navigate({
-                                                            to: `/demandes/${row.original.id.toString()}/`,
+                                                            to: "/demandes/$id",
                                                             params: { id: row.original.id.toString() },
-                                                            // Ajout du paramètre de recherche
-                                                        });
-
+                                                            search: { from: location.pathname + location.search }
+                                                          });
 
 
                                                     }
