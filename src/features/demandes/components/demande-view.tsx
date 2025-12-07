@@ -290,9 +290,10 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     const coordinateur = data.visiteur.superieur ?? data.visiteur;
     await createVisite({ acteur: { id: data.visiteur.id }, demande: { id: currentRow.id }, status: 'Programee' })
     await updateDemande(currentRow.id, {
-      status: "en_visite",
+      status: "en_visite", acteur : {id:coordinateur.id}
  
     }); 
+    
 
     setOpenVisiteSheet(false);
   };
