@@ -26,6 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
+import { useDemandeService } from '@/api/demande/demandeService';
 
 interface DataTableRowActionsProps {
   row: Row<Versement>;
@@ -36,7 +37,6 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const [showDialog, setShowDialog] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [autresVersements, setAutresVersements] = useState<Versement[]>([]);
-
   const { handleFileUpload } = useDocumentActions({ versements: { id: row.original.id } });
   const { updateVersement } = useVersementMutations();
   const { typeDocuments = [] }: { typeDocuments: TypeDocument[] } = useTypeDocumentService({
@@ -56,6 +56,8 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     // 1. Upload pour le versement actuel
     await handleFileUpload(versement.aide.contact.id, file, typeDocuments[0].id, 0, 0, versement.id);
     await updateVersement(versement.id, { status: 'Verse' });
+
+
 
     // 2. Si récurrent, demander confirmation pour les autres
     if (versement.aide.frequence !== 'UneFois') {

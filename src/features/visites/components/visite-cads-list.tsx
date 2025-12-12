@@ -43,7 +43,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA,onVisitDone 
     const { visites, updateVisite, refetch, isSubmitting } = useVisiteService({
         where: { demande: { id: demandeId } },orderBy:{createdAt:'Asc'}
     });
-      const { updateDemande } = useDemandeService({ where: { id: { equals: demandeId } } });
+      const { demandes, updateDemande } = useDemandeService({ where: { id: { equals: demandeId } } });
     const [openVisiteSheet, setOpenVisiteSheet] = useState(false);
     const { handleFileUpload } = useDocumentActions({});
     const { deleteDocument } = useDocumentService();
@@ -308,7 +308,7 @@ export const VisiteList = ({ demandeId, onRapportAdded, onAffecterA,onVisitDone 
             <CoordinateursMapSheet
                 open={openVisiteSheet}
                 onOpenChange={setOpenVisiteSheet}
-                contactId={0}
+                contactId={demandes[0]?.contact?.id}
                 onAssign={handleAssign}
                 visite={currentVisite ?? undefined}
             />
