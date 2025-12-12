@@ -37,7 +37,6 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const [showDialog, setShowDialog] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [autresVersements, setAutresVersements] = useState<Versement[]>([]);
-const { updateDemande } = useDemandeService();
   const { handleFileUpload } = useDocumentActions({ versements: { id: row.original.id } });
   const { updateVersement } = useVersementMutations();
   const { typeDocuments = [] }: { typeDocuments: TypeDocument[] } = useTypeDocumentService({
