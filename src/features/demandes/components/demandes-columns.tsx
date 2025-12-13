@@ -11,18 +11,34 @@ import { fr } from 'date-fns/locale';
 import { userTypes } from '@/features/users/data/data';
 import { DataTableColumnHeader } from './data-table-column-header';
 
-const dateRangeFilter: ColumnDef<Demande>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
+const dateRangeFilter: ColumnDef<Demande>['filterFn'] = (
+    row,
+    columnId,
+    filterValue: DateRange | undefined
+) => {
     if (!filterValue || (!filterValue.from && !filterValue.to)) {
-        return true; // Aucun filtre, afficher toutes les lignes
+        return true;
     }
 
     const rowDate = new Date(row.getValue(columnId));
+
+    // 🔥 Normaliser les bornes
+    const start = filterValue.from ? new Date(filterValue.from) : null;
+    const end = filterValue.to ? new Date(filterValue.to) : null;
+
+    if (start) {
+        start.setHours(0, 0, 0, 0); // Début de journée
+    }
+
+    if (end) {
+        end.setHours(23, 59, 59, 999); // Fin de journée
+    }
+
     return (
-        (!filterValue.from || rowDate >= filterValue.from) &&
-        (!filterValue.to || rowDate <= filterValue.to)
+        (!start || rowDate >= start) &&
+        (!end || rowDate <= end)
     );
 };
-
 
 export const columns: ColumnDef<Demande>[] = [
     // Sélection des lignes
@@ -73,6 +89,17 @@ export const columns: ColumnDef<Demande>[] = [
             const date = row.getValue('createdAt') as string;
             return date ? new Date(date).toLocaleDateString('fr-FR') : '-';
         },
+        filterFn: dateRangeFilter, // Ajout du filtre
+    },
+    {
+        id: 'decisionDate',
+        accessorKey: 'decisionDate',
+        header: 'Statué le',
+        cell: ({ row }) => {
+            const date = row.getValue('decisionDate') as string;
+            return date ? new Date(date).toLocaleDateString('fr-FR') : '-';
+        },
+        
         filterFn: dateRangeFilter, // Ajout du filtre
     },
 
@@ -138,7 +165,7 @@ export const columns: ColumnDef<Demande>[] = [
           ),
         cell: ({ row }) => {
           const acteur = row.original?.acteur;
-          const fullName = `${acteur?.firstName ?? '-'} ${acteur?.lastName ?? ''}`;
+          const fullName = `${acteur?.firstName ?? '-'} ${acteur?.lastName?.[0]?.toUpperCase() ?? ''}.`;
           const role = acteur?.role;
           const userType = userTypes.find(({ value }) => value === role);
       

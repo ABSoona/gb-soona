@@ -24,6 +24,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
     // ✅ État pour gérer les filtres sauvegardés
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [filterName, setFilterName] = useState<string>('');
+    const [decisionDateRange, setDecisionDateRange] = useState<DateRange | undefined>();
 
     // ✅ Restaurer les filtres depuis localStorage au chargement
     useEffect(() => {
@@ -33,6 +34,27 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             setFilterName(savedName);
             table.getColumn('contactNomPrenom')?.setFilterValue(savedName);
         }
+        // 🔹 Restaurer le filtre "decisionDate"
+            const savedDecisionRange = localStorage.getItem('filter-decision-date-range');
+            if (savedDecisionRange && savedDecisionRange !== "undefined") {
+                try {
+                    const storedDecisionRange = JSON.parse(savedDecisionRange);
+                    if (storedDecisionRange) {
+                        const parsedDecisionRange = {
+                            from: new Date(storedDecisionRange.from),
+                            to: new Date(storedDecisionRange.to),
+                        };
+                        setDecisionDateRange(parsedDecisionRange);
+                        table.getColumn('decisionDate')?.setFilterValue(parsedDecisionRange);
+                    }
+                } catch (error) {
+                    console.error("Erreur lors de la récupération du filtre decisionDate :", error);
+                    localStorage.removeItem('filter-decision-date-range');
+                }
+            } else {
+                setDecisionDateRange(undefined);
+            }
+
 
         // 🔹 Restaurer le filtre "Période" (et éviter qu'il soit écrasé)
         const savedDateRange = localStorage.getItem('filter-date-range');
@@ -79,16 +101,27 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
         // 🔥 Sauvegarde dans localStorage
 
     };
+    const handleDecisionDateChange = (newRange: DateRange | undefined) => {
+        if (newRange?.from != null && newRange?.to != null) {
+            setDecisionDateRange(newRange);
+            table.getColumn('decisionDate')?.setFilterValue(newRange);
+    
+            // Sauvegarde
+            localStorage.setItem('filter-decision-date-range', JSON.stringify(newRange));
+        }
+    };
 
     // ✅ Réinitialisation complète des filtres
     const handleResetFilters = () => {
         table.resetColumnFilters(); // 🔥 Réinitialise tous les filtres
         setDateRange(undefined);
+        setDecisionDateRange(undefined);
         setFilterName('');
 
         // 🔥 Supprime les filtres de `localStorage`
         localStorage.removeItem('filter-name');
         localStorage.removeItem('filter-date-range');
+        localStorage.removeItem('filter-decision-date-range');
 
         table.getAllColumns().forEach(column => {
             if (column.getCanFilter()) {
@@ -116,6 +149,15 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                         <DatePickerWithRange
                             value={dateRange}
                             onChange={handleDateRangeChange} // ✅ Mise à jour avec `localStorage`
+                            placeholder={"Date réception"}
+                             
+                        />
+                    )}
+                    {table.getColumn('decisionDate') && (
+                        <DatePickerWithRange
+                            value={decisionDateRange}
+                            onChange={handleDecisionDateChange}
+                            placeholder={"Date décision"}
                         />
                     )}
                     {table.getColumn('departement') && (

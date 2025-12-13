@@ -72,6 +72,8 @@ export const columns: ColumnDef<Versement>[] = [
         filterFn: dateRangeFilter, // Ajout du filtre
     },
 
+   
+
     // 👤 Informations du Contact 
 
 
