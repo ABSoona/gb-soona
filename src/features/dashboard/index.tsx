@@ -36,7 +36,7 @@ export default function Dashboard() {
 
       <Main>
         <div className='mb-2 flex items-center justify-between space-y-2'>
-          <h1 className='text-2xl font-bold tracking-tight'>Tableau de bord</h1>
+          <h1 className='text-xl font-bold tracking-tight'>Tableau de bord</h1>
         </div>
 
         <div className='space-y-4'>
@@ -74,7 +74,7 @@ export default function Dashboard() {
                   {icon}
                 </CardHeader>
                 <CardContent>
-                  <div className='text-2xl font-bold'>
+                  <div className='text-xl font-bold'>
                     {!data?.loading ? (
                       value
                     ) : (

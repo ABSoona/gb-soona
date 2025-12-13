@@ -482,7 +482,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
 
 
             </CardHeader>
-            <CardContent className="text-2xl font-bold">
+            <CardContent className="text-xl font-bold">
               <DocumentsManager nbColumns={1}
                 documents={documents}
                 contactId={currentRow ? currentRow?.contact.id : 0}

@@ -42,13 +42,12 @@ export function DataTableExport<TData>({ table }: DataTableExportProps<TData>) {
 
   return (
     <Button
-      variant="outline"
-      size="sm"
-      className="ml-auto hidden h-8 lg:flex"
-      onClick={exportToCSV}
-    >
-      <ArrowTopRightIcon className="mr-2 h-4 w-4" />
-      Exporter
-    </Button>
+        variant="outline"
+        size="sm"
+        className="ml-auto hidden h-8 lg:flex items-center justify-center"
+        onClick={exportToCSV}
+      >
+        <ArrowTopRightIcon className="h-4 w-4" />
+      </Button>
   );
 }

@@ -149,7 +149,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
 
   const handleRefuserDemande = async () => {
     nextStatusRef.current = "refusée";
-    await updateDemande(currentRow.id, { status: nextStatusRef.current });
+    await updateDemande(currentRow.id, { status: nextStatusRef.current,decisionDate: new Date() });
   }
 
   const handleAcceptDemande = async () => {
@@ -161,7 +161,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       { confirmText: "Oui", cancelBtnText: "Annuler" }
     );
     const firstTresorier: User | undefined = users.length > 0 ? users[0] : undefined;
-    await updateDemande(currentRow.id, { status: nextStatusRef.current, ...(firstTresorier && { acteur: { id: firstTresorier.id } }), });
+    await updateDemande(currentRow.id, {decisionDate: new Date(), status: nextStatusRef.current, ...(firstTresorier && { acteur: { id: firstTresorier.id } }), });
   }
 
   const handleSubmitNote = async ({ titre, message }: { titre: string; message: string }) => {
@@ -299,7 +299,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   };
 
   return (
-    <div className="sm:min-w-full grid grid-cols-1 xl:grid-cols-1 2xl:grid-cols-3 md:grid-cols-1 gap-6 mt-6">
+    <div className="sm:min-w-full grid grid-cols-1 xl:grid-cols-3 2xl:grid-cols-3 md:grid-cols-1 gap-6 mt-6">
       {showContact && (
   <div className="col-span-1">
     <DemandeSuiviActions
@@ -356,7 +356,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         onAssign={handleAssign}
       />
       <div className={`${showContact ? "col-span-2" : "col-span-3 "} space-y-6`}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-5 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2">
           <InfoCard title="Revenus" value={`${totalRevenus?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
           <InfoCard title="Charges" value={`${totalCharges?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
           <InfoCard title="Dettes" value={`${totalDettes?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
@@ -474,7 +474,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                   onChange={handleMultipleFileChange}
                 />
               </CardHeader>
-              <CardContent className="text-2xl font-bold">
+              <CardContent className="text-xl font-bold">
   {isLoadingDocuments ? (
     <div className="flex justify-center py-6">
       <Spinner size="large" />
@@ -548,7 +548,7 @@ function InfoCard({
       </CardHeader>
 
       <CardContent className="whitespace-nowrap overflow-hidden truncate">
-        <div className="text-2xl font-bold truncate">{value}</div>
+        <div className="text-xl font-bold truncate">{value}</div>
 
         {subtitle && (
           <div className="text-sm text-muted-foreground mt-1 truncate">
