@@ -27,6 +27,7 @@ export const DEMANDE_FIELDS = gql`
     nombreRelances
     nombrePersonnes
     recommandation
+    decisionDate
     acteur {
       id
       firstName

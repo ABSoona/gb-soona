@@ -69,7 +69,9 @@ export function DemandesTable({ columns, data, hideTools = false, ShowPagination
             dettes : false,
             contactAge: false,
             situationProfessionnelle:false,
-            resteAVivre:false
+            resteAVivre:false,
+            aides:false,
+            categorieDemandeur: false
 
 
         }

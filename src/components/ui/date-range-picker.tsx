@@ -15,9 +15,10 @@ import { cn } from "@/lib/utils"
 interface DatePickerWithRangeProps {
   value?: DateRange; // ✅ Ajout pour permettre un contrôle externe
   onChange: (dateRange: DateRange | undefined) => void;
+  placeholder?: String;
 }
 
-export function DatePickerWithRange({ value, onChange }: DatePickerWithRangeProps) {
+export function DatePickerWithRange({ value, onChange,placeholder }: DatePickerWithRangeProps) {
   const [date, setDate] = React.useState<DateRange | undefined>(value);
 
   // 🔥 Met à jour l'état local si `value` change (ex: lors de la réinitialisation)
@@ -37,8 +38,8 @@ export function DatePickerWithRange({ value, onChange }: DatePickerWithRangeProp
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] h-[32px] justify-start text-left font-normal",
-              !date && "text-muted-foreground"
+              "h-8 w-[150px] lg:w-[250px] justify-start text-left font-normal",
+              !date && "text-muted-foreground"  
             )}
           >
             <CalendarIcon className="mr-2" />
@@ -51,7 +52,7 @@ export function DatePickerWithRange({ value, onChange }: DatePickerWithRangeProp
                 format(date.from, "dd LLL y")
               )
             ) : (
-              <span>Choisir une période</span>
+              placeholder ? placeholder: <span>Choisir une période</span>
             )}
           </Button>
         </PopoverTrigger>

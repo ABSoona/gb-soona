@@ -91,7 +91,7 @@ export function TypeDocumentForm({ typeDocuments }: Props) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="max-w-2xl space-y-4">
+        <div className="max-w-xl space-y-4">
           {typeDocuments.map((doc: TypeDocument) => (
             <FormItem
               key={doc.id}

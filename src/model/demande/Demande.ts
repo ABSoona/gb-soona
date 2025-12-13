@@ -81,6 +81,7 @@ export const demandeSchema = z.object({
   status: demandeStatusSchema,
   remarques: z.string().optional(),
   createdAt: z.coerce.date(),
+  decisionDate: z.coerce.date().optional(),
   situationFamiliale: situationFamSchema,
   nombreEnfants: z.coerce.number().min(-1).max(10),
   nombrePersonnes: z.coerce.number().min(-1).max(10),
