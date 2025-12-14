@@ -331,7 +331,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   return (
     
     <div className="sm:min-w-full grid grid-cols-1 xl:grid-cols-3 2xl:grid-cols-3 md:grid-cols-1 gap-6 mt-6">
-      {!currentRow.telegramComiteeAction && (
+      {currentRow.telegramComiteeAction && (
   <div className="col-span-full">
     <Card className="border-green-500 bg-green-50 dark:bg-green-900/20">
       <CardContent className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4">
