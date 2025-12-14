@@ -23,6 +23,7 @@ export const DEMANDE_FIELDS = gql`
     categorieDemandeur
     updatedAt
     dernierContact
+    telegramComiteeAction
     derniereRelance
     nombreRelances
     nombrePersonnes
