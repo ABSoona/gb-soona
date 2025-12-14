@@ -46,7 +46,8 @@ const situationBase = {
 } as const;
 // 📌 Schéma de validation du formulaire avec Zod
 const formSchema = demandeSchema
-  .omit({ id: true, contact: true, createdAt: true, demandeActivities: true,acteur :true,proprietaire:true }) // Supprime les champs "id" et "contact"
+  .omit({ id: true, contact: true, createdAt: true, demandeActivities: true,acteur :true,proprietaire:true,telegramComiteeAction:true
+  }) // Supprime les champs "id" et "contact"
   .extend({ contactId: z.any(), acteurId: z.any()}) 
   .superRefine((data, ctx) => {
     if (data.situationFamiliale === 'marié') {
