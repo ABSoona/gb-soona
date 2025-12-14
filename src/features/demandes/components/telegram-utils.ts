@@ -38,7 +38,7 @@ export function buildTelegramMessage(demande: Demande,observations : string) {
   
     const resteAVivre = totalRevenus - totalCharges;
     const resteAVivreParPersonne =
-      resteAVivre > 0 && demande.nombrePersonnes
+      resteAVivre > 0 && demande.nombrePersonnes>0
         ? resteAVivre / demande.nombrePersonnes / 30
         : 0;
   
@@ -80,11 +80,15 @@ export function buildTelegramMessage(demande: Demande,observations : string) {
         style: "currency",
         currency: "EUR",
         minimumFractionDigits: 0,
-      })} (${resteAVivreParPersonne.toLocaleString("fr-FR", {
-        style: "currency",
-        currency: "EUR",
-        minimumFractionDigits: 0,
-      })} / j / pers.)`
+      })}${
+        resteAVivreParPersonne > 0
+          ? ` (${resteAVivreParPersonne.toLocaleString("fr-FR", {
+              style: "currency",
+              currency: "EUR",
+              minimumFractionDigits: 0,
+            })} / j / pers.)`
+          : ""
+      }`
     );
   
     if (observations && observations.trim().length > 0) {
