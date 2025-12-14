@@ -8,7 +8,7 @@ import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService'
 import { useUserServicev2 } from '@/api/user/userService.v2'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem,  DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { columns as aidecolumns } from '@/features/aides/components/aides-columns'
 import { AidesDialogs } from '@/features/aides/components/aides-dialogs'
@@ -24,7 +24,7 @@ import { User } from '@/model/user/User'
 import { TabsContent } from '@radix-ui/react-tabs'
 import { useNavigate } from '@tanstack/react-router'
 import { addMonths } from 'date-fns'
-import {  ChevronDown, Files,  Plus} from 'lucide-react'
+import { ChevronDown, Files, Plus } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { categorieTypes } from '../data/data'
 import CoordinateursMapSheet from './assign-coordinateur'
@@ -39,6 +39,9 @@ import { DemandeSuiviActions } from './DemandeSuiviActions'
 import { EntretienSuiviSheet } from './EntretienSuiviSheet'
 import { calculerAge } from '@/lib/utils'
 import { Spinner } from '@/components/ui/spinner'
+import { TelegramSheet } from './TelegramSheet'
+import { telegramPublish } from '@/api/telegram/telegramService'
+import { buildTelegramMessage } from './telegram-utils'
 
 
 interface Props {
@@ -66,6 +69,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const [openNoteSheet, setOpenNoteSheet] = useState(false);
   const [openEntretienSheet, setOpenEntretienSheet] = useState(false);
   const [openShareFicheVisite, setOpenShareFicheVisite] = useState(false);
+  const [openTelegramSheet, setOpenTelegramSheet] = useState(false);
 
   const [openDocsRequestSheet, setOpenDocsRequestSheet] = useState(false);
   const [openAssignDemandeSheet, setOpenAssignDemandeSheet] = useState(false);
@@ -82,7 +86,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const totalDettes = currentRow?.dettes ?? 0
   const totalAides = currentRow?.contact?.aides?.reduce((acc, aide) => acc + (aide.montant ?? 0), 0) ?? 0
   const resteAVivre = totalRevenus - totalCharges
-  const resteAVivreParPersonne = resteAVivre > 0 && resteAVivre/currentRow.nombrePersonnes/30
+  const resteAVivreParPersonne = resteAVivre > 0 ? resteAVivre / currentRow.nombrePersonnes / 30 : 0
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileInputMultiRef = useRef<HTMLInputElement>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
@@ -149,7 +153,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
 
   const handleRefuserDemande = async () => {
     nextStatusRef.current = "refusée";
-    await updateDemande(currentRow.id, { status: nextStatusRef.current,decisionDate: new Date() });
+    await updateDemande(currentRow.id, { status: nextStatusRef.current, decisionDate: new Date() });
   }
 
   const handleAcceptDemande = async () => {
@@ -161,7 +165,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       { confirmText: "Oui", cancelBtnText: "Annuler" }
     );
     const firstTresorier: User | undefined = users.length > 0 ? users[0] : undefined;
-    await updateDemande(currentRow.id, {decisionDate: new Date(), status: nextStatusRef.current, ...(firstTresorier && { acteur: { id: firstTresorier.id } }), });
+    await updateDemande(currentRow.id, { decisionDate: new Date(), status: nextStatusRef.current, ...(firstTresorier && { acteur: { id: firstTresorier.id } }), });
   }
 
   const handleAskAgainAide = async ()=>{
@@ -183,7 +187,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       userId: userId!,
     });
   };
-  const handleSubmitEntretien = async ({  message }: { message: string }) => {
+  const handleSubmitEntretien = async ({ message }: { message: string }) => {
     await createDemandeActivity({
       titre: "Entretien avec le bénéficiaire",
       message: message,
@@ -198,6 +202,20 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     await shareFicheVisite({ demandeId: currentRow.id, userId: userId, subordoneId: userId });
     setOpenShareFicheVisite(false);
   };
+
+  const handleSubmitTelegram = async ({ message }: { message: string }) => {
+    const lines = buildTelegramMessage(currentRow, message);
+    const demandeUrl = `${window.location.origin}/demandes/${currentRow.id}`;
+    await telegramPublish({
+      demandeId: currentRow.id,
+      title: `Demande #${currentRow.id}`,
+      lines,
+      demandeUrl: demandeUrl,
+    });
+
+    setOpenTelegramSheet(false);
+  };
+
   const handDownloadFicheVisite = async () => {
     navigate({ to: `/demandes/${currentRow.id}/pdf` });
   }
@@ -243,6 +261,8 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const handleOpenVisiteSheet = async () => {
     setOpenVisiteSheet(true); // Ouvre la Sheet
   };
+
+
   const handleAbandonnerDemande = async () => {
     await updateDemande(currentRow.id, { status: "Abandonnée" });
   }
@@ -256,7 +276,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   };
 
   const hasContactAttempts: boolean = (currentRow.demandeActivities.filter((e) => (e.typeField === "priseContactReussie"))).length > 0
-  const hasPedingVisite : boolean = visites.filter((e:Visite) =>(e.status==='Programee' || e.status==='Planifiee' )).length>0
+  const hasPedingVisite: boolean = visites.filter((e: Visite) => (e.status === 'Programee' || e.status === 'Planifiee')).length > 0
 
   async function handleChnageToEnComite() {
     await createDemandeActivity({
@@ -289,9 +309,9 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
 
   async function onRapportAdded() {
     handleChnageToEnComite()
-  } 
+  }
 
-  async function onVisitDone(){
+  async function onVisitDone() {
     handleChnageToEnComite()
   }
 
@@ -300,46 +320,68 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     const coordinateur = data.visiteur.superieur ?? data.visiteur;
     await createVisite({ acteur: { id: data.visiteur.id }, demande: { id: currentRow.id }, status: 'Programee' })
     await updateDemande(currentRow.id, {
-      status: "en_visite", acteur : {id:coordinateur.id}
- 
-    }); 
-    
+      status: "en_visite", acteur: { id: coordinateur.id }
+
+    });
+
 
     setOpenVisiteSheet(false);
   };
 
   return (
+    
     <div className="sm:min-w-full grid grid-cols-1 xl:grid-cols-3 2xl:grid-cols-3 md:grid-cols-1 gap-6 mt-6">
-      {showContact && (
-  <div className="col-span-1">
-    <DemandeSuiviActions
-      currentRow={currentRow}
-      hasContactAttempts={hasContactAttempts}
-      hasDocument={hasDocument}
-      hasPedingVisite={hasPedingVisite}
-      handleAcceptDemande={handleAcceptDemande}
-      handleRefuserDemande={handleRefuserDemande}
-      handleEchecContact={handleEchecContact}
-      handleSuccessContact={setOpenEntretienSheet}
-      setOpenNoteSheet={setOpenNoteSheet}
-      handleOpenAssigSheet={handleOpenAssigSheet}
-      handleDocsRequest={handleDocsRequest}
-      handleOpenVisiteSheet={handleOpenVisiteSheet}
-      setOpenShareFicheVisite={setOpenShareFicheVisite}
-      handleAbandonnerDemande={handleAbandonnerDemande}
-      onRapportAdded={onRapportAdded}
-      onVisitDone={onVisitDone}
+      {!currentRow.telegramComiteeAction && (
+  <div className="col-span-full">
+    <Card className="border-green-500 bg-green-50 dark:bg-green-900/20">
+      <CardContent className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4">
+        <div>
+          <p className="font-semibold text-green-700 dark:text-green-300">
+            Demande approuvée lors du comité Telegram
+          </p>
+          <p className="text-sm text-green-600 dark:text-green-400">
+            Vous pouvez ajouter une aide dès maintenant.
+          </p>
+        </div>
 
-    />
+        <Button onClick={handleAcceptDemande}>
+          Confirmer et Ajouter une aide
+        </Button>
+      </CardContent>
+    </Card>
   </div>
 )}
+
+      {showContact && (
+        <div className="col-span-1">
+          <DemandeSuiviActions
+            currentRow={currentRow}
+            hasContactAttempts={hasContactAttempts}
+            hasDocument={hasDocument}
+            hasPedingVisite={hasPedingVisite}
+            handleAcceptDemande={handleAcceptDemande}
+            handleRefuserDemande={handleRefuserDemande}
+            handleEchecContact={handleEchecContact}
+            handleSuccessContact={setOpenEntretienSheet}
+            setOpenNoteSheet={setOpenNoteSheet}
+            handleOpenAssigSheet={handleOpenAssigSheet}
+            handleDocsRequest={handleDocsRequest}
+            handleOpenVisiteSheet={handleOpenVisiteSheet}
+            setOpenShareFicheVisite={setOpenShareFicheVisite}
+            setOpenTelegramSheet={setOpenTelegramSheet}
+            handleAbandonnerDemande={handleAbandonnerDemande}
+            onRapportAdded={onRapportAdded}
+            onVisitDone={onVisitDone}
+          />
+        </div>
+      )}
       <NoteSuiviSheet
         open={openNoteSheet}
         onOpenChange={setOpenNoteSheet}
         onSubmit={handleSubmitNote}
       />
 
-    <EntretienSuiviSheet
+      <EntretienSuiviSheet
         open={openEntretienSheet}
         onOpenChange={setOpenEntretienSheet}
         onSubmit={handleSubmitEntretien}
@@ -350,6 +392,13 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         onSubmit={handleSubmitFicheVisite}
         onDownload={handDownloadFicheVisite}
       />
+      <TelegramSheet
+        open={openTelegramSheet}
+        onOpenChange={setOpenTelegramSheet}
+        onSubmit={handleSubmitTelegram}
+
+      />
+
       <DocsRequestSheet
         open={openDocsRequestSheet}
         onOpenChange={setOpenDocsRequestSheet}
@@ -372,10 +421,10 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
           <InfoCard title="Charges" value={`${totalCharges?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
           <InfoCard title="Dettes" value={`${totalDettes?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
           <InfoCard title="Historique Aides" value={`${totalAides?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
-          <InfoCard title="Reste à Vivre" subtitle={ resteAVivreParPersonne ?`${resteAVivreParPersonne?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}  par j/pers`:""}
-          value={`${resteAVivre?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
+          <InfoCard title="Reste à Vivre" subtitle={resteAVivreParPersonne ? `${resteAVivreParPersonne?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}  par j/pers` : ""}
+            value={`${resteAVivre?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card className="h-full">
             <CardHeader>
@@ -384,13 +433,13 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
             <CardContent className="space-y-2">
               <DetailRow label="Nom et Prénom" value={`${currentRow?.contact?.nom} ${currentRow?.contact?.prenom}`} link={`/contacts/${currentRow.contact.id}`} capitalize={true} />
               <DetailRow
-              label="Âge"
-              value={
-                currentRow?.contact?.dateNaissance
-                  ? `${calculerAge(currentRow.contact.dateNaissance)} ans`
-                  : '-'
-              }
-            />
+                label="Âge"
+                value={
+                  currentRow?.contact?.dateNaissance
+                    ? `${calculerAge(currentRow.contact.dateNaissance)} ans`
+                    : '-'
+                }
+              />
               <DetailRow label="Email" value={currentRow?.contact.email ?? '-'} />
               <DetailRow label="Tél" value={currentRow?.contact.telephone ?? '-'} />
               <DetailRow label="Adresse" value={currentRow?.contact.adresse ?? '-'} capitalize={true} />
@@ -460,7 +509,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant='outline' size="sm" >
-                    Ajouter <ChevronDown className="h-4 w-4"/>
+                      Ajouter <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
@@ -486,20 +535,20 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                 />
               </CardHeader>
               <CardContent className="text-xl font-bold">
-  {isLoadingDocuments ? (
-    <div className="flex justify-center py-6">
-      <Spinner size="large" />
-    </div>
-  ) : (
-    <DocumentsManager
-      attachement="Demande"
-      documents={suiviDdemandeur}
-      contactId={currentRow?.contact.id}
-      onUpload={handleFileUpload}
-      onDelete={handleDelete}
-    />
-  )}
-</CardContent>
+                {isLoadingDocuments ? (
+                  <div className="flex justify-center py-6">
+                    <Spinner size="large" />
+                  </div>
+                ) : (
+                  <DocumentsManager
+                    attachement="Demande"
+                    documents={suiviDdemandeur}
+                    contactId={currentRow?.contact.id}
+                    onUpload={handleFileUpload}
+                    onDelete={handleDelete}
+                  />
+                )}
+              </CardContent>
             </Card>
           }
         </div>

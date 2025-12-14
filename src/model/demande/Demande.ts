@@ -4,6 +4,7 @@ import { IconExternalLink, IconShield, IconUsersGroup } from "@tabler/icons-reac
 import { z } from 'zod';
 import { contactSchema } from '../contact/Contact';
 import { userSchema } from "../user/User";
+import { E } from "node_modules/@faker-js/faker/dist/airline-CBNP41sR";
 
 // Schéma pour le statut de la demande
 export const demandeStatusSchema = z.union([
@@ -109,6 +110,7 @@ export const demandeSchema = z.object({
   derniereRelance:z.string().optional(),
   nombreRelances:z.coerce.number().optional(),
   recommandation:z.string().optional(),
+  telegramComiteeAction : z.boolean()
 
 });
 

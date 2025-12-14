@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-  import { Plus, CheckCircle, PauseCircle, PhoneMissed, PhoneCall, StickyNote, UserCheck, FilePlus2, MapPin, ExternalLink, RefreshCwOff, ChevronDown } from 'lucide-react';
+  import { Plus, CheckCircle, PauseCircle, PhoneMissed, PhoneCall, StickyNote, UserCheck, FilePlus2, MapPin, ExternalLink, RefreshCwOff, ChevronDown, Send } from 'lucide-react';
   import { TabsContent } from '@radix-ui/react-tabs';
   import { Button } from '@/components/ui/button';
   import { DemandeActivityTimeline } from './DemandeActivityTimeline';
@@ -33,6 +33,7 @@ import { useAides } from '@/features/aides/context/aides-context';
     handleDocsRequest: () => void;
     handleOpenVisiteSheet: () => void;
     setOpenShareFicheVisite: (open: boolean) => void;
+    setOpenTelegramSheet: (open: boolean) => void;
     handleAbandonnerDemande: () => void;
     onRapportAdded: () => void;
     onVisitDone: () => void;
@@ -54,6 +55,7 @@ import { useAides } from '@/features/aides/context/aides-context';
     handleOpenVisiteSheet,
     setOpenShareFicheVisite: setOpenShareDemande,
     handleAbandonnerDemande,
+    setOpenTelegramSheet,
     onRapportAdded,
     onVisitDone,
   }: Props) {
@@ -82,6 +84,10 @@ import { useAides } from '@/features/aides/context/aides-context';
                     <DropdownMenuItem onClick={handleRefuserDemande}>
                       <PauseCircle className="mr-2 h-4 w-4" />
                       Rejeter la demande
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setOpenTelegramSheet(true)}>
+                      <Send  className="mr-2 h-4 w-4" />
+                      Soumettere au comité Telegram
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </>
