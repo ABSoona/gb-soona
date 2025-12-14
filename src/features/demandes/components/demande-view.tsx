@@ -327,15 +327,15 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       <CardContent className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4">
         <div>
           <p className="font-semibold text-green-700 dark:text-green-300">
-            Demande approuvée lors du comité Telegram
+            Demande traitée lors du comité Telegram
           </p>
           <p className="text-sm text-green-600 dark:text-green-400">
-            Vous pouvez ajouter une aide dès maintenant.
+            Vous pouvez confirmer la décision et ajouter une aide dès maintenant.
           </p>
         </div>
 
         <Button onClick={handleAcceptDemande}>
-          Confirmer et Ajouter une aide
+          Confirmer
         </Button>
       </CardContent>
     </Card>
