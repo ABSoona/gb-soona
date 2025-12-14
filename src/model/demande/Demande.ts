@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { contactSchema } from '../contact/Contact';
 import { userSchema } from "../user/User";
 
+
 // Schéma pour le statut de la demande
 export const demandeStatusSchema = z.union([
   z.literal('recue'),
@@ -109,6 +110,7 @@ export const demandeSchema = z.object({
   derniereRelance:z.string().optional(),
   nombreRelances:z.coerce.number().optional(),
   recommandation:z.string().optional(),
+  telegramComiteeAction : z.boolean()
 
 });
 
