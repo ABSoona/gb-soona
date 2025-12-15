@@ -1,6 +1,7 @@
 import { Demande, situationFamilleTypes, situationTypes } from "@/model/demande/Demande";
+import { z } from "zod";
 
-export function buildTelegramMessage(demande: Demande,observations : string) {
+export function buildTelegramMessage(demande: Demande) {
     const lines: string[] = [];
   
     const situationFamille =
@@ -74,6 +75,10 @@ export function buildTelegramMessage(demande: Demande,observations : string) {
         minimumFractionDigits: 0,
       })}`
     );
+
+    if (demande?.natureDettes?.trim() !== "") {
+      lines.push(`Nature Dettes : ${demande?.natureDettes}`);
+    }
   
     lines.push(
       `Reste à vivre : ${resteAVivre.toLocaleString("fr-FR", {
@@ -91,10 +96,25 @@ export function buildTelegramMessage(demande: Demande,observations : string) {
       }`
     );
   
-    if (observations && observations.trim().length > 0) {
-      lines.push(`Recommandation A.S.: ${observations}`);
-     
-    }
+   
     return lines;
   }
   
+
+  const telegramSuggestion = z.union([
+    z.literal('reject'),
+    z.literal('accept')
+  ]);
+  export type telegramSuggestion = z.infer<typeof telegramSuggestion>;
+  export const telegramSuggestOptions = [
+    {
+      label: 'Rejeter',
+      value: 'reject',
+    },
+    {
+      label: 'Accepter',
+      value: 'accept',
+
+    },
+   
+  ] as const;
