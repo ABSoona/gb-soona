@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,12 +47,16 @@ export const TelegramSheet: React.FC<TelegramSheetProps> = ({ open, onOpenChange
         </SheetHeader>
 
         <div className="space-y-4">
-         
+        <div className="flex items-center gap-2">
            <Switch
+              id="authorize-vote"
               checked={authorizeVote}
               onCheckedChange={setAuthorizeVote}
                                 />
-                              
+           <Label htmlFor="authorize-vote">
+            Ajouter les boutons de vote
+          </Label>
+         </div>                     
           
           <Textarea
             placeholder="Recomandations / Observations"
