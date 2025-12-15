@@ -2,7 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -10,18 +12,19 @@ import { useState } from "react";
 interface TelegramSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: { message: string }) => Promise<void>;
+  onSubmit: (data: { message: string,authorizeVote:boolean }) => Promise<void>;
 }
 
 export const TelegramSheet: React.FC<TelegramSheetProps> = ({ open, onOpenChange, onSubmit }) => {
 
   const [message, setMessage] = useState("");
+  const [authorizeVote, setAuthorizeVote] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      await onSubmit({ message });
+      await onSubmit({ message,authorizeVote });
       setMessage("");
       onOpenChange(false);
     } catch (error) {
@@ -44,6 +47,16 @@ export const TelegramSheet: React.FC<TelegramSheetProps> = ({ open, onOpenChange
         </SheetHeader>
 
         <div className="space-y-4">
+        <div className="flex items-center gap-2">
+           <Switch
+              id="authorize-vote"
+              checked={authorizeVote}
+              onCheckedChange={setAuthorizeVote}
+                                />
+           <Label htmlFor="authorize-vote">
+            Ajouter les boutons de vote
+          </Label>
+         </div>                     
           
           <Textarea
             placeholder="Recomandations / Observations"
