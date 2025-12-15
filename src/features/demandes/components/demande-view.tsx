@@ -203,7 +203,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     setOpenShareFicheVisite(false);
   };
 
-  const handleSubmitTelegram = async ({ message,authorizeVote }: { message: string, authorizeVote:boolean }) => {
+  const handleSubmitTelegram = async ({ message,authoriseVote }: { message: string, authoriseVote:boolean }) => {
     const lines = buildTelegramMessage(currentRow, message);
     const demandeUrl = `${window.location.origin}/demandes/${currentRow.id}`;
     await telegramPublish({
@@ -211,7 +211,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       title: `Demande #${currentRow.id}`,
       lines,
       demandeUrl: demandeUrl,
-      authorizeVote : authorizeVote
+      authoriseVote : authoriseVote
     });
 
     setOpenTelegramSheet(false);

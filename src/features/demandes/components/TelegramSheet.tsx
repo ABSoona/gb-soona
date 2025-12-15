@@ -12,19 +12,19 @@ import { useState } from "react";
 interface TelegramSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: { message: string,authorizeVote:boolean }) => Promise<void>;
+  onSubmit: (data: { message: string,authoriseVote:boolean }) => Promise<void>;
 }
 
 export const TelegramSheet: React.FC<TelegramSheetProps> = ({ open, onOpenChange, onSubmit }) => {
 
   const [message, setMessage] = useState("");
-  const [authorizeVote, setAuthorizeVote] = useState(true);
+  const [authoriseVote, setAuthoriseVote] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      await onSubmit({ message,authorizeVote });
+      await onSubmit({ message,authoriseVote });
       setMessage("");
       onOpenChange(false);
     } catch (error) {
@@ -50,8 +50,8 @@ export const TelegramSheet: React.FC<TelegramSheetProps> = ({ open, onOpenChange
         <div className="flex items-center gap-2">
            <Switch
               id="authorize-vote"
-              checked={authorizeVote}
-              onCheckedChange={setAuthorizeVote}
+              checked={authoriseVote}
+              onCheckedChange={setAuthoriseVote}
                                 />
            <Label htmlFor="authorize-vote">
             Ajouter les boutons de vote
