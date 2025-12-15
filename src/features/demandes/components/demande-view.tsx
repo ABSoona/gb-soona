@@ -41,7 +41,7 @@ import { calculerAge } from '@/lib/utils'
 import { Spinner } from '@/components/ui/spinner'
 import { TelegramSheet } from './TelegramSheet'
 import { telegramPublish } from '@/api/telegram/telegramService'
-import { buildTelegramMessage } from './telegram-utils'
+import { buildTelegramMessage, telegramSuggestion } from './telegram-utils'
 
 
 interface Props {
@@ -193,15 +193,17 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     setOpenShareFicheVisite(false);
   };
 
-  const handleSubmitTelegram = async ({ message,authoriseVote }: { message: string, authoriseVote:boolean }) => {
-    const lines = buildTelegramMessage(currentRow, message);
+  const handleSubmitTelegram = async ({ message,authoriseVote,recommandation }: { message: string, authoriseVote:boolean,recommandation:telegramSuggestion }) => {
+    const lines = buildTelegramMessage(currentRow);
     const demandeUrl = `${window.location.origin}/demandes/${currentRow.id}`;
     await telegramPublish({
       demandeId: currentRow.id,
       title: `Demande #${currentRow.id}`,
       lines,
       demandeUrl: demandeUrl,
-      authoriseVote : authoriseVote
+      authoriseVote : authoriseVote,
+      recommandation:recommandation,
+      message : message
     });
 
     setOpenTelegramSheet(false);
