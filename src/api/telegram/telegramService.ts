@@ -3,7 +3,7 @@ import { getUserId } from '@/lib/session';
 import { User } from '@/model/user/User';
 
 
-export const telegramPublish = async (payload : {demandeId: number, title: string, lines : string[],demandeUrl:string}): Promise<void> => {
+export const telegramPublish = async (payload : {demandeId: number, title: string, lines : string[],demandeUrl:string,authoriseVote:boolean}): Promise<void> => {
   await axiosInstance.post(`/telegram/publish`, payload);
 };
 

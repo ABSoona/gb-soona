@@ -203,7 +203,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     setOpenShareFicheVisite(false);
   };
 
-  const handleSubmitTelegram = async ({ message }: { message: string }) => {
+  const handleSubmitTelegram = async ({ message,authoriseVote }: { message: string, authoriseVote:boolean }) => {
     const lines = buildTelegramMessage(currentRow, message);
     const demandeUrl = `${window.location.origin}/demandes/${currentRow.id}`;
     await telegramPublish({
@@ -211,6 +211,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       title: `Demande #${currentRow.id}`,
       lines,
       demandeUrl: demandeUrl,
+      authoriseVote : authoriseVote
     });
 
     setOpenTelegramSheet(false);
@@ -340,7 +341,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
             Demande traitée lors du comité Telegram
           </p>
           <p className="text-sm text-green-600 dark:text-green-400">
-            Vous pouvez confirmer la décision et ajouter une aide dès maintenant.
+            Vous pouvez confirmer la décision et ajouter une aide.
           </p>
         </div>
 
