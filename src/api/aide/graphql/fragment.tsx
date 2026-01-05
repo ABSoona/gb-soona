@@ -21,6 +21,7 @@ export const AIDE_FIELDS = gql`
    status
    reetudier 
    versements{id status}
+   acteurVersement {id firstName lastName}
   }
 `;
 
@@ -35,6 +36,7 @@ export const AIDE_FIELDS_LIGHT = gql`
     dateExpiration
     nombreVersements
     status
+    
 
  
   }

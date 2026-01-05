@@ -13,6 +13,7 @@ export const VERSEMENT_FIELDS = gql`
       }
       frequence
       demande{id status}
+      acteurVersement {id, firstName, lastName}
     }
     status
     dataVersement
