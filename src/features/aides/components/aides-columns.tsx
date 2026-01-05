@@ -8,6 +8,8 @@ import { aideCredieteurTypes, aideFrquenceTypes, aideStatusTypes, typeAideTypes 
 import { DataTableRowActions } from './data-table-row-actions';
 import { DataTableRowDocuments } from '../../versements/components/data-table-row-documents';
 import { Progress } from '@/components/ui/progress';
+import { DataTableColumnHeader } from './data-table-column-header';
+import { userTypes } from '@/features/users/data/data';
 
 const dateRangeFilter: ColumnDef<Aide>['filterFn'] = (row, columnId, filterValue: DateRange | undefined) => {
     if (!filterValue || (!filterValue.from && !filterValue.to)) {
@@ -94,6 +96,34 @@ export const columns: ColumnDef<Aide>[] = [
         cell: ({ row }) => row.original?.montant?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? '-',
         enableHiding: true,
     },
+
+     {
+            accessorFn: (row) => `${row?.acteurVersement?.firstName ?? ''} ${row?.acteurVersement?.lastName ?? ''}`,
+            id: 'acteurVersement',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title='Trésorier' />
+              ),
+            cell: ({ row }) => {
+              const acteur = row.original?.acteurVersement;
+              const fullName = `${acteur?.firstName ?? '-'} ${acteur?.lastName?.[0]?.toUpperCase()  ?? ''}`;
+              const role = acteur?.role;
+              const userType = userTypes.find(({ value }) => value === role);
+          
+              return (
+                <div className='flex items-center gap-x-2'>
+                  {userType?.icon && (
+                    <userType.icon size={18} className='text-muted-foreground' />
+                  )}
+                  <span className='capitalize'>{fullName}</span>
+                </div>
+              );
+            },
+            enableHiding: true,
+            filterFn: (row, id, value) => {
+              const fullName = `${row.getValue(id)}`.toLowerCase();
+              return fullName.includes(value.toLowerCase());
+            },
+          },
 
     {
         accessorFn: (row) => row.frequence,

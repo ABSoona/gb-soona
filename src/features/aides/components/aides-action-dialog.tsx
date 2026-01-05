@@ -45,10 +45,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Plus } from 'lucide-react';
 import { TypeDocument } from '@/model/typeDocument/typeDocument';
 import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService';
+import { User } from '@/model/user/User';
+import { useUserServicev2 } from '@/api/user/userService.v2';
 
 
 // 📌 Schéma de validation du formulaire avec Zod
-const formSchema = aideSchema.omit({ id: true, contact: true, demande: true, status: true }).extend({ contactId: z.any(), demandeId: z.any() });
+const formSchema = aideSchema.omit({ id: true, contact: true, demande: true, status: true,acteurVersement :true }).extend({ contactId: z.any(), demandeId: z.any(),acteurVersementId: z.any() });
 
 type AideForm = z.infer<typeof formSchema>;
 
@@ -77,6 +79,10 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
   /* const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
   const { typeDocuments } = useTypeDocumentService({ where: { rattachement: 'Aide' } }); */
+    const { users } = useUserServicev2(
+       { where: { role: { not: "visiteur" } } } 
+    );
+  
   const defaultFormValues: AideForm = isEdit && currentRow
     ? {
       contactId: currentRow.contact?.id || '',
@@ -92,6 +98,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       remarque: currentRow.remarque ?? '',
       demandeId: currentRow.demande?.id?.toString() ?? '',
       reetudier: currentRow.reetudier ?? false,
+      acteurVersementId: currentRow?.acteurVersement?.id ?? undefined,
     }
     : {
       contactId: forContactId ?? '',
@@ -107,6 +114,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       remarque: '',
       demandeId: forDemandeId?.toString() ?? '',
       reetudier: false,
+      acteurVersementId: undefined,
     };
   const form = useForm<AideForm>({
     resolver: zodResolver(formSchema),
@@ -148,6 +156,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
     const demandeId = forDemandeId ?? values.demandeId;
     const aidePayload = {
       contact: { id: Number(contactId) },
+      acteurVersement : {id : values.acteurVersementId},
       typeField: values.typeField,
       montant: Number(values.montant),
       dateAide: values.dateAide,
@@ -422,6 +431,40 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
                   </FormItem>
                 )} />
               }
+              <FormField
+                              control={form.control}
+                              name="acteurVersementId"
+                              render={({ field }) => (
+                                <FormItem className="space-y-1">
+                                  <FormLabel>Trésorier</FormLabel>
+                                  <SelectDropdown
+                                    defaultValue={field.value}
+                                    onValueChange={field.onChange}
+                                    placeholder="Choisissez un trésorier"
+                                    className="col-span-4"
+                    
+                                    items={users.map((user: User) => {
+                                      const initials = `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase();
+                                      const label = (
+                                        <div className="flex items-center gap-2">
+                                          <div className="h-6 w-6 rounded-full bg-black text-xs text-center font-medium text-white flex items-center justify-center">
+                                            {initials}
+                                          </div>
+                                          <span>{user.firstName} {user.lastName}</span>
+                                        </div>
+                                      );
+                                    
+                                      return {
+                                        value: user.id.toString(),
+                                        label,
+                                      };
+                                    })}
+                                  />
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
 
               <FormField control={form.control} name="remarque" render={({ field }) => (
                 <FormItem>
