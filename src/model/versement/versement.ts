@@ -7,6 +7,7 @@ import { documentSchema } from "../document/Document";
 export const VersementSatusSchema = z.union([
   z.literal('AVerser'),
   z.literal('Verse'),
+  z.literal('Planifie'),
 
 ]);
 export type VersementStatus= z.infer<typeof VersementSatusSchema>;

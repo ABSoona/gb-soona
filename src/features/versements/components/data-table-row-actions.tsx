@@ -55,7 +55,11 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
 
     // 1. Upload pour le versement actuel
     await handleFileUpload(versement.aide.contact.id, file, typeDocuments[0].id, 0, 0, versement.id);
-    await updateVersement(versement.id, { status: 'Verse' });
+    
+    new Date(versement.dataVersement) <= new Date()
+      ? await updateVersement(versement.id, { status: 'Verse' })
+      : await updateVersement(versement.id, { status: 'Planifie' })
+   
 
 
 
@@ -73,6 +77,9 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     const contactId = row.original.aide.contact.id;
     for (const v of autresVersements) {
       await handleFileUpload(contactId, pendingFile!, typeDocuments[0].id, 0, 0, v.id);
+      new Date(v.dataVersement) <= new Date()
+      ? await updateVersement(v.id, { status: 'Verse' })
+      : await updateVersement(v.id, { status: 'Planifie' })
       //await updateVersement(v.id, { status: 'Verse' });
     }
     setShowDialog(false);
