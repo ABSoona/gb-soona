@@ -67,6 +67,9 @@ const AuthenticatedContactsIndexLazyImport = createFileRoute(
 const AuthenticatedAidesIndexLazyImport = createFileRoute(
   '/_authenticated/aides/',
 )()
+const AuthenticatedVersementsPlanifieLazyImport = createFileRoute(
+  '/_authenticated/versements/planifie',
+)()
 const AuthenticatedVersementsEnRetardLazyImport = createFileRoute(
   '/_authenticated/versements/en-retard',
 )()
@@ -319,6 +322,17 @@ const AuthenticatedAidesIndexLazyRoute =
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any).lazy(() =>
     import('./routes/_authenticated/aides/index.lazy').then((d) => d.Route),
+  )
+
+const AuthenticatedVersementsPlanifieLazyRoute =
+  AuthenticatedVersementsPlanifieLazyImport.update({
+    id: '/versements/planifie',
+    path: '/versements/planifie',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/versements/planifie.lazy').then(
+      (d) => d.Route,
+    ),
   )
 
 const AuthenticatedVersementsEnRetardLazyRoute =
@@ -673,6 +687,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVersementsEnRetardLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/versements/planifie': {
+      id: '/_authenticated/versements/planifie'
+      path: '/versements/planifie'
+      fullPath: '/versements/planifie'
+      preLoaderRoute: typeof AuthenticatedVersementsPlanifieLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/aides/': {
       id: '/_authenticated/aides/'
       path: '/aides'
@@ -806,6 +827,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDemandesNouvellesLazyRoute: typeof AuthenticatedDemandesNouvellesLazyRoute
   AuthenticatedVersementsAVerserLazyRoute: typeof AuthenticatedVersementsAVerserLazyRoute
   AuthenticatedVersementsEnRetardLazyRoute: typeof AuthenticatedVersementsEnRetardLazyRoute
+  AuthenticatedVersementsPlanifieLazyRoute: typeof AuthenticatedVersementsPlanifieLazyRoute
   AuthenticatedAidesIndexLazyRoute: typeof AuthenticatedAidesIndexLazyRoute
   AuthenticatedContactsIndexLazyRoute: typeof AuthenticatedContactsIndexLazyRoute
   AuthenticatedDemandesIndexLazyRoute: typeof AuthenticatedDemandesIndexLazyRoute
@@ -838,6 +860,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedVersementsAVerserLazyRoute,
   AuthenticatedVersementsEnRetardLazyRoute:
     AuthenticatedVersementsEnRetardLazyRoute,
+  AuthenticatedVersementsPlanifieLazyRoute:
+    AuthenticatedVersementsPlanifieLazyRoute,
   AuthenticatedAidesIndexLazyRoute: AuthenticatedAidesIndexLazyRoute,
   AuthenticatedContactsIndexLazyRoute: AuthenticatedContactsIndexLazyRoute,
   AuthenticatedDemandesIndexLazyRoute: AuthenticatedDemandesIndexLazyRoute,
@@ -883,6 +907,7 @@ export interface FileRoutesByFullPath {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsLazyRoute
   '/versements/a-verser': typeof AuthenticatedVersementsAVerserLazyRoute
   '/versements/en-retard': typeof AuthenticatedVersementsEnRetardLazyRoute
+  '/versements/planifie': typeof AuthenticatedVersementsPlanifieLazyRoute
   '/aides': typeof AuthenticatedAidesIndexLazyRoute
   '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
@@ -923,6 +948,7 @@ export interface FileRoutesByTo {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsLazyRoute
   '/versements/a-verser': typeof AuthenticatedVersementsAVerserLazyRoute
   '/versements/en-retard': typeof AuthenticatedVersementsEnRetardLazyRoute
+  '/versements/planifie': typeof AuthenticatedVersementsPlanifieLazyRoute
   '/aides': typeof AuthenticatedAidesIndexLazyRoute
   '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
@@ -967,6 +993,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsLazyRoute
   '/_authenticated/versements/a-verser': typeof AuthenticatedVersementsAVerserLazyRoute
   '/_authenticated/versements/en-retard': typeof AuthenticatedVersementsEnRetardLazyRoute
+  '/_authenticated/versements/planifie': typeof AuthenticatedVersementsPlanifieLazyRoute
   '/_authenticated/aides/': typeof AuthenticatedAidesIndexLazyRoute
   '/_authenticated/contacts/': typeof AuthenticatedContactsIndexLazyRoute
   '/_authenticated/demandes/': typeof AuthenticatedDemandesIndexLazyRoute
@@ -1011,6 +1038,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/versements/a-verser'
     | '/versements/en-retard'
+    | '/versements/planifie'
     | '/aides'
     | '/contacts'
     | '/demandes'
@@ -1050,6 +1078,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/versements/a-verser'
     | '/versements/en-retard'
+    | '/versements/planifie'
     | '/aides'
     | '/contacts'
     | '/demandes'
@@ -1092,6 +1121,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/notifications'
     | '/_authenticated/versements/a-verser'
     | '/_authenticated/versements/en-retard'
+    | '/_authenticated/versements/planifie'
     | '/_authenticated/aides/'
     | '/_authenticated/contacts/'
     | '/_authenticated/demandes/'
@@ -1181,6 +1211,7 @@ export const routeTree = rootRoute
         "/_authenticated/demandes/nouvelles",
         "/_authenticated/versements/a-verser",
         "/_authenticated/versements/en-retard",
+        "/_authenticated/versements/planifie",
         "/_authenticated/aides/",
         "/_authenticated/contacts/",
         "/_authenticated/demandes/",
@@ -1291,6 +1322,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/versements/en-retard": {
       "filePath": "_authenticated/versements/en-retard.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/versements/planifie": {
+      "filePath": "_authenticated/versements/planifie.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/aides/": {

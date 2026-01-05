@@ -95,8 +95,13 @@ export function useSidebarData(): SidebarData {
               icon: Squircle,
             },
             {
-              title: 'A venir',
+              title: 'A verser',
               url: '/versements/a-verser',
+              icon: Squircle,
+            },
+            {
+              title: 'Planifiés',
+              url: '/versements/planifie',
               icon: Squircle,
             },
             {
