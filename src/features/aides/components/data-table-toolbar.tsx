@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { DataTableViewOptions } from './data-table-view-options';
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
 import { DataTableExport } from './data-table-export';
+import { useUserServicev2 } from '@/api/user/userService.v2';
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -20,7 +21,17 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
     // ✅ État pour gérer les filtres sauvegardés
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [filterName, setFilterName] = useState<string>('');
-
+     const { users } = useUserServicev2(
+               { where: { role: { not: "visiteur" } } } 
+            );
+            const userOptions = useMemo(
+                () =>
+                  (users ?? []).map((u: any) => ({
+                    label: `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim() || u.id,
+                    value: u.id, // IMPORTANT : doit matcher la valeur stockée dans la colonne acteurVersement
+                  })),
+                [users]
+              );
     // ✅ Restaurer les filtres depuis localStorage au chargement
     useEffect(() => {
         // 🔹 Restaurer le filtre "Nom"
@@ -132,6 +143,13 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                             options={aideCredieteurTypes.map((t) => ({ ...t }))}
                         />
                     )}
+                     {table.getColumn('acteurVersement') && (
+                                            <DataTableFacetedFilter
+                                                column={table.getColumn('acteurVersement')}
+                                                 title="Trésorier"
+                                                  options={userOptions}
+                                            />
+                                        )}
                     {table.getColumn('suspendue') && (
                         <DataTableFacetedFilter
                             column={table.getColumn('suspendue')}
