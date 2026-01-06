@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { contactSchema } from '../contact/Contact';
 import { demandeSchema } from '../demande/Demande';
+import { userSchema } from '../user/User';
 
 
 // Schéma pour le statut de la aide
@@ -66,6 +67,7 @@ export const aideSchema = z.object({
   status: aideSatusSchema,
   reetudier: z.boolean(),
   versements : z.array(versementLight).optional(),
+  acteurVersement : userSchema.optional(),
 
 });
 export type Aide = z.infer<typeof aideSchema>;

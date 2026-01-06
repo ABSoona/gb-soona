@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { DataTableViewOptions } from './data-table-view-options';
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
 import { DataTableExport } from './data-table-export';
+import { useUserServicev2 } from '@/api/user/userService.v2';
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -16,7 +17,17 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
-
+    const { users } = useUserServicev2(
+           { where: { role: { not: "visiteur" } } } 
+        );
+        const userOptions = useMemo(
+            () =>
+              (users ?? []).map((u: any) => ({
+                label: `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim() || u.id,
+                value: u.id, // IMPORTANT : doit matcher la valeur stockée dans la colonne acteurVersement
+              })),
+            [users]
+          );
     // ✅ État pour gérer les filtres sauvegardés
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [filterName, setFilterName] = useState<string>('');
@@ -127,7 +138,13 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                         />
                     )}
                    
-
+                    {table.getColumn('acteurVersement') && (
+                        <DataTableFacetedFilter
+                            column={table.getColumn('acteurVersement')}
+                             title="Trésorier"
+                              options={userOptions}
+                        />
+                    )}
 
                 </div>
 
