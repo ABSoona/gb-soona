@@ -97,32 +97,33 @@ export const columns: ColumnDef<Aide>[] = [
         enableHiding: true,
     },
 
-     {
-            accessorFn: (row) => `${row?.acteurVersement?.firstName ?? ''} ${row?.acteurVersement?.lastName ?? ''}`,
-            id: 'acteurVersement',
+    {
+            accessorFn: (row) => row?.acteurVersement?.id ?? "", // <-- ID, pas le nom
+            id: "acteurVersement",
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Trésorier' />
-              ),
+              <DataTableColumnHeader column={column} title="Trésorier" />
+            ),
             cell: ({ row }) => {
               const acteur = row.original?.acteurVersement;
-              const fullName = `${acteur?.firstName ?? '-'} ${acteur?.lastName?.[0]?.toUpperCase()  ?? ''}`;
+              const fullName = `${acteur?.firstName ?? "-"} ${acteur?.lastName?.[0]?.toUpperCase() ?? ""}`;
               const role = acteur?.role;
               const userType = userTypes.find(({ value }) => value === role);
           
               return (
-                <div className='flex items-center gap-x-2'>
-                  {userType?.icon && (
-                    <userType.icon size={18} className='text-muted-foreground' />
-                  )}
-                  <span className='capitalize'>{fullName}</span>
+                <div className="flex items-center gap-x-2">
+                  {userType?.icon && <userType.icon size={18} className="text-muted-foreground" />}
+                  <span className="capitalize">{fullName}</span>
                 </div>
               );
             },
-            enableHiding: true,
             filterFn: (row, id, value) => {
-              const fullName = `${row.getValue(id)}`.toLowerCase();
-              return fullName.includes(value.toLowerCase());
+              const rowUserId = String(row.getValue(id) ?? "");
+          
+              // faceted filter => value est souvent string[]
+              if (!value || (Array.isArray(value) && value.length === 0)) return true;
+              return Array.isArray(value) ? value.includes(rowUserId) : rowUserId === String(value);
             },
+            enableHiding: true,
           },
 
     {
