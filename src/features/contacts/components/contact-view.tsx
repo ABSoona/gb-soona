@@ -16,7 +16,7 @@ import { DemandesTable, detailOpenOption } from '@/features/demandes/components/
 import { useDemandes } from '@/features/demandes/context/demandes-context';
 import { DocumentsManager } from '@/features/documents/documents-manager';
 import { Contact } from '@/model/contact/Contact';
-import { Edit2, Plus } from 'lucide-react';
+import { Edit2, Files, Plus } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useContacts } from '../context/contacts-context';
 import { ContactsDialogs } from './contacts-dialogs';
@@ -27,6 +27,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { useDocumentActions } from '@/features/documents/useDocumentActions';
@@ -50,14 +51,29 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
 
   const { documents }:{ documents: Document[] } = useDocumentService({ where: { contact: { id: currentRow.id }, } }) ;
   const { handleFileUpload, handleDelete } = useDocumentActions({ contact: { id: currentRow.id } });
-  const { typeDocuments } :{typeDocuments:TypeDocument[]}= useTypeDocumentService({ where: { rattachement: 'Contact' }  });
+  const { typeDocuments }: { typeDocuments: TypeDocument[] } = useTypeDocumentService();
+  const typeDocumentsContact = typeDocuments.filter((e) => (e.rattachement == "Contact" && e.internalCode !== 'unknown_contact'))
+  const typeDocumentUnknown = typeDocuments.filter((e) => (e.rattachement == "Contact" && e.internalCode == 'unknown_contact'))[0]
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
   useEffect(() => {
     setRefetchAides(refetchAides);
   }, [refetchAides, setRefetchAides]);
+  const fileInputMultiRef = useRef<HTMLInputElement>(null);
+  const handleMultipleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    for (const file of files) {
+      // Optionnel : demander à l'utilisateur le type de document (via un prompt ou une modale)
+      const typeId = selectedTypeId || typeDocumentsContact[0]?.id;
+      if (!typeId) continue;
 
+      await handleFileUpload(currentRow.id, file, typeDocumentUnknown.id);
+    }
 
+    // Reset input
+    e.target.value = '';
+  };
   const fewDemandesColumns = columns.filter(column => column.id && ['numeroDemande', 'createdAt', 'status', 'actions'].includes(column.id));
   const fewAidesColumns = aidecolumns.filter(column => column.id && ['dateAide', 'montant', 'frequence', 'verse', 'resteAVerser', 'actions'].includes(column.id));
 
@@ -140,14 +156,26 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {typeDocuments.filter((e)=>(e.internalCode!=='unknown_contact'))?.map((type: TypeDocument) => (
-                    <DropdownMenuItem key={type.id} onClick={() => handleTypeClick(type.id)}>
-                      {type.label}
-                    </DropdownMenuItem>
-                  ))}
+                {typeDocumentsContact?.map((type: TypeDocument) => (
+                      <DropdownMenuItem key={type.id} onClick={() => handleTypeClick(type.id)}>
+                        {type.label}
+                      </DropdownMenuItem>
+                    ))}
+                  <DropdownMenuSeparator />
+                                      <DropdownMenuItem onClick={() => fileInputMultiRef.current?.click()}>
+                                        <Files className="mr-2 h-4 w-4" />
+                                        Charger plusieurs documents
+                                      </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
               <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
+              <input
+                  ref={fileInputMultiRef}
+                  type="file"
+                  className="hidden"
+                  multiple
+                  onChange={handleMultipleFileChange}
+                />
             </CardHeader>
             <CardContent>
               <DocumentsManager attachement={'Contact'} contactId={currentRow.id} documents={documents.filter((e)=>(e.typeDocument.rattachement=='Contact'))} onUpload={handleFileUpload} onDelete={handleDelete} />
