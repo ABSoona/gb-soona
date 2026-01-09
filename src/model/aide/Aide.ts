@@ -68,6 +68,7 @@ export const aideSchema = z.object({
   reetudier: z.boolean(),
   versements : z.array(versementLight).optional(),
   acteurVersement : userSchema.optional(),
+  acteurAlertSent : z.boolean(), 
 
 });
 export type Aide = z.infer<typeof aideSchema>;
