@@ -46,7 +46,7 @@ const situationBase = {
 } as const;
 // 📌 Schéma de validation du formulaire avec Zod
 const formSchema = demandeSchema
-  .omit({ id: true, contact: true, createdAt: true, demandeActivities: true,acteur :true,proprietaire:true,telegramComiteeAction:true
+  .omit({ id: true, contact: true, createdAt: true, demandeActivities: true,acteur :true,proprietaire:true
   }) // Supprime les champs "id" et "contact"
   .extend({ contactId: z.any(), acteurId: z.any()}) 
   .superRefine((data, ctx) => {
@@ -144,6 +144,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
         apl: currentRow?.apl ?? 0,
         categorieDemandeur: currentRow?.categorieDemandeur ?? undefined,
         acteurId: currentRow?.acteur?.id ?? undefined,
+        telegramComiteeAction:currentRow.telegramComiteeAction??false
       }
     : {
         contactId: '',
@@ -165,6 +166,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
         apl: 0,
         categorieDemandeur: undefined,
         acteurId: undefined,
+        telegramComiteeAction : false
       }
   
   });
@@ -203,6 +205,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
       apl: Number(values.apl),
       categorieDemandeur: values.categorieDemandeur,
       proprietaire: !isEdit? {id : values.acteurId}:null,
+      telegramComiteeAction :isEdit ?currentRow.telegramComiteeAction:false
 
     };
 
