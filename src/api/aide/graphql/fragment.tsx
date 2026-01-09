@@ -22,6 +22,7 @@ export const AIDE_FIELDS = gql`
    reetudier 
    versements{id status}
    acteurVersement {id firstName lastName}
+   acteurAlertSent
   }
 `;
 

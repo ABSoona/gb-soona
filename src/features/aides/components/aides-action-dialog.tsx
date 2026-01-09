@@ -47,10 +47,11 @@ import { TypeDocument } from '@/model/typeDocument/typeDocument';
 import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService';
 import { User } from '@/model/user/User';
 import { useUserServicev2 } from '@/api/user/userService.v2';
+import { normalizeDate } from '@/lib/utils';
 
 
 // 📌 Schéma de validation du formulaire avec Zod
-const formSchema = aideSchema.omit({ id: true, contact: true, demande: true, status: true,acteurVersement :true }).extend({ contactId: z.any(), demandeId: z.any(),acteurVersementId: z.any() });
+const formSchema = aideSchema.omit({ id: true, contact: true, demande: true, status: true,acteurVersement :true}).extend({ contactId: z.any(), demandeId: z.any(),acteurVersementId: z.any() });
 
 type AideForm = z.infer<typeof formSchema>;
 
@@ -99,6 +100,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       demandeId: currentRow.demande?.id?.toString() ?? '',
       reetudier: currentRow.reetudier ?? false,
       acteurVersementId: currentRow?.acteurVersement?.id ?? undefined,
+      acteurAlertSent : currentRow.acteurAlertSent
     }
     : {
       contactId: forContactId ?? '',
@@ -115,6 +117,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       demandeId: forDemandeId?.toString() ?? '',
       reetudier: false,
       acteurVersementId: undefined,
+      acteurAlertSent : false
     };
   const form = useForm<AideForm>({
     resolver: zodResolver(formSchema),
@@ -154,7 +157,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
     console.log(form.formState.errors);
     const contactId = forContactId ?? values.contactId; // priorité au forContactId
     const demandeId = forDemandeId ?? values.demandeId;
-    const aidePayload = {
+    let aidePayload = {
       contact: { id: Number(contactId) },
       acteurVersement : {id : values.acteurVersementId},
       typeField: values.typeField,
@@ -170,8 +173,18 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       remarque: values.remarque,
       demande: { id: Number(demandeId) },
       reetudier: values.reetudier,
-      status: "EnCours"
+      status: "EnCours",
+      acteurAlertSent : defaultFormValues.acteurAlertSent
+      
     };
+
+    if (
+      !isEdit ||
+      (isEdit &&
+       currentRow.dateAide) < values.dateAide)
+     {
+      aidePayload = { ...aidePayload, acteurAlertSent: false };
+    }
 
     try {
       if (isEdit && currentRow?.id) {
