@@ -40,6 +40,9 @@ const AuthenticatedSettingsRouteLazyImport = createFileRoute(
 const AuthenticatedWebsiteDemandesIndexLazyImport = createFileRoute(
   '/_authenticated/website-demandes/',
 )()
+const AuthenticatedVisitesIndexLazyImport = createFileRoute(
+  '/_authenticated/visites/',
+)()
 const AuthenticatedVersementsIndexLazyImport = createFileRoute(
   '/_authenticated/versements/',
 )()
@@ -66,6 +69,12 @@ const AuthenticatedContactsIndexLazyImport = createFileRoute(
 )()
 const AuthenticatedAidesIndexLazyImport = createFileRoute(
   '/_authenticated/aides/',
+)()
+const AuthenticatedVisitesMesVisitesLazyImport = createFileRoute(
+  '/_authenticated/visites/mes-visites',
+)()
+const AuthenticatedVisitesAvenirLazyImport = createFileRoute(
+  '/_authenticated/visites/avenir',
 )()
 const AuthenticatedVersementsPlanifieLazyImport = createFileRoute(
   '/_authenticated/versements/planifie',
@@ -237,6 +246,15 @@ const AuthenticatedWebsiteDemandesIndexLazyRoute =
     ),
   )
 
+const AuthenticatedVisitesIndexLazyRoute =
+  AuthenticatedVisitesIndexLazyImport.update({
+    id: '/visites/',
+    path: '/visites/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/visites/index.lazy').then((d) => d.Route),
+  )
+
 const AuthenticatedVersementsIndexLazyRoute =
   AuthenticatedVersementsIndexLazyImport.update({
     id: '/versements/',
@@ -322,6 +340,26 @@ const AuthenticatedAidesIndexLazyRoute =
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any).lazy(() =>
     import('./routes/_authenticated/aides/index.lazy').then((d) => d.Route),
+  )
+
+const AuthenticatedVisitesMesVisitesLazyRoute =
+  AuthenticatedVisitesMesVisitesLazyImport.update({
+    id: '/visites/mes-visites',
+    path: '/visites/mes-visites',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/visites/mes-visites.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthenticatedVisitesAvenirLazyRoute =
+  AuthenticatedVisitesAvenirLazyImport.update({
+    id: '/visites/avenir',
+    path: '/visites/avenir',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/visites/avenir.lazy').then((d) => d.Route),
   )
 
 const AuthenticatedVersementsPlanifieLazyRoute =
@@ -694,6 +732,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVersementsPlanifieLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/visites/avenir': {
+      id: '/_authenticated/visites/avenir'
+      path: '/visites/avenir'
+      fullPath: '/visites/avenir'
+      preLoaderRoute: typeof AuthenticatedVisitesAvenirLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/visites/mes-visites': {
+      id: '/_authenticated/visites/mes-visites'
+      path: '/visites/mes-visites'
+      fullPath: '/visites/mes-visites'
+      preLoaderRoute: typeof AuthenticatedVisitesMesVisitesLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/aides/': {
       id: '/_authenticated/aides/'
       path: '/aides'
@@ -755,6 +807,13 @@ declare module '@tanstack/react-router' {
       path: '/versements'
       fullPath: '/versements'
       preLoaderRoute: typeof AuthenticatedVersementsIndexLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/visites/': {
+      id: '/_authenticated/visites/'
+      path: '/visites'
+      fullPath: '/visites'
+      preLoaderRoute: typeof AuthenticatedVisitesIndexLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
     '/_authenticated/website-demandes/': {
@@ -828,6 +887,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedVersementsAVerserLazyRoute: typeof AuthenticatedVersementsAVerserLazyRoute
   AuthenticatedVersementsEnRetardLazyRoute: typeof AuthenticatedVersementsEnRetardLazyRoute
   AuthenticatedVersementsPlanifieLazyRoute: typeof AuthenticatedVersementsPlanifieLazyRoute
+  AuthenticatedVisitesAvenirLazyRoute: typeof AuthenticatedVisitesAvenirLazyRoute
+  AuthenticatedVisitesMesVisitesLazyRoute: typeof AuthenticatedVisitesMesVisitesLazyRoute
   AuthenticatedAidesIndexLazyRoute: typeof AuthenticatedAidesIndexLazyRoute
   AuthenticatedContactsIndexLazyRoute: typeof AuthenticatedContactsIndexLazyRoute
   AuthenticatedDemandesIndexLazyRoute: typeof AuthenticatedDemandesIndexLazyRoute
@@ -836,6 +897,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTypeDocumentsIndexLazyRoute: typeof AuthenticatedTypeDocumentsIndexLazyRoute
   AuthenticatedUsersIndexLazyRoute: typeof AuthenticatedUsersIndexLazyRoute
   AuthenticatedVersementsIndexLazyRoute: typeof AuthenticatedVersementsIndexLazyRoute
+  AuthenticatedVisitesIndexLazyRoute: typeof AuthenticatedVisitesIndexLazyRoute
   AuthenticatedWebsiteDemandesIndexLazyRoute: typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   AuthenticatedDemandesIdPdfLazyRoute: typeof AuthenticatedDemandesIdPdfLazyRoute
   AuthenticatedDemandesIdIndexRoute: typeof AuthenticatedDemandesIdIndexRoute
@@ -862,6 +924,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedVersementsEnRetardLazyRoute,
   AuthenticatedVersementsPlanifieLazyRoute:
     AuthenticatedVersementsPlanifieLazyRoute,
+  AuthenticatedVisitesAvenirLazyRoute: AuthenticatedVisitesAvenirLazyRoute,
+  AuthenticatedVisitesMesVisitesLazyRoute:
+    AuthenticatedVisitesMesVisitesLazyRoute,
   AuthenticatedAidesIndexLazyRoute: AuthenticatedAidesIndexLazyRoute,
   AuthenticatedContactsIndexLazyRoute: AuthenticatedContactsIndexLazyRoute,
   AuthenticatedDemandesIndexLazyRoute: AuthenticatedDemandesIndexLazyRoute,
@@ -871,6 +936,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedTypeDocumentsIndexLazyRoute,
   AuthenticatedUsersIndexLazyRoute: AuthenticatedUsersIndexLazyRoute,
   AuthenticatedVersementsIndexLazyRoute: AuthenticatedVersementsIndexLazyRoute,
+  AuthenticatedVisitesIndexLazyRoute: AuthenticatedVisitesIndexLazyRoute,
   AuthenticatedWebsiteDemandesIndexLazyRoute:
     AuthenticatedWebsiteDemandesIndexLazyRoute,
   AuthenticatedDemandesIdPdfLazyRoute: AuthenticatedDemandesIdPdfLazyRoute,
@@ -908,6 +974,8 @@ export interface FileRoutesByFullPath {
   '/versements/a-verser': typeof AuthenticatedVersementsAVerserLazyRoute
   '/versements/en-retard': typeof AuthenticatedVersementsEnRetardLazyRoute
   '/versements/planifie': typeof AuthenticatedVersementsPlanifieLazyRoute
+  '/visites/avenir': typeof AuthenticatedVisitesAvenirLazyRoute
+  '/visites/mes-visites': typeof AuthenticatedVisitesMesVisitesLazyRoute
   '/aides': typeof AuthenticatedAidesIndexLazyRoute
   '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
@@ -917,6 +985,7 @@ export interface FileRoutesByFullPath {
   '/typeDocuments': typeof AuthenticatedTypeDocumentsIndexLazyRoute
   '/users': typeof AuthenticatedUsersIndexLazyRoute
   '/versements': typeof AuthenticatedVersementsIndexLazyRoute
+  '/visites': typeof AuthenticatedVisitesIndexLazyRoute
   '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
   '/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
@@ -949,6 +1018,8 @@ export interface FileRoutesByTo {
   '/versements/a-verser': typeof AuthenticatedVersementsAVerserLazyRoute
   '/versements/en-retard': typeof AuthenticatedVersementsEnRetardLazyRoute
   '/versements/planifie': typeof AuthenticatedVersementsPlanifieLazyRoute
+  '/visites/avenir': typeof AuthenticatedVisitesAvenirLazyRoute
+  '/visites/mes-visites': typeof AuthenticatedVisitesMesVisitesLazyRoute
   '/aides': typeof AuthenticatedAidesIndexLazyRoute
   '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
@@ -958,6 +1029,7 @@ export interface FileRoutesByTo {
   '/typeDocuments': typeof AuthenticatedTypeDocumentsIndexLazyRoute
   '/users': typeof AuthenticatedUsersIndexLazyRoute
   '/versements': typeof AuthenticatedVersementsIndexLazyRoute
+  '/visites': typeof AuthenticatedVisitesIndexLazyRoute
   '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
   '/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
@@ -994,6 +1066,8 @@ export interface FileRoutesById {
   '/_authenticated/versements/a-verser': typeof AuthenticatedVersementsAVerserLazyRoute
   '/_authenticated/versements/en-retard': typeof AuthenticatedVersementsEnRetardLazyRoute
   '/_authenticated/versements/planifie': typeof AuthenticatedVersementsPlanifieLazyRoute
+  '/_authenticated/visites/avenir': typeof AuthenticatedVisitesAvenirLazyRoute
+  '/_authenticated/visites/mes-visites': typeof AuthenticatedVisitesMesVisitesLazyRoute
   '/_authenticated/aides/': typeof AuthenticatedAidesIndexLazyRoute
   '/_authenticated/contacts/': typeof AuthenticatedContactsIndexLazyRoute
   '/_authenticated/demandes/': typeof AuthenticatedDemandesIndexLazyRoute
@@ -1003,6 +1077,7 @@ export interface FileRoutesById {
   '/_authenticated/typeDocuments/': typeof AuthenticatedTypeDocumentsIndexLazyRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexLazyRoute
   '/_authenticated/versements/': typeof AuthenticatedVersementsIndexLazyRoute
+  '/_authenticated/visites/': typeof AuthenticatedVisitesIndexLazyRoute
   '/_authenticated/website-demandes/': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/(auth)/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
   '/_authenticated/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
@@ -1039,6 +1114,8 @@ export interface FileRouteTypes {
     | '/versements/a-verser'
     | '/versements/en-retard'
     | '/versements/planifie'
+    | '/visites/avenir'
+    | '/visites/mes-visites'
     | '/aides'
     | '/contacts'
     | '/demandes'
@@ -1048,6 +1125,7 @@ export interface FileRouteTypes {
     | '/typeDocuments'
     | '/users'
     | '/versements'
+    | '/visites'
     | '/website-demandes'
     | '/demandes/$id/fiche-visite-pdf'
     | '/demandes/$id/pdf'
@@ -1079,6 +1157,8 @@ export interface FileRouteTypes {
     | '/versements/a-verser'
     | '/versements/en-retard'
     | '/versements/planifie'
+    | '/visites/avenir'
+    | '/visites/mes-visites'
     | '/aides'
     | '/contacts'
     | '/demandes'
@@ -1088,6 +1168,7 @@ export interface FileRouteTypes {
     | '/typeDocuments'
     | '/users'
     | '/versements'
+    | '/visites'
     | '/website-demandes'
     | '/demandes/$id/fiche-visite-pdf'
     | '/demandes/$id/pdf'
@@ -1122,6 +1203,8 @@ export interface FileRouteTypes {
     | '/_authenticated/versements/a-verser'
     | '/_authenticated/versements/en-retard'
     | '/_authenticated/versements/planifie'
+    | '/_authenticated/visites/avenir'
+    | '/_authenticated/visites/mes-visites'
     | '/_authenticated/aides/'
     | '/_authenticated/contacts/'
     | '/_authenticated/demandes/'
@@ -1131,6 +1214,7 @@ export interface FileRouteTypes {
     | '/_authenticated/typeDocuments/'
     | '/_authenticated/users/'
     | '/_authenticated/versements/'
+    | '/_authenticated/visites/'
     | '/_authenticated/website-demandes/'
     | '/(auth)/demandes/$id/fiche-visite-pdf'
     | '/_authenticated/demandes/$id/pdf'
@@ -1212,6 +1296,8 @@ export const routeTree = rootRoute
         "/_authenticated/versements/a-verser",
         "/_authenticated/versements/en-retard",
         "/_authenticated/versements/planifie",
+        "/_authenticated/visites/avenir",
+        "/_authenticated/visites/mes-visites",
         "/_authenticated/aides/",
         "/_authenticated/contacts/",
         "/_authenticated/demandes/",
@@ -1220,6 +1306,7 @@ export const routeTree = rootRoute
         "/_authenticated/typeDocuments/",
         "/_authenticated/users/",
         "/_authenticated/versements/",
+        "/_authenticated/visites/",
         "/_authenticated/website-demandes/",
         "/_authenticated/demandes/$id/pdf",
         "/_authenticated/demandes/$id/"
@@ -1328,6 +1415,14 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/versements/planifie.lazy.tsx",
       "parent": "/_authenticated"
     },
+    "/_authenticated/visites/avenir": {
+      "filePath": "_authenticated/visites/avenir.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/visites/mes-visites": {
+      "filePath": "_authenticated/visites/mes-visites.lazy.tsx",
+      "parent": "/_authenticated"
+    },
     "/_authenticated/aides/": {
       "filePath": "_authenticated/aides/index.lazy.tsx",
       "parent": "/_authenticated"
@@ -1362,6 +1457,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/versements/": {
       "filePath": "_authenticated/versements/index.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/visites/": {
+      "filePath": "_authenticated/visites/index.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/website-demandes/": {

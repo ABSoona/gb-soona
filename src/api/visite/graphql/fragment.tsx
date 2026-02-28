@@ -28,6 +28,7 @@ export const VISITE_FIELDS = gql`
     status
     createdAt
     updatedAt
+    demande {id, contact {id,nom, prenom}}
     
   }
 `;

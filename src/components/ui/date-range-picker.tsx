@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { fr } from "date-fns/locale/fr"
 
 interface DatePickerWithRangeProps {
   value?: DateRange; // ✅ Ajout pour permettre un contrôle externe
@@ -59,6 +60,7 @@ export function DatePickerWithRange({ value, onChange,placeholder }: DatePickerW
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             initialFocus
+            locale={fr}
             mode="range"
             selected={date}
             onSelect={setDate}
