@@ -112,6 +112,29 @@ export function useSidebarData(): SidebarData {
 
           ]
         },
+        {
+          title: 'Visites',
+          
+          icon: BadgeEuro,
+          items:[
+            {
+              title: 'Tous',
+              url: '/visites',
+              icon: Squircle,
+            },
+            {
+              title: 'Mes visites',
+              url: '/visites/mes-visites',
+              icon: Squircle,
+            },
+            {
+              title: 'A venir',
+              url: '/visites/avenir',
+              icon: Squircle,
+            },
+            
+          ]
+        },
       ],
     },
     {
