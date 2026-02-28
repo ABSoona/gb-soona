@@ -83,3 +83,58 @@ export function useAideService(variables?: any) {
     isSubmitting, // ✅ centralisé
   };
 }
+export function useAideMutations() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createAideMutation] = useMutation(CREATE_AIDE);
+  const [updateAideMutation] = useMutation(UPDATE_AIDE);
+  const [deleteAideMutation] = useMutation(DELETE_AIDE);
+
+  const createAide = async (data: any) => {
+    try {
+      setIsSubmitting(true);
+      await createAideMutation({ variables: { data } });
+      toast({ title: 'Aide créé avec succès.' });
+      return true;
+    } catch (err) {
+      handleServerError(err);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const updateAide = async (id: number, data: any) => {
+    try {
+      setIsSubmitting(true);
+      await updateAideMutation({ variables: { id, data } });
+      toast({ title: 'Aide mis à jour.' });
+      return true;
+    } catch (err) {
+      handleServerError(err);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const deleteAide = async (id: number) => {
+    try {
+      setIsSubmitting(true);
+      await deleteAideMutation({ variables: { id } });
+      toast({ title: 'Aide supprimé.' });
+      return true;
+    } catch (err) {
+      handleServerError(err);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return {
+    isSubmitting,
+    createAide,
+    updateAide,
+    deleteAide,
+  };
+}

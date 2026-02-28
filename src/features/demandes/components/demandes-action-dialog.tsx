@@ -35,6 +35,7 @@ import { useUserServicev2 } from '@/api/user/userService.v2';
 import { User } from '@/model/user/User';
 import { useEffect, useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
+import { useAlert } from '@/components/Alert';
 
 
 const situationBase = {
@@ -84,7 +85,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
   type Charge = { id: number; value: string };
   const [charges, setCharges] = useState([{ id: Date.now(), value: '' }]);
   const [total, setTotal] = useState('');
-
+  const { openAlert, AlertNode } = useAlert()
   const handleAddCharge = () => {
     setCharges([...charges, { id: Date.now(), value: '' }]);
   };
@@ -211,6 +212,8 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
 
     try {
       if (isEdit && currentRow?.id) {
+       if( values.status == 'EnCours' && values.categorieDemandeur == undefined  )
+        throw Error("Vous devez d'abord renseigner la categorie du demandeur");
         await updateDemande(currentRow.id, demandePayload);
         
         toast({ title: 'Demande mise à jour avec succès !' });
@@ -224,14 +227,15 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
       await refetch();
       form.reset();
 
-    } catch (error) {
-      console.error('❌ Erreur lors de la soumission :', error);
-      handleServerError(error);
+    } catch (error : any) {
+        handleServerError(error);
+      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+    
     }
   };
 
   return (
-
+    <>{AlertNode}
     <Sheet
    
       open={open}
@@ -725,6 +729,6 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
           </Button>
         </SheetFooter>
       </SheetContent>
-    </Sheet>
+    </Sheet></>
   );
 }

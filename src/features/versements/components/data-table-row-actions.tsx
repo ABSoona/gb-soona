@@ -27,6 +27,8 @@ import {
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 import { useDemandeService } from '@/api/demande/demandeService';
+import { useAideMutations } from '@/api/aide/aideService';
+import { getCurrentUser } from '@/api/user/userService';
 
 interface DataTableRowActionsProps {
   row: Row<Versement>;
@@ -39,6 +41,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const [autresVersements, setAutresVersements] = useState<Versement[]>([]);
   const { handleFileUpload } = useDocumentActions({ versements: { id: row.original.id } });
   const { updateVersement } = useVersementMutations();
+
   const { typeDocuments = [] }: { typeDocuments: TypeDocument[] } = useTypeDocumentService({
     where: { internalCode: { equals: 'preuve_virement' } }
   });
@@ -59,8 +62,8 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     new Date(versement.dataVersement) <= new Date()
       ? await updateVersement(versement.id, { status: 'Verse' })
       : await updateVersement(versement.id, { status: 'Planifie' })
-   
-
+ 
+  
 
 
     // 2. Si récurrent, demander confirmation pour les autres
@@ -96,7 +99,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+            className="flex h-5 w-8 p-0 data-[state=open]:bg-muted"
           >
             <DotsHorizontalIcon className="h-4 w-4" />
             <span className="sr-only">Open menu</span>

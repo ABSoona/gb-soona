@@ -42,6 +42,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { TelegramSheet } from './TelegramSheet'
 import { telegramPublish } from '@/api/telegram/telegramService'
 import { buildTelegramMessage, telegramSuggestion } from './telegram-utils'
+import { toast } from '@/hooks/use-toast'
 
 
 interface Props {
@@ -157,7 +158,11 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   }
 
   const handleAcceptDemande = async () => {
+    try{
     nextStatusRef.current = "EnCours";
+    if( currentRow.categorieDemandeur == undefined)
+      throw Error("Vous devez d'abord renseigner la catégorie du demandeur");
+
     openConfirmDialog(
       "Ajouter une aide ?",
       "Souhaitez-vous ajouter une aide maintenant ?",
@@ -166,6 +171,9 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     );
     const firstTresorier: User | undefined = users.length > 0 ? users[0] : undefined;
     await updateDemande(currentRow.id, { decisionDate: new Date(), status: nextStatusRef.current, ...(firstTresorier && { acteur: { id: firstTresorier.id } }), });
+    }catch(error:any){
+       toast({ title: 'Echec', description: error.message, variant: 'destructive' });
+    }
   }
 
   const handleAskAgainAide = async ()=>{
