@@ -8,6 +8,7 @@ export const VersementSatusSchema = z.union([
   z.literal('AVerser'),
   z.literal('Verse'),
   z.literal('Planifie'),
+  z.literal('Annulee'),
 
 ]);
 export type VersementStatus= z.infer<typeof VersementSatusSchema>;
