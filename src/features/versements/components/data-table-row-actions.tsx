@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { Check, Paperclip } from 'lucide-react';
+import { Check, Delete, DeleteIcon, Eraser, Paperclip } from 'lucide-react';
 import { Row } from '@tanstack/react-table';
 import { Versement } from '@/model/versement/versement';
 import { useDocumentActions } from '@/features/documents/useDocumentActions';
@@ -93,6 +93,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     await updateVersement(row.original.id, { status: 'Verse' });
   };
 
+  const cancelVersement = async () => {
+    await updateVersement(row.original.id, { status: 'Annulee' });
+  };
+
   return (
     <>
       <DropdownMenu modal={false}>
@@ -116,6 +120,12 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             Marquer comme versé
             <DropdownMenuShortcut>
               <Check size={16} />
+            </DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={cancelVersement}>
+            Annuler
+            <DropdownMenuShortcut>
+              <Eraser size={16} />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuContent>
