@@ -10,7 +10,8 @@ import { cn } from '@/lib/utils';
 import { Demande } from '@/model/demande/Demande';
 import { handleServerError } from '@/utils/handle-server-error';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, History } from 'lucide-react';
+import { useState } from 'react';
 import AidesProvider from '../aides/context/aides-context';
 import { DemandeView } from './components/demande-view';
 import { demandeStatusColor, demandeStatusTypes } from './data/data';
@@ -18,6 +19,7 @@ import AppLayout from '@/components/layout/app-layout';
 import { DemandesPrimaryButtons } from './components/demandes-primary-buttons';
 import { useDemandes } from './context/demandes-context';
 import { DemandesDialogs } from './components/demandes-dialogs';
+import { DemandeSituationHistoryDrawer } from './components/DemandeSituationHistoryDrawer';
 import { IconPencil } from '@tabler/icons-react';
 
 
@@ -38,6 +40,7 @@ export default function DemandeDetail({ showContact = true }: Props) {
   const searchParams = new URLSearchParams(location.search);
   const from = searchParams.get('from');
     const { setOpenDemande: setOpen, setCurrentRow } = useDemandes()
+    const [historyDrawerOpen, setHistoryDrawerOpen] = useState(false)
 
 
   // Récupération du contexte pour gérer les actions sur les demandes
@@ -78,13 +81,24 @@ export default function DemandeDetail({ showContact = true }: Props) {
 
           
           
-          <Button className='space-x-1'  onClick={() => {
-              setCurrentRow(demande)
-              setOpen('edit')
-            }}>
-         <span>Modifier</span> <IconPencil size={18} />
-      </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" className="space-x-1" onClick={() => setHistoryDrawerOpen(true)}>
+              <History size={18} />
+              <span>Voir historique</span>
+            </Button>
+            <Button className='space-x-1'  onClick={() => {
+                setCurrentRow(demande)
+                setOpen('edit')
+              }}>
+           <span>Modifier</span> <IconPencil size={18} />
+        </Button>
+          </div>
          <DemandesDialogs refetch={refetch}/>
+         <DemandeSituationHistoryDrawer
+           demandeId={demande?.id}
+           open={historyDrawerOpen}
+           onOpenChange={setHistoryDrawerOpen}
+         />
         </div>
 
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">

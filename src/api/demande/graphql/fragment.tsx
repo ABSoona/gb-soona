@@ -41,6 +41,35 @@ export const DEMANDE_FIELDS = gql`
   }
 `;
 
+export const DEMANDE_SITUATION_HISTORY_FIELDS = gql`
+  fragment DemandeSituationHistoryFields on DemandeSituationHistory {
+    id
+    createdAt
+    nombreEnfants
+    nombrePersonnes
+    agesEnfants
+    situationFamiliale
+    situationProfessionnelle
+    situationProConjoint
+    revenus
+    revenusConjoint
+    loyer
+    facturesEnergie
+    dettes
+    natureDettes
+    autresAides
+    autresCharges
+    apl
+    categorieDemandeur
+    remarques
+    creePar {
+      id
+      firstName
+      lastName
+    }
+  }
+`;
+
 export const DEMANDE_ACTIVITY_FIELDS = gql`
   fragment DemandeActivityFields on DemandeActivity {
     id

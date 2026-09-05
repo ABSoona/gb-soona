@@ -6,12 +6,16 @@ import { useState } from 'react';
 import {
   CREATE_DEMANDE,
   CREATE_DEMANDE_ACTIVITY,
+  CREATE_DEMANDE_SITUATION_HISTORY,
   DELETE_DEMANDE,
   DELETE_DEMANDE_ACTIVITY,
+  DELETE_DEMANDE_SITUATION_HISTORY,
+  GET_DEMANDE_SITUATION_HISTORIES,
   GET_DEMANDE_STATS,
   GET_DEMANDES,
   UPDATE_DEMANDE,
 } from './graphql/queries';
+import { DemandeSituationHistory } from '@/model/demande/Demande';
 import { Demande } from '@/model/demande/Demande';
 import { getUserId } from '@/lib/session';
 import axiosInstance from '@/lib/axtios-instance';
@@ -228,6 +232,68 @@ export function useDemandeService(variables?: DemandeServiceParams): {
     stats,
   };
 
+}
+
+export function useDemandeSituationHistoryService(demandeId?: number): {
+  demandeSituationHistories: DemandeSituationHistory[];
+  loading: boolean;
+  refetch: () => void;
+  createDemandeSituationHistory: (data: any) => Promise<boolean>;
+  deleteDemandeSituationHistory: (id: number) => Promise<boolean>;
+  isSubmitting: boolean;
+} {
+  const { data, loading, refetch } = useQuery(GET_DEMANDE_SITUATION_HISTORIES, {
+    variables: { where: { demande: { id: demandeId } } },
+    fetchPolicy: 'network-only',
+    skip: !demandeId,
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createMutation] = useMutation(CREATE_DEMANDE_SITUATION_HISTORY);
+  const [deleteMutation] = useMutation(DELETE_DEMANDE_SITUATION_HISTORY);
+
+  const createDemandeSituationHistory = async (payload: any) => {
+    try {
+      setIsSubmitting(true);
+      await createMutation({ variables: { data: payload } });
+      if (demandeId) {
+        await refetch();
+      }
+      toast({ title: 'Situation historisée avec succès.' });
+      return true;
+    } catch (err) {
+      handleServerError(err);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const deleteDemandeSituationHistory = async (id: number) => {
+    try {
+      setIsSubmitting(true);
+      await deleteMutation({ variables: { id } });
+      if (demandeId) {
+        await refetch();
+      }
+      toast({ title: 'Entrée d\'historique supprimée.' });
+      return true;
+    } catch (err) {
+      handleServerError(err);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return {
+    demandeSituationHistories: data?.demandeSituationHistories ?? [],
+    loading,
+    refetch,
+    createDemandeSituationHistory,
+    deleteDemandeSituationHistory,
+    isSubmitting,
+  };
 }
 
 export const downloadFicheVisitePdf = async (demandeId: number, token: string): Promise<void> => {
