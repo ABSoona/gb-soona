@@ -1,6 +1,6 @@
 'use client';
 
-import { useDemandeService } from '@/api/demande/demandeService';
+import { useDemandeService, useDemandeSituationHistoryService } from '@/api/demande/demandeService';
 import { SelectDropdown } from '@/components/select-dropdown';
 import { Button } from '@/components/ui/button';
 import {
@@ -36,6 +36,7 @@ import { User } from '@/model/user/User';
 import { useEffect, useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useAlert } from '@/components/Alert';
+import { getUserId } from '@/lib/session';
 
 
 const situationBase = {
@@ -118,8 +119,10 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
   }, [charges])
 
   
-  const whereClause = isEdit ? {where:{id : {equals:currentRow.id}}}:{where:{id:{equals:0}}} 
+  const whereClause = isEdit ? {where:{id : {equals:currentRow.id}}}:{where:{id:{equals:0}}}
   const { createDemande, updateDemande,  isSubmitting } = useDemandeService();
+  const { createDemandeSituationHistory } = useDemandeSituationHistoryService();
+  const [isHistorizing, setIsHistorizing] = useState(false);
   const form = useForm<DemandeForm>({
     resolver: zodResolver(formSchema),
     
@@ -182,7 +185,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
     return base + (nombreEnfants || 0);
   }, [situationFamiliale, nombreEnfants]);
 
-  const onSubmit = async (values: DemandeForm) => {
+  const onSubmit = async (values: DemandeForm, historiser: boolean = false) => {
     console.log("erreur de validation: ");
     const demandePayload = {
       contact: { id: Number(values.contactId) }, // Utilisation du contact ID sélectionné
@@ -215,7 +218,37 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
        if( values.status == 'EnCours' && values.categorieDemandeur == undefined  )
         throw Error("Vous devez d'abord renseigner la categorie du demandeur");
         await updateDemande(currentRow.id, demandePayload);
-        
+
+        if (historiser) {
+          setIsHistorizing(true);
+          try {
+            const userId = getUserId();
+            await createDemandeSituationHistory({
+              demande: { id: currentRow.id },
+              creePar: userId ? { id: userId } : undefined,
+              nombreEnfants: Number(values.nombreEnfants),
+              nombrePersonnes: Number(values.nombrePersonnes),
+              agesEnfants: values.agesEnfants,
+              situationFamiliale: values.situationFamiliale,
+              situationProfessionnelle: values.situationProfessionnelle,
+              situationProConjoint: values.situationProConjoint,
+              revenus: Number(values.revenus),
+              revenusConjoint: Number(values.revenusConjoint),
+              loyer: Number(values.loyer),
+              facturesEnergie: Number(values.facturesEnergie),
+              dettes: Number(values.dettes),
+              natureDettes: values.natureDettes,
+              autresAides: values.autresAides,
+              autresCharges: Number(values.autresCharges),
+              apl: Number(values.apl),
+              categorieDemandeur: values.categorieDemandeur,
+              remarques: values.remarques,
+            });
+          } finally {
+            setIsHistorizing(false);
+          }
+        }
+
         toast({ title: 'Demande mise à jour avec succès !' });
       } else {
         console.log(demandePayload);
@@ -255,7 +288,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
           <Form {...form}>
             <form id="demande-form" onSubmit={(e) => {
               console.log(form.formState.errors);
-              form.handleSubmit(onSubmit)(e);
+              form.handleSubmit((values) => onSubmit(values, false))(e);
               console.log("✅ handleSubmit exécuté !");
             }} className="space-y-4 p-0.5">
 
@@ -723,7 +756,16 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
           </Form>
         </ScrollArea>
         <SheetFooter>
-
+          {isEdit && (
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={isSubmitting || isHistorizing}
+              onClick={() => form.handleSubmit((values) => onSubmit(values, true))()}
+            >
+              {isHistorizing ? 'En cours...' : 'Enregistrer et historiser'}
+            </Button>
+          )}
           <Button type="submit" form="demande-form" disabled={isSubmitting}>
             {isSubmitting ? 'En cours...' : 'Enregistrer'}
           </Button>

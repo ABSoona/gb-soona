@@ -1,7 +1,7 @@
 import { AIDE_FIELDS, AIDE_FIELDS_LIGHT } from '@/api/aide/graphql/fragment';
 import { CONTACT_FIELDS, CONTACT_FIELDS_LIGHT } from '@/api/contact/graphql/fragment';
 import { gql } from '@apollo/client';
-import { DEMANDE_ACTIVITY_FIELDS, DEMANDE_FIELDS } from './fragment';
+import { DEMANDE_ACTIVITY_FIELDS, DEMANDE_FIELDS, DEMANDE_SITUATION_HISTORY_FIELDS } from './fragment';
 
 export const GET_DEMANDES = gql`
   query GetDemandesWithContactAides($skip: Float, $take: Float, $where : DemandeWhereInput) {
@@ -81,7 +81,33 @@ export const DELETE_DEMANDE_ACTIVITY = gql`
   }
 `;
 
-//stats queries ici 
+export const GET_DEMANDE_SITUATION_HISTORIES = gql`
+  query GetDemandeSituationHistories($where: DemandeSituationHistoryWhereInput) {
+    demandeSituationHistories(where: $where, orderBy: { createdAt: Desc }) {
+      ...DemandeSituationHistoryFields
+    }
+  }
+  ${DEMANDE_SITUATION_HISTORY_FIELDS}
+`;
+
+export const CREATE_DEMANDE_SITUATION_HISTORY = gql`
+  mutation CreateDemandeSituationHistory($data: DemandeSituationHistoryCreateInput!) {
+    createDemandeSituationHistory(data: $data) {
+      ...DemandeSituationHistoryFields
+    }
+  }
+  ${DEMANDE_SITUATION_HISTORY_FIELDS}
+`;
+
+export const DELETE_DEMANDE_SITUATION_HISTORY = gql`
+  mutation DeleteDemandeSituationHistory($id: Float!) {
+    deleteDemandeSituationHistory(where: { id: $id }) {
+      id
+    }
+  }
+`;
+
+//stats queries ici
 
 export const GET_DEMANDE_STATS = gql`
   query CountDemandesStats($userId: String!) {

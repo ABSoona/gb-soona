@@ -73,6 +73,34 @@ export const DemandeActivitySchema = z.object({
 });
 export type DemandeActivity = z.infer<typeof DemandeActivitySchema>;
 
+export const DemandeSituationHistorySchema = z.object({
+  id: z.number(),
+  createdAt: z.coerce.date(),
+  nombreEnfants: z.number().nullable().optional(),
+  nombrePersonnes: z.number().nullable().optional(),
+  agesEnfants: z.string().nullable().optional(),
+  situationFamiliale: z.string().nullable().optional(),
+  situationProfessionnelle: z.string().nullable().optional(),
+  situationProConjoint: z.string().nullable().optional(),
+  revenus: z.number().nullable().optional(),
+  revenusConjoint: z.number().nullable().optional(),
+  loyer: z.number().nullable().optional(),
+  facturesEnergie: z.number().nullable().optional(),
+  dettes: z.number().nullable().optional(),
+  natureDettes: z.string().nullable().optional(),
+  autresAides: z.string().nullable().optional(),
+  autresCharges: z.number().nullable().optional(),
+  apl: z.number().nullable().optional(),
+  categorieDemandeur: categorieSchema.nullable().optional(),
+  remarques: z.string().nullable().optional(),
+  creePar: z.object({
+    id: z.string(),
+    firstName: z.string().nullable().optional(),
+    lastName: z.string().nullable().optional(),
+  }).nullable().optional(),
+});
+export type DemandeSituationHistory = z.infer<typeof DemandeSituationHistorySchema>;
+
 export type categorieDemandeur = z.infer<typeof categorieSchema>;
 export type SituationPro = z.infer<typeof situationProSchema>;
 // Schéma principal pour les demandes
