@@ -16,6 +16,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" variant="floating" {...props}>
       <SidebarHeader>
+        <span className="app-name font-manrope text-2xl font-black tracking-[0.35em] text-white translate-x-2 uppercase">Mizana</span>
         <img className="logo" src={logo} alt="Logo" />
       </SidebarHeader>
       <SidebarContent>

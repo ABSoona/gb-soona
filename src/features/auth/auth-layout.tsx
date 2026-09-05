@@ -7,16 +7,17 @@ interface Props {
 
 export default function AuthLayout({ children }: Props) {
   return (
-    <div className="container grid h-svh flex-col items-center justify-center bg-primary-foreground lg:max-w-none lg:px-0">
+    <div className="container grid h-svh flex-col items-center justify-center bg-slate-400 lg:max-w-none lg:px-0">
       <div className="mx-auto flex w-full flex-col justify-center space-y-2 sm:w-[480px] lg:p-8">
-        <div className="mb-6 flex items-center justify-center">
-          <div className="transition-transform duration-300 ease-in-out hover:scale-110">
+        <div className="mb-6 flex flex-col items-center justify-center">
+          <span className="text-center font-manrope text-3xl font-bold tracking-[0.07em] text-white">Mizana</span>
+          <div className="-mt-2 transition-transform duration-300 ease-in-out hover:scale-110">
             <img
               src={logo}
               alt="Logo GBSoona"
               width={80}
               height={80}
-              className="h-20 w-40 object-contain"
+              className="h-14 w-40 object-contain"
             />
           </div>
         </div>
