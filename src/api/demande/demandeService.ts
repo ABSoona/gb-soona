@@ -57,7 +57,7 @@ export function useDemandeService(variables?: DemandeServiceParams): {
   const shouldSkip = !variables || Object.keys(variables).length === 0;
 
 
-  const { data, loading, error, refetch } = useQuery(GET_DEMANDES, {
+  const { data, previousData, loading, error, refetch } = useQuery(GET_DEMANDES, {
     variables: variables || {},
     fetchPolicy: 'network-only',
     skip: shouldSkip,
@@ -221,8 +221,11 @@ export function useDemandeService(variables?: DemandeServiceParams): {
   };
 
   return {
-    demandes: data?.demandes ?? [],
-    total: data?.meta?.count ?? 0,
+    // 🔥 Retombe sur le resultat precedent pendant qu'une nouvelle requete est
+    // en vol (recherche/filtre/page) au lieu de vider la liste : evite que le
+    // tableau (et son champ de recherche) se demonte/remonte a chaque frappe.
+    demandes: data?.demandes ?? previousData?.demandes ?? [],
+    total: data?.meta?.count ?? previousData?.meta?.count ?? 0,
     loading,
     error,
     refetch,

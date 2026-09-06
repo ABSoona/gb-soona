@@ -139,32 +139,39 @@ export default function Demandes({ acteurId, status,title,description, newOlny,e
                 </div>
 
                 <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
-                    {isLoading ? (
+                    {isLoading && demandes.length === 0 ? (
                         <TableSkeleton rows={10} columns={8} />
                     ) : error ? (
                         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
                             <p>❌ Erreur lors du chargement des demandes.</p>
                             <p>{(error as Error)?.message ?? 'Une erreur inattendue est survenue.'}</p>
                         </div>
-                    ) : filteredDemandes?.length === 0 ? (
-                        <div className="text-center py-4">
-                            <p>Aucune demande trouvée.</p>
-                        </div>
-                    ) : isServerMode ? (
-                        <DemandesTable
-                            data={filteredDemandes ?? []}
-                            columns={columns}
-                            hideTools={false}
-                            manualPagination
-                            pageCount={Math.max(1, Math.ceil(total / pagination.pageSize))}
-                            totalRowCount={total}
-                            pagination={pagination}
-                            onPaginationChange={setPagination}
-                            columnFilters={columnFilters}
-                            onColumnFiltersChange={setColumnFilters}
-                        />
                     ) : (
-                        <DemandesTable data={filteredDemandes ?? []} columns={columns} hideTools={false} />
+                        // 🔥 Le tableau (et son toolbar/champ de recherche) reste monté pendant
+                        // les rafraîchissements en arrière-plan (recherche, filtre, changement de
+                        // page) — seule son opacité change, pour ne pas perdre le focus du champ.
+                        <div className={isLoading ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
+                            {isServerMode ? (
+                                <DemandesTable
+                                    data={filteredDemandes ?? []}
+                                    columns={columns}
+                                    hideTools={false}
+                                    manualPagination
+                                    pageCount={Math.max(1, Math.ceil(total / pagination.pageSize))}
+                                    totalRowCount={total}
+                                    pagination={pagination}
+                                    onPaginationChange={setPagination}
+                                    columnFilters={columnFilters}
+                                    onColumnFiltersChange={setColumnFilters}
+                                />
+                            ) : filteredDemandes?.length === 0 ? (
+                                <div className="text-center py-4">
+                                    <p>Aucune demande trouvée.</p>
+                                </div>
+                            ) : (
+                                <DemandesTable data={filteredDemandes ?? []} columns={columns} hideTools={false} />
+                            )}
+                        </div>
                     )}
 
                 </div>
