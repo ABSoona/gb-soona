@@ -27,6 +27,7 @@ export function useContactService(variables?: any) {
 
   const {
     data,
+    previousData,
     loading,
     error,
     refetch
@@ -113,7 +114,10 @@ export function useContactService(variables?: any) {
   
 
   return {
-    contacts: data?.contacts || [],
+    // 🔥 Retombe sur le resultat precedent pendant qu'une nouvelle requete
+    // est en vol — voir demandeService.ts pour le meme fix.
+    contacts: data?.contacts ?? previousData?.contacts ?? [],
+    total: data?.meta?.count ?? previousData?.meta?.count ?? 0,
     loading,
     error,
     refetch,

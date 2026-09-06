@@ -11,6 +11,8 @@ import { useNavigate } from '@tanstack/react-router';
 import {
     ColumnDef,
     ColumnFiltersState,
+    OnChangeFn,
+    PaginationState,
     RowData,
     SortingState,
     VisibilityState,
@@ -38,9 +40,29 @@ interface DataTableProps {
     columns: ColumnDef<Contact>[];
     data: Contact[];
     hideTools?: boolean;
+    // 🔥 Pagination + filtres pilotes par le serveur (voir demandes-table.tsx
+    // pour le meme pattern).
+    manualPagination?: boolean;
+    pageCount?: number;
+    totalRowCount?: number;
+    pagination?: PaginationState;
+    onPaginationChange?: OnChangeFn<PaginationState>;
+    columnFilters?: ColumnFiltersState;
+    onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
 }
 
-export function ContactsTable({ columns, data, hideTools = false }: DataTableProps) {
+export function ContactsTable({
+    columns,
+    data,
+    hideTools = false,
+    manualPagination = false,
+    pageCount,
+    totalRowCount,
+    pagination: controlledPagination,
+    onPaginationChange: controlledOnPaginationChange,
+    columnFilters: controlledColumnFilters,
+    onColumnFiltersChange: controlledOnColumnFiltersChange,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({});
     const navigate = useNavigate();
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -87,7 +109,14 @@ export function ContactsTable({ columns, data, hideTools = false }: DataTablePro
             }
     );
 
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [internalColumnFilters, setInternalColumnFilters] = useState<ColumnFiltersState>([]);
+    const columnFilters = controlledColumnFilters ?? internalColumnFilters;
+    const onColumnFiltersChange = controlledOnColumnFiltersChange ?? setInternalColumnFilters;
+
+    const [internalPagination, setInternalPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
+    const pagination = controlledPagination ?? internalPagination;
+    const onPaginationChange = controlledOnPaginationChange ?? setInternalPagination;
+
     const [sorting, setSorting] = useState<SortingState>([]);
 
     // 🔥 Utilisation du filtre par période
@@ -101,13 +130,18 @@ export function ContactsTable({ columns, data, hideTools = false }: DataTablePro
             columnVisibility,
             rowSelection,
             columnFilters,
+            pagination,
         },
+        manualPagination,
+        manualFiltering: manualPagination,
+        pageCount: manualPagination ? (pageCount ?? -1) : undefined,
         enableMultiRowSelection: false,
         enableRowSelection: false,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
+        onColumnFiltersChange,
         onColumnVisibilityChange: setColumnVisibility,
+        onPaginationChange,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -178,7 +212,7 @@ export function ContactsTable({ columns, data, hideTools = false }: DataTablePro
                 </Table>
             </div>
             {/* Afficher la Pagination seulement si hideTools est false */}
-            <DataTablePagination table={table} />
+            <DataTablePagination table={table} totalRowCount={totalRowCount} />
         </div>
     );
 }
