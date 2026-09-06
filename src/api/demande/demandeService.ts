@@ -25,6 +25,10 @@ type DemandeServiceParams = {
   where?: Record<string, any>; // tu peux affiner selon ton schéma GraphQL
   take?:number
   skip?:number
+  // 🔥 Recupere uniquement les fonctions de mutation (createDemande,
+  // updateDemande...) sans relancer GET_DEMANDES / GET_DEMANDE_STATS,
+  // quand l'appelant a deja la donnee (ex: recue en props).
+  skipQuery?: boolean
 };
 
 export function useDemandeService(variables?: DemandeServiceParams): {
@@ -54,17 +58,19 @@ export function useDemandeService(variables?: DemandeServiceParams): {
     nouvelles: number;
   };
 } {
-  const shouldSkip = !variables || Object.keys(variables).length === 0;
+  const skipQuery = variables?.skipQuery === true;
+  const shouldSkip = skipQuery || !variables || Object.keys(variables).length === 0;
 
+  const { skipQuery: _skipQuery, ...queryVariables } = variables || {};
 
   const { data, previousData, loading, error, refetch } = useQuery(GET_DEMANDES, {
-    variables: variables || {},
+    variables: queryVariables,
     fetchPolicy: 'network-only',
     skip: shouldSkip,
     onCompleted: (newData) => {
       console.log("✅ DEMANDES chargées :", newData);
     },
-  
+
   });
   const userId = getUserId();
 
@@ -75,6 +81,7 @@ export function useDemandeService(variables?: DemandeServiceParams): {
   } = useQuery(GET_DEMANDE_STATS, {
     variables: { userId },
     fetchPolicy: 'network-only',
+    skip: skipQuery,
   });
 
   const stats = {

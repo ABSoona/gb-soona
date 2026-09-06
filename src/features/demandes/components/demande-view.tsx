@@ -66,7 +66,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const suiviDdemandeur = documents.filter((doc: Document) => doc.typeDocument?.rattachement === "Demande");
   const userId = getUserId();
   const { handleFileUpload, handleDelete } = useDocumentActions({ demande: { id: currentRow.id } });
-  const { createDemandeActivity, updateDemande } = useDemandeService({ where: { id: { equals: currentRow.id } } });
+  const { createDemandeActivity, updateDemande } = useDemandeService({ where: { id: { equals: currentRow.id } }, skipQuery: true });
   const [openNoteSheet, setOpenNoteSheet] = useState(false);
   const [openEntretienSheet, setOpenEntretienSheet] = useState(false);
   const [openShareFicheVisite, setOpenShareFicheVisite] = useState(false);
@@ -91,7 +91,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileInputMultiRef = useRef<HTMLInputElement>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
-  const { sendMessage } = useContactService({ where: { id: { equals: currentRow.contact.id } } }); // ✅ Utilisation du service
+  const { sendMessage } = useContactService({ where: { id: { equals: currentRow.contact.id } }, skipQuery: true }); // ✅ Utilisation du service
 
   const { visites, createVisite, refetch: refetchVisites } = useVisiteService({ where: { demande: { id: currentRow.id } } })
 
