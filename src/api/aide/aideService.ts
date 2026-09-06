@@ -7,9 +7,15 @@ import { CREATE_AIDE, DELETE_AIDE, GET_AIDES, UPDATE_AIDE } from './graphql/quer
 export function useAideService(variables?: any) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // 🔥 skipQuery : permet de recuperer uniquement les fonctions de mutation
+  // (createAide, deleteAide...) sans relancer GET_AIDES (non borne, potentiellement
+  // toutes les aides de l'application) quand l'appelant n'a pas besoin de la liste.
+  const { skipQuery, ...queryVariables } = variables ?? {};
+
   const { data, loading, error, refetch } = useQuery(GET_AIDES, {
-    variables,
+    variables: queryVariables,
     fetchPolicy: 'network-only',
+    skip: skipQuery === true,
     onCompleted: (newData) => {
       console.log("✅ Aides chargées :", newData);
     }
