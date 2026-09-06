@@ -8,11 +8,83 @@ import { useAideService } from '@/api/aide/aideService';
 import AppLayout from '@/components/layout/app-layout';
 import { TableSkeleton } from '@/components/ui/skeleton-table';
 import { handleServerError } from '@/utils/handle-server-error';
+import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { IconHeartHandshake } from '@tabler/icons-react';
+import { ColumnFiltersState, PaginationState } from '@tanstack/react-table';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { DateRange } from 'react-day-picker';
+
+const PAGE_SIZE = 25;
+
+// 🔥 Traduit l'etat de filtres du tableau (pilote par le toolbar) en `where`
+// GraphQL, pour que la recherche/les filtres se fassent cote serveur plutot
+// que sur les lignes deja chargees en memoire (voir features/demandes/index.tsx
+// pour le meme pattern).
+function buildFiltersWhere(columnFilters: ColumnFiltersState): Record<string, any> {
+    const where: Record<string, any> = {};
+    for (const filter of columnFilters) {
+        const value = filter.value as any;
+        if (value === undefined || value === null) continue;
+
+        switch (filter.id) {
+            case 'contactNomPrenom':
+                if (typeof value === 'string' && value.trim() !== '') {
+                    where.fullSearch = { contains: value.trim(), mode: 'Insensitive' };
+                }
+                break;
+            case 'frequence':
+                if (Array.isArray(value) && value.length > 0) {
+                    where.frequence = { in: value };
+                }
+                break;
+            case 'crediteur':
+                if (Array.isArray(value) && value.length > 0) {
+                    where.crediteur = { in: value };
+                }
+                break;
+            case 'acteurVersement':
+                if (Array.isArray(value) && value.length > 0) {
+                    where.acteurVersementId = { in: value };
+                }
+                break;
+            case 'dateAide': {
+                const range = value as DateRange | undefined;
+                if (range?.from || range?.to) {
+                    where.dateAide = {
+                        ...(range.from ? { gte: range.from } : {}),
+                        ...(range.to ? { lte: range.to } : {}),
+                    };
+                }
+                break;
+            }
+        }
+    }
+    return where;
+}
 
 export default function Aides() {
+    const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: PAGE_SIZE });
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+    const where = useMemo(() => buildFiltersWhere(columnFilters), [columnFilters]);
+    const debouncedWhere = useDebouncedValue(where, 300);
+
+    // 🔥 Revenir à la première page quand un filtre change.
+    const isFirstRender = useRef(true);
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+        setPagination((p) => (p.pageIndex === 0 ? p : { ...p, pageIndex: 0 }));
+    }, [debouncedWhere]);
+
     // ✅ Utilisation du service pour récupérer les aides
-    const { aides, loading: isLoading, error } = useAideService();
+    const { aides, total, loading: isLoading, error } = useAideService({
+        where: debouncedWhere,
+        take: pagination.pageSize,
+        skip: pagination.pageIndex * pagination.pageSize,
+    });
 
     // Gestion des erreurs via la fonction centralisée
     if (error) {
@@ -37,19 +109,28 @@ export default function Aides() {
                 </div>
 
                 <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0">
-                    {isLoading ? (
+                    {isLoading && aides.length === 0 ? (
                         <TableSkeleton rows={10} columns={8} />
                     ) : error ? (
                         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
                             <p>❌ Erreur lors du chargement des aides.</p>
                             <p>{(error as Error)?.message ?? 'Une erreur inattendue est survenue.'}</p>
                         </div>
-                    ) : aides?.length === 0 ? (
-                        <div className="text-center py-4">
-                            <p>Aucune aide trouvée.</p>
-                        </div>
                     ) : (
-                        <AidesTable data={aides ?? []} columns={columns} hideTools={false} />
+                        <div className={isLoading ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
+                            <AidesTable
+                                data={aides ?? []}
+                                columns={columns}
+                                hideTools={false}
+                                manualPagination
+                                pageCount={Math.max(1, Math.ceil(total / pagination.pageSize))}
+                                totalRowCount={total}
+                                pagination={pagination}
+                                onPaginationChange={setPagination}
+                                columnFilters={columnFilters}
+                                onColumnFiltersChange={setColumnFilters}
+                            />
+                        </div>
                     )}
                 </div>
             </AppLayout>
