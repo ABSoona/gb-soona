@@ -1,5 +1,3 @@
-import { AIDE_FIELDS } from '@/api/aide/graphql/fragment';
-import { DEMANDE_FIELDS } from '@/api/demande/graphql/fragment';
 import { gql } from '@apollo/client';
 import { CONTACT_FIELDS } from './fragment';
 
@@ -24,17 +22,12 @@ export const GET_CONTACTS = gql`
   query GetContacts($skip: Float, $take: Float, $where : ContactWhereInput) {
     contacts(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Asc }]) {
       ...ContactFields
-          aides {
-          ...AideFields
-        }
-          demandes {
-          ...DemandeFields
-        }
-      }
+    }
+    meta: _contactsMeta(where: $where) {
+      count
+    }
   }
   ${CONTACT_FIELDS}
-  ${AIDE_FIELDS}
-  ${DEMANDE_FIELDS}
 `;
 
 export const GET_CONTACT = gql`

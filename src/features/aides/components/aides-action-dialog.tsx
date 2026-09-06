@@ -71,7 +71,7 @@ interface Props {
 export function AidesActionDialog({ currentRow, open, onOpenChange, showContactSearch = true, showDemandeSearch = true, forContactId, forDemandeId,  onSuccess}: Props) {
 
 
-  const { createAide, updateAide, refetch, isSubmitting } = useAideService();
+  const { createAide, updateAide, refetch, isSubmitting } = useAideService({ skipQuery: true });
 
   const isEdit = !!currentRow;
   const { triggerRefetchAides } = useAides();

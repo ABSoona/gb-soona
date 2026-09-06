@@ -41,7 +41,7 @@ export const DemandeActivityTimeline: React.FC<Props> = ({ activities,demandeId 
   const [editingMessage, setEditingMessage] = useState("");
   const [expandedMessages, setExpandedMessages] = useState<Record<number, boolean>>({});
   const [updateDemandeActivity] = useMutation(UPDATE_DEMANDE_ACTIVITY);
-  const { deleteDemandeActivity } = useDemandeService({where :{id:{equals:demandeId}}});
+  const { deleteDemandeActivity } = useDemandeService({where :{id:{equals:demandeId}}, skipQuery: true});
   const textareaRefs = useRef<Record<number, HTMLTextAreaElement | null>>({});
 
   const startEditing = (activity: DemandeActivity) => {

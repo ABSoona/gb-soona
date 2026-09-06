@@ -20,14 +20,21 @@ export function useContactService(variables?: any) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // 🔥 skipQuery : permet de recuperer uniquement les fonctions de
+  // mutation/action (createContact, sendMessage...) sans relancer
+  // GET_CONTACTS quand l'appelant a deja la donnee (ex: recue en props).
+  const { skipQuery, ...queryVariables } = variables ?? {};
+
   const {
     data,
+    previousData,
     loading,
     error,
     refetch
   } = useQuery(GET_CONTACTS, {
-    variables,
+    variables: queryVariables,
     fetchPolicy: 'network-only',
+    skip: skipQuery === true,
     onCompleted: (newData) => {
       console.log("✅ Contacts chargés :", newData);
     },
@@ -107,7 +114,10 @@ export function useContactService(variables?: any) {
   
 
   return {
-    contacts: data?.contacts || [],
+    // 🔥 Retombe sur le resultat precedent pendant qu'une nouvelle requete
+    // est en vol — voir demandeService.ts pour le meme fix.
+    contacts: data?.contacts ?? previousData?.contacts ?? [],
+    total: data?.meta?.count ?? previousData?.meta?.count ?? 0,
     loading,
     error,
     refetch,

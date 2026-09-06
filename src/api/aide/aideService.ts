@@ -7,9 +7,15 @@ import { CREATE_AIDE, DELETE_AIDE, GET_AIDES, UPDATE_AIDE } from './graphql/quer
 export function useAideService(variables?: any) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { data, loading, error, refetch } = useQuery(GET_AIDES, {
-    variables,
+  // 🔥 skipQuery : permet de recuperer uniquement les fonctions de mutation
+  // (createAide, deleteAide...) sans relancer GET_AIDES (non borne, potentiellement
+  // toutes les aides de l'application) quand l'appelant n'a pas besoin de la liste.
+  const { skipQuery, ...queryVariables } = variables ?? {};
+
+  const { data, previousData, loading, error, refetch } = useQuery(GET_AIDES, {
+    variables: queryVariables,
     fetchPolicy: 'network-only',
+    skip: skipQuery === true,
     onCompleted: (newData) => {
       console.log("✅ Aides chargées :", newData);
     }
@@ -73,7 +79,11 @@ export function useAideService(variables?: any) {
   };
 
   return {
-    aides: data?.aides || [],
+    // 🔥 Retombe sur le resultat precedent pendant qu'une nouvelle requete est
+    // en vol (recherche/filtre/page) au lieu de vider la liste — voir
+    // demandeService.ts pour le meme fix (evite de demonter le toolbar).
+    aides: data?.aides ?? previousData?.aides ?? [],
+    total: data?.meta?.count ?? previousData?.meta?.count ?? 0,
     loading,
     error,
     refetch,

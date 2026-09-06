@@ -9,12 +9,15 @@ export const GET_AIDES = gql`
     aides(skip: $skip, take: $take, where: $where, orderBy:[{ createdAt: Asc }]) {
       ...AideFields
       contact {
-        ...ContactFields       
+        ...ContactFields
       }
       documents {
           ...DocumentFields
-        } 
-      
+        }
+
+    }
+    meta: _aidesMeta(where: $where) {
+      count
     }
   }
 

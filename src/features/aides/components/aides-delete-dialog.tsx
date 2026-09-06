@@ -37,7 +37,7 @@ function equalsMoney(a: number, b: number): boolean {
 
 export function AidesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
   const queryClient = useQueryClient();
-  const { deleteAide, isSubmitting } = useAideService();
+  const { deleteAide, isSubmitting } = useAideService({ skipQuery: true });
   const { triggerRefetchAides } = useAides();
 
   // ✅ On stocke la saisie en string (sinon le "." / "12." saute)

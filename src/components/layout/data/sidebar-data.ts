@@ -8,14 +8,16 @@ import {
   IconUsers
 } from '@tabler/icons-react';
 import { BadgeEuro, Globe, Squircle, UserIcon } from 'lucide-react';
-import { useDemandeService } from '@/api/demande/demandeService';
+import { useDemandeStatsService } from '@/api/demande/demandeStatsService';
 import type { SidebarData, NavGroup } from '../types';
 import { equal } from 'assert';
 
 export function useSidebarData(): SidebarData {
-  //const { demandes } = useDemandeService();
-
-  const { stats, loading } = useDemandeService({where :{id :{equals : 0}}});
+  // 🔥 Hook dedie et leger (fetchPolicy par defaut, pas network-only) pour de
+  // simples compteurs de badge : la sidebar restant montee en permanence et se
+  // re-rendant a chaque navigation, useDemandeService({..}) forcait ici un aller-retour
+  // reseau (GET_DEMANDES + GET_DEMANDE_STATS) a chaque changement de page.
+  const { stats, loading } = useDemandeStatsService();
   // Badges par sous-catégorie (à adapter selon ta logique métier)
 
   

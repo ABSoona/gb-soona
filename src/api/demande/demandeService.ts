@@ -24,10 +24,16 @@ type DemandeServiceParams = {
   order?: number;
   where?: Record<string, any>; // tu peux affiner selon ton schéma GraphQL
   take?:number
+  skip?:number
+  // 🔥 Recupere uniquement les fonctions de mutation (createDemande,
+  // updateDemande...) sans relancer GET_DEMANDES / GET_DEMANDE_STATS,
+  // quand l'appelant a deja la donnee (ex: recue en props).
+  skipQuery?: boolean
 };
 
 export function useDemandeService(variables?: DemandeServiceParams): {
   demandes: Demande[];
+  total: number;
   loading: boolean;
   error: unknown;
   refetch: () => void;
@@ -52,17 +58,19 @@ export function useDemandeService(variables?: DemandeServiceParams): {
     nouvelles: number;
   };
 } {
-  const shouldSkip = !variables || Object.keys(variables).length === 0;
+  const skipQuery = variables?.skipQuery === true;
+  const shouldSkip = skipQuery || !variables || Object.keys(variables).length === 0;
 
+  const { skipQuery: _skipQuery, ...queryVariables } = variables || {};
 
-  const { data, loading, error, refetch } = useQuery(GET_DEMANDES, {
-    variables: variables || {},
+  const { data, previousData, loading, error, refetch } = useQuery(GET_DEMANDES, {
+    variables: queryVariables,
     fetchPolicy: 'network-only',
     skip: shouldSkip,
     onCompleted: (newData) => {
       console.log("✅ DEMANDES chargées :", newData);
     },
-  
+
   });
   const userId = getUserId();
 
@@ -73,6 +81,7 @@ export function useDemandeService(variables?: DemandeServiceParams): {
   } = useQuery(GET_DEMANDE_STATS, {
     variables: { userId },
     fetchPolicy: 'network-only',
+    skip: skipQuery,
   });
 
   const stats = {
@@ -219,7 +228,11 @@ export function useDemandeService(variables?: DemandeServiceParams): {
   };
 
   return {
-    demandes: data?.demandes ?? [],
+    // 🔥 Retombe sur le resultat precedent pendant qu'une nouvelle requete est
+    // en vol (recherche/filtre/page) au lieu de vider la liste : evite que le
+    // tableau (et son champ de recherche) se demonte/remonte a chaque frappe.
+    demandes: data?.demandes ?? previousData?.demandes ?? [],
+    total: data?.meta?.count ?? previousData?.meta?.count ?? 0,
     loading,
     error,
     refetch,

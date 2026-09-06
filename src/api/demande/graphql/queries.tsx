@@ -17,6 +17,9 @@ export const GET_DEMANDES = gql`
         ...DemandeActivityFields
       }
     }
+    meta: _demandesMeta(where: $where) {
+      count
+    }
   }
   ${DEMANDE_FIELDS}
   ${CONTACT_FIELDS_LIGHT}
