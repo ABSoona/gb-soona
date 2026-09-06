@@ -160,13 +160,10 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                             placeholder={"Date décision"}
                         />
                     )}
-                    {table.getColumn('departement') && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn('departement')}
-                        title="Département"
-                        options={departementOptions}
-                    />
-                    )}
+                    {/* Filtre "Département" désactivé temporairement : il dépendait du
+                    filtrage client sur le jeu de données complet ; avec la pagination
+                    serveur il faudrait un champ dénormalisé sur Demande pour le refaire
+                    proprement côté serveur. */}
                     {/* 📌 Filtre par Etat */}
                     {table.getColumn('status') && (
                         <DataTableFacetedFilter

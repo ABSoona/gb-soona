@@ -16,10 +16,12 @@ import { Table } from '@tanstack/react-table'
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>
+  totalRowCount?: number
 }
 
 export function DataTablePagination<TData>({
   table,
+  totalRowCount,
 }: DataTablePaginationProps<TData>) {
   return (
     <div
@@ -27,8 +29,8 @@ export function DataTablePagination<TData>({
       style={{ overflowClipMargin: 1 }}
     >
       <div className='hidden flex-1 text-xs text-muted-foreground sm:block'>
-        
-        {table.getFilteredRowModel().rows.length} Ligne(s)
+
+        {totalRowCount ?? table.getFilteredRowModel().rows.length} Ligne(s)
       </div>
       <div className='flex items-center sm:space-x-6 lg:space-x-8'>
         <div className='flex items-center space-x-2'>
@@ -43,7 +45,7 @@ export function DataTablePagination<TData>({
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side='top'>
-              {[10, 20, 30, 40, 50].map((pageSize) => (
+              {[10, 25, 50, 100].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>

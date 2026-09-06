@@ -24,10 +24,12 @@ type DemandeServiceParams = {
   order?: number;
   where?: Record<string, any>; // tu peux affiner selon ton schéma GraphQL
   take?:number
+  skip?:number
 };
 
 export function useDemandeService(variables?: DemandeServiceParams): {
   demandes: Demande[];
+  total: number;
   loading: boolean;
   error: unknown;
   refetch: () => void;
@@ -220,6 +222,7 @@ export function useDemandeService(variables?: DemandeServiceParams): {
 
   return {
     demandes: data?.demandes ?? [],
+    total: data?.meta?.count ?? 0,
     loading,
     error,
     refetch,

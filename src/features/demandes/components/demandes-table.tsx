@@ -11,6 +11,8 @@ import { useNavigate } from '@tanstack/react-router';
 import {
     ColumnDef,
     ColumnFiltersState,
+    OnChangeFn,
+    PaginationState,
     RowData,
     SortingState,
     VisibilityState,
@@ -42,9 +44,32 @@ interface DataTableProps {
     showDetailIn?: detailOpenOption;
     hideActions?: boolean
     ShowPagination?:boolean
+    // 🔥 Pagination + filtres pilotés par le serveur (vue "Toutes les demandes" et consorts).
+    // Quand manualPagination est actif, le parent fournit les donnees deja paginees/filtrees
+    // par le serveur et pilote l'etat pagination/columnFilters lui-meme.
+    manualPagination?: boolean;
+    pageCount?: number;
+    totalRowCount?: number;
+    pagination?: PaginationState;
+    onPaginationChange?: OnChangeFn<PaginationState>;
+    columnFilters?: ColumnFiltersState;
+    onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
 }
 
-export function DemandesTable({ columns, data, hideTools = false, ShowPagination = true, showDetailIn = detailOpenOption.page }: DataTableProps) {
+export function DemandesTable({
+    columns,
+    data,
+    hideTools = false,
+    ShowPagination = true,
+    showDetailIn = detailOpenOption.page,
+    manualPagination = false,
+    pageCount,
+    totalRowCount,
+    pagination: controlledPagination,
+    onPaginationChange: controlledOnPaginationChange,
+    columnFilters: controlledColumnFilters,
+    onColumnFiltersChange: controlledOnColumnFiltersChange,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({});
     const navigate = useNavigate();
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -78,7 +103,14 @@ export function DemandesTable({ columns, data, hideTools = false, ShowPagination
 
     );
 
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [internalColumnFilters, setInternalColumnFilters] = useState<ColumnFiltersState>([]);
+    const columnFilters = controlledColumnFilters ?? internalColumnFilters;
+    const onColumnFiltersChange = controlledOnColumnFiltersChange ?? setInternalColumnFilters;
+
+    const [internalPagination, setInternalPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
+    const pagination = controlledPagination ?? internalPagination;
+    const onPaginationChange = controlledOnPaginationChange ?? setInternalPagination;
+
     const [sorting, setSorting] = useState<SortingState>([]);
 
     // 🔥 Utilisation du filtre par période
@@ -92,13 +124,18 @@ export function DemandesTable({ columns, data, hideTools = false, ShowPagination
             columnVisibility,
             rowSelection,
             columnFilters,
+            pagination,
         },
+        manualPagination,
+        manualFiltering: manualPagination,
+        pageCount: manualPagination ? (pageCount ?? -1) : undefined,
         enableMultiRowSelection: false,
         enableRowSelection: false,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
+        onColumnFiltersChange,
         onColumnVisibilityChange: setColumnVisibility,
+        onPaginationChange,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -183,7 +220,7 @@ export function DemandesTable({ columns, data, hideTools = false, ShowPagination
                 </Table>
             </div>
             {/* Afficher la Pagination seulement si hideTools est false */}
-            {ShowPagination && <DataTablePagination table={table} />}
+            {ShowPagination && <DataTablePagination table={table} totalRowCount={totalRowCount} />}
         </div>
     );
 }
