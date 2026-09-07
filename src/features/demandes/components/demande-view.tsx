@@ -2,7 +2,7 @@
 
 
 import { useContactService } from '@/api/contact/contact-service'
-import { shareFicheVisite, useDemandeService } from '@/api/demande/demandeService'
+import { shareFicheVisite, useDemandeService, useDemandeSituationHistoryService } from '@/api/demande/demandeService'
 import { useDocumentService } from '@/api/document/documentService'
 import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService'
 import { useUserServicev2 } from '@/api/user/userService.v2'
@@ -24,7 +24,7 @@ import { User } from '@/model/user/User'
 import { TabsContent } from '@radix-ui/react-tabs'
 import { useNavigate } from '@tanstack/react-router'
 import { addMonths } from 'date-fns'
-import { ChevronDown, Files, Plus } from 'lucide-react'
+import { ArrowDown, ArrowUp, ChevronDown, Files, Minus, Plus } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { categorieTypes } from '../data/data'
 import CoordinateursMapSheet from './assign-coordinateur'
@@ -88,6 +88,16 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const totalAides = currentRow?.contact?.aides?.reduce((acc, aide) => acc + (aide.montant ?? 0), 0) ?? 0
   const resteAVivre = totalRevenus - totalCharges
   const resteAVivreParPersonne = resteAVivre > 0 ? resteAVivre / currentRow.nombrePersonnes / 30 : 0
+
+  // 🔥 Comparaison avec la dernière situation historisée (voir DemandeSituationHistoryDrawer)
+  // pour afficher une flèche de tendance sur chaque indicateur.
+  const { demandeSituationHistories } = useDemandeSituationHistoryService(currentRow.id);
+  const latestHistory = demandeSituationHistories[0];
+  const histRevenus = latestHistory ? (latestHistory.revenus ?? 0) + (latestHistory.revenusConjoint ?? 0) + (latestHistory.apl ?? 0) : undefined;
+  const histCharges = latestHistory ? (latestHistory.loyer ?? 0) + (latestHistory.facturesEnergie ?? 0) + (latestHistory.autresCharges ?? 0) : undefined;
+  const histDettes = latestHistory ? (latestHistory.dettes ?? 0) : undefined;
+  const histResteAVivre = histRevenus !== undefined && histCharges !== undefined ? histRevenus - histCharges : undefined;
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileInputMultiRef = useRef<HTMLInputElement>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
@@ -418,12 +428,26 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       />
       <div className={`${showContact ? "col-span-2" : "col-span-3 "} space-y-6`}>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2">
-          <InfoCard title="Revenus" value={`${totalRevenus?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
-          <InfoCard title="Charges" value={`${totalCharges?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
-          <InfoCard title="Dettes" value={`${totalDettes?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
+          <InfoCard
+            title="Revenus"
+            value={`${totalRevenus?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`}
+            trend={histRevenus !== undefined ? <TrendIndicator current={totalRevenus} previous={histRevenus} label="Revenus" /> : undefined}
+          />
+          <InfoCard
+            title="Charges"
+            value={`${totalCharges?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`}
+            trend={histCharges !== undefined ? <TrendIndicator current={totalCharges} previous={histCharges} invert label="Charges" /> : undefined}
+          />
+          <InfoCard
+            title="Dettes"
+            value={`${totalDettes?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`}
+            trend={histDettes !== undefined ? <TrendIndicator current={totalDettes} previous={histDettes} invert label="Dettes" /> : undefined}
+          />
           <InfoCard title="Historique Aides" value={`${totalAides?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
           <InfoCard title="Reste à Vivre" subtitle={resteAVivreParPersonne ? `${resteAVivreParPersonne?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}  par j/pers` : ""}
-            value={`${resteAVivre?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
+            value={`${resteAVivre?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`}
+            trend={histResteAVivre !== undefined ? <TrendIndicator current={resteAVivre} previous={histResteAVivre} label="Reste à vivre" /> : undefined}
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -595,17 +619,20 @@ export function InfoCard({
   title,
   value,
   subtitle,
+  trend,
 }: {
   title: string;
   value: string;
   subtitle?: string;
+  trend?: React.ReactNode;
 }) {
   return (
     <Card className="h-full">
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-md whitespace-nowrap overflow-hidden truncate">
           {title}
         </CardTitle>
+        {trend}
       </CardHeader>
 
       <CardContent className="whitespace-nowrap overflow-hidden truncate">
@@ -618,5 +645,39 @@ export function InfoCard({
         )}
       </CardContent>
     </Card>
+  );
+}
+
+// 🔥 Indique si un indicateur a augmenté/diminué/stagné par rapport a la
+// derniere situation historisee. `invert` = true pour les indicateurs ou une
+// hausse est defavorable (Charges, Dettes) — inverse le sens des couleurs.
+function TrendIndicator({
+  current,
+  previous,
+  invert = false,
+  label,
+}: {
+  current: number;
+  previous: number;
+  invert?: boolean;
+  label: string;
+}) {
+  const diff = current - previous;
+  const diffLabel = `${diff > 0 ? '+' : ''}${diff.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`;
+  const title = `${label} : ${diffLabel} par rapport à la dernière situation historisée`;
+
+  if (Math.abs(diff) < 1) {
+    return <Minus className="h-4 w-4 text-muted-foreground shrink-0" title={title} />;
+  }
+
+  const isUp = diff > 0;
+  const isFavorable = invert ? !isUp : isUp;
+  const Icon = isUp ? ArrowUp : ArrowDown;
+
+  return (
+    <Icon
+      className={`h-4 w-4 shrink-0 ${isFavorable ? 'text-green-600' : 'text-red-600'}`}
+      title={title}
+    />
   );
 }
