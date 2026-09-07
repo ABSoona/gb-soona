@@ -1,6 +1,6 @@
 'use client';
 
-import { useDemandeService, useDemandeSituationHistoryService } from '@/api/demande/demandeService';
+import { useDemandeAutreChargeService, useDemandeService, useDemandeSituationHistoryService } from '@/api/demande/demandeService';
 import { SelectDropdown } from '@/components/select-dropdown';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,8 +33,8 @@ import { categorieTypes, demandeStatusTypes } from '../data/data';
 import { ContactSearchCombobox } from './contact-search';
 import { useUserServicev2 } from '@/api/user/userService.v2';
 import { User } from '@/model/user/User';
-import { useEffect, useMemo, useState } from 'react';
-import { Plus } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Plus, X } from 'lucide-react';
 import { useAlert } from '@/components/Alert';
 import { getUserId } from '@/lib/session';
 
@@ -83,42 +83,63 @@ interface Props {
 }
 
 export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }: Props) {
-  type Charge = { id: number; value: string };
-  const [charges, setCharges] = useState([{ id: Date.now(), value: '' }]);
-  const [total, setTotal] = useState('');
   const { openAlert, AlertNode } = useAlert()
-  const handleAddCharge = () => {
-    setCharges([...charges, { id: Date.now(), value: '' }]);
-  };
-
-  const handleChange = (id: number, newValue: string) => {
-    setCharges(prev =>
-      prev.map(c => (c.id === id ? { ...c, value: newValue } : c))
-    );
-  };
   const { users } = useUserServicev2(
-     { where: { role: { not: "visiteur" } } } 
+     { where: { role: { not: "visiteur" } } }
   );
 
   const isEdit = !!currentRow;
-  useEffect(() => {
-    if (isEdit && currentRow?.autresCharges !== undefined) {
-      // Afficher la valeur existante dans un champ dynamique
-      setCharges([{ id: Date.now(), value: currentRow.autresCharges.toString() }]);
-    } else {
-      // Mode création → champ vide par défaut
-      setCharges([{ id: Date.now(), value: "" }]);
-    }
-  }, [isEdit, currentRow]);
-  useEffect(() => {
-    const totalAutesCharges = charges.reduce((acc: number, c) => acc + Number(c.value || 0), 0)
-    setTotal(totalAutesCharges.toString())
-  
-    // ⚠️ Et on met aussi à jour React Hook Form ici :
-    form.setValue("autresCharges", totalAutesCharges)
-  }, [charges])
 
-  
+  // 🔥 Decomposition (nom + montant) du champ "Autres charges", uniquement en
+  // mode modification (en creation, "Autres charges" reste un simple champ,
+  // conformement au comportement existant). Voir useDemandeAutreChargeService.
+  type ChargeRow = { id: number; dbId?: number; nom: string; montant: string };
+  const [chargeRows, setChargeRows] = useState<ChargeRow[]>([]);
+  const chargesSeededRef = useRef(false);
+  const {
+    demandeAutreCharges,
+    loading: autreChargesLoading,
+    createDemandeAutreCharge,
+    updateDemandeAutreCharge,
+    deleteDemandeAutreCharge,
+  } = useDemandeAutreChargeService(isEdit ? currentRow?.id : undefined);
+
+  const handleAddChargeRow = () => {
+    setChargeRows(prev => [...prev, { id: Date.now(), nom: '', montant: '' }]);
+  };
+  const handleChargeRowChange = (id: number, field: 'nom' | 'montant', newValue: string) => {
+    setChargeRows(prev => prev.map(c => (c.id === id ? { ...c, [field]: newValue } : c)));
+  };
+  const handleRemoveChargeRow = (id: number) => {
+    setChargeRows(prev => (prev.length > 1 ? prev.filter(c => c.id !== id) : prev));
+  };
+
+  // Reinitialise le flag de seed a chaque changement de demande éditée.
+  useEffect(() => {
+    chargesSeededRef.current = false;
+  }, [currentRow?.id]);
+
+  // Charge une seule fois la composition existante (ou, a defaut, pre-remplit
+  // une ligne unique avec le montant global actuel — on ne perd rien).
+  useEffect(() => {
+    if (!isEdit || autreChargesLoading || chargesSeededRef.current) return;
+    chargesSeededRef.current = true;
+    if (demandeAutreCharges.length > 0) {
+      setChargeRows(demandeAutreCharges.map(c => ({ id: c.id, dbId: c.id, nom: c.nom, montant: String(c.montant) })));
+    } else if (currentRow?.autresCharges) {
+      setChargeRows([{ id: Date.now(), nom: 'Autres charges', montant: String(currentRow.autresCharges) }]);
+    } else {
+      setChargeRows([{ id: Date.now(), nom: '', montant: '' }]);
+    }
+  }, [isEdit, autreChargesLoading, demandeAutreCharges, currentRow]);
+
+  // Synchronise le total des lignes avec le champ "autresCharges" du formulaire.
+  useEffect(() => {
+    if (!isEdit || !chargesSeededRef.current) return;
+    const totalAutresCharges = chargeRows.reduce((acc, c) => acc + Number(c.montant || 0), 0);
+    form.setValue("autresCharges", totalAutresCharges);
+  }, [chargeRows, isEdit]);
+
   const whereClause = isEdit ? {where:{id : {equals:currentRow.id}}}:{where:{id:{equals:0}}}
   const { createDemande, updateDemande,  isSubmitting } = useDemandeService();
   const { createDemandeSituationHistory } = useDemandeSituationHistoryService();
@@ -254,6 +275,26 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
 
         await updateDemande(currentRow.id, demandePayload);
 
+        // 🔥 Synchronise la composition des "Autres charges" : supprime les
+        // lignes retirées, met à jour les existantes, crée les nouvelles.
+        const currentDbIds = new Set(chargeRows.map(c => c.dbId).filter((id): id is number => !!id));
+        await Promise.all(
+          demandeAutreCharges
+            .filter(c => !currentDbIds.has(c.id))
+            .map(c => deleteDemandeAutreCharge(c.id))
+        );
+        await Promise.all(
+          chargeRows.map(c => {
+            const nom = c.nom.trim();
+            const montant = Number(c.montant || 0);
+            if (!nom && !montant) return Promise.resolve();
+            if (c.dbId) {
+              return updateDemandeAutreCharge(c.dbId, { nom: nom || 'Autres charges', montant });
+            }
+            return createDemandeAutreCharge({ demande: { id: currentRow.id }, nom: nom || 'Autres charges', montant });
+          })
+        );
+
         toast({ title: 'Demande mise à jour avec succès !' });
       } else {
         console.log(demandePayload);
@@ -279,6 +320,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
       open={open}
       onOpenChange={(state) => {
         form.reset();
+        chargesSeededRef.current = false;
         onOpenChange(state);
       }}
     >
@@ -606,46 +648,73 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
 
               />
                <div className="space-y-4">
+                {!isEdit ? (
+                  <FormField
+                    control={form.control}
+                    name="autresCharges"
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel>Autres charges (€)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Sans centimes, sans signe €"
+                            className="col-span-4"
+                            autoComplete="off"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="col-span-4 col-start-3" />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  <FormItem className="space-y-1">
+                    <FormLabel>Autres charges (€) — composition</FormLabel>
 
-                <FormField
-                  control={form.control}
-                  name="autresCharges"
-                  render={({ field }) => (
-                    <FormItem className="space-y-1">
-                      <FormLabel>Autres charges (€)</FormLabel>
+                    <div className="space-y-2">
+                      {chargeRows.map((charge) => (
+                        <div key={charge.id} className="flex gap-2">
+                          <Input
+                            placeholder="Nom de la charge"
+                            value={charge.nom}
+                            onChange={(e) => handleChargeRowChange(charge.id, 'nom', e.target.value)}
+                            autoComplete="off"
+                            className="flex-[2]"
+                          />
+                          <Input
+                            type="number"
+                            placeholder="Montant €"
+                            value={charge.montant}
+                            onChange={(e) => handleChargeRowChange(charge.id, 'montant', e.target.value)}
+                            autoComplete="off"
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 shrink-0"
+                            onClick={() => handleRemoveChargeRow(charge.id)}
+                            disabled={chargeRows.length <= 1}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
 
-                      <div className="space-y-2">
-                        {charges.map((charge) => (
-                          <FormControl key={charge.id}>
-                            <div className="flex gap-2">
-                              <Input
-                                type="number"
-                                placeholder="Sans centimes, sans signe €"
-                                value={charge.value}
-                                onChange={(e) => handleChange(charge.id, e.target.value)}
-                                autoComplete="off"
-                              />
-                              <Button type="button" variant="secondary" onClick={handleAddCharge}  className="px-3">
-                                +
-                              </Button>
-                            </div>
-                          </FormControl>
-                        ))}
-                      </div>
+                    <Button type="button" variant="secondary" size="sm" onClick={handleAddChargeRow} className="mt-1">
+                      <Plus className="h-4 w-4 mr-1" />
+                      Ajouter une charge
+                    </Button>
 
-                      {/* Champ caché pour RHF */}
-                      <Input type="hidden" {...field} />
-
-                      {/* 🔥 Texte du total mis à jour en live */}
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Total des charges : <span className="font-medium">{total} €</span>
-                      </p>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
+                    {/* 🔥 Texte du total mis à jour en live */}
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Total des charges : <span className="font-medium">{chargeRows.reduce((acc, c) => acc + Number(c.montant || 0), 0).toLocaleString('fr-FR')} €</span>
+                    </p>
+                  </FormItem>
+                )}
 </div>
 
               <FormField

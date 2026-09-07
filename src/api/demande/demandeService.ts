@@ -6,16 +6,20 @@ import { useState } from 'react';
 import {
   CREATE_DEMANDE,
   CREATE_DEMANDE_ACTIVITY,
+  CREATE_DEMANDE_AUTRE_CHARGE,
   CREATE_DEMANDE_SITUATION_HISTORY,
   DELETE_DEMANDE,
   DELETE_DEMANDE_ACTIVITY,
+  DELETE_DEMANDE_AUTRE_CHARGE,
   DELETE_DEMANDE_SITUATION_HISTORY,
+  GET_DEMANDE_AUTRE_CHARGES,
   GET_DEMANDE_SITUATION_HISTORIES,
   GET_DEMANDE_STATS,
   GET_DEMANDES,
   UPDATE_DEMANDE,
+  UPDATE_DEMANDE_AUTRE_CHARGE,
 } from './graphql/queries';
-import { DemandeSituationHistory } from '@/model/demande/Demande';
+import { DemandeAutreCharge, DemandeSituationHistory } from '@/model/demande/Demande';
 import { Demande } from '@/model/demande/Demande';
 import { getUserId } from '@/lib/session';
 import axiosInstance from '@/lib/axtios-instance';
@@ -306,6 +310,52 @@ export function useDemandeSituationHistoryService(demandeId?: number): {
     createDemandeSituationHistory,
     deleteDemandeSituationHistory,
     isSubmitting,
+  };
+}
+
+// 🔥 Decomposition (nom + montant) du champ "Autres charges" d'une demande.
+// Les mutations create/update/delete sont volontairement silencieuses (pas de
+// toast) : elles sont utilisees en lot lors de l'enregistrement de la demande,
+// le toast de succes/echec global de la sauvegarde suffit.
+export function useDemandeAutreChargeService(demandeId?: number): {
+  demandeAutreCharges: DemandeAutreCharge[];
+  loading: boolean;
+  refetch: () => void;
+  createDemandeAutreCharge: (data: { demande: { id: number }; nom: string; montant: number }) => Promise<DemandeAutreCharge>;
+  updateDemandeAutreCharge: (id: number, data: { nom: string; montant: number }) => Promise<DemandeAutreCharge>;
+  deleteDemandeAutreCharge: (id: number) => Promise<void>;
+} {
+  const { data, loading, refetch } = useQuery(GET_DEMANDE_AUTRE_CHARGES, {
+    variables: { where: { demande: { id: demandeId } } },
+    fetchPolicy: 'network-only',
+    skip: !demandeId,
+  });
+
+  const [createMutation] = useMutation(CREATE_DEMANDE_AUTRE_CHARGE);
+  const [updateMutation] = useMutation(UPDATE_DEMANDE_AUTRE_CHARGE);
+  const [deleteMutation] = useMutation(DELETE_DEMANDE_AUTRE_CHARGE);
+
+  const createDemandeAutreCharge = async (payload: { demande: { id: number }; nom: string; montant: number }) => {
+    const result = await createMutation({ variables: { data: payload } });
+    return result.data?.createDemandeAutreCharge;
+  };
+
+  const updateDemandeAutreCharge = async (id: number, payload: { nom: string; montant: number }) => {
+    const result = await updateMutation({ variables: { id, data: payload } });
+    return result.data?.updateDemandeAutreCharge;
+  };
+
+  const deleteDemandeAutreCharge = async (id: number) => {
+    await deleteMutation({ variables: { id } });
+  };
+
+  return {
+    demandeAutreCharges: data?.demandeAutreCharges ?? [],
+    loading,
+    refetch,
+    createDemandeAutreCharge,
+    updateDemandeAutreCharge,
+    deleteDemandeAutreCharge,
   };
 }
 
