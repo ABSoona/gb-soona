@@ -217,8 +217,11 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
       if (isEdit && currentRow?.id) {
        if( values.status == 'EnCours' && values.categorieDemandeur == undefined  )
         throw Error("Vous devez d'abord renseigner la categorie du demandeur");
-        await updateDemande(currentRow.id, demandePayload);
 
+        // 🔥 L'historisation doit figer la situation telle qu'elle était AVANT
+        // cette mise à jour (currentRow, chargé avant l'édition), pas les
+        // nouvelles valeurs qu'on est en train d'enregistrer — sinon
+        // l'historique ne fait que dupliquer l'état courant.
         if (historiser) {
           setIsHistorizing(true);
           try {
@@ -226,28 +229,30 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
             await createDemandeSituationHistory({
               demande: { id: currentRow.id },
               creePar: userId ? { id: userId } : undefined,
-              nombreEnfants: Number(values.nombreEnfants),
-              nombrePersonnes: Number(values.nombrePersonnes),
-              agesEnfants: values.agesEnfants,
-              situationFamiliale: values.situationFamiliale,
-              situationProfessionnelle: values.situationProfessionnelle,
-              situationProConjoint: values.situationProConjoint,
-              revenus: Number(values.revenus),
-              revenusConjoint: Number(values.revenusConjoint),
-              loyer: Number(values.loyer),
-              facturesEnergie: Number(values.facturesEnergie),
-              dettes: Number(values.dettes),
-              natureDettes: values.natureDettes,
-              autresAides: values.autresAides,
-              autresCharges: Number(values.autresCharges),
-              apl: Number(values.apl),
-              categorieDemandeur: values.categorieDemandeur,
-              remarques: values.remarques,
+              nombreEnfants: currentRow.nombreEnfants ?? 0,
+              nombrePersonnes: currentRow.nombrePersonnes ?? 0,
+              agesEnfants: currentRow.agesEnfants,
+              situationFamiliale: currentRow.situationFamiliale,
+              situationProfessionnelle: currentRow.situationProfessionnelle,
+              situationProConjoint: currentRow.situationProConjoint,
+              revenus: currentRow.revenus ?? 0,
+              revenusConjoint: currentRow.revenusConjoint ?? 0,
+              loyer: currentRow.loyer ?? 0,
+              facturesEnergie: currentRow.facturesEnergie ?? 0,
+              dettes: currentRow.dettes ?? 0,
+              natureDettes: currentRow.natureDettes,
+              autresAides: currentRow.autresAides,
+              autresCharges: currentRow.autresCharges ?? 0,
+              apl: currentRow.apl ?? 0,
+              categorieDemandeur: currentRow.categorieDemandeur,
+              remarques: currentRow.remarques,
             });
           } finally {
             setIsHistorizing(false);
           }
         }
+
+        await updateDemande(currentRow.id, demandePayload);
 
         toast({ title: 'Demande mise à jour avec succès !' });
       } else {
