@@ -667,17 +667,23 @@ function TrendIndicator({
   const title = `${label} : ${diffLabel} par rapport à la dernière situation historisée`;
 
   if (Math.abs(diff) < 1) {
-    return <Minus className="h-4 w-4 text-muted-foreground shrink-0" title={title} />;
+    return (
+      <span className="flex items-center gap-0.5 text-xs text-muted-foreground shrink-0" title={title}>
+        <Minus className="h-4 w-4 shrink-0" />
+        {diffLabel}
+      </span>
+    );
   }
 
   const isUp = diff > 0;
   const isFavorable = invert ? !isUp : isUp;
   const Icon = isUp ? ArrowUp : ArrowDown;
+  const colorClass = isFavorable ? 'text-green-600' : 'text-red-600';
 
   return (
-    <Icon
-      className={`h-4 w-4 shrink-0 ${isFavorable ? 'text-green-600' : 'text-red-600'}`}
-      title={title}
-    />
+    <span className={`flex items-center gap-0.5 text-xs font-medium shrink-0 ${colorClass}`} title={title}>
+      <Icon className="h-4 w-4 shrink-0" />
+      {diffLabel}
+    </span>
   );
 }
