@@ -13,12 +13,13 @@ import { DataTableViewOptions } from './data-table-view-options';
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
+    onExportAll?: () => Promise<TData[]>;
 }
 export const departementOptions = Array.from({ length: 95 }, (_, i) => {
     const code = (i + 1).toString().padStart(2, "0")
     return { label: code, value: code }
   })
-export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData>({ table, onExportAll }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
 
     // ✅ État pour gérer les filtres sauvegardés
@@ -215,7 +216,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
             {/* ⚙️ Options d'affichage des colonnes */}
             <div className='mx-2'><DataTableViewOptions table={table} /></div>
-            <div><DataTableExport table={table} /></div>
+            <div><DataTableExport table={table} onExportAll={onExportAll} /></div>
 
 
         </div>

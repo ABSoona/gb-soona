@@ -5,6 +5,8 @@ import { ContactsTable } from './components/contacts-table';
 import ContactsProvider from './context/contacts-context';
 
 import { useContactService } from '@/api/contact/contact-service';
+import { GET_CONTACTS } from '@/api/contact/graphql/queries';
+import { useApolloClient } from '@apollo/client';
 import AppLayout from '@/components/layout/app-layout';
 import { TableSkeleton } from '@/components/ui/skeleton-table';
 import { handleServerError } from '@/utils/handle-server-error';
@@ -12,7 +14,7 @@ import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { IconUser } from '@tabler/icons-react';
 import { ContactsDialogs } from './components/contacts-dialogs';
 import { ColumnFiltersState, PaginationState } from '@tanstack/react-table';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
 const PAGE_SIZE = 25;
@@ -77,6 +79,18 @@ export default function Contacts() {
         skip: pagination.pageIndex * pagination.pageSize,
     });
 
+    // 🔥 L'export doit porter sur TOUTES les lignes correspondant aux filtres
+    // actuels, pas seulement la page chargée en mémoire (voir data-table-export.tsx).
+    const client = useApolloClient();
+    const exportAllRows = useCallback(async () => {
+        const { data } = await client.query({
+            query: GET_CONTACTS,
+            variables: { where: debouncedWhere },
+            fetchPolicy: 'network-only',
+        });
+        return data?.contacts ?? [];
+    }, [client, debouncedWhere]);
+
     // Gestion des erreurs via la fonction centralisée
     if (error) {
         handleServerError(error);
@@ -119,6 +133,7 @@ export default function Contacts() {
                                 onPaginationChange={setPagination}
                                 columnFilters={columnFilters}
                                 onColumnFiltersChange={setColumnFilters}
+                                onExportAll={exportAllRows}
                             />
                         </div>
                     )}

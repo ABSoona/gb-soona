@@ -49,6 +49,7 @@ interface DataTableProps {
     onPaginationChange?: OnChangeFn<PaginationState>;
     columnFilters?: ColumnFiltersState;
     onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
+    onExportAll?: () => Promise<Contact[]>;
 }
 
 export function ContactsTable({
@@ -60,6 +61,7 @@ export function ContactsTable({
     totalRowCount,
     pagination: controlledPagination,
     onPaginationChange: controlledOnPaginationChange,
+    onExportAll,
     columnFilters: controlledColumnFilters,
     onColumnFiltersChange: controlledOnColumnFiltersChange,
 }: DataTableProps) {
@@ -157,7 +159,7 @@ export function ContactsTable({
     return (
         <div className="space-y-4">
             {/* 🔥 Passer `setDateRange` à `DataTableToolbar` */}
-            <DataTableToolbar table={table} />
+            <DataTableToolbar table={table} onExportAll={onExportAll} />
 
             <div className="rounded-md border">
                 <Table className='text-xs'>

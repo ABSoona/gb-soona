@@ -19,6 +19,7 @@ import { ChevronDown, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { categorieTypes } from '../data/data';
+import { InfoCard } from './demande-view';
 
 interface Props {
   demandeId?: number;
@@ -28,6 +29,9 @@ interface Props {
 
 const formatMontant = (value?: number | null) =>
   value === null || value === undefined ? '—' : `${value.toLocaleString('fr-FR')} €`;
+
+const formatEuro = (value: number) =>
+  value.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 });
 
 const Champ = ({ label, value }: { label: string; value?: string | number | null }) => {
   if (value === null || value === undefined || value === '') return null;
@@ -48,6 +52,15 @@ const SituationCard = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
   const categorieLabel = categorieTypes.find((c) => c.value === situation.categorieDemandeur)?.label;
+
+  // Memes indicateurs/formules que sur la fiche demande (voir demande-view.tsx),
+  // calcules a partir des valeurs figees de cet instantane.
+  const totalRevenus = (situation.revenus ?? 0) + (situation.revenusConjoint ?? 0) + (situation.apl ?? 0);
+  const totalCharges = (situation.loyer ?? 0) + (situation.facturesEnergie ?? 0) + (situation.autresCharges ?? 0);
+  const totalDettes = situation.dettes ?? 0;
+  const resteAVivre = totalRevenus - totalCharges;
+  const resteAVivreParPersonne =
+    resteAVivre > 0 && situation.nombrePersonnes ? resteAVivre / situation.nombrePersonnes / 30 : 0;
 
   return (
     <Card className="mb-4 overflow-hidden">
@@ -92,7 +105,18 @@ const SituationCard = ({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <CardContent className="grid grid-cols-3 gap-3">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <InfoCard title="Revenus" value={formatEuro(totalRevenus)} />
+                <InfoCard title="Charges" value={formatEuro(totalCharges)} />
+                <InfoCard title="Dettes" value={formatEuro(totalDettes)} />
+                <InfoCard
+                  title="Reste à Vivre"
+                  subtitle={resteAVivreParPersonne ? `${formatEuro(resteAVivreParPersonne)} par j/pers` : ''}
+                  value={formatEuro(resteAVivre)}
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-3">
               <Champ label="Catégorie du bénéficiaire" value={categorieLabel} />
               <Champ label="Nb. de personnes dans le foyer" value={situation.nombrePersonnes} />
               <Champ label="Nombre d'enfants" value={situation.nombreEnfants} />
@@ -115,6 +139,7 @@ const SituationCard = ({
                   <span className="text-sm whitespace-pre-line">{situation.remarques}</span>
                 </div>
               )}
+              </div>
             </CardContent>
           </motion.div>
         )}

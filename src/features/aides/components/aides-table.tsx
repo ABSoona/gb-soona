@@ -53,6 +53,7 @@ interface DataTableProps {
     onPaginationChange?: OnChangeFn<PaginationState>;
     columnFilters?: ColumnFiltersState;
     onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
+    onExportAll?: () => Promise<Aide[]>;
 }
 
 export function AidesTable({
@@ -66,6 +67,7 @@ export function AidesTable({
     totalRowCount,
     pagination: controlledPagination,
     onPaginationChange: controlledOnPaginationChange,
+    onExportAll,
     columnFilters: controlledColumnFilters,
     onColumnFiltersChange: controlledOnColumnFiltersChange,
 }: DataTableProps) {
@@ -130,7 +132,7 @@ export function AidesTable({
     return (
         <div className="space-y-4">
             {/* 🔥 Passer `setDateRange` à `DataTableToolbar` */}
-            {!hideTools && <DataTableToolbar table={table} />}
+            {!hideTools && <DataTableToolbar table={table} onExportAll={onExportAll} />}
 
             <div className="rounded-md border">
                 <Table className='text-xs'>

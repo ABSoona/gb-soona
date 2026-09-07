@@ -5,13 +5,15 @@ import { AidesTable } from './components/aides-table';
 import AidesProvider from './context/aides-context';
 
 import { useAideService } from '@/api/aide/aideService';
+import { GET_AIDES } from '@/api/aide/graphql/queries';
+import { useApolloClient } from '@apollo/client';
 import AppLayout from '@/components/layout/app-layout';
 import { TableSkeleton } from '@/components/ui/skeleton-table';
 import { handleServerError } from '@/utils/handle-server-error';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { IconHeartHandshake } from '@tabler/icons-react';
 import { ColumnFiltersState, PaginationState } from '@tanstack/react-table';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
 const PAGE_SIZE = 25;
@@ -86,6 +88,18 @@ export default function Aides() {
         skip: pagination.pageIndex * pagination.pageSize,
     });
 
+    // 🔥 L'export doit porter sur TOUTES les lignes correspondant aux filtres
+    // actuels, pas seulement la page chargée en mémoire (voir data-table-export.tsx).
+    const client = useApolloClient();
+    const exportAllRows = useCallback(async () => {
+        const { data } = await client.query({
+            query: GET_AIDES,
+            variables: { where: debouncedWhere },
+            fetchPolicy: 'network-only',
+        });
+        return data?.aides ?? [];
+    }, [client, debouncedWhere]);
+
     // Gestion des erreurs via la fonction centralisée
     if (error) {
         handleServerError(error);
@@ -129,6 +143,7 @@ export default function Aides() {
                                 onPaginationChange={setPagination}
                                 columnFilters={columnFilters}
                                 onColumnFiltersChange={setColumnFilters}
+                                onExportAll={exportAllRows}
                             />
                         </div>
                     )}

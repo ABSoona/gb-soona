@@ -6,13 +6,15 @@ import { DemandesTable } from './components/demandes-table';
 import DemandesProvider from './context/demandes-context';
 
 import { useDemandeService } from '@/api/demande/demandeService';
+import { GET_DEMANDES } from '@/api/demande/graphql/queries';
+import { useApolloClient } from '@apollo/client';
 import AppLayout from '@/components/layout/app-layout';
 import { TableSkeleton } from '@/components/ui/skeleton-table';
 import { handleServerError } from '@/utils/handle-server-error';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { IconMailDown } from '@tabler/icons-react';
 import { ColumnFiltersState, PaginationState } from '@tanstack/react-table';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
 const PAGE_SIZE = 25;
@@ -112,7 +114,17 @@ export default function Demandes({ acteurId, status,title,description, newOlny,e
 
     const { demandes, total, loading: isLoading, error, refetch } = useDemandeService(serviceParams);
 
-
+    // 🔥 L'export doit porter sur TOUTES les lignes correspondant aux filtres
+    // actuels, pas seulement la page chargée en mémoire (voir data-table-export.tsx).
+    const client = useApolloClient();
+    const exportAllRows = useCallback(async () => {
+        const { data } = await client.query({
+            query: GET_DEMANDES,
+            variables: { where: debouncedWhere },
+            fetchPolicy: 'network-only',
+        });
+        return data?.demandes ?? [];
+    }, [client, debouncedWhere]);
 
     let filteredDemandes = newOlny ? demandes.filter((e) => (!(e.demandeActivities.length > 1))) : demandes
     filteredDemandes = excludeNews ?demandes.filter((e) => (e.demandeActivities.length > 1)) :filteredDemandes
@@ -163,6 +175,7 @@ export default function Demandes({ acteurId, status,title,description, newOlny,e
                                     onPaginationChange={setPagination}
                                     columnFilters={columnFilters}
                                     onColumnFiltersChange={setColumnFilters}
+                                    onExportAll={exportAllRows}
                                 />
                             ) : filteredDemandes?.length === 0 ? (
                                 <div className="text-center py-4">
