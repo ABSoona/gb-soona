@@ -13,9 +13,10 @@ import { useUserServicev2 } from '@/api/user/userService.v2';
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
+    onExportAll?: () => Promise<TData[]>;
 }
 
-export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData>({ table, onExportAll }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
 
     // ✅ État pour gérer les filtres sauvegardés
@@ -176,7 +177,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
             {/* ⚙️ Options d'affichage des colonnes */}
             <div className='mx-2'><DataTableViewOptions table={table} /></div>
-            <div><DataTableExport table={table} /></div>
+            <div><DataTableExport table={table} onExportAll={onExportAll} /></div>
 
 
         </div>
