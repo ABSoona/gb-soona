@@ -591,7 +591,7 @@ function DetailMultiLineRow({ label, value }: { label: string; value: React.Reac
   )
 }
 
-function InfoCard({
+export function InfoCard({
   title,
   value,
   subtitle,
