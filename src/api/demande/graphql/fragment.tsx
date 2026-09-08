@@ -70,6 +70,16 @@ export const DEMANDE_SITUATION_HISTORY_FIELDS = gql`
   }
 `;
 
+export const DEMANDE_AUTRE_CHARGE_FIELDS = gql`
+  fragment DemandeAutreChargeFields on DemandeAutreCharge {
+    id
+    nom
+    montant
+    createdAt
+    updatedAt
+  }
+`;
+
 export const DEMANDE_ACTIVITY_FIELDS = gql`
   fragment DemandeActivityFields on DemandeActivity {
     id
