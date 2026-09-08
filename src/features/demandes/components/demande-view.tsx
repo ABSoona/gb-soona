@@ -2,12 +2,13 @@
 
 
 import { useContactService } from '@/api/contact/contact-service'
-import { shareFicheVisite, useDemandeService, useDemandeSituationHistoryService } from '@/api/demande/demandeService'
+import { shareFicheVisite, useDemandeAutreChargeService, useDemandeService, useDemandeSituationHistoryService } from '@/api/demande/demandeService'
 import { useDocumentService } from '@/api/document/documentService'
 import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService'
 import { useUserServicev2 } from '@/api/user/userService.v2'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { columns as aidecolumns } from '@/features/aides/components/aides-columns'
@@ -24,7 +25,7 @@ import { User } from '@/model/user/User'
 import { TabsContent } from '@radix-ui/react-tabs'
 import { useNavigate } from '@tanstack/react-router'
 import { addMonths } from 'date-fns'
-import { ArrowDown, ArrowUp, ChevronDown, Files, Minus, Plus } from 'lucide-react'
+import { ArrowDown, ArrowUp, ChevronDown, Files, Info, Minus, Plus } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { categorieTypes } from '../data/data'
 import CoordinateursMapSheet from './assign-coordinateur'
@@ -502,7 +503,17 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                     <DetailRow label="Loyer" value={`${currentRow?.loyer?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })} `} />
                     <DetailRow label="Factures Énergie" value={`${currentRow?.facturesEnergie?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
                     <DetailRow label="Dettes" value={`${currentRow?.dettes?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}`} />
-                    < DetailRow label="Autres charges" value={`${currentRow?.autresCharges?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 0} `} />
+                    <DetailRow
+                      label="Autres charges"
+                      value={
+                        <span className="inline-flex items-center gap-1.5">
+                          {`${currentRow?.autresCharges?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 }) ?? 0} `}
+                          {!!currentRow?.autresCharges && (
+                            <AutresChargesDetail demandeId={currentRow.id} />
+                          )}
+                        </span>
+                      }
+                    />
                     <DetailMultiLineRow label="Nature dettes" value={currentRow?.natureDettes ?? '-'} />
                   </TabsContent>
                 </Tabs>
@@ -600,6 +611,45 @@ function DetailRow({ label, value, link, capitalize = false }: { label: string; 
         )}
       </div>
     </div>
+  );
+}
+
+// 🔥 Icone affichant, au clic, le detail (nom + montant) de la composition
+// des "Autres charges" (voir DemandeAutreCharge). Charge la composition
+// uniquement a l'ouverture du popover, pas au chargement de la fiche.
+function AutresChargesDetail({ demandeId }: { demandeId: number }) {
+  const [open, setOpen] = useState(false);
+  const { demandeAutreCharges, loading } = useDemandeAutreChargeService(open ? demandeId : undefined);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="text-muted-foreground hover:text-foreground shrink-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Info className="h-3.5 w-3.5" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-64 p-3" align="end" onClick={(e) => e.stopPropagation()}>
+        <p className="text-xs font-semibold mb-2">Composition des autres charges</p>
+        {loading ? (
+          <p className="text-xs text-muted-foreground">Chargement...</p>
+        ) : demandeAutreCharges.length === 0 ? (
+          <p className="text-xs text-muted-foreground">Aucun détail enregistré.</p>
+        ) : (
+          <ul className="space-y-1">
+            {demandeAutreCharges.map((c) => (
+              <li key={c.id} className="flex items-center justify-between gap-2 text-xs">
+                <span className="truncate">{c.nom}</span>
+                <span className="font-medium shrink-0">{c.montant.toLocaleString('fr-FR')} €</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }
 
