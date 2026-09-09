@@ -96,6 +96,7 @@ export default function DemandeDetail({ showContact = true }: Props) {
          <DemandesDialogs refetch={refetch}/>
          <DemandeSituationHistoryDrawer
            demandeId={demande?.id}
+           demandeCreatedAt={demande?.createdAt}
            open={historyDrawerOpen}
            onOpenChange={setHistoryDrawerOpen}
          />

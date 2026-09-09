@@ -82,6 +82,15 @@ export const DemandeAutreChargeSchema = z.object({
 });
 export type DemandeAutreCharge = z.infer<typeof DemandeAutreChargeSchema>;
 
+export const DemandeDetteDetailSchema = z.object({
+  id: z.number(),
+  nom: z.string(),
+  montant: z.number(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+export type DemandeDetteDetail = z.infer<typeof DemandeDetteDetailSchema>;
+
 export const DemandeSituationHistorySchema = z.object({
   id: z.number(),
   createdAt: z.coerce.date(),

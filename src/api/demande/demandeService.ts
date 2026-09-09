@@ -7,19 +7,23 @@ import {
   CREATE_DEMANDE,
   CREATE_DEMANDE_ACTIVITY,
   CREATE_DEMANDE_AUTRE_CHARGE,
+  CREATE_DEMANDE_DETTE_DETAIL,
   CREATE_DEMANDE_SITUATION_HISTORY,
   DELETE_DEMANDE,
   DELETE_DEMANDE_ACTIVITY,
   DELETE_DEMANDE_AUTRE_CHARGE,
+  DELETE_DEMANDE_DETTE_DETAIL,
   DELETE_DEMANDE_SITUATION_HISTORY,
   GET_DEMANDE_AUTRE_CHARGES,
+  GET_DEMANDE_DETTE_DETAILS,
   GET_DEMANDE_SITUATION_HISTORIES,
   GET_DEMANDE_STATS,
   GET_DEMANDES,
   UPDATE_DEMANDE,
   UPDATE_DEMANDE_AUTRE_CHARGE,
+  UPDATE_DEMANDE_DETTE_DETAIL,
 } from './graphql/queries';
-import { DemandeAutreCharge, DemandeSituationHistory } from '@/model/demande/Demande';
+import { DemandeAutreCharge, DemandeDetteDetail, DemandeSituationHistory } from '@/model/demande/Demande';
 import { Demande } from '@/model/demande/Demande';
 import { getUserId } from '@/lib/session';
 import axiosInstance from '@/lib/axtios-instance';
@@ -356,6 +360,48 @@ export function useDemandeAutreChargeService(demandeId?: number): {
     createDemandeAutreCharge,
     updateDemandeAutreCharge,
     deleteDemandeAutreCharge,
+  };
+}
+
+export function useDemandeDetteDetailService(demandeId?: number): {
+  demandeDetteDetails: DemandeDetteDetail[];
+  loading: boolean;
+  refetch: () => void;
+  createDemandeDetteDetail: (data: { demande: { id: number }; nom: string; montant: number }) => Promise<DemandeDetteDetail>;
+  updateDemandeDetteDetail: (id: number, data: { nom: string; montant: number }) => Promise<DemandeDetteDetail>;
+  deleteDemandeDetteDetail: (id: number) => Promise<void>;
+} {
+  const { data, loading, refetch } = useQuery(GET_DEMANDE_DETTE_DETAILS, {
+    variables: { where: { demande: { id: demandeId } } },
+    fetchPolicy: 'network-only',
+    skip: !demandeId,
+  });
+
+  const [createMutation] = useMutation(CREATE_DEMANDE_DETTE_DETAIL);
+  const [updateMutation] = useMutation(UPDATE_DEMANDE_DETTE_DETAIL);
+  const [deleteMutation] = useMutation(DELETE_DEMANDE_DETTE_DETAIL);
+
+  const createDemandeDetteDetail = async (payload: { demande: { id: number }; nom: string; montant: number }) => {
+    const result = await createMutation({ variables: { data: payload } });
+    return result.data?.createDemandeDetteDetail;
+  };
+
+  const updateDemandeDetteDetail = async (id: number, payload: { nom: string; montant: number }) => {
+    const result = await updateMutation({ variables: { id, data: payload } });
+    return result.data?.updateDemandeDetteDetail;
+  };
+
+  const deleteDemandeDetteDetail = async (id: number) => {
+    await deleteMutation({ variables: { id } });
+  };
+
+  return {
+    demandeDetteDetails: data?.demandeDetteDetails ?? [],
+    loading,
+    refetch,
+    createDemandeDetteDetail,
+    updateDemandeDetteDetail,
+    deleteDemandeDetteDetail,
   };
 }
 

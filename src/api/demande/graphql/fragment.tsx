@@ -80,6 +80,16 @@ export const DEMANDE_AUTRE_CHARGE_FIELDS = gql`
   }
 `;
 
+export const DEMANDE_DETTE_DETAIL_FIELDS = gql`
+  fragment DemandeDetteDetailFields on DemandeDetteDetail {
+    id
+    nom
+    montant
+    createdAt
+    updatedAt
+  }
+`;
+
 export const DEMANDE_ACTIVITY_FIELDS = gql`
   fragment DemandeActivityFields on DemandeActivity {
     id

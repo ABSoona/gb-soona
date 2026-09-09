@@ -78,6 +78,7 @@ export function DemandeViewDialog({ currentRow, open, onOpenChange }: Props) {
     </Sheet>
     <DemandeSituationHistoryDrawer
       demandeId={currentRow.id}
+      demandeCreatedAt={currentRow.createdAt}
       open={historyDrawerOpen}
       onOpenChange={setHistoryDrawerOpen}
     />

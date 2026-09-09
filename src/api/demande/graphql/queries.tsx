@@ -1,7 +1,7 @@
 import { AIDE_FIELDS, AIDE_FIELDS_LIGHT } from '@/api/aide/graphql/fragment';
 import { CONTACT_FIELDS, CONTACT_FIELDS_LIGHT } from '@/api/contact/graphql/fragment';
 import { gql } from '@apollo/client';
-import { DEMANDE_ACTIVITY_FIELDS, DEMANDE_AUTRE_CHARGE_FIELDS, DEMANDE_FIELDS, DEMANDE_SITUATION_HISTORY_FIELDS } from './fragment';
+import { DEMANDE_ACTIVITY_FIELDS, DEMANDE_AUTRE_CHARGE_FIELDS, DEMANDE_DETTE_DETAIL_FIELDS, DEMANDE_FIELDS, DEMANDE_SITUATION_HISTORY_FIELDS } from './fragment';
 
 export const GET_DEMANDES = gql`
   query GetDemandesWithContactAides($skip: Float, $take: Float, $where : DemandeWhereInput) {
@@ -140,6 +140,41 @@ export const UPDATE_DEMANDE_AUTRE_CHARGE = gql`
 export const DELETE_DEMANDE_AUTRE_CHARGE = gql`
   mutation DeleteDemandeAutreCharge($id: Float!) {
     deleteDemandeAutreCharge(where: { id: $id }) {
+      id
+    }
+  }
+`;
+
+export const GET_DEMANDE_DETTE_DETAILS = gql`
+  query GetDemandeDetteDetails($where: DemandeDetteDetailWhereInput) {
+    demandeDetteDetails(where: $where, orderBy: { createdAt: Asc }) {
+      ...DemandeDetteDetailFields
+    }
+  }
+  ${DEMANDE_DETTE_DETAIL_FIELDS}
+`;
+
+export const CREATE_DEMANDE_DETTE_DETAIL = gql`
+  mutation CreateDemandeDetteDetail($data: DemandeDetteDetailCreateInput!) {
+    createDemandeDetteDetail(data: $data) {
+      ...DemandeDetteDetailFields
+    }
+  }
+  ${DEMANDE_DETTE_DETAIL_FIELDS}
+`;
+
+export const UPDATE_DEMANDE_DETTE_DETAIL = gql`
+  mutation UpdateDemandeDetteDetail($id: Float!, $data: DemandeDetteDetailUpdateInput!) {
+    updateDemandeDetteDetail(where: { id: $id }, data: $data) {
+      ...DemandeDetteDetailFields
+    }
+  }
+  ${DEMANDE_DETTE_DETAIL_FIELDS}
+`;
+
+export const DELETE_DEMANDE_DETTE_DETAIL = gql`
+  mutation DeleteDemandeDetteDetail($id: Float!) {
+    deleteDemandeDetteDetail(where: { id: $id }) {
       id
     }
   }
