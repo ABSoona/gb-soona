@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { Demande } from '@/model/demande/Demande';
 import { handleServerError } from '@/utils/handle-server-error';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { ChevronLeft, History } from 'lucide-react';
+import { ChevronLeft, ChevronRight, History } from 'lucide-react';
 import { useState } from 'react';
 import AidesProvider from '../aides/context/aides-context';
 import { DemandeView } from './components/demande-view';
@@ -39,6 +39,13 @@ export default function DemandeDetail({ showContact = true }: Props) {
  const demande = demandes[0]!;
   const searchParams = new URLSearchParams(location.search);
   const from = searchParams.get('from');
+  // 🔥 Liste ordonnee des demandes de la vue d'origine (transmise par
+  // DemandesTable) pour permettre de naviguer vers la precedente/suivante
+  // sans revenir a la liste.
+  const ids = searchParams.get('ids')?.split(',').filter(Boolean) ?? [];
+  const currentIndex = ids.indexOf(id);
+  const prevId = currentIndex > 0 ? ids[currentIndex - 1] : undefined;
+  const nextId = currentIndex >= 0 && currentIndex < ids.length - 1 ? ids[currentIndex + 1] : undefined;
     const { setOpenDemande: setOpen, setCurrentRow } = useDemandes()
     const [historyDrawerOpen, setHistoryDrawerOpen] = useState(false)
 
@@ -52,6 +59,15 @@ export default function DemandeDetail({ showContact = true }: Props) {
     } else {
       navigate({ to: '/demandes' });
     }
+  };
+
+  const goToDemande = (targetId?: string) => {
+    if (!targetId) return;
+    navigate({
+      to: '/demandes/$id',
+      params: { id: targetId },
+      search: { from: from ?? undefined, ids: ids.join(',') },
+    });
   };
   
   // Gestion des erreurs
@@ -82,6 +98,28 @@ export default function DemandeDetail({ showContact = true }: Props) {
           
           
           <div className="flex items-center gap-2">
+            {ids.length > 0 && (
+              <div className="flex items-center gap-1 mr-1">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={!prevId}
+                  onClick={() => goToDemande(prevId)}
+                  title="Demande précédente"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={!nextId}
+                  onClick={() => goToDemande(nextId)}
+                  title="Demande suivante"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
             <Button variant="outline" className="space-x-1" onClick={() => setHistoryDrawerOpen(true)}>
               <History size={18} />
               <span>Voir historique</span>
