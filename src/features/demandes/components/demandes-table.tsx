@@ -190,11 +190,14 @@ export function DemandesTable({
                                             onClick={(e) => {
                                                 if (cell.column.id !== 'actions') {
                                                     if (showDetailIn == detailOpenOption.page) {
+                                                        // 🔥 Transmet l'ordre des demandes de la vue courante pour
+                                                        // permettre la navigation precedent/suivant sur la fiche detail.
+                                                        const ids = table.getRowModel().rows.map((r) => r.original.id).join(',');
 
                                                         navigate({
                                                             to: "/demandes/$id",
                                                             params: { id: row.original.id.toString() },
-                                                            search: { from: location.pathname + location.search }
+                                                            search: { from: location.pathname + location.search, ids }
                                                           });
 
 

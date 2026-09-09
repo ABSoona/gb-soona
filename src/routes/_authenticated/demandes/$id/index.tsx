@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 export const validateSearch = (search: Record<string, unknown>) => {
   return {
     from: search.from as string | undefined,
+    ids: search.ids as string | undefined,
   };
 };
 
