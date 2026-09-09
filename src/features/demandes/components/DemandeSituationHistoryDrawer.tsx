@@ -23,6 +23,7 @@ import { InfoCard } from './demande-view';
 
 interface Props {
   demandeId?: number;
+  demandeCreatedAt?: Date | string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -45,9 +46,11 @@ const Champ = ({ label, value }: { label: string; value?: string | number | null
 
 const SituationCard = ({
   situation,
+  periodStart,
   onDelete,
 }: {
   situation: DemandeSituationHistory;
+  periodStart?: Date | string;
   onDelete: (id: number) => void;
 }) => {
   const [expanded, setExpanded] = useState(false);
@@ -74,7 +77,9 @@ const SituationCard = ({
           />
           <div>
             <CardTitle className="text-base">
-              Situation au {format(new Date(situation.createdAt), 'dd/MM/yyyy', { locale: fr })}
+              {periodStart
+                ? `Situation du ${format(new Date(periodStart), 'dd/MM/yyyy', { locale: fr })} au ${format(new Date(situation.createdAt), 'dd/MM/yyyy', { locale: fr })}`
+                : `Situation au ${format(new Date(situation.createdAt), 'dd/MM/yyyy', { locale: fr })}`}
             </CardTitle>
             {situation.creePar && (
               <p className="text-xs text-muted-foreground mt-1">
@@ -148,7 +153,7 @@ const SituationCard = ({
   );
 };
 
-export function DemandeSituationHistoryDrawer({ demandeId, open, onOpenChange }: Props) {
+export function DemandeSituationHistoryDrawer({ demandeId, demandeCreatedAt, open, onOpenChange }: Props) {
   const { demandeSituationHistories, loading, deleteDemandeSituationHistory } =
     useDemandeSituationHistoryService(open ? demandeId : undefined);
 
@@ -168,13 +173,21 @@ export function DemandeSituationHistoryDrawer({ demandeId, open, onOpenChange }:
               Aucune situation historisée pour le moment.
             </p>
           )}
-          {demandeSituationHistories.map((situation) => (
-            <SituationCard
-              key={situation.id}
-              situation={situation}
-              onDelete={deleteDemandeSituationHistory}
-            />
-          ))}
+          {demandeSituationHistories.map((situation, index) => {
+            // Liste triee par createdAt Desc : la situation precedente (plus
+            // ancienne) est l'element suivant dans le tableau ; pour la toute
+            // premiere historisation, on part de la date de creation de la demande.
+            const previous = demandeSituationHistories[index + 1];
+            const periodStart = previous ? previous.createdAt : demandeCreatedAt;
+            return (
+              <SituationCard
+                key={situation.id}
+                situation={situation}
+                periodStart={periodStart}
+                onDelete={deleteDemandeSituationHistory}
+              />
+            );
+          })}
         </ScrollArea>
       </SheetContent>
     </Sheet>

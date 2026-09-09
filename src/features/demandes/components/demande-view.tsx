@@ -2,7 +2,7 @@
 
 
 import { useContactService } from '@/api/contact/contact-service'
-import { shareFicheVisite, useDemandeAutreChargeService, useDemandeService, useDemandeSituationHistoryService } from '@/api/demande/demandeService'
+import { shareFicheVisite, useDemandeAutreChargeService, useDemandeDetteDetailService, useDemandeService, useDemandeSituationHistoryService } from '@/api/demande/demandeService'
 import { useDocumentService } from '@/api/document/documentService'
 import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService'
 import { useUserServicev2 } from '@/api/user/userService.v2'
@@ -512,7 +512,17 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                   <TabsContent value='Charges' className="space-y-2">
                     <DetailRow label="Loyer" value={`${currentRow?.loyer?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })} `} />
                     <DetailRow label="Factures Énergie" value={`${currentRow?.facturesEnergie?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 })}`} />
-                    <DetailRow label="Dettes" value={`${currentRow?.dettes?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}`} />
+                    <DetailRow
+                      label="Dettes"
+                      value={
+                        <span className="inline-flex items-center gap-1.5">
+                          {`${currentRow?.dettes?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}`}
+                          {!!currentRow?.dettes && (
+                            <DettesDetail demandeId={currentRow.id} />
+                          )}
+                        </span>
+                      }
+                    />
                     <DetailRow
                       label="Autres charges"
                       value={
@@ -653,6 +663,44 @@ function AutresChargesDetail({ demandeId }: { demandeId: number }) {
         ) : (
           <ul className="space-y-1">
             {demandeAutreCharges.map((c) => (
+              <li key={c.id} className="flex items-center justify-between gap-2 text-xs">
+                <span className="truncate">{c.nom}</span>
+                <span className="font-medium shrink-0">{c.montant.toLocaleString('fr-FR')} €</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// 🔥 Meme principe que AutresChargesDetail, pour la composition des "Dettes"
+// (voir DemandeDetteDetail).
+function DettesDetail({ demandeId }: { demandeId: number }) {
+  const [open, setOpen] = useState(false);
+  const { demandeDetteDetails, loading } = useDemandeDetteDetailService(open ? demandeId : undefined);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="text-muted-foreground hover:text-foreground shrink-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Info className="h-3.5 w-3.5" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-64 p-3" align="end" onClick={(e) => e.stopPropagation()}>
+        <p className="text-xs font-semibold mb-2">Composition des dettes</p>
+        {loading ? (
+          <p className="text-xs text-muted-foreground">Chargement...</p>
+        ) : demandeDetteDetails.length === 0 ? (
+          <p className="text-xs text-muted-foreground">Aucun détail enregistré.</p>
+        ) : (
+          <ul className="space-y-1">
+            {demandeDetteDetails.map((c) => (
               <li key={c.id} className="flex items-center justify-between gap-2 text-xs">
                 <span className="truncate">{c.nom}</span>
                 <span className="font-medium shrink-0">{c.montant.toLocaleString('fr-FR')} €</span>

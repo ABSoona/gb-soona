@@ -1,6 +1,6 @@
 'use client';
 
-import { useDemandeAutreChargeService, useDemandeService, useDemandeSituationHistoryService } from '@/api/demande/demandeService';
+import { useDemandeAutreChargeService, useDemandeDetteDetailService, useDemandeService, useDemandeSituationHistoryService } from '@/api/demande/demandeService';
 import { SelectDropdown } from '@/components/select-dropdown';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import {
   Sheet,
   SheetContent,
@@ -34,7 +35,7 @@ import { ContactSearchCombobox } from './contact-search';
 import { useUserServicev2 } from '@/api/user/userService.v2';
 import { User } from '@/model/user/User';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Plus, X } from 'lucide-react';
+import { Pencil, Plus, X } from 'lucide-react';
 import { useAlert } from '@/components/Alert';
 import { getUserId } from '@/lib/session';
 
@@ -50,7 +51,7 @@ const situationBase = {
 const formSchema = demandeSchema
   .omit({ id: true, contact: true, createdAt: true, demandeActivities: true,acteur :true,proprietaire:true
   }) // Supprime les champs "id" et "contact"
-  .extend({ contactId: z.any(), acteurId: z.any()}) 
+  .extend({ contactId: z.any(), acteurId: z.any()})
   .superRefine((data, ctx) => {
     if (data.situationFamiliale === 'marié') {
       if (!data.situationProConjoint) {
@@ -69,7 +70,7 @@ const formSchema = demandeSchema
       }
     }
   }); // Ajoute "contactId"
-  
+
 
 type DemandeForm = z.infer<typeof formSchema>;
 
@@ -80,6 +81,22 @@ interface Props {
   refetch: () => void;
 
 
+}
+
+// 🔥 Titre de section reutilisable pour regrouper les champs du formulaire
+// (Situation personnelle, Revenus, Charges, Suivi...).
+function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-3">
+      <div className="space-y-1.5">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</h3>
+        <Separator />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4">
+        {children}
+      </div>
+    </div>
+  );
 }
 
 export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }: Props) {
@@ -95,6 +112,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
   // conformement au comportement existant). Voir useDemandeAutreChargeService.
   type ChargeRow = { id: number; dbId?: number; nom: string; montant: string };
   const [chargeRows, setChargeRows] = useState<ChargeRow[]>([]);
+  const [editingChargeNameId, setEditingChargeNameId] = useState<number | null>(null);
   const chargesSeededRef = useRef(false);
   const {
     demandeAutreCharges,
@@ -140,13 +158,60 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
     form.setValue("autresCharges", totalAutresCharges);
   }, [chargeRows, isEdit]);
 
+  // 🔥 Decomposition (nom + montant) du champ "Dettes", meme principe que
+  // pour "Autres charges" : uniquement en mode modification, persistee via
+  // useDemandeDetteDetailService, le champ "dettes" reste la somme.
+  const [detteRows, setDetteRows] = useState<ChargeRow[]>([]);
+  const [editingDetteNameId, setEditingDetteNameId] = useState<number | null>(null);
+  const dettesSeededRef = useRef(false);
+  const {
+    demandeDetteDetails,
+    loading: dettesDetailLoading,
+    createDemandeDetteDetail,
+    updateDemandeDetteDetail,
+    deleteDemandeDetteDetail,
+  } = useDemandeDetteDetailService(isEdit ? currentRow?.id : undefined);
+
+  const handleAddDetteRow = () => {
+    setDetteRows(prev => [...prev, { id: Date.now(), nom: '', montant: '' }]);
+  };
+  const handleDetteRowChange = (id: number, field: 'nom' | 'montant', newValue: string) => {
+    setDetteRows(prev => prev.map(c => (c.id === id ? { ...c, [field]: newValue } : c)));
+  };
+  const handleRemoveDetteRow = (id: number) => {
+    setDetteRows(prev => (prev.length > 1 ? prev.filter(c => c.id !== id) : prev));
+  };
+
+  useEffect(() => {
+    dettesSeededRef.current = false;
+  }, [currentRow?.id]);
+
+  useEffect(() => {
+    if (!isEdit || dettesDetailLoading || dettesSeededRef.current) return;
+    dettesSeededRef.current = true;
+    if (demandeDetteDetails.length > 0) {
+      setDetteRows(demandeDetteDetails.map(c => ({ id: c.id, dbId: c.id, nom: c.nom, montant: String(c.montant) })));
+    } else if (currentRow?.dettes) {
+      setDetteRows([{ id: Date.now(), nom: 'Dettes', montant: String(currentRow.dettes) }]);
+    } else {
+      setDetteRows([{ id: Date.now(), nom: '', montant: '' }]);
+    }
+  }, [isEdit, dettesDetailLoading, demandeDetteDetails, currentRow]);
+
+  // Synchronise le total des lignes avec le champ "dettes" du formulaire.
+  useEffect(() => {
+    if (!isEdit || !dettesSeededRef.current) return;
+    const totalDettes = detteRows.reduce((acc, c) => acc + Number(c.montant || 0), 0);
+    form.setValue("dettes", totalDettes);
+  }, [detteRows, isEdit]);
+
   const whereClause = isEdit ? {where:{id : {equals:currentRow.id}}}:{where:{id:{equals:0}}}
   const { createDemande, updateDemande,  isSubmitting } = useDemandeService();
   const { createDemandeSituationHistory } = useDemandeSituationHistoryService();
   const [isHistorizing, setIsHistorizing] = useState(false);
   const form = useForm<DemandeForm>({
     resolver: zodResolver(formSchema),
-    
+
     defaultValues: isEdit
     ? {
         contactId: currentRow?.contact?.id ?? '',
@@ -193,7 +258,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
         acteurId: undefined,
         telegramComiteeAction : false
       }
-  
+
   });
   const situationFamiliale = form.watch("situationFamiliale");
   const dettes = form.watch("dettes");
@@ -295,11 +360,31 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
           })
         );
 
+        // 🔥 Synchronise la composition des "Dettes" : meme logique que pour
+        // les "Autres charges".
+        const currentDetteDbIds = new Set(detteRows.map(c => c.dbId).filter((id): id is number => !!id));
+        await Promise.all(
+          demandeDetteDetails
+            .filter(c => !currentDetteDbIds.has(c.id))
+            .map(c => deleteDemandeDetteDetail(c.id))
+        );
+        await Promise.all(
+          detteRows.map(c => {
+            const nom = c.nom.trim();
+            const montant = Number(c.montant || 0);
+            if (!nom && !montant) return Promise.resolve();
+            if (c.dbId) {
+              return updateDemandeDetteDetail(c.dbId, { nom: nom || 'Dettes', montant });
+            }
+            return createDemandeDetteDetail({ demande: { id: currentRow.id }, nom: nom || 'Dettes', montant });
+          })
+        );
+
         toast({ title: 'Demande mise à jour avec succès !' });
       } else {
         console.log(demandePayload);
         await createDemande(demandePayload);
-       
+
         toast({ title: 'Nouvelle demande créée avec succès !' });
       }
       onOpenChange(false);
@@ -309,22 +394,23 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
     } catch (error : any) {
         handleServerError(error);
       toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
-    
+
     }
   };
 
   return (
     <>{AlertNode}
     <Sheet
-   
+
       open={open}
       onOpenChange={(state) => {
         form.reset();
         chargesSeededRef.current = false;
+        dettesSeededRef.current = false;
         onOpenChange(state);
       }}
     >
-      <SheetContent className="flex flex-col" >
+      <SheetContent className="flex flex-col w-full sm:max-w-3xl">
         <SheetHeader className="text-left">
           <SheetTitle>{isEdit ? 'Modifier la Demande' : 'Ajouter une Demande'}</SheetTitle>
           <SheetDescription>
@@ -337,14 +423,14 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
               console.log(form.formState.errors);
               form.handleSubmit((values) => onSubmit(values, false))(e);
               console.log("✅ handleSubmit exécuté !");
-            }} className="space-y-4 p-0.5">
+            }} className="space-y-9 p-0.5">
 
               <FormField
                 control={form.control}
                 name="contactId"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
-                    <FormLabel>Bénéficiaire</FormLabel>
+                    <FormLabel className="text-foreground/70 font-medium">Bénéficiaire</FormLabel>
                     <FormControl>
                       <ContactSearchCombobox
                         onSelect={(contactId) => {
@@ -362,470 +448,558 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="categorieDemandeur"
-                render={({ field }) => (
-                  <FormItem className="space-y-1">
-                    <FormLabel>Catégorie du bénéficiaire</FormLabel>
-                    <SelectDropdown
-                      defaultValue={field.value?.toString()}
-                      onValueChange={field.onChange}
-                      placeholder="Choisissez une categorie"
-                      className="col-span-4"
-                      items={[...categorieTypes]}
 
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='nombreEnfants'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel>
-                      Nombre d'enfants
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='de 1 à 20'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-                        type='number'
-                        onChange={(e) => {
-                          const inputValue = parseInt(e.target.value, 10);
-                          field.onChange(inputValue < 0 ? 0 : inputValue);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-
-              />
-                {/* --- CHAMP NOMBRE DE PERSONNES --- */}
-      <FormField
-        control={form.control}
-        name="nombrePersonnes"
-        render={({ field }) => (
-          <FormItem className="space-y-1">
-            <FormLabel>Nb. de personnes dans le foyer</FormLabel>
-            <FormControl>
-              <div className="flex items-center gap-2">
-                <Input
-                  placeholder="de 1 à 20"
-                  type="number"
-                  className="col-span-4"
-                  {...field}
-                  onChange={(e) => {
-                    const v = parseInt(e.target.value, 10);
-                    field.onChange(v < 0 ? 0 : v);
-                  }}
-                />
-
-                
-              </div>
-            </FormControl>
-
-            {/* --- Texte suggestion --- */}
-            {suggestion && (
-              <p className="text-sm text-muted-foreground mt-1">
-                Suggestion : {suggestion} personne{suggestion > 1 ? "s" : ""} 
-              </p>
-            )}
-
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-              {
-                nombreEnfants > 0 && <FormField
+              <FormSection title="Situation personnelle">
+                <FormField
                   control={form.control}
-                  name='agesEnfants'
+                  name="categorieDemandeur"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-foreground/70 font-medium">Catégorie du bénéficiaire</FormLabel>
+                      <SelectDropdown
+                        defaultValue={field.value?.toString()}
+                        onValueChange={field.onChange}
+                        placeholder="Choisissez une categorie"
+                        className="w-full"
+                        items={[...categorieTypes]}
+
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="situationFamiliale"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-foreground/70 font-medium">Situation matrimoniale</FormLabel>
+                      <SelectDropdown
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Choisissez une situation"
+                        className="w-full"
+                        items={[...situationFamilleTypes]}
+
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="situationProfessionnelle"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-foreground/70 font-medium">Situation professionnelle</FormLabel>
+                      <SelectDropdown
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Choisissez une situation"
+                        className="w-full"
+                        items={[...situationTypes]}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {situationFamiliale === "marié" && <FormField
+                  control={form.control}
+                  name="situationProConjoint"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-foreground/70 font-medium">Situation pro. Conjoint</FormLabel>
+                      <SelectDropdown
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Choisissez une situation"
+                        className="w-full"
+                        items={[...situationTypes]}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />}
+                <FormField
+                  control={form.control}
+                  name='nombreEnfants'
                   render={({ field }) => (
                     <FormItem className='space-y-1'>
-                      <FormLabel>
-                        Ages des enfants
+                      <FormLabel className="text-foreground/70 font-medium">
+                        Nombre d'enfants
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder='Ex : 9, 13 et 17 '
-                          className='col-span-4'
+                          placeholder='de 1 à 20'
+                          autoComplete='off'
+                          {...field}
+                          type='number'
+                          onChange={(e) => {
+                            const inputValue = parseInt(e.target.value, 10);
+                            field.onChange(inputValue < 0 ? 0 : inputValue);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+
+                />
+                {
+                  nombreEnfants > 0 && <FormField
+                    control={form.control}
+                    name='agesEnfants'
+                    render={({ field }) => (
+                      <FormItem className='space-y-1'>
+                        <FormLabel className="text-foreground/70 font-medium">
+                          Ages des enfants
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='Ex : 9, 13 et 17 '
+                            autoComplete='off'
+                            {...field}
+
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+
+                  />
+                }
+                <FormField
+                  control={form.control}
+                  name="nombrePersonnes"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-foreground/70 font-medium">Nb. de personnes dans le foyer</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="de 1 à 20"
+                          type="number"
+                          {...field}
+                          onChange={(e) => {
+                            const v = parseInt(e.target.value, 10);
+                            field.onChange(v < 0 ? 0 : v);
+                          }}
+                        />
+                      </FormControl>
+
+                      {/* --- Texte suggestion --- */}
+                      {suggestion && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Suggestion : {suggestion} personne{suggestion > 1 ? "s" : ""}
+                        </p>
+                      )}
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormSection>
+
+              <FormSection title="Revenus">
+                <FormField
+                  control={form.control}
+                  name='revenus'
+                  render={({ field }) => (
+                    <FormItem className='space-y-1'>
+                      <FormLabel className="text-foreground/70 font-medium">
+                        Revenus  (€)
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Sans centimes, sans singe €'
+                          autoComplete='off'
+                          {...field}
+
+
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+
+                />
+                {situationFamiliale === "marié" && <FormField
+                  control={form.control}
+                  name='revenusConjoint'
+                  render={({ field }) => (
+                    <FormItem className='space-y-1'>
+                      <FormLabel className="text-foreground/70 font-medium">
+                        Revenus du conjoint  (€)
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Sans centimes, sans singe €'
                           autoComplete='off'
                           {...field}
 
                         />
                       </FormControl>
-                      <FormMessage className='col-span-4 col-start-3' />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />}
+                <FormField
+                  control={form.control}
+                  name='apl'
+                  render={({ field }) => (
+                    <FormItem className='space-y-1'>
+                      <FormLabel className="text-foreground/70 font-medium">
+                        APL  (€)
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Sans centimes, sans singe €'
+                          autoComplete='off'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
 
                 />
-              }
-              <FormField
-                control={form.control}
-                name="situationFamiliale"
-                render={({ field }) => (
-                  <FormItem className="space-y-1">
-                    <FormLabel>Situation matrimoniale</FormLabel>
-                    <SelectDropdown
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      placeholder="Choisissez une situation"
-                      className="col-span-4"
-                      items={[...situationFamilleTypes]}
+                <FormField
+                  control={form.control}
+                  name='autresAides'
+                  render={({ field }) => (
+                    <FormItem className='space-y-1'>
+                      <FormLabel className="text-foreground/70 font-medium">
+                        Autres aides
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Association, Famille...'
+                          autoComplete='off'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
 
+                />
+              </FormSection>
+
+              <FormSection title="Charges">
+                <FormField
+                  control={form.control}
+                  name='loyer'
+                  render={({ field }) => (
+                    <FormItem className='space-y-1'>
+                      <FormLabel className="text-foreground/70 font-medium">
+                        Loyer mensuel (€)
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Sans centimes, sans singe €'
+                          autoComplete='off'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+
+                />
+                <FormField
+                  control={form.control}
+                  name='facturesEnergie'
+                  render={({ field }) => (
+                    <FormItem className='space-y-1'>
+                      <FormLabel className="text-foreground/70 font-medium">
+                        Factures Energie (€)
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Sans centimes, sans singe €'
+                          autoComplete='off'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+
+                />
+                <div className="sm:col-span-2 lg:col-span-3 space-y-4">
+                  {!isEdit ? (
+                    <FormField
+                      control={form.control}
+                      name="autresCharges"
+                      render={({ field }) => (
+                        <FormItem className="space-y-1">
+                          <FormLabel className="text-foreground/70 font-medium">Autres charges (€)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="Sans centimes, sans signe €"
+                              className="sm:max-w-xs"
+                              autoComplete="off"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="situationProfessionnelle"
-                render={({ field }) => (
-                  <FormItem className="space-y-1">
-                    <FormLabel>Situation professionnelle</FormLabel>
-                    <SelectDropdown
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      placeholder="Choisissez une situation"
-                      className="col-span-4"
-                      items={[...situationTypes]}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {situationFamiliale === "marié" && <FormField
-                control={form.control}
-                name="situationProConjoint"
-                render={({ field }) => (
-                  <FormItem className="space-y-1">
-                    <FormLabel>Situation pro. Conjoint</FormLabel>
-                    <SelectDropdown
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      placeholder="Choisissez une situation"
-                      className="col-span-4"
-                      items={[...situationTypes]}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />}
+                  ) : (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-foreground/70 font-medium">Autres charges (€) - composition</FormLabel>
 
-
-              <FormField
-                control={form.control}
-                name='revenus'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel>
-                      Revenus  (€)
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Sans centimes, sans singe €'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-
-
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-
-              />
-              {situationFamiliale === "marié" && <FormField
-                control={form.control}
-                name='revenusConjoint'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel>
-                      Revenus du conjoint  (€)
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Sans centimes, sans singe €'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-              />}
-              <FormField
-                control={form.control}
-                name='apl'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel>
-                      APL  (€)
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Sans centimes, sans singe €'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-
-              />
-              <FormField
-                control={form.control}
-                name='autresAides'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel>
-                      Autres aides
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Association, Famille...'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-
-              />
-              <FormField
-                control={form.control}
-                name='loyer'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel>
-                      Loyer mensuel (€)
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Sans centimes, sans singe €'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-
-              />
-              <FormField
-                control={form.control}
-                name='facturesEnergie'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel>
-                      Factures Energie (€)
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Sans centimes, sans singe €'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-
-              />
-               <div className="space-y-4">
-                {!isEdit ? (
-                  <FormField
-                    control={form.control}
-                    name="autresCharges"
-                    render={({ field }) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel>Autres charges (€)</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="Sans centimes, sans signe €"
-                            className="col-span-4"
-                            autoComplete="off"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="col-span-4 col-start-3" />
-                      </FormItem>
-                    )}
-                  />
-                ) : (
-                  <FormItem className="space-y-1">
-                    <FormLabel>Autres charges (€) — composition</FormLabel>
-
-                    <div className="space-y-2">
-                      {chargeRows.map((charge) => (
-                        <div key={charge.id} className="flex gap-2">
-                          <Input
-                            placeholder="Nom de la charge"
-                            value={charge.nom}
-                            onChange={(e) => handleChargeRowChange(charge.id, 'nom', e.target.value)}
-                            autoComplete="off"
-                            className="flex-[2]"
-                          />
-                          <Input
-                            type="number"
-                            placeholder="Montant €"
-                            value={charge.montant}
-                            onChange={(e) => handleChargeRowChange(charge.id, 'montant', e.target.value)}
-                            autoComplete="off"
-                            className="flex-1"
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 shrink-0"
-                            onClick={() => handleRemoveChargeRow(charge.id)}
-                            disabled={chargeRows.length <= 1}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-
-                    <Button type="button" variant="secondary" size="sm" onClick={handleAddChargeRow} className="mt-1">
-                      <Plus className="h-4 w-4 mr-1" />
-                      Ajouter une charge
-                    </Button>
-
-                    {/* 🔥 Texte du total mis à jour en live */}
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Total des charges : <span className="font-medium">{chargeRows.reduce((acc, c) => acc + Number(c.montant || 0), 0).toLocaleString('fr-FR')} €</span>
-                    </p>
-                  </FormItem>
-                )}
-</div>
-
-              <FormField
-                control={form.control}
-                name='dettes'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel>
-                      Dettes (€)
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Sans centimes, sans singe €'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-
-              />
-              {dettes > 0 && <FormField
-                control={form.control}
-                name='natureDettes'
-                render={({ field }) => (
-                  <FormItem className='space-y-1'>
-                    <FormLabel>
-                      Natures des dettes
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Retard de loyer, Amendes...'
-                        className='col-span-4'
-                        autoComplete='off'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-
-              />}
-
-              {/* 📌 Sélecteur de statut */}
-              {isEdit && <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem className="space-y-1">
-                    <FormLabel>Statut</FormLabel>
-                    <SelectDropdown
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      placeholder="Choisissez un statut"
-                      className="col-span-4"
-                      items={[...demandeStatusTypes]}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />}
-               <FormField
-                control={form.control}
-                name="acteurId"
-                render={({ field }) => (
-                  <FormItem className="space-y-1">
-                    <FormLabel>Attribuée à</FormLabel>
-                    <SelectDropdown
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      placeholder="Choisissez un membre"
-                      className="col-span-4"
-      
-                      items={users.map((user: User) => {
-                        const initials = `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase();
-                        const label = (
-                          <div className="flex items-center gap-2">
-                            <div className="h-6 w-6 rounded-full bg-black text-xs text-center font-medium text-white flex items-center justify-center">
-                              {initials}
+                      <div className="space-y-2">
+                        {chargeRows.map((charge) => (
+                          <div key={charge.id} className="flex gap-2 items-center">
+                            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2">
+                              {editingChargeNameId === charge.id ? (
+                                <Input
+                                  placeholder="Nom de la charge"
+                                  value={charge.nom}
+                                  onChange={(e) => handleChargeRowChange(charge.id, 'nom', e.target.value)}
+                                  onBlur={() => setEditingChargeNameId(null)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault();
+                                      setEditingChargeNameId(null);
+                                    }
+                                  }}
+                                  autoFocus
+                                  autoComplete="off"
+                                />
+                              ) : (
+                                <div className="flex items-center gap-2 px-1 py-2">
+                                  <span className={`text-sm truncate ${charge.nom ? '' : 'text-muted-foreground'}`}>
+                                    {charge.nom || 'Nom de la charge'}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditingChargeNameId(charge.id)}
+                                    className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                                  >
+                                    <Pencil className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
+                              )}
+                              <Input
+                                type="number"
+                                placeholder="Montant €"
+                                value={charge.montant}
+                                onChange={(e) => handleChargeRowChange(charge.id, 'montant', e.target.value)}
+                                autoComplete="off"
+                              />
                             </div>
-                            <span>{user.firstName} {user.lastName}</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 shrink-0"
+                              onClick={() => handleRemoveChargeRow(charge.id)}
+                              disabled={chargeRows.length <= 1}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
                           </div>
-                        );
-                      
-                        return {
-                          value: user.id.toString(),
-                          label,
-                        };
-                      })}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                        ))}
+                      </div>
 
-              {/* 📌 Champ Remarques */}
-              <FormField
-                control={form.control}
-                name="remarques"
-                render={({ field }) => (
-                  <FormItem className="space-y-1">
-                    <FormLabel>Remarques</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Ajoutez une remarque" className="col-span-4 min-h-[150px]" autoComplete="off" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <Button type="button" variant="secondary" size="sm" onClick={handleAddChargeRow} className="mt-1">
+                        <Plus className="h-4 w-4 mr-1" />
+                        Ajouter une charge
+                      </Button>
+
+                      {/* 🔥 Texte du total mis à jour en live */}
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Total des charges : <span className="font-medium">{chargeRows.reduce((acc, c) => acc + Number(c.montant || 0), 0).toLocaleString('fr-FR')} €</span>
+                      </p>
+                    </FormItem>
+                  )}
+                </div>
+              </FormSection>
+
+              <FormSection title="Dettes">
+                <div className="sm:col-span-2 lg:col-span-3 space-y-4">
+                  {!isEdit ? (
+                    <FormField
+                      control={form.control}
+                      name="dettes"
+                      render={({ field }) => (
+                        <FormItem className="space-y-1">
+                          <FormLabel className="text-foreground/70 font-medium">Dettes (€)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="Sans centimes, sans signe €"
+                              className="sm:max-w-xs"
+                              autoComplete="off"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  ) : (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-foreground/70 font-medium">Dettes (€) - composition</FormLabel>
+
+                      <div className="space-y-2">
+                        {detteRows.map((detteRow) => (
+                          <div key={detteRow.id} className="flex gap-2 items-center">
+                            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2">
+                              {editingDetteNameId === detteRow.id ? (
+                                <Input
+                                  placeholder="Nom de la dette"
+                                  value={detteRow.nom}
+                                  onChange={(e) => handleDetteRowChange(detteRow.id, 'nom', e.target.value)}
+                                  onBlur={() => setEditingDetteNameId(null)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault();
+                                      setEditingDetteNameId(null);
+                                    }
+                                  }}
+                                  autoFocus
+                                  autoComplete="off"
+                                />
+                              ) : (
+                                <div className="flex items-center gap-2 px-1 py-2">
+                                  <span className={`text-sm truncate ${detteRow.nom ? '' : 'text-muted-foreground'}`}>
+                                    {detteRow.nom || 'Nom de la dette'}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditingDetteNameId(detteRow.id)}
+                                    className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                                  >
+                                    <Pencil className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
+                              )}
+                              <Input
+                                type="number"
+                                placeholder="Montant €"
+                                value={detteRow.montant}
+                                onChange={(e) => handleDetteRowChange(detteRow.id, 'montant', e.target.value)}
+                                autoComplete="off"
+                              />
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 shrink-0"
+                              onClick={() => handleRemoveDetteRow(detteRow.id)}
+                              disabled={detteRows.length <= 1}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+
+                      <Button type="button" variant="secondary" size="sm" onClick={handleAddDetteRow} className="mt-1">
+                        <Plus className="h-4 w-4 mr-1" />
+                        Ajouter une dette
+                      </Button>
+
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Total des dettes : <span className="font-medium">{detteRows.reduce((acc, c) => acc + Number(c.montant || 0), 0).toLocaleString('fr-FR')} €</span>
+                      </p>
+                    </FormItem>
+                  )}
+                </div>
+                {dettes > 0 && <FormField
+                  control={form.control}
+                  name='natureDettes'
+                  render={({ field }) => (
+                    <FormItem className='space-y-1 lg:col-span-2'>
+                      <FormLabel className="text-foreground/70 font-medium">
+                        Natures des dettes
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Retard de loyer, Amendes...'
+                          autoComplete='off'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+
+                />}
+              </FormSection>
+
+              <FormSection title="Suivi">
+                {isEdit && <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-foreground/70 font-medium">Statut</FormLabel>
+                      <SelectDropdown
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Choisissez un statut"
+                        className="w-full"
+                        items={[...demandeStatusTypes]}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />}
+                <FormField
+                  control={form.control}
+                  name="acteurId"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-foreground/70 font-medium">Attribuée à</FormLabel>
+                      <SelectDropdown
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Choisissez un membre"
+                        className="w-full"
+
+                        items={users.map((user: User) => {
+                          const initials = `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase();
+                          const label = (
+                            <div className="flex items-center gap-2">
+                              <div className="h-6 w-6 rounded-full bg-black text-xs text-center font-medium text-white flex items-center justify-center">
+                                {initials}
+                              </div>
+                              <span>{user.firstName} {user.lastName}</span>
+                            </div>
+                          );
+
+                          return {
+                            value: user.id.toString(),
+                            label,
+                          };
+                        })}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* 📌 Champ Remarques */}
+                <FormField
+                  control={form.control}
+                  name="remarques"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1 sm:col-span-2 lg:col-span-3">
+                      <FormLabel className="text-foreground/70 font-medium">Remarques</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Ajoutez une remarque" className="min-h-[150px]" autoComplete="off" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormSection>
             </form>
           </Form>
         </ScrollArea>
