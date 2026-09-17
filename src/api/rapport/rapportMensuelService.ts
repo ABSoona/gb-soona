@@ -42,13 +42,20 @@ type MonthBucket = {
   visitesNonAnnulees: number;
   passeesEnCoursRefusee: number;
   dossiersAbandonnes: number;
-  delaisVisite: number[];
-  delaisEnCoursRefusee: number[];
+};
+
+type DelaisDemande = {
+  moisIndex: number;
+  delaiVisiteJours: number | null;
+  delaiTraitementJours: number | null;
 };
 
 const RAPPORT_MOIS_DEBUT = new Date(2026, 0, 1);
+const FENETRE_GLISSANTE_MOIS = 3;
 
 const monthKey = (date: Date) => format(date, 'yyyy-MM');
+
+const moisIndex = (date: Date) => date.getFullYear() * 12 + date.getMonth();
 
 const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
@@ -85,13 +92,15 @@ export function useRapportMensuelService() {
           visitesNonAnnulees: 0,
           passeesEnCoursRefusee: 0,
           dossiersAbandonnes: 0,
-          delaisVisite: [],
-          delaisEnCoursRefusee: [],
         };
         buckets.set(key, bucket);
       }
       return bucket;
     };
+
+    // Délais par demande, rattachés au mois de création (createdAt) de la demande,
+    // utilisés ensuite pour une moyenne glissante sur 3 mois.
+    const delaisParDemande: DelaisDemande[] = [];
 
     demandes.forEach((demande) => {
       if (!demande.createdAt) return;
@@ -100,24 +109,21 @@ export function useRapportMensuelService() {
       getBucket(monthKey(dateCreation)).demandesRecues += 1;
 
       const enVisite = premierStatut(demande.demandeStatusHistories, ['en_visite']);
+      let delaiVisiteJours: number | null = null;
       if (enVisite) {
-        const dateEnVisite = new Date(enVisite.createdAt);
-        const diffJours = differenceInCalendarDays(dateEnVisite, dateCreation);
-        if (diffJours >= 0) {
-          getBucket(monthKey(dateEnVisite)).delaisVisite.push(diffJours);
-        }
+        const diff = differenceInCalendarDays(new Date(enVisite.createdAt), dateCreation);
+        if (diff >= 0) delaiVisiteJours = diff;
       }
 
       const enCoursOuRefusee = premierStatut(demande.demandeStatusHistories, ['EnCours', 'refusée']);
+      let delaiTraitementJours: number | null = null;
       if (enCoursOuRefusee) {
-        const dateEnCoursOuRefusee = new Date(enCoursOuRefusee.createdAt);
-        const bucket = getBucket(monthKey(dateEnCoursOuRefusee));
-        bucket.passeesEnCoursRefusee += 1;
-        const diffJours = differenceInCalendarDays(dateEnCoursOuRefusee, dateCreation);
-        if (diffJours >= 0) {
-          bucket.delaisEnCoursRefusee.push(diffJours);
-        }
+        getBucket(monthKey(new Date(enCoursOuRefusee.createdAt))).passeesEnCoursRefusee += 1;
+        const diff = differenceInCalendarDays(new Date(enCoursOuRefusee.createdAt), dateCreation);
+        if (diff >= 0) delaiTraitementJours = diff;
       }
+
+      delaisParDemande.push({ moisIndex: moisIndex(dateCreation), delaiVisiteJours, delaiTraitementJours });
 
       const abandonnee = premierStatut(demande.demandeStatusHistories, ['Abandonnée']);
       if (abandonnee) {
@@ -142,15 +148,26 @@ export function useRapportMensuelService() {
     return eachMonthOfInterval({ start: premierMois, end: dernierMois }).map((date) => {
       const key = monthKey(date);
       const bucket = getBucket(key);
+      const indexMoisCourant = moisIndex(date);
+      const indexMoisMin = indexMoisCourant - (FENETRE_GLISSANTE_MOIS - 1);
+
+      const delaisVisiteFenetre: number[] = [];
+      const delaisTraitementFenetre: number[] = [];
+      delaisParDemande.forEach((d) => {
+        if (d.moisIndex < indexMoisMin || d.moisIndex > indexMoisCourant) return;
+        if (d.delaiVisiteJours !== null) delaisVisiteFenetre.push(d.delaiVisiteJours);
+        if (d.delaiTraitementJours !== null) delaisTraitementFenetre.push(d.delaiTraitementJours);
+      });
+
       return {
         mois: key,
         moisLabel: capitalize(format(date, 'MMMM yyyy', { locale: fr })),
         demandesRecues: bucket.demandesRecues,
         visitesNonAnnulees: bucket.visitesNonAnnulees,
         passeesEnCoursRefusee: bucket.passeesEnCoursRefusee,
-        delaiMoyenVisiteJours: moyenneJours(bucket.delaisVisite),
+        delaiMoyenVisiteJours: moyenneJours(delaisVisiteFenetre),
         dossiersAbandonnes: bucket.dossiersAbandonnes,
-        delaiMoyenEnCoursRefuseeJours: moyenneJours(bucket.delaisEnCoursRefusee),
+        delaiMoyenEnCoursRefuseeJours: moyenneJours(delaisTraitementFenetre),
       };
     });
   }, [data]);
