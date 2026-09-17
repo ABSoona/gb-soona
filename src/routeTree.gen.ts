@@ -58,6 +58,9 @@ const AuthenticatedTasksIndexLazyImport = createFileRoute(
 const AuthenticatedSettingsIndexLazyImport = createFileRoute(
   '/_authenticated/settings/',
 )()
+const AuthenticatedRapportsIndexLazyImport = createFileRoute(
+  '/_authenticated/rapports/',
+)()
 const AuthenticatedHelpCenterIndexLazyImport = createFileRoute(
   '/_authenticated/help-center/',
 )()
@@ -96,6 +99,9 @@ const AuthenticatedSettingsAppearanceLazyImport = createFileRoute(
 )()
 const AuthenticatedSettingsAccountLazyImport = createFileRoute(
   '/_authenticated/settings/account',
+)()
+const AuthenticatedRapportsTableauMensuelLazyImport = createFileRoute(
+  '/_authenticated/rapports/tableau-mensuel',
 )()
 const AuthenticatedDemandesNouvellesLazyImport = createFileRoute(
   '/_authenticated/demandes/nouvelles',
@@ -304,6 +310,15 @@ const AuthenticatedSettingsIndexLazyRoute =
     import('./routes/_authenticated/settings/index.lazy').then((d) => d.Route),
   )
 
+const AuthenticatedRapportsIndexLazyRoute =
+  AuthenticatedRapportsIndexLazyImport.update({
+    id: '/rapports/',
+    path: '/rapports/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/rapports/index.lazy').then((d) => d.Route),
+  )
+
 const AuthenticatedHelpCenterIndexLazyRoute =
   AuthenticatedHelpCenterIndexLazyImport.update({
     id: '/help-center/',
@@ -435,6 +450,17 @@ const AuthenticatedSettingsAccountLazyRoute =
     getParentRoute: () => AuthenticatedSettingsRouteLazyRoute,
   } as any).lazy(() =>
     import('./routes/_authenticated/settings/account.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthenticatedRapportsTableauMensuelLazyRoute =
+  AuthenticatedRapportsTableauMensuelLazyImport.update({
+    id: '/rapports/tableau-mensuel',
+    path: '/rapports/tableau-mensuel',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/rapports/tableau-mensuel.lazy').then(
       (d) => d.Route,
     ),
   )
@@ -683,6 +709,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDemandesNouvellesLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/rapports/tableau-mensuel': {
+      id: '/_authenticated/rapports/tableau-mensuel'
+      path: '/rapports/tableau-mensuel'
+      fullPath: '/rapports/tableau-mensuel'
+      preLoaderRoute: typeof AuthenticatedRapportsTableauMensuelLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/settings/account': {
       id: '/_authenticated/settings/account'
       path: '/account'
@@ -772,6 +805,13 @@ declare module '@tanstack/react-router' {
       path: '/help-center'
       fullPath: '/help-center'
       preLoaderRoute: typeof AuthenticatedHelpCenterIndexLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/rapports/': {
+      id: '/_authenticated/rapports/'
+      path: '/rapports'
+      fullPath: '/rapports'
+      preLoaderRoute: typeof AuthenticatedRapportsIndexLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
     '/_authenticated/settings/': {
@@ -884,6 +924,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDemandesEnVisiteLazyRoute: typeof AuthenticatedDemandesEnVisiteLazyRoute
   AuthenticatedDemandesMesDemandesLazyRoute: typeof AuthenticatedDemandesMesDemandesLazyRoute
   AuthenticatedDemandesNouvellesLazyRoute: typeof AuthenticatedDemandesNouvellesLazyRoute
+  AuthenticatedRapportsTableauMensuelLazyRoute: typeof AuthenticatedRapportsTableauMensuelLazyRoute
   AuthenticatedVersementsAVerserLazyRoute: typeof AuthenticatedVersementsAVerserLazyRoute
   AuthenticatedVersementsEnRetardLazyRoute: typeof AuthenticatedVersementsEnRetardLazyRoute
   AuthenticatedVersementsPlanifieLazyRoute: typeof AuthenticatedVersementsPlanifieLazyRoute
@@ -893,6 +934,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedContactsIndexLazyRoute: typeof AuthenticatedContactsIndexLazyRoute
   AuthenticatedDemandesIndexLazyRoute: typeof AuthenticatedDemandesIndexLazyRoute
   AuthenticatedHelpCenterIndexLazyRoute: typeof AuthenticatedHelpCenterIndexLazyRoute
+  AuthenticatedRapportsIndexLazyRoute: typeof AuthenticatedRapportsIndexLazyRoute
   AuthenticatedTasksIndexLazyRoute: typeof AuthenticatedTasksIndexLazyRoute
   AuthenticatedTypeDocumentsIndexLazyRoute: typeof AuthenticatedTypeDocumentsIndexLazyRoute
   AuthenticatedUsersIndexLazyRoute: typeof AuthenticatedUsersIndexLazyRoute
@@ -918,6 +960,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedDemandesMesDemandesLazyRoute,
   AuthenticatedDemandesNouvellesLazyRoute:
     AuthenticatedDemandesNouvellesLazyRoute,
+  AuthenticatedRapportsTableauMensuelLazyRoute:
+    AuthenticatedRapportsTableauMensuelLazyRoute,
   AuthenticatedVersementsAVerserLazyRoute:
     AuthenticatedVersementsAVerserLazyRoute,
   AuthenticatedVersementsEnRetardLazyRoute:
@@ -931,6 +975,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedContactsIndexLazyRoute: AuthenticatedContactsIndexLazyRoute,
   AuthenticatedDemandesIndexLazyRoute: AuthenticatedDemandesIndexLazyRoute,
   AuthenticatedHelpCenterIndexLazyRoute: AuthenticatedHelpCenterIndexLazyRoute,
+  AuthenticatedRapportsIndexLazyRoute: AuthenticatedRapportsIndexLazyRoute,
   AuthenticatedTasksIndexLazyRoute: AuthenticatedTasksIndexLazyRoute,
   AuthenticatedTypeDocumentsIndexLazyRoute:
     AuthenticatedTypeDocumentsIndexLazyRoute,
@@ -967,6 +1012,7 @@ export interface FileRoutesByFullPath {
   '/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
   '/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
   '/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
+  '/rapports/tableau-mensuel': typeof AuthenticatedRapportsTableauMensuelLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
@@ -980,6 +1026,7 @@ export interface FileRoutesByFullPath {
   '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
+  '/rapports': typeof AuthenticatedRapportsIndexLazyRoute
   '/settings/': typeof AuthenticatedSettingsIndexLazyRoute
   '/tasks': typeof AuthenticatedTasksIndexLazyRoute
   '/typeDocuments': typeof AuthenticatedTypeDocumentsIndexLazyRoute
@@ -1011,6 +1058,7 @@ export interface FileRoutesByTo {
   '/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
   '/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
   '/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
+  '/rapports/tableau-mensuel': typeof AuthenticatedRapportsTableauMensuelLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
@@ -1024,6 +1072,7 @@ export interface FileRoutesByTo {
   '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
+  '/rapports': typeof AuthenticatedRapportsIndexLazyRoute
   '/settings': typeof AuthenticatedSettingsIndexLazyRoute
   '/tasks': typeof AuthenticatedTasksIndexLazyRoute
   '/typeDocuments': typeof AuthenticatedTypeDocumentsIndexLazyRoute
@@ -1059,6 +1108,7 @@ export interface FileRoutesById {
   '/_authenticated/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
   '/_authenticated/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
   '/_authenticated/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
+  '/_authenticated/rapports/tableau-mensuel': typeof AuthenticatedRapportsTableauMensuelLazyRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
@@ -1072,6 +1122,7 @@ export interface FileRoutesById {
   '/_authenticated/contacts/': typeof AuthenticatedContactsIndexLazyRoute
   '/_authenticated/demandes/': typeof AuthenticatedDemandesIndexLazyRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexLazyRoute
+  '/_authenticated/rapports/': typeof AuthenticatedRapportsIndexLazyRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexLazyRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexLazyRoute
   '/_authenticated/typeDocuments/': typeof AuthenticatedTypeDocumentsIndexLazyRoute
@@ -1107,6 +1158,7 @@ export interface FileRouteTypes {
     | '/demandes/en-visite'
     | '/demandes/mes-demandes'
     | '/demandes/nouvelles'
+    | '/rapports/tableau-mensuel'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -1120,6 +1172,7 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/demandes'
     | '/help-center'
+    | '/rapports'
     | '/settings/'
     | '/tasks'
     | '/typeDocuments'
@@ -1150,6 +1203,7 @@ export interface FileRouteTypes {
     | '/demandes/en-visite'
     | '/demandes/mes-demandes'
     | '/demandes/nouvelles'
+    | '/rapports/tableau-mensuel'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -1163,6 +1217,7 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/demandes'
     | '/help-center'
+    | '/rapports'
     | '/settings'
     | '/tasks'
     | '/typeDocuments'
@@ -1196,6 +1251,7 @@ export interface FileRouteTypes {
     | '/_authenticated/demandes/en-visite'
     | '/_authenticated/demandes/mes-demandes'
     | '/_authenticated/demandes/nouvelles'
+    | '/_authenticated/rapports/tableau-mensuel'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
@@ -1209,6 +1265,7 @@ export interface FileRouteTypes {
     | '/_authenticated/contacts/'
     | '/_authenticated/demandes/'
     | '/_authenticated/help-center/'
+    | '/_authenticated/rapports/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/typeDocuments/'
@@ -1293,6 +1350,7 @@ export const routeTree = rootRoute
         "/_authenticated/demandes/en-visite",
         "/_authenticated/demandes/mes-demandes",
         "/_authenticated/demandes/nouvelles",
+        "/_authenticated/rapports/tableau-mensuel",
         "/_authenticated/versements/a-verser",
         "/_authenticated/versements/en-retard",
         "/_authenticated/versements/planifie",
@@ -1302,6 +1360,7 @@ export const routeTree = rootRoute
         "/_authenticated/contacts/",
         "/_authenticated/demandes/",
         "/_authenticated/help-center/",
+        "/_authenticated/rapports/",
         "/_authenticated/tasks/",
         "/_authenticated/typeDocuments/",
         "/_authenticated/users/",
@@ -1387,6 +1446,10 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/demandes/nouvelles.lazy.tsx",
       "parent": "/_authenticated"
     },
+    "/_authenticated/rapports/tableau-mensuel": {
+      "filePath": "_authenticated/rapports/tableau-mensuel.lazy.tsx",
+      "parent": "/_authenticated"
+    },
     "/_authenticated/settings/account": {
       "filePath": "_authenticated/settings/account.lazy.tsx",
       "parent": "/_authenticated/settings"
@@ -1437,6 +1500,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/help-center/": {
       "filePath": "_authenticated/help-center/index.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/rapports/": {
+      "filePath": "_authenticated/rapports/index.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/settings/": {
