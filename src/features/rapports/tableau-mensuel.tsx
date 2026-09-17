@@ -87,6 +87,10 @@ export default function TableauMensuel() {
           </Button>
         </div>
 
+        <p className='mb-4 text-xs text-muted-foreground'>
+          Les délais moyens sont calculés sur une fenêtre glissante des 3 mois se terminant au mois de la ligne (ex : la ligne de septembre couvre juillet, août et septembre).
+        </p>
+
         {loading ? (
           <Skeleton className='h-[400px] w-full rounded-md' />
         ) : (
