@@ -143,6 +143,11 @@ export function useSidebarData(): SidebarData {
       title: 'Autres',
       items: [
         {
+          title: 'Rapports',
+          url: '/rapports',
+          icon: IconFile,
+        },
+        {
           title: 'Paramètres',
           icon: IconSettings,
           items: [
