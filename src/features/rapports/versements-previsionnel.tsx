@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { endOfMonth, endOfYear, startOfMonth, startOfYear, subMonths, subYears } from 'date-fns'
+import { endOfMonth, endOfYear, format, startOfMonth, startOfYear } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 import { Download } from 'lucide-react'
 import { Header } from '@/components/layout/header'
@@ -19,9 +19,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { RapportVersementRow, useRapportVersementsMensuelsService } from '@/api/rapport/rapportVersementsService'
+import { RapportVersementRow, useRapportVersementsPrevisionnelService } from '@/api/rapport/rapportVersementsService'
 
-type Periode = 'mois' | 'moisPrecedent' | 'annee' | 'anneePrecedente' | 'custom'
+type Periode = 'aVenir' | 'mois' | 'annee' | 'custom'
 
 const formatEuro = (value: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value)
@@ -43,53 +43,46 @@ const exportToCsv = (rows: RapportVersementRow[]) => {
 
   const link = document.createElement('a')
   link.href = url
-  link.setAttribute('download', 'rapport_versements_mensuels.csv')
+  link.setAttribute('download', 'rapport_previsionnel_versements.csv')
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
 }
 
-export default function VersementsMensuels() {
+export default function VersementsPrevisionnel() {
   const [dateRange, setDateRange] = useState<DateRange>({
-    from: startOfYear(new Date()),
-    to: endOfYear(new Date()),
+    from: startOfMonth(new Date()),
+    to: undefined,
   })
-  const [periode, setPeriode] = useState<Periode>('annee')
+  const [periode, setPeriode] = useState<Periode>('aVenir')
   const [showCustomPicker, setShowCustomPicker] = useState(false)
 
   const handlePeriodeChange = (p: Periode) => {
     setPeriode(p)
 
     switch (p) {
+      case 'aVenir':
+        setShowCustomPicker(false)
+        setDateRange({ from: startOfMonth(new Date()), to: undefined })
+        break
       case 'mois':
         setShowCustomPicker(false)
         setDateRange({ from: startOfMonth(new Date()), to: endOfMonth(new Date()) })
         break
-      case 'moisPrecedent': {
-        setShowCustomPicker(false)
-        const prevMonth = subMonths(new Date(), 1)
-        setDateRange({ from: startOfMonth(prevMonth), to: endOfMonth(prevMonth) })
-        break
-      }
       case 'annee':
         setShowCustomPicker(false)
         setDateRange({ from: startOfYear(new Date()), to: endOfYear(new Date()) })
         break
-      case 'anneePrecedente': {
-        setShowCustomPicker(false)
-        const prevYear = subYears(new Date(), 1)
-        setDateRange({ from: startOfYear(prevYear), to: endOfYear(prevYear) })
-        break
-      }
       case 'custom':
         setShowCustomPicker(true)
         break
     }
   }
 
-  const { rows, montantTotalPeriode, loading } = useRapportVersementsMensuelsService(dateRange.from, dateRange.to)
+  const { rows, montantTotalPeriode, loading } = useRapportVersementsPrevisionnelService(dateRange.from, dateRange.to)
   const nombreTotalPeriode = rows.reduce((acc, row) => acc + row.nombreVersements, 0)
+  const moisCourant = format(new Date(), 'yyyy-MM')
 
   return (
     <>
@@ -103,7 +96,7 @@ export default function VersementsMensuels() {
 
       <Main>
         <div className='mb-2 flex items-center justify-between space-y-2'>
-          <h1 className='text-xl font-bold tracking-tight'>Versements par mois</h1>
+          <h1 className='text-xl font-bold tracking-tight'>Prévisionnel de versements</h1>
           <Button variant='outline' size='sm' onClick={() => exportToCsv(rows)} disabled={loading || rows.length === 0}>
             <Download className='mr-2 h-4 w-4' />
             Exporter CSV
@@ -112,17 +105,14 @@ export default function VersementsMensuels() {
 
         <div className='mb-4 flex items-center justify-between flex-wrap gap-2'>
           <div className='flex gap-2 flex-wrap'>
+            <Button size='sm' variant={periode === 'aVenir' ? 'default' : 'outline'} onClick={() => handlePeriodeChange('aVenir')}>
+              À venir
+            </Button>
             <Button size='sm' variant={periode === 'mois' ? 'default' : 'outline'} onClick={() => handlePeriodeChange('mois')}>
               Mois
             </Button>
-            <Button size='sm' variant={periode === 'moisPrecedent' ? 'default' : 'outline'} onClick={() => handlePeriodeChange('moisPrecedent')}>
-              Mois-1
-            </Button>
             <Button size='sm' variant={periode === 'annee' ? 'default' : 'outline'} onClick={() => handlePeriodeChange('annee')}>
               Année
-            </Button>
-            <Button size='sm' variant={periode === 'anneePrecedente' ? 'default' : 'outline'} onClick={() => handlePeriodeChange('anneePrecedente')}>
-              Année-1
             </Button>
             <Button size='sm' variant={periode === 'custom' ? 'default' : 'outline'} onClick={() => handlePeriodeChange('custom')}>
               Personnalisé
@@ -141,8 +131,12 @@ export default function VersementsMensuels() {
           )}
         </div>
 
-        <p className='mb-4 text-xs text-muted-foreground'>
-          Tous les versements (sauf ceux annulés), regroupés par mois selon leur date de versement, sur la période sélectionnée.
+        <p className='mb-1 text-xs text-muted-foreground'>
+          Versements au statut « À verser » ou « Planifié », regroupés par mois selon leur date de versement, sur la période sélectionnée.
+        </p>
+        <p className='mb-4 flex items-center gap-2 text-xs text-muted-foreground'>
+          <span className='inline-block h-3 w-3 rounded-sm bg-blue-100 dark:bg-blue-500/20' />
+          Mois à venir
         </p>
 
         {loading ? (
@@ -166,7 +160,10 @@ export default function VersementsMensuels() {
                   </TableRow>
                 ) : (
                   rows.map((row) => (
-                    <TableRow key={row.mois}>
+                    <TableRow
+                      key={row.mois}
+                      className={row.mois > moisCourant ? 'bg-blue-50/60 hover:bg-blue-100/60 dark:bg-blue-500/10 dark:hover:bg-blue-500/15' : undefined}
+                    >
                       <TableCell className='font-medium capitalize'>{row.moisLabel}</TableCell>
                       <TableCell className='text-right'>{row.nombreVersements}</TableCell>
                       <TableCell className='text-right'>{formatEuro(row.montantTotal)}</TableCell>

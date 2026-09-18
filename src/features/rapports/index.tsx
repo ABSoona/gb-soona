@@ -29,9 +29,15 @@ const rapports: RapportDefinition[] = [
     enabled: true,
   },
   {
-    title: 'Versements par mois',
-    description: 'Nombre et montant total des versements, mois par mois, sur une période sélectionnable.',
-    url: '/rapports/versements-mensuels',
+    title: 'Récapitulatif des versements',
+    description: 'Nombre et montant total des versements effectués (statut « Versé »), mois par mois, sur une période sélectionnable.',
+    url: '/rapports/versements-recapitulatif',
+    enabled: true,
+  },
+  {
+    title: 'Prévisionnel de versements',
+    description: 'Versements à venir (statuts « À verser » et « Planifié »), mois par mois, sur une période sélectionnable.',
+    url: '/rapports/versements-previsionnel',
     enabled: true,
   },
 ]

@@ -100,8 +100,11 @@ const AuthenticatedSettingsAppearanceLazyImport = createFileRoute(
 const AuthenticatedSettingsAccountLazyImport = createFileRoute(
   '/_authenticated/settings/account',
 )()
-const AuthenticatedRapportsVersementsMensuelsLazyImport = createFileRoute(
-  '/_authenticated/rapports/versements-mensuels',
+const AuthenticatedRapportsVersementsRecapitulatifLazyImport = createFileRoute(
+  '/_authenticated/rapports/versements-recapitulatif',
+)()
+const AuthenticatedRapportsVersementsPrevisionnelLazyImport = createFileRoute(
+  '/_authenticated/rapports/versements-previsionnel',
 )()
 const AuthenticatedRapportsTableauMensuelLazyImport = createFileRoute(
   '/_authenticated/rapports/tableau-mensuel',
@@ -460,15 +463,26 @@ const AuthenticatedSettingsAccountLazyRoute =
     ),
   )
 
-const AuthenticatedRapportsVersementsMensuelsLazyRoute =
-  AuthenticatedRapportsVersementsMensuelsLazyImport.update({
-    id: '/rapports/versements-mensuels',
-    path: '/rapports/versements-mensuels',
+const AuthenticatedRapportsVersementsRecapitulatifLazyRoute =
+  AuthenticatedRapportsVersementsRecapitulatifLazyImport.update({
+    id: '/rapports/versements-recapitulatif',
+    path: '/rapports/versements-recapitulatif',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any).lazy(() =>
-    import('./routes/_authenticated/rapports/versements-mensuels.lazy').then(
-      (d) => d.Route,
-    ),
+    import(
+      './routes/_authenticated/rapports/versements-recapitulatif.lazy'
+    ).then((d) => d.Route),
+  )
+
+const AuthenticatedRapportsVersementsPrevisionnelLazyRoute =
+  AuthenticatedRapportsVersementsPrevisionnelLazyImport.update({
+    id: '/rapports/versements-previsionnel',
+    path: '/rapports/versements-previsionnel',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import(
+      './routes/_authenticated/rapports/versements-previsionnel.lazy'
+    ).then((d) => d.Route),
   )
 
 const AuthenticatedRapportsTableauMensuelLazyRoute =
@@ -751,11 +765,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRapportsTableauMensuelLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
-    '/_authenticated/rapports/versements-mensuels': {
-      id: '/_authenticated/rapports/versements-mensuels'
-      path: '/rapports/versements-mensuels'
-      fullPath: '/rapports/versements-mensuels'
-      preLoaderRoute: typeof AuthenticatedRapportsVersementsMensuelsLazyImport
+    '/_authenticated/rapports/versements-previsionnel': {
+      id: '/_authenticated/rapports/versements-previsionnel'
+      path: '/rapports/versements-previsionnel'
+      fullPath: '/rapports/versements-previsionnel'
+      preLoaderRoute: typeof AuthenticatedRapportsVersementsPrevisionnelLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/rapports/versements-recapitulatif': {
+      id: '/_authenticated/rapports/versements-recapitulatif'
+      path: '/rapports/versements-recapitulatif'
+      fullPath: '/rapports/versements-recapitulatif'
+      preLoaderRoute: typeof AuthenticatedRapportsVersementsRecapitulatifLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
     '/_authenticated/settings/account': {
@@ -968,7 +989,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDemandesNouvellesLazyRoute: typeof AuthenticatedDemandesNouvellesLazyRoute
   AuthenticatedRapportsRepartitionDepartementsLazyRoute: typeof AuthenticatedRapportsRepartitionDepartementsLazyRoute
   AuthenticatedRapportsTableauMensuelLazyRoute: typeof AuthenticatedRapportsTableauMensuelLazyRoute
-  AuthenticatedRapportsVersementsMensuelsLazyRoute: typeof AuthenticatedRapportsVersementsMensuelsLazyRoute
+  AuthenticatedRapportsVersementsPrevisionnelLazyRoute: typeof AuthenticatedRapportsVersementsPrevisionnelLazyRoute
+  AuthenticatedRapportsVersementsRecapitulatifLazyRoute: typeof AuthenticatedRapportsVersementsRecapitulatifLazyRoute
   AuthenticatedVersementsAVerserLazyRoute: typeof AuthenticatedVersementsAVerserLazyRoute
   AuthenticatedVersementsEnRetardLazyRoute: typeof AuthenticatedVersementsEnRetardLazyRoute
   AuthenticatedVersementsPlanifieLazyRoute: typeof AuthenticatedVersementsPlanifieLazyRoute
@@ -1008,8 +1030,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedRapportsRepartitionDepartementsLazyRoute,
   AuthenticatedRapportsTableauMensuelLazyRoute:
     AuthenticatedRapportsTableauMensuelLazyRoute,
-  AuthenticatedRapportsVersementsMensuelsLazyRoute:
-    AuthenticatedRapportsVersementsMensuelsLazyRoute,
+  AuthenticatedRapportsVersementsPrevisionnelLazyRoute:
+    AuthenticatedRapportsVersementsPrevisionnelLazyRoute,
+  AuthenticatedRapportsVersementsRecapitulatifLazyRoute:
+    AuthenticatedRapportsVersementsRecapitulatifLazyRoute,
   AuthenticatedVersementsAVerserLazyRoute:
     AuthenticatedVersementsAVerserLazyRoute,
   AuthenticatedVersementsEnRetardLazyRoute:
@@ -1062,7 +1086,8 @@ export interface FileRoutesByFullPath {
   '/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
   '/rapports/repartition-departements': typeof AuthenticatedRapportsRepartitionDepartementsLazyRoute
   '/rapports/tableau-mensuel': typeof AuthenticatedRapportsTableauMensuelLazyRoute
-  '/rapports/versements-mensuels': typeof AuthenticatedRapportsVersementsMensuelsLazyRoute
+  '/rapports/versements-previsionnel': typeof AuthenticatedRapportsVersementsPrevisionnelLazyRoute
+  '/rapports/versements-recapitulatif': typeof AuthenticatedRapportsVersementsRecapitulatifLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
@@ -1110,7 +1135,8 @@ export interface FileRoutesByTo {
   '/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
   '/rapports/repartition-departements': typeof AuthenticatedRapportsRepartitionDepartementsLazyRoute
   '/rapports/tableau-mensuel': typeof AuthenticatedRapportsTableauMensuelLazyRoute
-  '/rapports/versements-mensuels': typeof AuthenticatedRapportsVersementsMensuelsLazyRoute
+  '/rapports/versements-previsionnel': typeof AuthenticatedRapportsVersementsPrevisionnelLazyRoute
+  '/rapports/versements-recapitulatif': typeof AuthenticatedRapportsVersementsRecapitulatifLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
@@ -1162,7 +1188,8 @@ export interface FileRoutesById {
   '/_authenticated/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
   '/_authenticated/rapports/repartition-departements': typeof AuthenticatedRapportsRepartitionDepartementsLazyRoute
   '/_authenticated/rapports/tableau-mensuel': typeof AuthenticatedRapportsTableauMensuelLazyRoute
-  '/_authenticated/rapports/versements-mensuels': typeof AuthenticatedRapportsVersementsMensuelsLazyRoute
+  '/_authenticated/rapports/versements-previsionnel': typeof AuthenticatedRapportsVersementsPrevisionnelLazyRoute
+  '/_authenticated/rapports/versements-recapitulatif': typeof AuthenticatedRapportsVersementsRecapitulatifLazyRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayLazyRoute
@@ -1214,7 +1241,8 @@ export interface FileRouteTypes {
     | '/demandes/nouvelles'
     | '/rapports/repartition-departements'
     | '/rapports/tableau-mensuel'
-    | '/rapports/versements-mensuels'
+    | '/rapports/versements-previsionnel'
+    | '/rapports/versements-recapitulatif'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -1261,7 +1289,8 @@ export interface FileRouteTypes {
     | '/demandes/nouvelles'
     | '/rapports/repartition-departements'
     | '/rapports/tableau-mensuel'
-    | '/rapports/versements-mensuels'
+    | '/rapports/versements-previsionnel'
+    | '/rapports/versements-recapitulatif'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -1311,7 +1340,8 @@ export interface FileRouteTypes {
     | '/_authenticated/demandes/nouvelles'
     | '/_authenticated/rapports/repartition-departements'
     | '/_authenticated/rapports/tableau-mensuel'
-    | '/_authenticated/rapports/versements-mensuels'
+    | '/_authenticated/rapports/versements-previsionnel'
+    | '/_authenticated/rapports/versements-recapitulatif'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
@@ -1412,7 +1442,8 @@ export const routeTree = rootRoute
         "/_authenticated/demandes/nouvelles",
         "/_authenticated/rapports/repartition-departements",
         "/_authenticated/rapports/tableau-mensuel",
-        "/_authenticated/rapports/versements-mensuels",
+        "/_authenticated/rapports/versements-previsionnel",
+        "/_authenticated/rapports/versements-recapitulatif",
         "/_authenticated/versements/a-verser",
         "/_authenticated/versements/en-retard",
         "/_authenticated/versements/planifie",
@@ -1516,8 +1547,12 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/rapports/tableau-mensuel.lazy.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/rapports/versements-mensuels": {
-      "filePath": "_authenticated/rapports/versements-mensuels.lazy.tsx",
+    "/_authenticated/rapports/versements-previsionnel": {
+      "filePath": "_authenticated/rapports/versements-previsionnel.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/rapports/versements-recapitulatif": {
+      "filePath": "_authenticated/rapports/versements-recapitulatif.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/settings/account": {
