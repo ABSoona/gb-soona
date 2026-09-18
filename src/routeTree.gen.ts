@@ -103,6 +103,9 @@ const AuthenticatedSettingsAccountLazyImport = createFileRoute(
 const AuthenticatedRapportsTableauMensuelLazyImport = createFileRoute(
   '/_authenticated/rapports/tableau-mensuel',
 )()
+const AuthenticatedRapportsRepartitionDepartementsLazyImport = createFileRoute(
+  '/_authenticated/rapports/repartition-departements',
+)()
 const AuthenticatedDemandesNouvellesLazyImport = createFileRoute(
   '/_authenticated/demandes/nouvelles',
 )()
@@ -465,6 +468,17 @@ const AuthenticatedRapportsTableauMensuelLazyRoute =
     ),
   )
 
+const AuthenticatedRapportsRepartitionDepartementsLazyRoute =
+  AuthenticatedRapportsRepartitionDepartementsLazyImport.update({
+    id: '/rapports/repartition-departements',
+    path: '/rapports/repartition-departements',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import(
+      './routes/_authenticated/rapports/repartition-departements.lazy'
+    ).then((d) => d.Route),
+  )
+
 const AuthenticatedDemandesNouvellesLazyRoute =
   AuthenticatedDemandesNouvellesLazyImport.update({
     id: '/demandes/nouvelles',
@@ -709,6 +723,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDemandesNouvellesLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/rapports/repartition-departements': {
+      id: '/_authenticated/rapports/repartition-departements'
+      path: '/rapports/repartition-departements'
+      fullPath: '/rapports/repartition-departements'
+      preLoaderRoute: typeof AuthenticatedRapportsRepartitionDepartementsLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/rapports/tableau-mensuel': {
       id: '/_authenticated/rapports/tableau-mensuel'
       path: '/rapports/tableau-mensuel'
@@ -924,6 +945,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDemandesEnVisiteLazyRoute: typeof AuthenticatedDemandesEnVisiteLazyRoute
   AuthenticatedDemandesMesDemandesLazyRoute: typeof AuthenticatedDemandesMesDemandesLazyRoute
   AuthenticatedDemandesNouvellesLazyRoute: typeof AuthenticatedDemandesNouvellesLazyRoute
+  AuthenticatedRapportsRepartitionDepartementsLazyRoute: typeof AuthenticatedRapportsRepartitionDepartementsLazyRoute
   AuthenticatedRapportsTableauMensuelLazyRoute: typeof AuthenticatedRapportsTableauMensuelLazyRoute
   AuthenticatedVersementsAVerserLazyRoute: typeof AuthenticatedVersementsAVerserLazyRoute
   AuthenticatedVersementsEnRetardLazyRoute: typeof AuthenticatedVersementsEnRetardLazyRoute
@@ -960,6 +982,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedDemandesMesDemandesLazyRoute,
   AuthenticatedDemandesNouvellesLazyRoute:
     AuthenticatedDemandesNouvellesLazyRoute,
+  AuthenticatedRapportsRepartitionDepartementsLazyRoute:
+    AuthenticatedRapportsRepartitionDepartementsLazyRoute,
   AuthenticatedRapportsTableauMensuelLazyRoute:
     AuthenticatedRapportsTableauMensuelLazyRoute,
   AuthenticatedVersementsAVerserLazyRoute:
@@ -1012,6 +1036,7 @@ export interface FileRoutesByFullPath {
   '/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
   '/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
   '/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
+  '/rapports/repartition-departements': typeof AuthenticatedRapportsRepartitionDepartementsLazyRoute
   '/rapports/tableau-mensuel': typeof AuthenticatedRapportsTableauMensuelLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
@@ -1058,6 +1083,7 @@ export interface FileRoutesByTo {
   '/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
   '/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
   '/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
+  '/rapports/repartition-departements': typeof AuthenticatedRapportsRepartitionDepartementsLazyRoute
   '/rapports/tableau-mensuel': typeof AuthenticatedRapportsTableauMensuelLazyRoute
   '/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
@@ -1108,6 +1134,7 @@ export interface FileRoutesById {
   '/_authenticated/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
   '/_authenticated/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
   '/_authenticated/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
+  '/_authenticated/rapports/repartition-departements': typeof AuthenticatedRapportsRepartitionDepartementsLazyRoute
   '/_authenticated/rapports/tableau-mensuel': typeof AuthenticatedRapportsTableauMensuelLazyRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountLazyRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceLazyRoute
@@ -1158,6 +1185,7 @@ export interface FileRouteTypes {
     | '/demandes/en-visite'
     | '/demandes/mes-demandes'
     | '/demandes/nouvelles'
+    | '/rapports/repartition-departements'
     | '/rapports/tableau-mensuel'
     | '/settings/account'
     | '/settings/appearance'
@@ -1203,6 +1231,7 @@ export interface FileRouteTypes {
     | '/demandes/en-visite'
     | '/demandes/mes-demandes'
     | '/demandes/nouvelles'
+    | '/rapports/repartition-departements'
     | '/rapports/tableau-mensuel'
     | '/settings/account'
     | '/settings/appearance'
@@ -1251,6 +1280,7 @@ export interface FileRouteTypes {
     | '/_authenticated/demandes/en-visite'
     | '/_authenticated/demandes/mes-demandes'
     | '/_authenticated/demandes/nouvelles'
+    | '/_authenticated/rapports/repartition-departements'
     | '/_authenticated/rapports/tableau-mensuel'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
@@ -1350,6 +1380,7 @@ export const routeTree = rootRoute
         "/_authenticated/demandes/en-visite",
         "/_authenticated/demandes/mes-demandes",
         "/_authenticated/demandes/nouvelles",
+        "/_authenticated/rapports/repartition-departements",
         "/_authenticated/rapports/tableau-mensuel",
         "/_authenticated/versements/a-verser",
         "/_authenticated/versements/en-retard",
@@ -1444,6 +1475,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/demandes/nouvelles": {
       "filePath": "_authenticated/demandes/nouvelles.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/rapports/repartition-departements": {
+      "filePath": "_authenticated/rapports/repartition-departements.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/rapports/tableau-mensuel": {

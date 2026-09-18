@@ -22,6 +22,12 @@ const rapports: RapportDefinition[] = [
     url: '/rapports/tableau-mensuel',
     enabled: true,
   },
+  {
+    title: 'Répartition des demandes par département',
+    description: 'Demandes reçues, acceptées, refusées et backlog par département, sur une période sélectionnable.',
+    url: '/rapports/repartition-departements',
+    enabled: true,
+  },
 ]
 
 export default function Rapports() {
