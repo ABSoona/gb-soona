@@ -13,29 +13,36 @@ export type RapportVersementRow = {
 
 const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
-export function useRapportVersementsMensuelsService(debut?: Date, fin?: Date) {
-  // status n'accepte qu'une égalité stricte côté GraphQL (VersementWhereInput.status
-  // est un enum simple, pas un filtre {in}/{not}) : on récupère tout sur la période
-  // et on exclut "Annulee" côté client.
+// VersementWhereInput.status est un enum a egalite stricte cote GraphQL (pas un
+// filtre {in}/{not}) : on recupere tout sur la periode et on filtre le statut
+// cote client.
+function useVersementsMensuelsAgreges(
+  debut: Date | undefined,
+  fin: Date | undefined,
+  inclureStatut: (status: string) => boolean
+) {
   const { versements, loading, error } = useVersementService(
-    debut && fin
+    debut
       ? {
           where: {
-            dataVersement: { gte: debut.toISOString(), lte: fin.toISOString() },
+            dataVersement: {
+              gte: debut.toISOString(),
+              ...(fin ? { lte: fin.toISOString() } : {}),
+            },
           },
         }
       : undefined
   );
 
   const { rows, montantTotalPeriode } = useMemo(() => {
-    if (!debut || !fin || !versements?.length) {
+    if (!debut || !versements?.length) {
       return { rows: [] as RapportVersementRow[], montantTotalPeriode: 0 };
     }
 
     const buckets = new Map<string, { nombreVersements: number; montantTotal: number }>();
 
     versements
-      .filter((versement: Versement) => versement.status !== 'Annulee')
+      .filter((versement: Versement) => inclureStatut(versement.status))
       .forEach((versement: Versement) => {
         const date = new Date(versement.dataVersement);
         const key = format(date, 'yyyy-MM');
@@ -63,4 +70,14 @@ export function useRapportVersementsMensuelsService(debut?: Date, fin?: Date) {
   }, [versements, debut, fin]);
 
   return { rows, montantTotalPeriode, loading, error };
+}
+
+/** Récapitulatif : versements réellement versés (statut "Verse"). */
+export function useRapportVersementsRecapitulatifService(debut?: Date, fin?: Date) {
+  return useVersementsMensuelsAgreges(debut, fin, (status) => status === 'Verse');
+}
+
+/** Prévisionnel : versements pas encore versés (statuts "AVerser" et "Planifie"). */
+export function useRapportVersementsPrevisionnelService(debut?: Date, fin?: Date) {
+  return useVersementsMensuelsAgreges(debut, fin, (status) => status === 'AVerser' || status === 'Planifie');
 }
