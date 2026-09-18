@@ -142,7 +142,7 @@ export default function VersementsMensuels() {
         </div>
 
         <p className='mb-4 text-xs text-muted-foreground'>
-          Versements au statut Versé ou Planifié, regroupés par mois selon leur date de versement, sur la période sélectionnée.
+          Tous les versements (sauf ceux annulés), regroupés par mois selon leur date de versement, sur la période sélectionnée.
         </p>
 
         {loading ? (
