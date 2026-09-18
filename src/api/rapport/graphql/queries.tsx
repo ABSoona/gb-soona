@@ -17,3 +17,17 @@ export const GET_RAPPORT_MENSUEL_DATA = gql`
     }
   }
 `;
+
+export const GET_RAPPORT_DEPARTEMENTS_DATA = gql`
+  query GetRapportDepartementsData {
+    demandes {
+      id
+      status
+      createdAt
+      decisionDate
+      contact {
+        codePostal
+      }
+    }
+  }
+`;
