@@ -28,6 +28,12 @@ const rapports: RapportDefinition[] = [
     url: '/rapports/repartition-departements',
     enabled: true,
   },
+  {
+    title: 'Versements par mois',
+    description: 'Nombre et montant total des versements, mois par mois, sur une période sélectionnable.',
+    url: '/rapports/versements-mensuels',
+    enabled: true,
+  },
 ]
 
 export default function Rapports() {
