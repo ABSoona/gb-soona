@@ -1,7 +1,7 @@
 'use client'
 
-
 import { Aide } from '@/model/aide/Aide'
+import { AideDocumentsCard } from './aide-documents-card'
 
 
 interface Props {
@@ -10,22 +10,18 @@ interface Props {
 
 }
 
-export function AideView({ currentRow, showContact = true }: Props) {
+export function AideView({ currentRow, showContact: _showContact = true }: Props) {
   if (!currentRow) {
     return null
   }
 
-  /*const { aides, loading: isLoading, error } = useAideService({where : {id :{equals:aideId} }});
-  //const { setOpen, setCurrentRow } = useAides()
-  const currentRow: Aide | undefined = aides.length > 0 ? aides[0] : undefined;*/
-
-
   return (
 
     <div className="sm:min-w-full grid grid-cols-1 xl:grid-cols-3 2xl:grid-cols-3 md:grid-cols-1 gap-6 mt-6">
-
+      <div className="xl:col-span-3 2xl:col-span-3">
+        <AideDocumentsCard aideId={currentRow.id} demandeId={currentRow.demande?.id} />
+      </div>
     </div>
 
   )
 }
-
