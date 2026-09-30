@@ -34,17 +34,18 @@ import { Spinner } from '@/components/ui/spinner';
 
 
 interface Props {
-  contactId: number;
+  contactId?: number;
   documents: Document[];
   nbColumns?: number;
-  onUpload: (contactId: number, file: File, typeId: number, demandeId: number) => Promise<void>;
+  onUpload?: (contactId: number, file: File, typeId: number, demandeId: number) => Promise<void>;
   onDelete: (docId: string) => Promise<void>;
+  deleteLabel?: string;
   attachement?: AttachmentType
 
 
 }
 
-export function DocumentsManager({ contactId, documents, nbColumns, onUpload, onDelete, attachement }: Props) {
+export function DocumentsManager({ contactId, documents, nbColumns, onUpload, onDelete, deleteLabel = 'Supprimer', attachement }: Props) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [document, setDocument] = useState<Document | null>(null);
   const [previewType, setPreviewType] = useState<string | null>(null);
@@ -138,7 +139,7 @@ export function DocumentsManager({ contactId, documents, nbColumns, onUpload, on
                     onClick={() => onDelete(doc.id)}
                     className="!text-red-500"
                   >
-                    Supprimer
+                    {deleteLabel}
                     <DropdownMenuShortcut>
                       <IconTrash size={16} />
                     </DropdownMenuShortcut>

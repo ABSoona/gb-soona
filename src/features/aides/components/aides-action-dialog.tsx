@@ -37,14 +37,7 @@ import { z } from 'zod';
 import { useAides } from '../context/aides-context';
 import { aideCredieteurTypes, aideFrquenceTypes, typeAideTypes } from '../data/data';
 import { ContactSearchCombobox } from './contact-search';
-import { useDocumentActions } from '@/features/documents/useDocumentActions';
-import { DocumentsManager } from '@/features/documents/documents-manager';
-import { useDocumentService } from '@/api/document/documentService';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Plus } from 'lucide-react';
-import { TypeDocument } from '@/model/typeDocument/typeDocument';
-import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService';
+import { AideDocumentsCard } from './aide-documents-card';
 import { User } from '@/model/user/User';
 import { useUserServicev2 } from '@/api/user/userService.v2';
 import { normalizeDate } from '@/lib/utils';
@@ -75,12 +68,6 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
 
   const isEdit = !!currentRow;
   const { triggerRefetchAides } = useAides();
-  /* const whereClause=isEdit?{ where: { aide: { id: currentRow?.id } } }:{ where: { aide: { id: 0} } }
-  const { documents } = useDocumentService();
-  const { handleFileUpload, handleDelete } = useDocumentActions({ aide: { id: currentRow ? currentRow.id : 0 } }); */
-  /* const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
-  const { typeDocuments } = useTypeDocumentService({ where: { rattachement: 'Aide' } }); */
     const { users } = useUserServicev2(
        { where: { role: { not: "visiteur" } } } 
     );
@@ -141,19 +128,6 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
     }
   }, [selectedContactId, form]);
 
- /*  const handleTypeClick = (typeId: number) => {
-    setSelectedTypeId(typeId);
-    fileInputRef.current?.click();
-  }; */
-
-  /* const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && selectedTypeId && currentRow) {
-      await handleFileUpload(currentRow.contact.id, file, selectedTypeId, undefined, currentRow.id);
-      setSelectedTypeId(null);
-      e.target.value = '';
-    }
-  }; */
   const onSubmit = async (values: AideForm) => {
     console.log(form.formState.errors);
     const contactId = forContactId ?? values.contactId; // priorité au forContactId
@@ -267,7 +241,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
         }
       }}
     >
-      <SheetContent className="flex flex-col">
+      <SheetContent className="flex flex-col w-full sm:max-w-2xl">
         <SheetHeader className="text-left">
           <SheetTitle>{isEdit ? 'Modifier l\'Aide' : 'Ajouter une Aide'}</SheetTitle>
           <SheetDescription>
@@ -281,12 +255,13 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
               form.handleSubmit(onSubmit)(e);
               console.log("✅ handleSubmit exécuté !");
             }}
-              className="space-y-4 p-0.5">
+              className="p-0.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
               {showContactSearch && <FormField
                 control={form.control}
                 name="contactId"
                 render={({ field }) => (
-                  <FormItem className="space-y-1">
+                  <FormItem className="space-y-1 sm:col-span-2">
                     <FormLabel>Bénéficiaire</FormLabel>
                     <FormControl>
                       <ContactSearchCombobox
@@ -309,7 +284,7 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
                 control={form.control}
                 name="demandeId"
                 render={({ field }) => {
-                  return (<FormItem className="space-y-1">
+                  return (<FormItem className="space-y-1 sm:col-span-2">
                     <FormLabel>Demande concernée</FormLabel>
                     <FormControl>
                       <SelectDropdown
@@ -483,9 +458,14 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
                               )}
                             />
 
+              {isEdit && currentRow && (
+                <div className="sm:col-span-2">
+                  <AideDocumentsCard aideId={currentRow.id} demandeId={currentRow.demande?.id} />
+                </div>
+              )}
 
               <FormField control={form.control} name="remarque" render={({ field }) => (
-                <FormItem>
+                <FormItem className="sm:col-span-2">
                   <FormLabel>Notes</FormLabel>
                   <FormControl>
                     <Textarea
@@ -515,44 +495,10 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
               />
 
               )}
-
-
+              </div>
 
             </form>
           </Form>
-
-         {/*  {isEdit && <Card className="mt-6">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 ">
-              <CardTitle>Documents</CardTitle>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {typeDocuments?.map((type: TypeDocument) => (
-                    <DropdownMenuItem key={type.id} onClick={() => handleTypeClick(type.id)}>
-                      {type.label}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
-
-
-            </CardHeader>
-            <CardContent className="text-xl font-bold">
-              <DocumentsManager nbColumns={1}
-                documents={documents}
-                contactId={currentRow ? currentRow?.contact.id : 0}
-                onUpload={handleFileUpload}
-                onDelete={handleDelete}
-                attachement={'Contact'}
-              />
-            </CardContent>
-          </Card>} */}
 
         </ScrollArea>
         <SheetFooter>

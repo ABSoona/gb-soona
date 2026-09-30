@@ -6,10 +6,13 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { Landmark, Paperclip, FileCheck } from 'lucide-react'
+import { Landmark, Paperclip, FileCheck, Receipt } from 'lucide-react'
 import { Row } from '@tanstack/react-table'
 import { Versement } from '@/model/versement/versement'
 import DocumentPreviewSheet from '@/features/documents/ocumentPreviewSheet'
@@ -48,11 +51,22 @@ export function DataTableRowDocuments({ row }: DataTableRowDocumentsProps) {
 
   const [loadDocuments, { data }] = useLazyQuery(GET_DOCUMENTS)
 
+  const aideId = row.original.aide?.id
+  const [loadAideDocuments, { data: aideDocsData, loading: aideDocsLoading }] = useLazyQuery(GET_DOCUMENTS)
+  const justificatifsComptables: Document[] = aideDocsData?.documents ?? []
+
   const preuve = row.original.document
 
   return (
     <>
-      <DropdownMenu modal={false}>
+      <DropdownMenu
+        modal={false}
+        onOpenChange={(isOpen) => {
+          if (isOpen && aideId) {
+            loadAideDocuments({ variables: { where: { aide: { id: aideId } } } })
+          }
+        }}
+      >
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='flex h-5 w-8 p-0 data-[state=open]:bg-muted'>
             <Paperclip className='h-4 w-4' />
@@ -95,6 +109,28 @@ export function DataTableRowDocuments({ row }: DataTableRowDocumentsProps) {
               <FileCheck size={16} />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger disabled={!aideId}>
+              Justificatifs comptables
+              <DropdownMenuShortcut>
+                <Receipt size={16} />
+              </DropdownMenuShortcut>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              {aideDocsLoading ? (
+                <DropdownMenuItem disabled>Chargement...</DropdownMenuItem>
+              ) : justificatifsComptables.length === 0 ? (
+                <DropdownMenuItem disabled>Aucun justificatif attaché à l'aide</DropdownMenuItem>
+              ) : (
+                justificatifsComptables.map((doc) => (
+                  <DropdownMenuItem key={doc.id} onClick={() => openPreview(doc)}>
+                    {doc.name ?? doc.contenu.filename}
+                  </DropdownMenuItem>
+                ))
+              )}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         </DropdownMenuContent>
       </DropdownMenu>
 

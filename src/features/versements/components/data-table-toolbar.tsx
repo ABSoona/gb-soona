@@ -9,6 +9,7 @@ import { DataTableViewOptions } from './data-table-view-options';
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
 import { DataTableExport } from './data-table-export';
+import { ExportCacButton } from './export-cac-button';
 import { useUserServicev2 } from '@/api/user/userService.v2';
 
 interface DataTableToolbarProps<TData> {
@@ -163,6 +164,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
             {/* ⚙️ Options d'affichage des colonnes */}
             <div className='mx-2'><DataTableViewOptions table={table} /></div>
+            <div className='mx-2'><ExportCacButton table={table} /></div>
             <div><DataTableExport table={table} /></div>
 
 
