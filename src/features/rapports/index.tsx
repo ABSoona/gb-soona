@@ -35,6 +35,12 @@ const rapports: RapportDefinition[] = [
     enabled: true,
   },
   {
+    title: "Rapport d'activité",
+    description: "Demandes, visites, délais, aides et versements sur une période sélectionnable. Le même rapport que celui envoyé sur Telegram, avec téléchargement du PDF.",
+    url: '/rapports/activite',
+    enabled: true,
+  },
+  {
     title: 'Prévisionnel de versements',
     description: 'Versements à venir (statuts « À verser » et « Planifié »), mois par mois, sur une période sélectionnable.',
     url: '/rapports/versements-previsionnel',
