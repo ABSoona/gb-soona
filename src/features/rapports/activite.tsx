@@ -202,7 +202,7 @@ export default function RapportActivite() {
                 <DelaiCard titre='Délai de traitement moyen' stats={data.delais.traitement} />
               </div>
               <p className='mt-2 text-xs text-muted-foreground'>
-                Délai de prise en charge : entre la réception et la première prise de contact avec le bénéficiaire. Délai de traitement : entre la réception et le passage en comité. Calculés sur une fenêtre glissante de 3 mois pour rester statistiquement significatifs.
+                Délai de prise en charge : entre la réception et la première prise de contact avec le bénéficiaire. Délai de traitement : entre la réception et le premier passage en statut « En cours » ou « Refusée ». Calculés sur une fenêtre glissante de 3 mois pour rester statistiquement significatifs.
               </p>
             </section>
 
