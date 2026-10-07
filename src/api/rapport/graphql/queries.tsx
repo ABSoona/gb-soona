@@ -5,6 +5,7 @@ export const GET_RAPPORT_MENSUEL_DATA = gql`
     demandes(orderBy: [{ createdAt: Asc }]) {
       id
       createdAt
+      status
       demandeStatusHistories(orderBy: { createdAt: Asc }) {
         status
         createdAt
