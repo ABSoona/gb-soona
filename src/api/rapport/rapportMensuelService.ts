@@ -23,6 +23,7 @@ type ActivityEntry = {
 type DemandeEntry = {
   id: string;
   createdAt: string | null;
+  status: string;
   demandeStatusHistories: StatusHistoryEntry[];
   demandeActivities: ActivityEntry[];
 };
@@ -66,6 +67,12 @@ type DelaisDemande = {
 
 type BacklogDemande = {
   createdAt: Date;
+  // Les imports en masse fixent parfois le statut final directement a la
+  // creation, sans jamais passer par un changement de statut trace (donc
+  // sans entree dans demandeStatusHistories). Dans ce cas, le statut n'a
+  // jamais ete "recue" : la demande ne doit jamais compter dans le backlog,
+  // meme si elle n'a pas d'historique.
+  jamaisRecue: boolean;
   // Date a laquelle la demande quitte le "backlog" (premier changement de
   // statut OU deuxieme activite, la premiere des deux a survenir — la
   // premiere activite est toujours la creation automatique "Demande
@@ -153,8 +160,13 @@ export function useRapportMensuelService() {
         datesSortieBacklog.length > 0
           ? new Date(Math.min(...datesSortieBacklog.map((d) => d.getTime())))
           : null;
+      // Sans historique de statut, la demande n'a jamais changé de statut
+      // depuis sa création : son statut actuel est donc celui qu'elle a
+      // toujours eu. Si ce n'est pas "recue" (import en masse avec statut
+      // final fixé directement), elle ne doit jamais compter dans le backlog.
+      const jamaisRecue = demande.demandeStatusHistories.length === 0 && demande.status !== 'recue';
 
-      demandesPourBacklog.push({ createdAt: dateCreation, sortieBacklogDate });
+      demandesPourBacklog.push({ createdAt: dateCreation, jamaisRecue, sortieBacklogDate });
 
       const enVisite = premierStatut(demande.demandeStatusHistories, ['en_visite']);
       let delaiVisiteJours: number | null = null;
@@ -236,6 +248,7 @@ export function useRapportMensuelService() {
       // au-delà de la création) à ce moment précis dans le temps.
       const finDeMois = endOfMonth(date);
       const backlogFinDeMois = demandesPourBacklog.reduce((count, d) => {
+        if (d.jamaisRecue) return count;
         if (d.createdAt > finDeMois) return count;
         if (d.sortieBacklogDate !== null && d.sortieBacklogDate <= finDeMois) return count;
         return count + 1;
