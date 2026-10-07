@@ -105,3 +105,11 @@ export const DEMANDE_ACTIVITY_FIELDS = gql`
     }
   }
 `;
+
+export const DEMANDE_STATUS_HISTORY_FIELDS = gql`
+  fragment DemandeStatusHistoryFields on DemandeStatusHistory {
+    id
+    status
+    createdAt
+  }
+`;

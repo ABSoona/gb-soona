@@ -13,6 +13,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
   import { TabsContent } from '@radix-ui/react-tabs';
   import { Button } from '@/components/ui/button';
   import { DemandeActivityTimeline } from './DemandeActivityTimeline';
+  import { DemandeStatusHistoryTimeline } from './DemandeStatusHistoryTimeline';
   import { VisiteList } from '@/features/visites/components/visite-cads-list';
   import { Demande, DemandeStatus } from '@/model/demande/Demande';
   import { Visite } from '@/model/visite/Visite';
@@ -131,15 +132,19 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
         </CardHeader>
         <CardContent className="space-y-2 max-h-[600px] overflow-y-auto pr-2">
           <Tabs defaultValue="Activites" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsList className="grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="Activites">Activités</TabsTrigger>
               <TabsTrigger value="Visites">Visites</TabsTrigger>
+              <TabsTrigger value="Historique">Historique</TabsTrigger>
             </TabsList>
             <TabsContent value="Activites">
               <DemandeActivityTimeline demandeId={currentRow.id} activities={currentRow.demandeActivities} />
             </TabsContent>
             <TabsContent value="Visites">
               <VisiteList demandeId={currentRow.id} onRapportAdded={onRapportAdded} onVisitDone={onVisitDone}/>
+            </TabsContent>
+            <TabsContent value="Historique">
+              <DemandeStatusHistoryTimeline history={currentRow.demandeStatusHistories ?? []} />
             </TabsContent>
           </Tabs>
         </CardContent>

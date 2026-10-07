@@ -1,7 +1,7 @@
 import { AIDE_FIELDS, AIDE_FIELDS_LIGHT } from '@/api/aide/graphql/fragment';
 import { CONTACT_FIELDS, CONTACT_FIELDS_LIGHT } from '@/api/contact/graphql/fragment';
 import { gql } from '@apollo/client';
-import { DEMANDE_ACTIVITY_FIELDS, DEMANDE_AUTRE_CHARGE_FIELDS, DEMANDE_DETTE_DETAIL_FIELDS, DEMANDE_FIELDS, DEMANDE_SITUATION_HISTORY_FIELDS } from './fragment';
+import { DEMANDE_ACTIVITY_FIELDS, DEMANDE_AUTRE_CHARGE_FIELDS, DEMANDE_DETTE_DETAIL_FIELDS, DEMANDE_FIELDS, DEMANDE_SITUATION_HISTORY_FIELDS, DEMANDE_STATUS_HISTORY_FIELDS } from './fragment';
 
 export const GET_DEMANDES = gql`
   query GetDemandesWithContactAides($skip: Float, $take: Float, $where : DemandeWhereInput) {
@@ -16,6 +16,9 @@ export const GET_DEMANDES = gql`
       demandeActivities(orderBy: { createdAt: Desc }) {
         ...DemandeActivityFields
       }
+      demandeStatusHistories(orderBy: { createdAt: Desc }) {
+        ...DemandeStatusHistoryFields
+      }
     }
     meta: _demandesMeta(where: $where) {
       count
@@ -25,6 +28,7 @@ export const GET_DEMANDES = gql`
   ${CONTACT_FIELDS_LIGHT}
   ${AIDE_FIELDS_LIGHT}
   ${DEMANDE_ACTIVITY_FIELDS}
+  ${DEMANDE_STATUS_HISTORY_FIELDS}
 `;
 
 export const CREATE_DEMANDE = gql`
@@ -43,10 +47,14 @@ export const UPDATE_DEMANDE = gql`
       demandeActivities(orderBy: { createdAt: Desc }) {
         ...DemandeActivityFields
       }
+      demandeStatusHistories(orderBy: { createdAt: Desc }) {
+        ...DemandeStatusHistoryFields
+      }
     }
   }
   ${DEMANDE_FIELDS}
   ${DEMANDE_ACTIVITY_FIELDS}
+  ${DEMANDE_STATUS_HISTORY_FIELDS}
 `;
 
 export const DELETE_DEMANDE = gql`
