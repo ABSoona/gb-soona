@@ -2,10 +2,13 @@ import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import {
   differenceInCalendarDays,
+  eachDayOfInterval,
   eachMonthOfInterval,
+  endOfDay,
   endOfMonth,
   format,
   parse,
+  startOfMonth,
 } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { GET_RAPPORT_MENSUEL_DATA } from './graphql/queries';
@@ -46,7 +49,7 @@ export type RapportMensuelRow = {
   dossiersAbandonnes: number;
   delaiMoyenEnCoursRefuseeJours: number | null;
   delaiMoyenPriseEnChargeJours: number | null;
-  backlogFinDeMois: number;
+  backlogMoyenDuMois: number | null;
 };
 
 type MonthBucket = {
@@ -220,6 +223,8 @@ export function useRapportMensuelService() {
 
     if (buckets.size === 0) return [];
 
+    const maintenant = new Date();
+
     const moisTries = Array.from(buckets.keys()).sort();
     const premierMoisDonnees = parse(moisTries[0] + '-01', 'yyyy-MM-dd', new Date());
     const dernierMois = parse(moisTries[moisTries.length - 1] + '-01', 'yyyy-MM-dd', new Date());
@@ -243,16 +248,30 @@ export function useRapportMensuelService() {
         if (d.delaiPriseEnChargeJours !== null) delaisPriseEnChargeFenetre.push(d.delaiPriseEnChargeJours);
       });
 
-      // Backlog figé à la fin du mois de la ligne : demandes déjà créées à
-      // cette date et toujours "vierges" (statut recue, aucune activité
-      // au-delà de la création) à ce moment précis dans le temps.
-      const finDeMois = endOfMonth(date);
-      const backlogFinDeMois = demandesPourBacklog.reduce((count, d) => {
-        if (d.jamaisRecue) return count;
-        if (d.createdAt > finDeMois) return count;
-        if (d.sortieBacklogDate !== null && d.sortieBacklogDate <= finDeMois) return count;
-        return count + 1;
-      }, 0);
+      // Backlog moyen du mois : moyenne du backlog figé (demandes déjà
+      // créées et toujours "vierges" — statut recue, aucune activité
+      // au-delà de la création) mesuré à la fin de chaque jour du mois.
+      // Un instantané unique en fin de mois peut masquer un pic survenu
+      // en cours de mois ; la moyenne journalière est plus représentative.
+      const backlogACetteDate = (cutoff: Date) =>
+        demandesPourBacklog.reduce((count, d) => {
+          if (d.jamaisRecue) return count;
+          if (d.createdAt > cutoff) return count;
+          if (d.sortieBacklogDate !== null && d.sortieBacklogDate <= cutoff) return count;
+          return count + 1;
+        }, 0);
+
+      const debutDuMois = startOfMonth(date);
+      const dernierJourACompter = endOfMonth(date) < maintenant ? endOfMonth(date) : maintenant;
+      let backlogMoyenDuMois: number | null = null;
+      if (debutDuMois <= dernierJourACompter) {
+        const joursDuMois = eachDayOfInterval({ start: debutDuMois, end: dernierJourACompter });
+        const totalBacklogJournalier = joursDuMois.reduce(
+          (sum, jour) => sum + backlogACetteDate(endOfDay(jour)),
+          0
+        );
+        backlogMoyenDuMois = Math.round((totalBacklogJournalier / joursDuMois.length) * 10) / 10;
+      }
 
       return {
         mois: key,
@@ -266,7 +285,7 @@ export function useRapportMensuelService() {
         delaiMoyenVisiteJours: moyenneJours(delaisVisiteFenetre),
         dossiersAbandonnes: bucket.dossiersAbandonnes,
         delaiMoyenEnCoursRefuseeJours: moyenneJours(delaisTraitementFenetre),
-        backlogFinDeMois,
+        backlogMoyenDuMois,
       };
     });
   }, [data]);
