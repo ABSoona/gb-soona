@@ -29,7 +29,7 @@ const CSV_HEADERS = [
   "Délai moyen jusqu'à visite (j)",
   'Délai moyen de traitement (j)',
   'Abandonnée',
-  'Backlog fin de mois',
+  'Backlog moyen du mois',
 ]
 
 const csvField = (value: string | number) => JSON.stringify(value ?? '')
@@ -49,7 +49,7 @@ const buildCsv = (rows: RapportMensuelRow[]) => {
         csvField(row.delaiMoyenVisiteJours ?? ''),
         csvField(row.delaiMoyenEnCoursRefuseeJours ?? ''),
         csvField(row.dossiersAbandonnes),
-        csvField(row.backlogFinDeMois),
+        csvField(row.backlogMoyenDuMois ?? ''),
       ].join(',')
     ),
   ].join('\n')
@@ -96,7 +96,7 @@ export default function TableauMensuel() {
         </div>
 
         <p className='mb-4 text-xs text-muted-foreground'>
-          Les délais moyens sont calculés sur une fenêtre glissante des 3 mois se terminant au mois de la ligne (ex : la ligne de septembre couvre juillet, août et septembre). Acceptées/Refusées : premier passage en statut « En cours »/« Refusée » (= Demande Traités réparti par issue, même calcul que le rapport d'activité). Backlog fin de mois : nombre de demandes déjà reçues à cette date et encore au statut « reçue » sans aucune activité au-delà de la création (figé dans le temps, ne change pas si le dossier est traité plus tard).
+          Les délais moyens sont calculés sur une fenêtre glissante des 3 mois se terminant au mois de la ligne (ex : la ligne de septembre couvre juillet, août et septembre). Acceptées/Refusées : premier passage en statut « En cours »/« Refusée » (= Demande Traités réparti par issue, même calcul que le rapport d'activité). Backlog moyen du mois : moyenne du nombre de demandes encore « vierges » (statut reçue, aucune activité au-delà de la création), mesuré à la fin de chaque jour du mois — figé dans le temps, ne change pas si les dossiers sont traités plus tard.
         </p>
 
         {loading ? (
@@ -116,7 +116,7 @@ export default function TableauMensuel() {
                   <TableHead className='text-right'>Délai moyen jusqu'à visite</TableHead>
                   <TableHead className='text-right'>Délai moyen de traitement</TableHead>
                   <TableHead className='text-right'>Abandonnée</TableHead>
-                  <TableHead className='text-right'>Backlog fin de mois</TableHead>
+                  <TableHead className='text-right'>Backlog moyen du mois</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -139,7 +139,7 @@ export default function TableauMensuel() {
                       <TableCell className='text-right'>{formatDelai(row.delaiMoyenVisiteJours)}</TableCell>
                       <TableCell className='text-right'>{formatDelai(row.delaiMoyenEnCoursRefuseeJours)}</TableCell>
                       <TableCell className='text-right'>{row.dossiersAbandonnes}</TableCell>
-                      <TableCell className='text-right'>{row.backlogFinDeMois}</TableCell>
+                      <TableCell className='text-right'>{row.backlogMoyenDuMois ?? '—'}</TableCell>
                     </TableRow>
                   ))
                 )}
