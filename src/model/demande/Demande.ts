@@ -73,6 +73,13 @@ export const DemandeActivitySchema = z.object({
 });
 export type DemandeActivity = z.infer<typeof DemandeActivitySchema>;
 
+export const DemandeStatusHistorySchema = z.object({
+  id: z.number(),
+  status: z.string(),
+  createdAt: z.coerce.date(),
+});
+export type DemandeStatusHistoryEntry = z.infer<typeof DemandeStatusHistorySchema>;
+
 export const DemandeAutreChargeSchema = z.object({
   id: z.number(),
   nom: z.string(),
@@ -150,6 +157,7 @@ export const demandeSchema = z.object({
   autresAides: z.string().optional(),
   categorieDemandeur: categorieSchema.optional().nullable(),
   demandeActivities: z.array(DemandeActivitySchema),
+  demandeStatusHistories: z.array(DemandeStatusHistorySchema).optional(),
   acteur : userSchema,
   proprietaire : userSchema,
   dernierContact:z.string().optional(),
