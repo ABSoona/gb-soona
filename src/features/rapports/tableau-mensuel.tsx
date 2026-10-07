@@ -22,7 +22,10 @@ const CSV_HEADERS = [
   'Mois',
   'Demandes reçues',
   'Demande Traités',
+  'Demandes acceptées',
+  'Demandes refusées',
   'Visites',
+  'Délai moyen de prise en charge (j)',
   "Délai moyen jusqu'à visite (j)",
   'Délai moyen de traitement (j)',
   'Abandonnée',
@@ -38,7 +41,10 @@ const buildCsv = (rows: RapportMensuelRow[]) => {
         csvField(row.moisLabel),
         csvField(row.demandesRecues),
         csvField(row.passeesEnCoursRefusee),
+        csvField(row.demandesAcceptees),
+        csvField(row.demandesRefusees),
         csvField(row.visitesNonAnnulees),
+        csvField(row.delaiMoyenPriseEnChargeJours ?? ''),
         csvField(row.delaiMoyenVisiteJours ?? ''),
         csvField(row.delaiMoyenEnCoursRefuseeJours ?? ''),
         csvField(row.dossiersAbandonnes),
@@ -88,7 +94,7 @@ export default function TableauMensuel() {
         </div>
 
         <p className='mb-4 text-xs text-muted-foreground'>
-          Les délais moyens sont calculés sur une fenêtre glissante des 3 mois se terminant au mois de la ligne (ex : la ligne de septembre couvre juillet, août et septembre).
+          Les délais moyens sont calculés sur une fenêtre glissante des 3 mois se terminant au mois de la ligne (ex : la ligne de septembre couvre juillet, août et septembre). Acceptées/Refusées : premier passage en statut « En cours »/« Refusée » (= Demande Traités réparti par issue, même calcul que le rapport d'activité).
         </p>
 
         {loading ? (
@@ -101,7 +107,10 @@ export default function TableauMensuel() {
                   <TableHead>Mois</TableHead>
                   <TableHead className='text-right'>Demandes reçues</TableHead>
                   <TableHead className='text-right'>Demande Traités</TableHead>
+                  <TableHead className='text-right'>Acceptées</TableHead>
+                  <TableHead className='text-right'>Refusées</TableHead>
                   <TableHead className='text-right'>Visites</TableHead>
+                  <TableHead className='text-right'>Délai moyen de prise en charge</TableHead>
                   <TableHead className='text-right'>Délai moyen jusqu'à visite</TableHead>
                   <TableHead className='text-right'>Délai moyen de traitement</TableHead>
                   <TableHead className='text-right'>Abandonnée</TableHead>
@@ -110,7 +119,7 @@ export default function TableauMensuel() {
               <TableBody>
                 {rows.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className='text-center text-muted-foreground'>
+                    <TableCell colSpan={10} className='text-center text-muted-foreground'>
                       Aucune donnée disponible.
                     </TableCell>
                   </TableRow>
@@ -120,7 +129,10 @@ export default function TableauMensuel() {
                       <TableCell className='font-medium capitalize'>{row.moisLabel}</TableCell>
                       <TableCell className='text-right'>{row.demandesRecues}</TableCell>
                       <TableCell className='text-right'>{row.passeesEnCoursRefusee}</TableCell>
+                      <TableCell className='text-right'>{row.demandesAcceptees}</TableCell>
+                      <TableCell className='text-right'>{row.demandesRefusees}</TableCell>
                       <TableCell className='text-right'>{row.visitesNonAnnulees}</TableCell>
+                      <TableCell className='text-right'>{formatDelai(row.delaiMoyenPriseEnChargeJours)}</TableCell>
                       <TableCell className='text-right'>{formatDelai(row.delaiMoyenVisiteJours)}</TableCell>
                       <TableCell className='text-right'>{formatDelai(row.delaiMoyenEnCoursRefuseeJours)}</TableCell>
                       <TableCell className='text-right'>{row.dossiersAbandonnes}</TableCell>

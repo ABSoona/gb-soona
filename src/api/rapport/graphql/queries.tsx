@@ -9,6 +9,10 @@ export const GET_RAPPORT_MENSUEL_DATA = gql`
         status
         createdAt
       }
+      demandeActivities(orderBy: { createdAt: Asc }) {
+        typeField
+        createdAt
+      }
     }
     visites(orderBy: [{ createdAt: Asc }]) {
       id
