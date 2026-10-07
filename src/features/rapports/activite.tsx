@@ -189,7 +189,7 @@ export default function RapportActivite() {
                 <StatCard value={data.demBacklog} label='Backlog' />
               </div>
               <p className='mt-2 text-xs text-muted-foreground'>
-                Acceptées/Refusées : basées sur la date de décision. Backlog : stock total des demandes au statut « reçue », indépendant de la période.
+                Acceptées : premier passage en statut « En cours ». Refusées : premier passage en statut « Refusée » (Acceptées + Refusées = Demandes Traités du tableau rectificatif mensuel). Backlog : stock total des demandes au statut « reçue », indépendant de la période.
               </p>
             </section>
 
