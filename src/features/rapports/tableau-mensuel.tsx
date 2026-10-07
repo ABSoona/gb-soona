@@ -29,6 +29,7 @@ const CSV_HEADERS = [
   "Délai moyen jusqu'à visite (j)",
   'Délai moyen de traitement (j)',
   'Abandonnée',
+  'Backlog fin de mois',
 ]
 
 const csvField = (value: string | number) => JSON.stringify(value ?? '')
@@ -48,6 +49,7 @@ const buildCsv = (rows: RapportMensuelRow[]) => {
         csvField(row.delaiMoyenVisiteJours ?? ''),
         csvField(row.delaiMoyenEnCoursRefuseeJours ?? ''),
         csvField(row.dossiersAbandonnes),
+        csvField(row.backlogFinDeMois),
       ].join(',')
     ),
   ].join('\n')
@@ -94,7 +96,7 @@ export default function TableauMensuel() {
         </div>
 
         <p className='mb-4 text-xs text-muted-foreground'>
-          Les délais moyens sont calculés sur une fenêtre glissante des 3 mois se terminant au mois de la ligne (ex : la ligne de septembre couvre juillet, août et septembre). Acceptées/Refusées : premier passage en statut « En cours »/« Refusée » (= Demande Traités réparti par issue, même calcul que le rapport d'activité).
+          Les délais moyens sont calculés sur une fenêtre glissante des 3 mois se terminant au mois de la ligne (ex : la ligne de septembre couvre juillet, août et septembre). Acceptées/Refusées : premier passage en statut « En cours »/« Refusée » (= Demande Traités réparti par issue, même calcul que le rapport d'activité). Backlog fin de mois : nombre de demandes déjà reçues à cette date et encore au statut « reçue » sans aucune activité au-delà de la création (figé dans le temps, ne change pas si le dossier est traité plus tard).
         </p>
 
         {loading ? (
@@ -114,12 +116,13 @@ export default function TableauMensuel() {
                   <TableHead className='text-right'>Délai moyen jusqu'à visite</TableHead>
                   <TableHead className='text-right'>Délai moyen de traitement</TableHead>
                   <TableHead className='text-right'>Abandonnée</TableHead>
+                  <TableHead className='text-right'>Backlog fin de mois</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {rows.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={10} className='text-center text-muted-foreground'>
+                    <TableCell colSpan={11} className='text-center text-muted-foreground'>
                       Aucune donnée disponible.
                     </TableCell>
                   </TableRow>
@@ -136,6 +139,7 @@ export default function TableauMensuel() {
                       <TableCell className='text-right'>{formatDelai(row.delaiMoyenVisiteJours)}</TableCell>
                       <TableCell className='text-right'>{formatDelai(row.delaiMoyenEnCoursRefuseeJours)}</TableCell>
                       <TableCell className='text-right'>{row.dossiersAbandonnes}</TableCell>
+                      <TableCell className='text-right'>{row.backlogFinDeMois}</TableCell>
                     </TableRow>
                   ))
                 )}

@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import {
   differenceInCalendarDays,
   eachMonthOfInterval,
+  endOfMonth,
   format,
   parse,
 } from 'date-fns';
@@ -44,6 +45,7 @@ export type RapportMensuelRow = {
   dossiersAbandonnes: number;
   delaiMoyenEnCoursRefuseeJours: number | null;
   delaiMoyenPriseEnChargeJours: number | null;
+  backlogFinDeMois: number;
 };
 
 type MonthBucket = {
@@ -60,6 +62,15 @@ type DelaisDemande = {
   delaiVisiteJours: number | null;
   delaiTraitementJours: number | null;
   delaiPriseEnChargeJours: number | null;
+};
+
+type BacklogDemande = {
+  createdAt: Date;
+  // Date a laquelle la demande quitte le "backlog" (premier changement de
+  // statut OU deuxieme activite, la premiere des deux a survenir — la
+  // premiere activite est toujours la creation automatique "Demande
+  // Reçue"). `null` si elle n'en est jamais sortie a ce jour.
+  sortieBacklogDate: Date | null;
 };
 
 const RAPPORT_MOIS_DEBUT = new Date(2026, 0, 1);
@@ -116,11 +127,34 @@ export function useRapportMensuelService() {
     // utilisés ensuite pour une moyenne glissante sur 3 mois.
     const delaisParDemande: DelaisDemande[] = [];
 
+    // Pour le backlog figé à fin de mois : une demande par ligne, avec la
+    // date a laquelle elle a cesse d'etre "vierge" (voir BacklogDemande).
+    const demandesPourBacklog: BacklogDemande[] = [];
+
     demandes.forEach((demande) => {
       if (!demande.createdAt) return;
       const dateCreation = new Date(demande.createdAt);
 
       getBucket(monthKey(dateCreation)).demandesRecues += 1;
+
+      const premierChangementStatut = [...demande.demandeStatusHistories]
+        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())[0];
+      // La 1re activité est toujours la création automatique "Demande Reçue" ;
+      // la 2e (s'il y en a une) est le premier évènement réel sur le dossier.
+      const activitesTriees = [...(demande.demandeActivities ?? [])]
+        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      const deuxiemeActivite = activitesTriees[1];
+
+      const datesSortieBacklog = [
+        premierChangementStatut ? new Date(premierChangementStatut.createdAt) : null,
+        deuxiemeActivite ? new Date(deuxiemeActivite.createdAt) : null,
+      ].filter((d): d is Date => d !== null);
+      const sortieBacklogDate =
+        datesSortieBacklog.length > 0
+          ? new Date(Math.min(...datesSortieBacklog.map((d) => d.getTime())))
+          : null;
+
+      demandesPourBacklog.push({ createdAt: dateCreation, sortieBacklogDate });
 
       const enVisite = premierStatut(demande.demandeStatusHistories, ['en_visite']);
       let delaiVisiteJours: number | null = null;
@@ -197,6 +231,16 @@ export function useRapportMensuelService() {
         if (d.delaiPriseEnChargeJours !== null) delaisPriseEnChargeFenetre.push(d.delaiPriseEnChargeJours);
       });
 
+      // Backlog figé à la fin du mois de la ligne : demandes déjà créées à
+      // cette date et toujours "vierges" (statut recue, aucune activité
+      // au-delà de la création) à ce moment précis dans le temps.
+      const finDeMois = endOfMonth(date);
+      const backlogFinDeMois = demandesPourBacklog.reduce((count, d) => {
+        if (d.createdAt > finDeMois) return count;
+        if (d.sortieBacklogDate !== null && d.sortieBacklogDate <= finDeMois) return count;
+        return count + 1;
+      }, 0);
+
       return {
         mois: key,
         moisLabel: capitalize(format(date, 'MMMM yyyy', { locale: fr })),
@@ -209,6 +253,7 @@ export function useRapportMensuelService() {
         delaiMoyenVisiteJours: moyenneJours(delaisVisiteFenetre),
         dossiersAbandonnes: bucket.dossiersAbandonnes,
         delaiMoyenEnCoursRefuseeJours: moyenneJours(delaisTraitementFenetre),
+        backlogFinDeMois,
       };
     });
   }, [data]);
