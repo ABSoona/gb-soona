@@ -270,7 +270,7 @@ export function useRapportMensuelService() {
           (sum, jour) => sum + backlogACetteDate(endOfDay(jour)),
           0
         );
-        backlogMoyenDuMois = Math.round((totalBacklogJournalier / joursDuMois.length) * 10) / 10;
+        backlogMoyenDuMois = Math.round(totalBacklogJournalier / joursDuMois.length);
       }
 
       return {
