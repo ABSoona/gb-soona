@@ -1,6 +1,17 @@
 import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
+import { eachDayOfInterval, endOfDay } from 'date-fns';
 import { GET_RAPPORT_DEPARTEMENTS_DATA } from './graphql/queries';
+
+type StatusHistoryEntry = {
+  status: string;
+  createdAt: string;
+};
+
+type ActivityEntry = {
+  typeField: string;
+  createdAt: string;
+};
 
 type DemandeEntry = {
   id: string;
@@ -8,6 +19,8 @@ type DemandeEntry = {
   createdAt: string | null;
   decisionDate: string | null;
   contact: { codePostal: number | null } | null;
+  demandeStatusHistories: StatusHistoryEntry[];
+  demandeActivities: ActivityEntry[];
 };
 
 export type RapportDepartementRow = {
@@ -34,6 +47,52 @@ const dansLaPeriode = (dateIso: string | null, debut: Date, fin: Date): boolean 
   return date >= debut && date <= fin;
 };
 
+// Même définition "backlog" que le tableau rectificatif mensuel : une
+// demande sans historique de statut n'a jamais changé depuis sa création
+// (donc son statut actuel est celui qu'elle a toujours eu — les imports en
+// masse fixent parfois le statut final directement, sans jamais passer par
+// un changement tracé). Si ce statut n'est pas "recue", elle ne compte
+// jamais dans le backlog, même sans historique.
+type BacklogDemande = {
+  departement: string;
+  createdAt: Date;
+  jamaisRecue: boolean;
+  sortieBacklogDate: Date | null;
+};
+
+const calculerBacklogDemande = (demande: DemandeEntry): BacklogDemande | null => {
+  if (!demande.createdAt) return null;
+  const createdAt = new Date(demande.createdAt);
+
+  const premierChangementStatut = [...demande.demandeStatusHistories].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  )[0];
+  // La 1re activité est toujours la création automatique "Demande Reçue" ;
+  // la 2e (s'il y en a une) est le premier évènement réel sur le dossier.
+  const activitesTriees = [...(demande.demandeActivities ?? [])].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+  const deuxiemeActivite = activitesTriees[1];
+
+  const datesSortieBacklog = [
+    premierChangementStatut ? new Date(premierChangementStatut.createdAt) : null,
+    deuxiemeActivite ? new Date(deuxiemeActivite.createdAt) : null,
+  ].filter((d): d is Date => d !== null);
+  const sortieBacklogDate =
+    datesSortieBacklog.length > 0
+      ? new Date(Math.min(...datesSortieBacklog.map((d) => d.getTime())))
+      : null;
+
+  const jamaisRecue = demande.demandeStatusHistories.length === 0 && demande.status !== 'recue';
+
+  return {
+    departement: extraireDepartement(demande.contact?.codePostal),
+    createdAt,
+    jamaisRecue,
+    sortieBacklogDate,
+  };
+};
+
 export function useRapportDepartementsService(debut?: Date, fin?: Date) {
   const { data, loading, error } = useQuery(GET_RAPPORT_DEPARTEMENTS_DATA);
 
@@ -52,6 +111,8 @@ export function useRapportDepartementsService(debut?: Date, fin?: Date) {
       return row;
     };
 
+    const demandesPourBacklog: BacklogDemande[] = [];
+
     demandes.forEach((demande) => {
       const departement = extraireDepartement(demande.contact?.codePostal);
 
@@ -67,10 +128,33 @@ export function useRapportDepartementsService(debut?: Date, fin?: Date) {
         }
       }
 
-      if (demande.status === 'recue') {
-        getRow(departement).backlog += 1;
-      }
+      const backlogDemande = calculerBacklogDemande(demande);
+      if (backlogDemande) demandesPourBacklog.push(backlogDemande);
     });
+
+    // Backlog moyen par département sur la période sélectionnée : moyenne
+    // du backlog figé (demandes encore "vierges") mesuré à la fin de
+    // chaque jour de la période, plafonné à aujourd'hui.
+    const maintenant = new Date();
+    const dernierJourACompter = fin < maintenant ? fin : maintenant;
+    if (debut <= dernierJourACompter) {
+      const joursDeLaPeriode = eachDayOfInterval({ start: debut, end: dernierJourACompter });
+      const sommeParDepartement = new Map<string, number>();
+
+      joursDeLaPeriode.forEach((jour) => {
+        const cutoff = endOfDay(jour);
+        demandesPourBacklog.forEach((d) => {
+          if (d.jamaisRecue) return;
+          if (d.createdAt > cutoff) return;
+          if (d.sortieBacklogDate !== null && d.sortieBacklogDate <= cutoff) return;
+          sommeParDepartement.set(d.departement, (sommeParDepartement.get(d.departement) ?? 0) + 1);
+        });
+      });
+
+      sommeParDepartement.forEach((somme, departement) => {
+        getRow(departement).backlog = Math.round(somme / joursDeLaPeriode.length);
+      });
+    }
 
     const rows = Array.from(parDepartement.values()).sort((a, b) => {
       if (a.departement === NON_COMMUNIQUE) return 1;

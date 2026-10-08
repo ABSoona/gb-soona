@@ -23,7 +23,7 @@ import { RapportDepartementRow, useRapportDepartementsService } from '@/api/rapp
 
 type Periode = 'mois' | 'moisPrecedent' | 'annee' | 'anneePrecedente' | 'custom'
 
-const CSV_HEADERS = ['Département', 'Reçues', 'Acceptées', 'Refusées', 'Backlog']
+const CSV_HEADERS = ['Département', 'Reçues', 'Acceptées', 'Refusées', 'Backlog moyen']
 
 const csvField = (value: string | number) => JSON.stringify(value ?? '')
 
@@ -140,7 +140,7 @@ export default function RepartitionDepartements() {
         </div>
 
         <p className='mb-4 text-xs text-muted-foreground'>
-          Reçues et Acceptées/Refusées sont comptées sur la période sélectionnée (respectivement via la date de création et la date de décision). Le Backlog est le stock total actuel des demandes au statut « reçue », indépendant de la période.
+          Reçues et Acceptées/Refusées sont comptées sur la période sélectionnée (respectivement via la date de création et la date de décision). Backlog moyen : moyenne du nombre de demandes encore « vierges » (statut reçue, aucune activité au-delà de la création), mesurée à la fin de chaque jour de la période — figé dans le temps, ne change pas si les dossiers sont traités plus tard.
         </p>
 
         {loading ? (
@@ -154,7 +154,7 @@ export default function RepartitionDepartements() {
                   <TableHead className='text-right'>Reçues</TableHead>
                   <TableHead className='text-right'>Acceptées</TableHead>
                   <TableHead className='text-right'>Refusées</TableHead>
-                  <TableHead className='text-right'>Backlog</TableHead>
+                  <TableHead className='text-right'>Backlog moyen</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

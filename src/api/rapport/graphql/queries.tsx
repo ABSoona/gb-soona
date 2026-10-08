@@ -33,6 +33,14 @@ export const GET_RAPPORT_DEPARTEMENTS_DATA = gql`
       contact {
         codePostal
       }
+      demandeStatusHistories(orderBy: { createdAt: Asc }) {
+        status
+        createdAt
+      }
+      demandeActivities(orderBy: { createdAt: Asc }) {
+        typeField
+        createdAt
+      }
     }
   }
 `;
