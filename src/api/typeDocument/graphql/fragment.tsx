@@ -10,5 +10,7 @@ export const TYPE_DOCUMENT_FIELDS = gql`
     isInternal
     createdAt
     updatedAt
+    publicUploadEnabled
+    description
   }
 `;

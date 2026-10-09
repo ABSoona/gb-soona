@@ -24,6 +24,11 @@ export async function downloadDocument(docId: string, filename: string) {
   }
 }
 
+export async function markDocumentConsulted(docId: string) {
+  const response = await axiosInstance.patch(`/documents/${docId}/mark-consulted`);
+  return response.data;
+}
+
 export async function previewDocument(doc: Document) {
   const response = await axiosInstance.get(`/documents/${doc.id}/contenu`, {
     responseType: 'blob',

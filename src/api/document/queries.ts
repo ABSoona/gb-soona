@@ -46,12 +46,40 @@ export const GET_DOCUMENTS = gql`
       updatedAt
       contenu
       name
-      typeDocument {  
+      uploadedByBeneficiaire
+      consultedAt
+      typeDocument {
         id
         label
         rattachement
         internalCode
        }
+    }
+  }
+`;
+
+// Notifications de la cloche : justificatifs deposes par le beneficiaire et
+// pas encore consultes par un membre de l'equipe.
+export const GET_BENEFICIAIRE_UPLOAD_NOTIFICATIONS = gql`
+  query beneficiaireUploadNotifications {
+    documents(
+      where: { uploadedByBeneficiaire: { equals: true }, consultedAt: { equals: null } }
+      orderBy: [{ createdAt: Desc }]
+    ) {
+      id
+      name
+      createdAt
+      typeDocument {
+        label
+      }
+      demande {
+        id
+      }
+      contact {
+        id
+        nom
+        prenom
+      }
     }
   }
 `;

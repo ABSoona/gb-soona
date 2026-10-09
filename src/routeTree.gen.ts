@@ -17,6 +17,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated/route
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
 import { Route as authSignInImport } from './routes/(auth)/sign-in'
 import { Route as authOtpImport } from './routes/(auth)/otp'
+import { Route as authDepotJustificatifsImport } from './routes/(auth)/depot-justificatifs'
 import { Route as auth500Import } from './routes/(auth)/500'
 import { Route as AuthenticatedDemandesIdIndexImport } from './routes/_authenticated/demandes/$id/index'
 import { Route as authDemandesIdFicheVisitePdfImport } from './routes/(auth)/demandes.$id.fiche-visite-pdf'
@@ -63,6 +64,9 @@ const AuthenticatedRapportsIndexLazyImport = createFileRoute(
 )()
 const AuthenticatedHelpCenterIndexLazyImport = createFileRoute(
   '/_authenticated/help-center/',
+)()
+const AuthenticatedEmailTemplatesIndexLazyImport = createFileRoute(
+  '/_authenticated/email-templates/',
 )()
 const AuthenticatedDemandesIndexLazyImport = createFileRoute(
   '/_authenticated/demandes/',
@@ -247,6 +251,12 @@ const authOtpRoute = authOtpImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const authDepotJustificatifsRoute = authDepotJustificatifsImport.update({
+  id: '/(auth)/depot-justificatifs',
+  path: '/depot-justificatifs',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const auth500Route = auth500Import.update({
   id: '/(auth)/500',
   path: '/500',
@@ -338,6 +348,17 @@ const AuthenticatedHelpCenterIndexLazyRoute =
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any).lazy(() =>
     import('./routes/_authenticated/help-center/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthenticatedEmailTemplatesIndexLazyRoute =
+  AuthenticatedEmailTemplatesIndexLazyImport.update({
+    id: '/email-templates/',
+    path: '/email-templates/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/email-templates/index.lazy').then(
       (d) => d.Route,
     ),
   )
@@ -632,6 +653,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof auth500Import
       parentRoute: typeof rootRoute
     }
+    '/(auth)/depot-justificatifs': {
+      id: '/(auth)/depot-justificatifs'
+      path: '/depot-justificatifs'
+      fullPath: '/depot-justificatifs'
+      preLoaderRoute: typeof authDepotJustificatifsImport
+      parentRoute: typeof rootRoute
+    }
     '/(auth)/otp': {
       id: '/(auth)/otp'
       path: '/otp'
@@ -884,6 +912,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDemandesIndexLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/email-templates/': {
+      id: '/_authenticated/email-templates/'
+      path: '/email-templates'
+      fullPath: '/email-templates'
+      preLoaderRoute: typeof AuthenticatedEmailTemplatesIndexLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/help-center/': {
       id: '/_authenticated/help-center/'
       path: '/help-center'
@@ -1021,6 +1056,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAidesIndexLazyRoute: typeof AuthenticatedAidesIndexLazyRoute
   AuthenticatedContactsIndexLazyRoute: typeof AuthenticatedContactsIndexLazyRoute
   AuthenticatedDemandesIndexLazyRoute: typeof AuthenticatedDemandesIndexLazyRoute
+  AuthenticatedEmailTemplatesIndexLazyRoute: typeof AuthenticatedEmailTemplatesIndexLazyRoute
   AuthenticatedHelpCenterIndexLazyRoute: typeof AuthenticatedHelpCenterIndexLazyRoute
   AuthenticatedRapportsIndexLazyRoute: typeof AuthenticatedRapportsIndexLazyRoute
   AuthenticatedTasksIndexLazyRoute: typeof AuthenticatedTasksIndexLazyRoute
@@ -1070,6 +1106,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAidesIndexLazyRoute: AuthenticatedAidesIndexLazyRoute,
   AuthenticatedContactsIndexLazyRoute: AuthenticatedContactsIndexLazyRoute,
   AuthenticatedDemandesIndexLazyRoute: AuthenticatedDemandesIndexLazyRoute,
+  AuthenticatedEmailTemplatesIndexLazyRoute:
+    AuthenticatedEmailTemplatesIndexLazyRoute,
   AuthenticatedHelpCenterIndexLazyRoute: AuthenticatedHelpCenterIndexLazyRoute,
   AuthenticatedRapportsIndexLazyRoute: AuthenticatedRapportsIndexLazyRoute,
   AuthenticatedTasksIndexLazyRoute: AuthenticatedTasksIndexLazyRoute,
@@ -1090,6 +1128,7 @@ const AuthenticatedRouteRouteWithChildren =
 export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteRouteWithChildren
   '/500': typeof errors500LazyRoute
+  '/depot-justificatifs': typeof authDepotJustificatifsRoute
   '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
   '/settings': typeof AuthenticatedSettingsRouteLazyRouteWithChildren
@@ -1125,6 +1164,7 @@ export interface FileRoutesByFullPath {
   '/aides': typeof AuthenticatedAidesIndexLazyRoute
   '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
+  '/email-templates': typeof AuthenticatedEmailTemplatesIndexLazyRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
   '/rapports': typeof AuthenticatedRapportsIndexLazyRoute
   '/settings/': typeof AuthenticatedSettingsIndexLazyRoute
@@ -1141,6 +1181,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/500': typeof errors500LazyRoute
+  '/depot-justificatifs': typeof authDepotJustificatifsRoute
   '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
   '/forgot-password': typeof authForgotPasswordLazyRoute
@@ -1175,6 +1216,7 @@ export interface FileRoutesByTo {
   '/aides': typeof AuthenticatedAidesIndexLazyRoute
   '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
+  '/email-templates': typeof AuthenticatedEmailTemplatesIndexLazyRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
   '/rapports': typeof AuthenticatedRapportsIndexLazyRoute
   '/settings': typeof AuthenticatedSettingsIndexLazyRoute
@@ -1193,6 +1235,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/(auth)/500': typeof auth500Route
+  '/(auth)/depot-justificatifs': typeof authDepotJustificatifsRoute
   '/(auth)/otp': typeof authOtpRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteLazyRouteWithChildren
@@ -1229,6 +1272,7 @@ export interface FileRoutesById {
   '/_authenticated/aides/': typeof AuthenticatedAidesIndexLazyRoute
   '/_authenticated/contacts/': typeof AuthenticatedContactsIndexLazyRoute
   '/_authenticated/demandes/': typeof AuthenticatedDemandesIndexLazyRoute
+  '/_authenticated/email-templates/': typeof AuthenticatedEmailTemplatesIndexLazyRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexLazyRoute
   '/_authenticated/rapports/': typeof AuthenticatedRapportsIndexLazyRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexLazyRoute
@@ -1248,6 +1292,7 @@ export interface FileRouteTypes {
   fullPaths:
     | ''
     | '/500'
+    | '/depot-justificatifs'
     | '/otp'
     | '/sign-in'
     | '/settings'
@@ -1283,6 +1328,7 @@ export interface FileRouteTypes {
     | '/aides'
     | '/contacts'
     | '/demandes'
+    | '/email-templates'
     | '/help-center'
     | '/rapports'
     | '/settings/'
@@ -1298,6 +1344,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/500'
+    | '/depot-justificatifs'
     | '/otp'
     | '/sign-in'
     | '/forgot-password'
@@ -1332,6 +1379,7 @@ export interface FileRouteTypes {
     | '/aides'
     | '/contacts'
     | '/demandes'
+    | '/email-templates'
     | '/help-center'
     | '/rapports'
     | '/settings'
@@ -1348,6 +1396,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/(auth)/500'
+    | '/(auth)/depot-justificatifs'
     | '/(auth)/otp'
     | '/(auth)/sign-in'
     | '/_authenticated/settings'
@@ -1384,6 +1433,7 @@ export interface FileRouteTypes {
     | '/_authenticated/aides/'
     | '/_authenticated/contacts/'
     | '/_authenticated/demandes/'
+    | '/_authenticated/email-templates/'
     | '/_authenticated/help-center/'
     | '/_authenticated/rapports/'
     | '/_authenticated/settings/'
@@ -1402,6 +1452,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   auth500Route: typeof auth500Route
+  authDepotJustificatifsRoute: typeof authDepotJustificatifsRoute
   authOtpRoute: typeof authOtpRoute
   authSignInRoute: typeof authSignInRoute
   authForgotPasswordLazyRoute: typeof authForgotPasswordLazyRoute
@@ -1419,6 +1470,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   auth500Route: auth500Route,
+  authDepotJustificatifsRoute: authDepotJustificatifsRoute,
   authOtpRoute: authOtpRoute,
   authSignInRoute: authSignInRoute,
   authForgotPasswordLazyRoute: authForgotPasswordLazyRoute,
@@ -1445,6 +1497,7 @@ export const routeTree = rootRoute
       "children": [
         "/_authenticated",
         "/(auth)/500",
+        "/(auth)/depot-justificatifs",
         "/(auth)/otp",
         "/(auth)/sign-in",
         "/(auth)/forgot-password",
@@ -1483,6 +1536,7 @@ export const routeTree = rootRoute
         "/_authenticated/aides/",
         "/_authenticated/contacts/",
         "/_authenticated/demandes/",
+        "/_authenticated/email-templates/",
         "/_authenticated/help-center/",
         "/_authenticated/rapports/",
         "/_authenticated/tasks/",
@@ -1497,6 +1551,9 @@ export const routeTree = rootRoute
     },
     "/(auth)/500": {
       "filePath": "(auth)/500.tsx"
+    },
+    "/(auth)/depot-justificatifs": {
+      "filePath": "(auth)/depot-justificatifs.tsx"
     },
     "/(auth)/otp": {
       "filePath": "(auth)/otp.tsx"
@@ -1636,6 +1693,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/demandes/": {
       "filePath": "_authenticated/demandes/index.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/email-templates/": {
+      "filePath": "_authenticated/email-templates/index.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/help-center/": {

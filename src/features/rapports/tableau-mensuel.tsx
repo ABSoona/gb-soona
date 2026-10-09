@@ -1,6 +1,7 @@
 import { Download } from 'lucide-react'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { NotificationBell } from '@/components/notification-bell'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -77,6 +78,7 @@ export default function TableauMensuel() {
         <div className='ml-auto flex items-center space-x-4'>
           <Search />
           <ThemeSwitch />
+          <NotificationBell />
           <ProfileDropdown />
         </div>
       </Header>
@@ -96,7 +98,7 @@ export default function TableauMensuel() {
         </div>
 
         <p className='mb-4 text-xs text-muted-foreground'>
-          Les délais moyens sont calculés sur une fenêtre glissante des 3 mois se terminant au mois de la ligne (ex : la ligne de septembre couvre juillet, août et septembre). Acceptées/Refusées : premier passage en statut « En cours »/« Refusée » (= Demande Traités réparti par issue, même calcul que le rapport d'activité). Backlog moyen du mois : moyenne du nombre de demandes encore « vierges » (statut reçue, aucune activité au-delà de la création), mesuré à la fin de chaque jour du mois — figé dans le temps, ne change pas si les dossiers sont traités plus tard.
+          Les délais moyens sont calculés sur une fenêtre glissante des 3 mois se terminant au mois de la ligne (ex : la ligne de septembre couvre juillet, août et septembre). Acceptées/Refusées : premier passage en statut « En cours »/« Refusée » (= Demande Traités réparti par issue, même calcul que le rapport d'activité). Backlog moyen du mois : moyenne du nombre de demandes encore « vierges » (statut reçue, aucune activité au-delà de la création), mesuré à la fin de chaque jour du mois - figé dans le temps, ne change pas si les dossiers sont traités plus tard.
         </p>
 
         {loading ? (

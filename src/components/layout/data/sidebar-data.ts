@@ -161,6 +161,11 @@ export function useSidebarData(): SidebarData {
               url: '/typeDocuments',
               icon: Squircle,
             },
+            {
+              title: "Modèles d'emails",
+              url: '/email-templates',
+              icon: Squircle,
+            },
           ],
         },
         {

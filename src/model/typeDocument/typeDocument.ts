@@ -12,6 +12,8 @@ export const typeDocumentSchema = z.object({
   internalCode: z.string().optional(),
   createdAt: z.string(), // ou z.date() selon ton usage
   updatedAt: z.string(),
+  publicUploadEnabled: z.boolean().optional(),
+  description: z.string().nullable().optional(),
 });
 
 export type TypeDocument = z.infer<typeof typeDocumentSchema>;
