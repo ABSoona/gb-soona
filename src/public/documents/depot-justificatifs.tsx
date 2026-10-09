@@ -107,12 +107,12 @@ export default function DepotJustificatifs() {
                   return (
                     <div
                       key={type.id}
-                      className="flex items-center justify-between gap-3 border rounded-lg p-3"
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border rounded-lg p-3"
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <FileText className="h-5 w-5 text-muted-foreground shrink-0" />
+                      <div className="flex items-start gap-2 min-w-0">
+                        <FileText className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div className="min-w-0">
-                          <p className="text-sm font-medium truncate">{type.label}</p>
+                          <p className="text-sm font-medium">{type.label}</p>
                           {type.description && (
                             <p className="text-xs text-muted-foreground">{type.description}</p>
                           )}
@@ -131,6 +131,7 @@ export default function DepotJustificatifs() {
                         variant="outline"
                         onClick={() => handleChooseFile(type.id)}
                         disabled={isUploading}
+                        className="w-full sm:w-auto shrink-0"
                       >
                         {isUploading ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
