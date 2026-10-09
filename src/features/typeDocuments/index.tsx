@@ -11,9 +11,12 @@ import TypeDocumentProvider from './context/type-demande-contaxt';
 import { notEqual } from 'assert';
 
 export default function SettingsTypeDocument() {
-  const { typeDocuments, loading, error } = useTypeDocumentService({where:
-    {isInternal:{equals:false}}})
-    
+  // Les types internes (ex: Rib) restent verrouilles (nom/rattachement non
+  // editables, cf. TypeDocumentForm) mais doivent rester visibles ici : c'est
+  // le seul endroit permettant d'activer leur visibilite sur la page
+  // publique de depot de justificatifs.
+  const { typeDocuments, loading, error } = useTypeDocumentService()
+
   if (error) {
     handleServerError(error);
   }
