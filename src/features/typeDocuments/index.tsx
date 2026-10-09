@@ -2,6 +2,7 @@
 
 import { useTypeDocumentService } from '@/api/typeDocument/typeDocumentService';
 import AppLayout from '@/components/layout/app-layout';
+import { TypeDocument } from '@/model/typeDocument/typeDocument';
 import { TableSkeleton } from '@/components/ui/skeleton-table';
 import { handleServerError } from '@/utils/handle-server-error';
 import { IconFile } from '@tabler/icons-react';
@@ -11,15 +12,21 @@ import TypeDocumentProvider from './context/type-demande-contaxt';
 import { notEqual } from 'assert';
 
 export default function SettingsTypeDocument() {
-  // Les types internes (ex: Rib) restent verrouilles (nom/rattachement non
-  // editables, cf. TypeDocumentForm) mais doivent rester visibles ici : c'est
-  // le seul endroit permettant d'activer leur visibilite sur la page
-  // publique de depot de justificatifs.
   const { typeDocuments, loading, error } = useTypeDocumentService()
 
   if (error) {
     handleServerError(error);
   }
+
+  // Les types internes (verrouilles : nom/rattachement non editables, cf.
+  // TypeDocumentForm) restent masques ici par defaut, sauf ceux deja
+  // exposes sur la page publique de depot (ex: Rib) : c'est le seul endroit
+  // permettant d'ajuster leur description ou de desactiver cette visibilite.
+  // Un internal qu'on veut exposer pour la premiere fois se bascule donc
+  // cote backend (publicUploadEnabled), pas depuis cet ecran.
+  const visibleTypeDocuments = typeDocuments?.filter(
+    (doc: TypeDocument) => !doc.isInternal || doc.publicUploadEnabled
+  );
 
   return (
     <TypeDocumentProvider>
@@ -46,12 +53,12 @@ export default function SettingsTypeDocument() {
               <p>❌ Erreur lors du chargement des types de document.</p>
               <p>{(error as Error)?.message ?? 'Une erreur inattendue est survenue.'}</p>
             </div>
-          ) : typeDocuments?.length === 0 ? (
+          ) : visibleTypeDocuments?.length === 0 ? (
             <div className="text-center py-4">
               <p>Aucun type de document trouvé.</p>
             </div>
           ) : (
-            <TypeDocumentForm typeDocuments={typeDocuments} />
+            <TypeDocumentForm typeDocuments={visibleTypeDocuments ?? []} />
           )}
         </div>
       </AppLayout>
