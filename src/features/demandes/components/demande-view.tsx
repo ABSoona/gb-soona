@@ -102,7 +102,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileInputMultiRef = useRef<HTMLInputElement>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
-  const { sendMessage } = useContactService({ where: { id: { equals: currentRow.contact.id } }, skipQuery: true }); // ✅ Utilisation du service
+  const { sendMessage, sendWhatsappMessage } = useContactService({ where: { id: { equals: currentRow.contact.id } }, skipQuery: true }); // ✅ Utilisation du service
 
   const { visites, createVisite, refetch: refetchVisites } = useVisiteService({ where: { demande: { id: currentRow.id } } })
 
@@ -237,11 +237,15 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     message,
     sendMail,
     includeUploadLink,
+    sendWhatsapp,
+    whatsappMessage,
   }: {
     objet: string;
     message: string;
     sendMail: boolean;
     includeUploadLink: boolean;
+    sendWhatsapp: boolean;
+    whatsappMessage: string;
   }) => {
     if (sendMail) {
       await sendMessage({
@@ -250,6 +254,12 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         message,
         demandeId: currentRow.id,
         includeUploadLink,
+      });
+    }
+    if (sendWhatsapp) {
+      await sendWhatsappMessage({
+        contactId: currentRow.contact.id.toString(),
+        message: whatsappMessage,
       });
     }
     await updateDemande(currentRow.id, { status: "EnAttenteDocs" });
@@ -418,6 +428,8 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         open={openDocsRequestSheet}
         onOpenChange={setOpenDocsRequestSheet}
         onSubmit={handleSubmitDocsRequest}
+        contactHasEmail={!!currentRow.contact?.email}
+        contactHasPhone={!!currentRow.contact?.telephone}
       />
       <AssignDemandeSheet
         open={openAssignDemandeSheet}

@@ -1,6 +1,7 @@
 import axiosInstance from '@/lib/axtios-instance';
 
 export const EMAIL_TEMPLATE_CODE_DEMANDE_JUSTIFICATIFS = 'DEMANDE_JUSTIFICATIFS';
+export const EMAIL_TEMPLATE_CODE_DEMANDE_JUSTIFICATIFS_WHATSAPP = 'DEMANDE_JUSTIFICATIFS_WHATSAPP';
 
 export interface EmailTemplate {
   code: string;

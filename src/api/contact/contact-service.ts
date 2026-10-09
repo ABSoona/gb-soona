@@ -109,6 +109,11 @@ export function useContactService(variables?: any) {
     const response = await axiosInstance.post<void>(`contacts/${data.contactId}/send-message`, data);
     return response.data;
   };
+
+  const sendWhatsappMessage = async (data: {contactId:string,message:string}): Promise<void> => {
+    const response = await axiosInstance.post<void>(`contacts/${data.contactId}/send-whatsapp-message`, data);
+    return response.data;
+  };
   
 
   
@@ -125,6 +130,7 @@ export function useContactService(variables?: any) {
     updateContact,
     deleteContact,
     sendMessage,
+    sendWhatsappMessage,
     isSubmitting, // ✅ pour désactiver les boutons ou afficher "en cours..."
   };
 
