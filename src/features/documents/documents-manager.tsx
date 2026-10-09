@@ -1,4 +1,4 @@
-import { downloadDocument, previewDocument } from '@/api/document/documentService';
+import { downloadDocument, markDocumentConsulted, previewDocument } from '@/api/document/documentService';
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -53,6 +53,18 @@ export function DocumentsManager({ contactId, documents, nbColumns, onUpload, on
   const className = "grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(120px,150px))]";
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [locallyConsultedIds, setLocallyConsultedIds] = useState<Set<string>>(new Set());
+  const isUnread = (doc: Document) =>
+    !!doc.uploadedByBeneficiaire && !doc.consultedAt && !locallyConsultedIds.has(doc.id);
+  const markConsultedIfNeeded = (doc: Document) => {
+    if (isUnread(doc)) {
+      setLocallyConsultedIds((prev) => new Set(prev).add(doc.id));
+      markDocumentConsulted(doc.id).catch(() => {
+        // Pas bloquant : la pastille reste disparue cote UI meme si l'appel echoue,
+        // elle reapparaitra simplement au prochain rechargement.
+      });
+    }
+  };
   const goTo = async (index: number) => {
     const doc = documents[index];
     if (!doc) return;
@@ -61,6 +73,7 @@ export function DocumentsManager({ contactId, documents, nbColumns, onUpload, on
     setPreviewUrl(url);
     setDocument(doc);
     setPreviewType(type || 'unsupported');
+    markConsultedIfNeeded(doc);
   };
   useEffect(() => {
     // Dès que les documents arrivent, on enlève le loader
@@ -100,6 +113,7 @@ export function DocumentsManager({ contactId, documents, nbColumns, onUpload, on
         setDocument(doc);
         setPreviewType(type || 'unsupported');
         setOpen(true);
+        markConsultedIfNeeded(doc);
       }
     } catch (e) {
       toast({ title: 'Erreur de prévisualisation', variant: 'destructive' });
@@ -116,6 +130,12 @@ export function DocumentsManager({ contactId, documents, nbColumns, onUpload, on
               className="border rounded-lg p-4 flex flex-col items-center bg-white shadow hover:shadow-lg transition relative cursor-pointer"
               onClick={() => handlePreview(doc)}
             >
+              {isUnread(doc) && (
+                <span
+                  className="absolute top-2 left-2 h-2.5 w-2.5 rounded-full bg-red-500"
+                  title="Déposé par le bénéficiaire, non consulté"
+                />
+              )}
               {/* Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

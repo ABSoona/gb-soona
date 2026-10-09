@@ -1,3 +1,4 @@
+import { NotificationBell } from '@/components/notification-bell'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -15,6 +16,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         <div className="ml-auto flex items-center space-x-4">
           <Search />
           <ThemeSwitch />
+          <NotificationBell />
           <ProfileDropdown />
         </div>
       </Header>

@@ -4,6 +4,7 @@ import { DateRange } from 'react-day-picker'
 import { Download } from 'lucide-react'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { NotificationBell } from '@/components/notification-bell'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -95,6 +96,7 @@ export default function RepartitionDepartements() {
         <div className='ml-auto flex items-center space-x-4'>
           <Search />
           <ThemeSwitch />
+          <NotificationBell />
           <ProfileDropdown />
         </div>
       </Header>
@@ -140,7 +142,7 @@ export default function RepartitionDepartements() {
         </div>
 
         <p className='mb-4 text-xs text-muted-foreground'>
-          Reçues et Acceptées/Refusées sont comptées sur la période sélectionnée (respectivement via la date de création et la date de décision). Backlog moyen : moyenne du nombre de demandes encore « vierges » (statut reçue, aucune activité au-delà de la création), mesurée à la fin de chaque jour de la période — figé dans le temps, ne change pas si les dossiers sont traités plus tard.
+          Reçues et Acceptées/Refusées sont comptées sur la période sélectionnée (respectivement via la date de création et la date de décision). Backlog moyen : moyenne du nombre de demandes encore « vierges » (statut reçue, aucune activité au-delà de la création), mesurée à la fin de chaque jour de la période - figé dans le temps, ne change pas si les dossiers sont traités plus tard.
         </p>
 
         {loading ? (

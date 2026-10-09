@@ -17,6 +17,8 @@ import {
   FormItem,
   FormLabel,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { toast } from '@/hooks/use-toast';
 import { TypeDocument } from '@/model/typeDocument/typeDocument';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -30,6 +32,8 @@ import { typesDocuments } from '../data/data';
 const formSchema = z.object({
   labels: z.record(z.string()),
   rattachements: z.record(z.union([z.literal('Contact'), z.literal('Demande'), z.literal('Suivi'),z.literal('Aide')])),
+  publicUploadEnabled: z.record(z.boolean()),
+  descriptions: z.record(z.string()),
 });
 type TypeDocumentFormValues = z.infer<typeof formSchema>;
 
@@ -51,6 +55,8 @@ export function TypeDocumentForm({ typeDocuments }: Props) {
     defaultValues: {
       labels: {},
       rattachements: {},
+      publicUploadEnabled: {},
+      descriptions: {},
     },
   });
 
@@ -58,14 +64,18 @@ export function TypeDocumentForm({ typeDocuments }: Props) {
     if (typeDocuments.length > 0) {
       const labels: Record<string, string> = {};
       const rattachements: Record<string, 'Contact' | 'Demande' | 'Suivi' | 'Aide'> = {};
+      const publicUploadEnabled: Record<string, boolean> = {};
+      const descriptions: Record<string, string> = {};
 
       typeDocuments.forEach((doc: TypeDocument) => {
         const id = doc.id.toString();
         labels[id] = doc.label;
         rattachements[id] = doc.rattachement;
+        publicUploadEnabled[id] = doc.publicUploadEnabled ?? true;
+        descriptions[id] = doc.description ?? '';
       });
 
-      form.reset({ labels, rattachements });
+      form.reset({ labels, rattachements, publicUploadEnabled, descriptions });
     }
   }, [typeDocuments, form]);
 
@@ -75,9 +85,10 @@ export function TypeDocumentForm({ typeDocuments }: Props) {
         const id = doc.id;
         const label = data.labels[id];
         const rattachement = data.rattachements[id];
+        const publicUploadEnabled = data.publicUploadEnabled[id];
+        const description = data.descriptions[id]?.trim() || null;
 
-
-        return updateTypeDocument(id, { label, rattachement });
+        return updateTypeDocument(id, { label, rattachement, publicUploadEnabled, description });
       });
 
       await Promise.all(ops);
@@ -95,8 +106,9 @@ export function TypeDocumentForm({ typeDocuments }: Props) {
           {typeDocuments.map((doc: TypeDocument) => (
             <FormItem
               key={doc.id}
-              className="flex flex-row items-center justify-between rounded-lg border p-4"
+              className="flex flex-col gap-3 rounded-lg border p-4"
             >
+              <div className="flex flex-row items-center justify-between">
               <div className="space-y-0.5 flex items-center gap-2">
                 <FormField
                   control={form.control}
@@ -182,6 +194,41 @@ export function TypeDocumentForm({ typeDocuments }: Props) {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <FormField
+                  control={form.control}
+                  name={`publicUploadEnabled.${doc.id}`}
+                  render={({ field }) => (
+                    <FormControl>
+                      <Switch
+                        checked={field.value ?? true}
+                        onCheckedChange={field.onChange}
+                        disabled={doc.isInternal}
+                      />
+                    </FormControl>
+                  )}
+                />
+                <span className="text-xs text-muted-foreground">
+                  Visible sur la page de dépôt des justificatifs par le bénéficiaire
+                </span>
+              </div>
+
+              <FormField
+                control={form.control}
+                name={`descriptions.${doc.id}`}
+                render={({ field }) => (
+                  <FormControl>
+                    <Input
+                      placeholder="Description affichée sur cet item (optionnel)"
+                      disabled={doc.isInternal}
+                      {...field}
+                      value={field.value ?? ''}
+                    />
+                  </FormControl>
+                )}
+              />
             </FormItem>
           ))}
 

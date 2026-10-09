@@ -1,6 +1,7 @@
 import { Header } from '@/components/layout/header';
 import { Main } from '@/components/layout/main';
 import { ThemeSwitch } from '@/components/theme-switch';
+import { NotificationBell } from '@/components/notification-bell';
 import { ProfileDropdown } from '@/components/profile-dropdown';
 
 import image1 from '@/assets/79a5c3be-ecb4-4c89-966d-291fd6336655.png';
@@ -36,11 +37,12 @@ export default function Documentation() {
             <Header>
                 <div className="ml-auto flex items-center space-x-4">
                     <ThemeSwitch />
+                    <NotificationBell />
                     <ProfileDropdown />
                 </div>
             </Header>
             <Main className="max-w-4xl mx-auto py-8 px-4">
-                <h1 className="text-3xl font-bold mb-6 text-center">📘 Comment traiter une demande dans GBSoona</h1>
+                <h1 className="text-3xl font-bold mb-6 text-center">📘 Comment traiter une demande dans Mizana</h1>
 
                 <section className="mb-8">
                     <h2 className="text-xl font-semibold mb-2">🔎 Vue d'ensemble du processus</h2>

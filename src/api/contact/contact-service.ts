@@ -105,7 +105,7 @@ export function useContactService(variables?: any) {
     }
   };
 
-  const sendMessage = async (data: {contactId:string,objet :string,message:string}): Promise<void> => {
+  const sendMessage = async (data: {contactId:string,objet :string,message:string,demandeId?:number,includeUploadLink?:boolean}): Promise<void> => {
     const response = await axiosInstance.post<void>(`contacts/${data.contactId}/send-message`, data);
     return response.data;
   };
@@ -115,7 +115,7 @@ export function useContactService(variables?: any) {
 
   return {
     // 🔥 Retombe sur le resultat precedent pendant qu'une nouvelle requete
-    // est en vol — voir demandeService.ts pour le meme fix.
+    // est en vol - voir demandeService.ts pour le meme fix.
     contacts: data?.contacts ?? previousData?.contacts ?? [],
     total: data?.meta?.count ?? previousData?.meta?.count ?? 0,
     loading,

@@ -1,6 +1,8 @@
 'use client';
 
+import { EMAIL_TEMPLATE_CODE_DEMANDE_JUSTIFICATIFS, getEmailTemplate } from "@/api/emailTemplate/emailTemplateService";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
@@ -11,13 +13,14 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useState } from "react";
-import { docRequestdefaultMessage } from "../data/data";
+import { Spinner } from "@/components/ui/spinner";
+import { handleServerError } from "@/utils/handle-server-error";
+import { useEffect, useState } from "react";
 
 interface DocsRequestSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: { objet: string; message: string; sendMail: boolean }) => Promise<void>;
+  onSubmit: (data: { objet: string; message: string; sendMail: boolean; includeUploadLink: boolean }) => Promise<void>;
 }
 
 export const DocsRequestSheet: React.FC<DocsRequestSheetProps> = ({
@@ -25,18 +28,35 @@ export const DocsRequestSheet: React.FC<DocsRequestSheetProps> = ({
   onOpenChange,
   onSubmit,
 }) => {
-  const [objet, setObjet] = useState("Pièces justificatives");
+  const [objet, setObjet] = useState("");
   const [message, setMessage] = useState("");
+  const [initialMessage, setInitialMessage] = useState<string | null>(null);
+  const [includeUploadLink, setIncludeUploadLink] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Recharge le modele a chaque ouverture : il peut avoir ete modifie dans
+  // les parametres depuis la derniere utilisation.
+  useEffect(() => {
+    if (!open) return;
+    setInitialMessage(null);
+    (async () => {
+      try {
+        const template = await getEmailTemplate(EMAIL_TEMPLATE_CODE_DEMANDE_JUSTIFICATIFS);
+        setObjet(template.objet);
+        setMessage(template.corps);
+        setInitialMessage(template.corps);
+      } catch (e) {
+        handleServerError(e);
+      }
+    })();
+  }, [open]);
 
   const handleSubmit = async (sendMail: boolean) => {
     if (!objet.trim()) return;
     setIsSubmitting(true);
-    await onSubmit({ objet: objet, message, sendMail });
+    await onSubmit({ objet: objet, message, sendMail, includeUploadLink });
     setIsSubmitting(false);
     onOpenChange(false);
-    setObjet("");
-    setMessage("");
   };
 
   return (
@@ -56,8 +76,23 @@ export const DocsRequestSheet: React.FC<DocsRequestSheetProps> = ({
             value={objet}
             onChange={(e) => setObjet(e.target.value)}
           />
-          <RichTextEditor 
-           value={message} onChange={setMessage}  initialValue={docRequestdefaultMessage}/>
+          {initialMessage === null ? (
+            <div className="flex items-center justify-center py-10">
+              <Spinner size="large" />
+            </div>
+          ) : (
+            <RichTextEditor value={message} onChange={setMessage} initialValue={initialMessage} />
+          )}
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="includeUploadLink"
+              checked={includeUploadLink}
+              onCheckedChange={(checked) => setIncludeUploadLink(checked === true)}
+            />
+            <label htmlFor="includeUploadLink" className="text-sm leading-none cursor-pointer">
+              Ajouter un bouton permettant au bénéficiaire de déposer ses justificatifs en ligne
+            </label>
+          </div>
         </div>
 
         <SheetFooter className="pt-4 flex justify-end gap-2">

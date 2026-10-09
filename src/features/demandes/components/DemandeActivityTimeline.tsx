@@ -7,6 +7,7 @@ import {
   Ban, CircleCheckBig, ClockAlert, FilePlus2, HeartHandshake, MapPin,
   MoreVertical, Pencil, PhoneCall, PhoneMissed, RefreshCw, RefreshCwOff,
   StickyNote, Trash,
+  UploadCloud,
   UserPlus
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
@@ -27,6 +28,7 @@ const getIconForType = (type: string) => {
     case "abandon": return <RefreshCwOff className="h-4 w-4 inline mr-2" />;
     case "aideAdd": return <HeartHandshake className="h-4 w-4 inline mr-2" />;
     case "docAjout": return <FilePlus2 className="h-4 w-4 inline mr-2" />;
+    case "docAjoutBeneficiaire": return <UploadCloud className="h-4 w-4 inline mr-2" />;
     case "docsRequest": return <FilePlus2 className="h-4 w-4 inline mr-2" />;
     case "expiration": return <ClockAlert className="h-4 w-4 inline mr-2" />;
     case "accept": return <CircleCheckBig className="h-4 w-4 inline mr-2" />;

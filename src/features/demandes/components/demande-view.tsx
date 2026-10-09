@@ -236,17 +236,20 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     objet,
     message,
     sendMail,
+    includeUploadLink,
   }: {
     objet: string;
     message: string;
     sendMail: boolean;
+    includeUploadLink: boolean;
   }) => {
     if (sendMail) {
       await sendMessage({
         contactId: currentRow.contact.id.toString(),
         objet,
         message,
-
+        demandeId: currentRow.id,
+        includeUploadLink,
       });
     }
     await updateDemande(currentRow.id, { status: "EnAttenteDocs" });
@@ -748,7 +751,7 @@ export function InfoCard({
 
 // 🔥 Indique si un indicateur a augmenté/diminué/stagné par rapport a la
 // derniere situation historisee. `invert` = true pour les indicateurs ou une
-// hausse est defavorable (Charges, Dettes) — inverse le sens des couleurs.
+// hausse est defavorable (Charges, Dettes) - inverse le sens des couleurs.
 function TrendIndicator({
   current,
   previous,

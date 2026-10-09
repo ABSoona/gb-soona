@@ -12,5 +12,7 @@ export const documentSchema = z.object({
   }),
   typeDocument: typeDocumentSchema,
   createdAt: z.coerce.date(),
+  uploadedByBeneficiaire: z.boolean().optional(),
+  consultedAt: z.coerce.date().nullable().optional(),
 });
 export type Document = z.infer<typeof documentSchema>;

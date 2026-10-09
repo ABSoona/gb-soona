@@ -4,12 +4,15 @@ export const DOCUMENT_FIELDS = gql`
   fragment DocumentFields on Document {
     id
     contenu
+    createdAt
     updatedAt
     name
-    typeDocument {  
+    uploadedByBeneficiaire
+    consultedAt
+    typeDocument {
       id
       label
       internalCode}
-      
+
   }
 `;

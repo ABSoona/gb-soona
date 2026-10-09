@@ -47,6 +47,7 @@ const activityTypeSchema = z.union([
   z.literal('statusUpdate'),
   z.literal('note'),
   z.literal('docAjout'),
+  z.literal('docAjoutBeneficiaire'),
   z.literal('abandon'),
   z.literal('accept'),
   z.literal('refuse'),
