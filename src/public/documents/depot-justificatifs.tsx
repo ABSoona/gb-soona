@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSearch } from '@tanstack/react-router'
 import { CheckCircle2, FileText, Loader2, UploadCloud } from 'lucide-react'
-import ViteLogo from '@/assets/logo.png'
+import SoonaLogo from '@/assets/logo-soona-noir.png'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -70,8 +70,8 @@ export default function DepotJustificatifs() {
 
   return (
     <div className="min-h-svh flex flex-col items-center bg-muted/30 py-10 px-4">
-      <div className="bg-zinc-900 rounded-lg px-8 py-4 mb-6">
-        <img src={ViteLogo} className="h-12" alt="Mizana" />
+      <div className="mb-6">
+        <img src={SoonaLogo} className="h-28" alt="Soo'na" />
       </div>
 
       <Card className="w-full max-w-xl">
