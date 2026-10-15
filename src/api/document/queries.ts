@@ -74,6 +74,11 @@ export const GET_BENEFICIAIRE_UPLOAD_NOTIFICATIONS = gql`
       }
       demande {
         id
+        contact {
+          id
+          nom
+          prenom
+        }
       }
       contact {
         id

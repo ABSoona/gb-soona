@@ -29,11 +29,22 @@ function buildFiltersWhere(columnFilters: ColumnFiltersState): Record<string, an
         if (value === undefined || value === null) continue;
 
         switch (filter.id) {
-            case 'contactNomPrenom':
-                if (typeof value === 'string' && value.trim() !== '') {
-                    where.fullSearch = { contains: value.trim(), mode: 'Insensitive' };
+            case 'contactNomPrenom': {
+                const search = typeof value === 'string' ? value.trim() : '';
+                if (search !== '') {
+                    // Une recherche purement numerique peut viser le numero de
+                    // demande (son id) en plus du nom du beneficiaire.
+                    if (/^\d+$/.test(search)) {
+                        where.OR = [
+                            { fullSearch: { contains: search, mode: 'Insensitive' } },
+                            { id: { equals: Number(search) } },
+                        ];
+                    } else {
+                        where.fullSearch = { contains: search, mode: 'Insensitive' };
+                    }
                 }
                 break;
+            }
             case 'status':
                 if (Array.isArray(value) && value.length > 0) {
                     where.status = { in: value };
@@ -79,7 +90,7 @@ export default function Demandes({ acteurId, status,title,description, newOlny,e
     // Les vues "Nouvelles" / "En cours de traitement" filtrent en plus sur le NOMBRE
     // d'activités de la demande (pas juste sa présence), ce qui n'est pas exprimable
     // aujourd'hui via un `where` GraphQL. Elles restent donc sur l'ancien mode (tout
-    // charger puis filtrer côté client) — elles sont de toute façon déjà bornées par un
+    // charger puis filtrer côté client) - elles sont de toute façon déjà bornées par un
     // filtre de statut, donc plus légères que la vue "Toutes les demandes".
     const isServerMode = !newOlny && !excludeNews;
 
@@ -161,7 +172,7 @@ export default function Demandes({ acteurId, status,title,description, newOlny,e
                     ) : (
                         // 🔥 Le tableau (et son toolbar/champ de recherche) reste monté pendant
                         // les rafraîchissements en arrière-plan (recherche, filtre, changement de
-                        // page) — seule son opacité change, pour ne pas perdre le focus du champ.
+                        // page) - seule son opacité change, pour ne pas perdre le focus du champ.
                         <div className={isLoading ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
                             {isServerMode ? (
                                 <DemandesTable
