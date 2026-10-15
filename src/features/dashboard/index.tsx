@@ -19,7 +19,7 @@ export default function Dashboard() {
   const { aides } = useAideService({
     where: {
       status: 'EnCours',
-      frequence: 'Mensuelle'
+      frequence: { equals: 'Mensuelle' }
     }
   })
 
