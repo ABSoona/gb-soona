@@ -11,6 +11,7 @@ export const demandeStatusSchema = z.union([
   z.literal('recue'),
   z.literal('EnAttenteDocs'),
   z.literal('en_visite'),
+  z.literal('en_pre_commision'),
   z.literal('en_commision'),
   z.literal('EnCours'),
   z.literal('clôturée'),

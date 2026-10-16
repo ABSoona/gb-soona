@@ -3,6 +3,7 @@ import { DemandeStatus } from '@/model/demande/Demande'
 export const demandeStatusColor = new Map<DemandeStatus, string>([
   ['recue', 'bg-teal-100/30 text-teal-900 dark:text-teal-200 border-teal-200'],
   ['en_visite', 'bg-sky-200/40 text-sky-900 dark:text-sky-100 border-sky-300'],
+  ['en_pre_commision', 'bg-indigo-200/40 text-indigo-900 dark:text-indigo-100 border-indigo-300'],
   ['en_commision', 'bg-sky-200/40 text-sky-900 dark:text-sky-100 border-sky-300'],
   [
     'clôturée',
@@ -27,6 +28,7 @@ export const demandeStatusTypes =
     { label: 'Reçue', value: 'recue' },
     { label: 'Attente justificatifs', value: 'EnAttenteDocs' },
     { label: 'En visite', value: 'en_visite' },
+    { label: 'Pré-comité', value: 'en_pre_commision' },
     { label: 'En comité', value: 'en_commision' },
     { label: 'En cours', value: 'EnCours' },
     { label: 'Clôturée', value: 'clôturée' },

@@ -35,6 +35,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     setOpenShareFicheVisite: (open: boolean) => void;
     setOpenTelegramSheet: (open: boolean) => void;
     handleAbandonnerDemande: () => void;
+    handleSubmitToComite: () => void;
     onRapportAdded: () => void;
     onVisitDone: () => void;
   }
@@ -55,6 +56,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     setOpenShareFicheVisite: setOpenShareDemande,
     handleAbandonnerDemande,
     setOpenTelegramSheet,
+    handleSubmitToComite,
     onRapportAdded,
     onVisitDone,
   }: Props) {
@@ -72,6 +74,16 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
+                {currentRow.status === 'en_pre_commision' && (
+                  <>
+                    <DropdownMenuLabel>Décision</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={handleSubmitToComite}>
+                      <Send className="mr-2 h-4 w-4" />
+                      Soumettre au comité
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 {currentRow.status === 'en_commision' && (
                   <>
                     <DropdownMenuLabel>Décision</DropdownMenuLabel>
