@@ -198,7 +198,7 @@ export const GET_DEMANDE_STATS = gql`
 
     suivies: demandes(
       where: {
-        status: { in: ["recue","en_commision", "en_visite", "EnAttenteDocs"] }
+        status: { in: ["recue","en_commision", "en_pre_commision", "en_visite", "EnAttenteDocs"] }
       }
     ) {
       id
@@ -210,6 +210,14 @@ export const GET_DEMANDE_STATS = gql`
     enVisite: _demandesMeta(
       where: {
         status: { equals: "en_visite" }
+      }
+    ) {
+      count
+    }
+
+    enPreCommite: _demandesMeta(
+      where: {
+        status: { equals: "en_pre_commision" }
       }
     ) {
       count
@@ -254,7 +262,7 @@ export const GET_DASHBOARD_STATS = gql`
 
     suivies: demandes(
       where: {
-        status: { in: ["recue","en_commision", "en_visite", "EnAttenteDocs"] }
+        status: { in: ["recue","en_commision", "en_pre_commision", "en_visite", "EnAttenteDocs"] }
       }
     ) {
       id
@@ -278,6 +286,14 @@ export const GET_DASHBOARD_STATS = gql`
       count
     }
 
+    enPreCommite: _demandesMeta(
+      where: {
+        status: { equals: "en_pre_commision" }
+      }
+    ) {
+      count
+    }
+
     enCommite: _demandesMeta(
       where: {
         status: { equals: "en_commision" }
@@ -285,7 +301,7 @@ export const GET_DASHBOARD_STATS = gql`
     ) {
       count
     }
-      
+
     recue: demandes(
       where: {
         status: { equals: "recue" }

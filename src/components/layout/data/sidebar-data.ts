@@ -67,9 +67,15 @@ export function useSidebarData(): SidebarData {
               url: '/demandes/en-visite',
               icon: Squircle,
               badge: stats.enVisite > 0 ? String(stats.enVisite) : undefined,
-            }, 
+            },
             {
-              title: 'En commité',
+              title: 'Pré-comité',
+              url: '/demandes/en-pre-commission',
+              icon: Squircle,
+              badge: stats.enPreCommite > 0 ? String(stats.enPreCommite) : undefined,
+            },
+            {
+              title: 'En comité',
               url: '/demandes/en-commission',
               icon: Squircle,
               badge: stats.enCommite > 0 ? String(stats.enCommite) : undefined,

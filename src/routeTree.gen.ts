@@ -128,6 +128,9 @@ const AuthenticatedDemandesMesDemandesLazyImport = createFileRoute(
 const AuthenticatedDemandesEnVisiteLazyImport = createFileRoute(
   '/_authenticated/demandes/en-visite',
 )()
+const AuthenticatedDemandesEnPreCommissionLazyImport = createFileRoute(
+  '/_authenticated/demandes/en-pre-commission',
+)()
 const AuthenticatedDemandesEnCoursTraitementLazyImport = createFileRoute(
   '/_authenticated/demandes/en-cours-traitement',
 )()
@@ -575,6 +578,17 @@ const AuthenticatedDemandesEnVisiteLazyRoute =
     ),
   )
 
+const AuthenticatedDemandesEnPreCommissionLazyRoute =
+  AuthenticatedDemandesEnPreCommissionLazyImport.update({
+    id: '/demandes/en-pre-commission',
+    path: '/demandes/en-pre-commission',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/demandes/en-pre-commission.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
 const AuthenticatedDemandesEnCoursTraitementLazyRoute =
   AuthenticatedDemandesEnCoursTraitementLazyImport.update({
     id: '/demandes/en-cours-traitement',
@@ -770,6 +784,13 @@ declare module '@tanstack/react-router' {
       path: '/demandes/en-cours-traitement'
       fullPath: '/demandes/en-cours-traitement'
       preLoaderRoute: typeof AuthenticatedDemandesEnCoursTraitementLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/demandes/en-pre-commission': {
+      id: '/_authenticated/demandes/en-pre-commission'
+      path: '/demandes/en-pre-commission'
+      fullPath: '/demandes/en-pre-commission'
+      preLoaderRoute: typeof AuthenticatedDemandesEnPreCommissionLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
     '/_authenticated/demandes/en-visite': {
@@ -1040,6 +1061,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedContactsIdLazyRoute: typeof AuthenticatedContactsIdLazyRoute
   AuthenticatedDemandesEnCommissionLazyRoute: typeof AuthenticatedDemandesEnCommissionLazyRoute
   AuthenticatedDemandesEnCoursTraitementLazyRoute: typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
+  AuthenticatedDemandesEnPreCommissionLazyRoute: typeof AuthenticatedDemandesEnPreCommissionLazyRoute
   AuthenticatedDemandesEnVisiteLazyRoute: typeof AuthenticatedDemandesEnVisiteLazyRoute
   AuthenticatedDemandesMesDemandesLazyRoute: typeof AuthenticatedDemandesMesDemandesLazyRoute
   AuthenticatedDemandesNouvellesLazyRoute: typeof AuthenticatedDemandesNouvellesLazyRoute
@@ -1078,6 +1100,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedDemandesEnCommissionLazyRoute,
   AuthenticatedDemandesEnCoursTraitementLazyRoute:
     AuthenticatedDemandesEnCoursTraitementLazyRoute,
+  AuthenticatedDemandesEnPreCommissionLazyRoute:
+    AuthenticatedDemandesEnPreCommissionLazyRoute,
   AuthenticatedDemandesEnVisiteLazyRoute:
     AuthenticatedDemandesEnVisiteLazyRoute,
   AuthenticatedDemandesMesDemandesLazyRoute:
@@ -1144,6 +1168,7 @@ export interface FileRoutesByFullPath {
   '/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
   '/demandes/en-commission': typeof AuthenticatedDemandesEnCommissionLazyRoute
   '/demandes/en-cours-traitement': typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
+  '/demandes/en-pre-commission': typeof AuthenticatedDemandesEnPreCommissionLazyRoute
   '/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
   '/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
   '/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
@@ -1196,6 +1221,7 @@ export interface FileRoutesByTo {
   '/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
   '/demandes/en-commission': typeof AuthenticatedDemandesEnCommissionLazyRoute
   '/demandes/en-cours-traitement': typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
+  '/demandes/en-pre-commission': typeof AuthenticatedDemandesEnPreCommissionLazyRoute
   '/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
   '/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
   '/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
@@ -1252,6 +1278,7 @@ export interface FileRoutesById {
   '/_authenticated/contacts/$id': typeof AuthenticatedContactsIdLazyRoute
   '/_authenticated/demandes/en-commission': typeof AuthenticatedDemandesEnCommissionLazyRoute
   '/_authenticated/demandes/en-cours-traitement': typeof AuthenticatedDemandesEnCoursTraitementLazyRoute
+  '/_authenticated/demandes/en-pre-commission': typeof AuthenticatedDemandesEnPreCommissionLazyRoute
   '/_authenticated/demandes/en-visite': typeof AuthenticatedDemandesEnVisiteLazyRoute
   '/_authenticated/demandes/mes-demandes': typeof AuthenticatedDemandesMesDemandesLazyRoute
   '/_authenticated/demandes/nouvelles': typeof AuthenticatedDemandesNouvellesLazyRoute
@@ -1308,6 +1335,7 @@ export interface FileRouteTypes {
     | '/contacts/$id'
     | '/demandes/en-commission'
     | '/demandes/en-cours-traitement'
+    | '/demandes/en-pre-commission'
     | '/demandes/en-visite'
     | '/demandes/mes-demandes'
     | '/demandes/nouvelles'
@@ -1359,6 +1387,7 @@ export interface FileRouteTypes {
     | '/contacts/$id'
     | '/demandes/en-commission'
     | '/demandes/en-cours-traitement'
+    | '/demandes/en-pre-commission'
     | '/demandes/en-visite'
     | '/demandes/mes-demandes'
     | '/demandes/nouvelles'
@@ -1413,6 +1442,7 @@ export interface FileRouteTypes {
     | '/_authenticated/contacts/$id'
     | '/_authenticated/demandes/en-commission'
     | '/_authenticated/demandes/en-cours-traitement'
+    | '/_authenticated/demandes/en-pre-commission'
     | '/_authenticated/demandes/en-visite'
     | '/_authenticated/demandes/mes-demandes'
     | '/_authenticated/demandes/nouvelles'
@@ -1520,6 +1550,7 @@ export const routeTree = rootRoute
         "/_authenticated/contacts/$id",
         "/_authenticated/demandes/en-commission",
         "/_authenticated/demandes/en-cours-traitement",
+        "/_authenticated/demandes/en-pre-commission",
         "/_authenticated/demandes/en-visite",
         "/_authenticated/demandes/mes-demandes",
         "/_authenticated/demandes/nouvelles",
@@ -1613,6 +1644,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/demandes/en-cours-traitement": {
       "filePath": "_authenticated/demandes/en-cours-traitement.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/demandes/en-pre-commission": {
+      "filePath": "_authenticated/demandes/en-pre-commission.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/demandes/en-visite": {

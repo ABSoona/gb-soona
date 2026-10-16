@@ -36,6 +36,7 @@ import { useAides } from '@/features/aides/context/aides-context';
     setOpenShareFicheVisite: (open: boolean) => void;
     setOpenTelegramSheet: (open: boolean) => void;
     handleAbandonnerDemande: () => void;
+    handleSubmitToComite: () => void;
     onRapportAdded: () => void;
     onVisitDone: () => void;
   }
@@ -57,6 +58,7 @@ import { useAides } from '@/features/aides/context/aides-context';
     setOpenShareFicheVisite: setOpenShareDemande,
     handleAbandonnerDemande,
     setOpenTelegramSheet,
+    handleSubmitToComite,
     onRapportAdded,
     onVisitDone,
   }: Props) {
@@ -75,6 +77,16 @@ import { useAides } from '@/features/aides/context/aides-context';
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
+                {currentRow.status === 'en_pre_commision' && (
+                  <>
+                    <DropdownMenuLabel>Décision</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={handleSubmitToComite}>
+                      <Send className="mr-2 h-4 w-4" />
+                      Soumettre au comité
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 {currentRow.status === 'en_commision' && (
                   <>
                     <DropdownMenuLabel>Décision</DropdownMenuLabel>

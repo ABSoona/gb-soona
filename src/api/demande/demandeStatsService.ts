@@ -7,6 +7,7 @@ type DemandeStats = {
   total: number;
   suivies: number;
   enVisite: number;
+  enPreCommite: number;
   enCommite: number;
   nouvelles: number;
   affecteAMoi: number;
@@ -16,6 +17,7 @@ type DashBoardDemandeStats = {
 
   suivies: number;
   enVisite: number;
+  enPreCommite: number;
   enCommite: number;
   nouvelles: number;
   enAttente: number;
@@ -35,6 +37,7 @@ export function useDemandeStatsService() {
     total: data?.total?.count || 0,
     suivies: data?.suivies?.count || 0,
     enVisite: data?.enVisite?.count || 0,
+    enPreCommite: data?.enPreCommite?.count || 0,
     enCommite: data?.enCommite?.count || 0,
     nouvelles: data?.recue?.filter((d: any) => d.demandeActivities.length === 1).length || 0,
     affecteAMoi: data?.affecteAMoi?.count || 0,
@@ -56,6 +59,7 @@ export function useDashboardStats() {
 
     suivies: data?.suivies?.filter((e:Demande) => e.demandeActivities.length > 1).length || 0,
     enVisite: data?.enVisite?.count || 0,
+    enPreCommite: data?.enPreCommite?.count || 0,
     enCommite: data?.enCommite?.count || 0,
     enAttente: data?.enAttente?.count || 0,
     nouvelles: data?.recue?.filter((d: any) => d.demandeActivities.length === 1).length || 0,

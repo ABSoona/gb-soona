@@ -342,6 +342,17 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     }
   }
 
+  async function handleSubmitToComite() {
+    openConfirmDialog(
+      "Soumettre au comité ?",
+      "Souhaitez-vous faire passer cette demande en \"En comité\" pour qu'elle soit examinée lors du prochain comité ?",
+      async () => {
+        await updateDemande(currentRow.id, { status: "en_commision" });
+      },
+      { confirmText: "Confirmer", cancelBtnText: "Annuler" }
+    );
+  }
+
   async function onRapportAdded() {
     handleChnageToEnComite()
   }
@@ -405,6 +416,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
             setOpenShareFicheVisite={setOpenShareFicheVisite}
             setOpenTelegramSheet={setOpenTelegramSheet}
             handleAbandonnerDemande={handleAbandonnerDemande}
+            handleSubmitToComite={handleSubmitToComite}
             onRapportAdded={onRapportAdded}
             onVisitDone={onVisitDone}
           />
