@@ -12,17 +12,23 @@ interface Props {
   showDemandeSearch?: boolean
 }
 export function AidesDialogs({ showContactSearch = true, forContactId, forDemandeId, showDemandeSearch = true }: Props) {
-  const { openAide: open, setOpenAide: setOpen, currentRow, setCurrentRow } = useAides()
+  const { openAide: open, setOpenAide: setOpen, currentRow, setCurrentRow, pendingDecisionId, setPendingDecisionId } = useAides()
   return (
     <>
       <AidesActionDialog
         key='aide-add'
         open={open === 'add'}
-        onOpenChange={() => setOpen('add')}
+        onOpenChange={(state) => {
+          setOpen('add')
+          if (!state) {
+            setPendingDecisionId(null)
+          }
+        }}
         showContactSearch={showContactSearch}
         forContactId={forContactId}
         forDemandeId={forDemandeId}
         showDemandeSearch={showDemandeSearch}
+        decisionId={pendingDecisionId ?? undefined}
       />
 
 

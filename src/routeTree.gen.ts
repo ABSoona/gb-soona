@@ -20,6 +20,7 @@ import { Route as authOtpImport } from './routes/(auth)/otp'
 import { Route as authDepotJustificatifsImport } from './routes/(auth)/depot-justificatifs'
 import { Route as auth500Import } from './routes/(auth)/500'
 import { Route as AuthenticatedDemandesIdIndexImport } from './routes/_authenticated/demandes/$id/index'
+import { Route as AuthenticatedComitesComiteIdIndexImport } from './routes/_authenticated/comites/$comiteId/index'
 import { Route as authDemandesIdFicheVisitePdfImport } from './routes/(auth)/demandes.$id.fiche-visite-pdf'
 
 // Create Virtual Routes
@@ -62,6 +63,9 @@ const AuthenticatedSettingsIndexLazyImport = createFileRoute(
 const AuthenticatedRapportsIndexLazyImport = createFileRoute(
   '/_authenticated/rapports/',
 )()
+const AuthenticatedOrganizationSettingsIndexLazyImport = createFileRoute(
+  '/_authenticated/organization-settings/',
+)()
 const AuthenticatedHelpCenterIndexLazyImport = createFileRoute(
   '/_authenticated/help-center/',
 )()
@@ -73,6 +77,9 @@ const AuthenticatedDemandesIndexLazyImport = createFileRoute(
 )()
 const AuthenticatedContactsIndexLazyImport = createFileRoute(
   '/_authenticated/contacts/',
+)()
+const AuthenticatedComitesIndexLazyImport = createFileRoute(
+  '/_authenticated/comites/',
 )()
 const AuthenticatedAidesIndexLazyImport = createFileRoute(
   '/_authenticated/aides/',
@@ -344,6 +351,17 @@ const AuthenticatedRapportsIndexLazyRoute =
     import('./routes/_authenticated/rapports/index.lazy').then((d) => d.Route),
   )
 
+const AuthenticatedOrganizationSettingsIndexLazyRoute =
+  AuthenticatedOrganizationSettingsIndexLazyImport.update({
+    id: '/organization-settings/',
+    path: '/organization-settings/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/organization-settings/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
 const AuthenticatedHelpCenterIndexLazyRoute =
   AuthenticatedHelpCenterIndexLazyImport.update({
     id: '/help-center/',
@@ -382,6 +400,15 @@ const AuthenticatedContactsIndexLazyRoute =
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any).lazy(() =>
     import('./routes/_authenticated/contacts/index.lazy').then((d) => d.Route),
+  )
+
+const AuthenticatedComitesIndexLazyRoute =
+  AuthenticatedComitesIndexLazyImport.update({
+    id: '/comites/',
+    path: '/comites/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/comites/index.lazy').then((d) => d.Route),
   )
 
 const AuthenticatedAidesIndexLazyRoute =
@@ -627,6 +654,17 @@ const AuthenticatedDemandesIdIndexRoute =
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any).lazy(() =>
     import('./routes/_authenticated/demandes/$id/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthenticatedComitesComiteIdIndexRoute =
+  AuthenticatedComitesComiteIdIndexImport.update({
+    id: '/comites/$comiteId/',
+    path: '/comites/$comiteId/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/comites/$comiteId/index.lazy').then(
       (d) => d.Route,
     ),
   )
@@ -919,6 +957,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAidesIndexLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/comites/': {
+      id: '/_authenticated/comites/'
+      path: '/comites'
+      fullPath: '/comites'
+      preLoaderRoute: typeof AuthenticatedComitesIndexLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/contacts/': {
       id: '/_authenticated/contacts/'
       path: '/contacts'
@@ -945,6 +990,13 @@ declare module '@tanstack/react-router' {
       path: '/help-center'
       fullPath: '/help-center'
       preLoaderRoute: typeof AuthenticatedHelpCenterIndexLazyImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/organization-settings/': {
+      id: '/_authenticated/organization-settings/'
+      path: '/organization-settings'
+      fullPath: '/organization-settings'
+      preLoaderRoute: typeof AuthenticatedOrganizationSettingsIndexLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
     '/_authenticated/rapports/': {
@@ -1017,6 +1069,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDemandesIdPdfLazyImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/comites/$comiteId/': {
+      id: '/_authenticated/comites/$comiteId/'
+      path: '/comites/$comiteId'
+      fullPath: '/comites/$comiteId'
+      preLoaderRoute: typeof AuthenticatedComitesComiteIdIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/demandes/$id/': {
       id: '/_authenticated/demandes/$id/'
       path: '/demandes/$id'
@@ -1076,10 +1135,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedVisitesAvenirLazyRoute: typeof AuthenticatedVisitesAvenirLazyRoute
   AuthenticatedVisitesMesVisitesLazyRoute: typeof AuthenticatedVisitesMesVisitesLazyRoute
   AuthenticatedAidesIndexLazyRoute: typeof AuthenticatedAidesIndexLazyRoute
+  AuthenticatedComitesIndexLazyRoute: typeof AuthenticatedComitesIndexLazyRoute
   AuthenticatedContactsIndexLazyRoute: typeof AuthenticatedContactsIndexLazyRoute
   AuthenticatedDemandesIndexLazyRoute: typeof AuthenticatedDemandesIndexLazyRoute
   AuthenticatedEmailTemplatesIndexLazyRoute: typeof AuthenticatedEmailTemplatesIndexLazyRoute
   AuthenticatedHelpCenterIndexLazyRoute: typeof AuthenticatedHelpCenterIndexLazyRoute
+  AuthenticatedOrganizationSettingsIndexLazyRoute: typeof AuthenticatedOrganizationSettingsIndexLazyRoute
   AuthenticatedRapportsIndexLazyRoute: typeof AuthenticatedRapportsIndexLazyRoute
   AuthenticatedTasksIndexLazyRoute: typeof AuthenticatedTasksIndexLazyRoute
   AuthenticatedTypeDocumentsIndexLazyRoute: typeof AuthenticatedTypeDocumentsIndexLazyRoute
@@ -1088,6 +1149,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedVisitesIndexLazyRoute: typeof AuthenticatedVisitesIndexLazyRoute
   AuthenticatedWebsiteDemandesIndexLazyRoute: typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   AuthenticatedDemandesIdPdfLazyRoute: typeof AuthenticatedDemandesIdPdfLazyRoute
+  AuthenticatedComitesComiteIdIndexRoute: typeof AuthenticatedComitesComiteIdIndexRoute
   AuthenticatedDemandesIdIndexRoute: typeof AuthenticatedDemandesIdIndexRoute
 }
 
@@ -1128,11 +1190,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedVisitesMesVisitesLazyRoute:
     AuthenticatedVisitesMesVisitesLazyRoute,
   AuthenticatedAidesIndexLazyRoute: AuthenticatedAidesIndexLazyRoute,
+  AuthenticatedComitesIndexLazyRoute: AuthenticatedComitesIndexLazyRoute,
   AuthenticatedContactsIndexLazyRoute: AuthenticatedContactsIndexLazyRoute,
   AuthenticatedDemandesIndexLazyRoute: AuthenticatedDemandesIndexLazyRoute,
   AuthenticatedEmailTemplatesIndexLazyRoute:
     AuthenticatedEmailTemplatesIndexLazyRoute,
   AuthenticatedHelpCenterIndexLazyRoute: AuthenticatedHelpCenterIndexLazyRoute,
+  AuthenticatedOrganizationSettingsIndexLazyRoute:
+    AuthenticatedOrganizationSettingsIndexLazyRoute,
   AuthenticatedRapportsIndexLazyRoute: AuthenticatedRapportsIndexLazyRoute,
   AuthenticatedTasksIndexLazyRoute: AuthenticatedTasksIndexLazyRoute,
   AuthenticatedTypeDocumentsIndexLazyRoute:
@@ -1143,6 +1208,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedWebsiteDemandesIndexLazyRoute:
     AuthenticatedWebsiteDemandesIndexLazyRoute,
   AuthenticatedDemandesIdPdfLazyRoute: AuthenticatedDemandesIdPdfLazyRoute,
+  AuthenticatedComitesComiteIdIndexRoute:
+    AuthenticatedComitesComiteIdIndexRoute,
   AuthenticatedDemandesIdIndexRoute: AuthenticatedDemandesIdIndexRoute,
 }
 
@@ -1187,10 +1254,12 @@ export interface FileRoutesByFullPath {
   '/visites/avenir': typeof AuthenticatedVisitesAvenirLazyRoute
   '/visites/mes-visites': typeof AuthenticatedVisitesMesVisitesLazyRoute
   '/aides': typeof AuthenticatedAidesIndexLazyRoute
+  '/comites': typeof AuthenticatedComitesIndexLazyRoute
   '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
   '/email-templates': typeof AuthenticatedEmailTemplatesIndexLazyRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
+  '/organization-settings': typeof AuthenticatedOrganizationSettingsIndexLazyRoute
   '/rapports': typeof AuthenticatedRapportsIndexLazyRoute
   '/settings/': typeof AuthenticatedSettingsIndexLazyRoute
   '/tasks': typeof AuthenticatedTasksIndexLazyRoute
@@ -1201,6 +1270,7 @@ export interface FileRoutesByFullPath {
   '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
   '/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
+  '/comites/$comiteId': typeof AuthenticatedComitesComiteIdIndexRoute
   '/demandes/$id': typeof AuthenticatedDemandesIdIndexRoute
 }
 
@@ -1240,10 +1310,12 @@ export interface FileRoutesByTo {
   '/visites/avenir': typeof AuthenticatedVisitesAvenirLazyRoute
   '/visites/mes-visites': typeof AuthenticatedVisitesMesVisitesLazyRoute
   '/aides': typeof AuthenticatedAidesIndexLazyRoute
+  '/comites': typeof AuthenticatedComitesIndexLazyRoute
   '/contacts': typeof AuthenticatedContactsIndexLazyRoute
   '/demandes': typeof AuthenticatedDemandesIndexLazyRoute
   '/email-templates': typeof AuthenticatedEmailTemplatesIndexLazyRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexLazyRoute
+  '/organization-settings': typeof AuthenticatedOrganizationSettingsIndexLazyRoute
   '/rapports': typeof AuthenticatedRapportsIndexLazyRoute
   '/settings': typeof AuthenticatedSettingsIndexLazyRoute
   '/tasks': typeof AuthenticatedTasksIndexLazyRoute
@@ -1254,6 +1326,7 @@ export interface FileRoutesByTo {
   '/website-demandes': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
   '/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
+  '/comites/$comiteId': typeof AuthenticatedComitesComiteIdIndexRoute
   '/demandes/$id': typeof AuthenticatedDemandesIdIndexRoute
 }
 
@@ -1297,10 +1370,12 @@ export interface FileRoutesById {
   '/_authenticated/visites/avenir': typeof AuthenticatedVisitesAvenirLazyRoute
   '/_authenticated/visites/mes-visites': typeof AuthenticatedVisitesMesVisitesLazyRoute
   '/_authenticated/aides/': typeof AuthenticatedAidesIndexLazyRoute
+  '/_authenticated/comites/': typeof AuthenticatedComitesIndexLazyRoute
   '/_authenticated/contacts/': typeof AuthenticatedContactsIndexLazyRoute
   '/_authenticated/demandes/': typeof AuthenticatedDemandesIndexLazyRoute
   '/_authenticated/email-templates/': typeof AuthenticatedEmailTemplatesIndexLazyRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexLazyRoute
+  '/_authenticated/organization-settings/': typeof AuthenticatedOrganizationSettingsIndexLazyRoute
   '/_authenticated/rapports/': typeof AuthenticatedRapportsIndexLazyRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexLazyRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexLazyRoute
@@ -1311,6 +1386,7 @@ export interface FileRoutesById {
   '/_authenticated/website-demandes/': typeof AuthenticatedWebsiteDemandesIndexLazyRoute
   '/(auth)/demandes/$id/fiche-visite-pdf': typeof authDemandesIdFicheVisitePdfRoute
   '/_authenticated/demandes/$id/pdf': typeof AuthenticatedDemandesIdPdfLazyRoute
+  '/_authenticated/comites/$comiteId/': typeof AuthenticatedComitesComiteIdIndexRoute
   '/_authenticated/demandes/$id/': typeof AuthenticatedDemandesIdIndexRoute
 }
 
@@ -1354,10 +1430,12 @@ export interface FileRouteTypes {
     | '/visites/avenir'
     | '/visites/mes-visites'
     | '/aides'
+    | '/comites'
     | '/contacts'
     | '/demandes'
     | '/email-templates'
     | '/help-center'
+    | '/organization-settings'
     | '/rapports'
     | '/settings/'
     | '/tasks'
@@ -1368,6 +1446,7 @@ export interface FileRouteTypes {
     | '/website-demandes'
     | '/demandes/$id/fiche-visite-pdf'
     | '/demandes/$id/pdf'
+    | '/comites/$comiteId'
     | '/demandes/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -1406,10 +1485,12 @@ export interface FileRouteTypes {
     | '/visites/avenir'
     | '/visites/mes-visites'
     | '/aides'
+    | '/comites'
     | '/contacts'
     | '/demandes'
     | '/email-templates'
     | '/help-center'
+    | '/organization-settings'
     | '/rapports'
     | '/settings'
     | '/tasks'
@@ -1420,6 +1501,7 @@ export interface FileRouteTypes {
     | '/website-demandes'
     | '/demandes/$id/fiche-visite-pdf'
     | '/demandes/$id/pdf'
+    | '/comites/$comiteId'
     | '/demandes/$id'
   id:
     | '__root__'
@@ -1461,10 +1543,12 @@ export interface FileRouteTypes {
     | '/_authenticated/visites/avenir'
     | '/_authenticated/visites/mes-visites'
     | '/_authenticated/aides/'
+    | '/_authenticated/comites/'
     | '/_authenticated/contacts/'
     | '/_authenticated/demandes/'
     | '/_authenticated/email-templates/'
     | '/_authenticated/help-center/'
+    | '/_authenticated/organization-settings/'
     | '/_authenticated/rapports/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
@@ -1475,6 +1559,7 @@ export interface FileRouteTypes {
     | '/_authenticated/website-demandes/'
     | '/(auth)/demandes/$id/fiche-visite-pdf'
     | '/_authenticated/demandes/$id/pdf'
+    | '/_authenticated/comites/$comiteId/'
     | '/_authenticated/demandes/$id/'
   fileRoutesById: FileRoutesById
 }
@@ -1565,10 +1650,12 @@ export const routeTree = rootRoute
         "/_authenticated/visites/avenir",
         "/_authenticated/visites/mes-visites",
         "/_authenticated/aides/",
+        "/_authenticated/comites/",
         "/_authenticated/contacts/",
         "/_authenticated/demandes/",
         "/_authenticated/email-templates/",
         "/_authenticated/help-center/",
+        "/_authenticated/organization-settings/",
         "/_authenticated/rapports/",
         "/_authenticated/tasks/",
         "/_authenticated/typeDocuments/",
@@ -1577,6 +1664,7 @@ export const routeTree = rootRoute
         "/_authenticated/visites/",
         "/_authenticated/website-demandes/",
         "/_authenticated/demandes/$id/pdf",
+        "/_authenticated/comites/$comiteId/",
         "/_authenticated/demandes/$id/"
       ]
     },
@@ -1722,6 +1810,10 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/aides/index.lazy.tsx",
       "parent": "/_authenticated"
     },
+    "/_authenticated/comites/": {
+      "filePath": "_authenticated/comites/index.lazy.tsx",
+      "parent": "/_authenticated"
+    },
     "/_authenticated/contacts/": {
       "filePath": "_authenticated/contacts/index.lazy.tsx",
       "parent": "/_authenticated"
@@ -1736,6 +1828,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/help-center/": {
       "filePath": "_authenticated/help-center/index.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/organization-settings/": {
+      "filePath": "_authenticated/organization-settings/index.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/rapports/": {
@@ -1775,6 +1871,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/demandes/$id/pdf": {
       "filePath": "_authenticated/demandes/$id/pdf.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/comites/$comiteId/": {
+      "filePath": "_authenticated/comites/$comiteId/index.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/demandes/$id/": {

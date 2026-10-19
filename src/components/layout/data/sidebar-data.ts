@@ -1,5 +1,6 @@
 import {
   IconFile,
+  IconGavel,
   IconHeartHandshake,
   IconHelp,
   IconLayoutDashboard,
@@ -93,6 +94,11 @@ export function useSidebarData(): SidebarData {
           icon: IconHeartHandshake,
         },
         {
+          title: 'Comités',
+          url: '/comites',
+          icon: IconGavel,
+        },
+        {
           title: 'Versements',
           
           icon: BadgeEuro,
@@ -170,6 +176,11 @@ export function useSidebarData(): SidebarData {
             {
               title: "Modèles d'emails",
               url: '/email-templates',
+              icon: Squircle,
+            },
+            {
+              title: "Coordonnées de l'association",
+              url: '/organization-settings',
               icon: Squircle,
             },
           ],

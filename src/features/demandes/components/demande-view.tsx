@@ -32,6 +32,9 @@ import CoordinateursMapSheet from './assign-coordinateur'
 import { AssignDemandeSheet } from './assign-demande-dialog'
 import { useConfirmDialog } from './demande-confirm-dialog'
 import { DocsRequestSheet } from './DocsRequestSheet'
+import { DecisionSheet } from './DecisionSheet'
+import { useDecisionService } from '@/api/decision/decisionService'
+import { DecisionType } from '@/model/decision/Decision'
 import { NoteSuiviSheet } from './NoteSuiviSheet'
 import { FicheVisiteShareSheet } from './shareFicheVisite'
 import { useVisiteService } from '@/api/visite/invitationService'
@@ -76,6 +79,8 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const [openDocsRequestSheet, setOpenDocsRequestSheet] = useState(false);
   const [openAssignDemandeSheet, setOpenAssignDemandeSheet] = useState(false);
   const [openVisiteSheet, setOpenVisiteSheet] = useState(false);
+  const [decisionSheetType, setDecisionSheetType] = useState<DecisionType | null>(null);
+  const { createDecision } = useDecisionService();
 
   const { openConfirmDialog, ConfirmDialogComponent } = useConfirmDialog()
   const pendingStatusUpdate = useRef(false);
@@ -107,7 +112,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const { visites, createVisite, refetch: refetchVisites } = useVisiteService({ where: { demande: { id: currentRow.id } } })
 
   const hasDocument = suiviDdemandeur && suiviDdemandeur.length > 0
-  const { setOpenAide } = useAides()
+  const { setOpenAide, setPendingDecisionId } = useAides()
   const { typeDocuments }: { typeDocuments: TypeDocument[] } = useTypeDocumentService();
   const typeDocumentsDemande = typeDocuments.filter((e) => (e.rattachement == "Demande" && e.internalCode !== 'unknown_demande'))
   const typeDocumentUnknown = typeDocuments.filter((e) => (e.rattachement == "Demande" && e.internalCode == 'unknown_demande'))[0]
@@ -163,27 +168,39 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   }
 
 
-  const handleRefuserDemande = async () => {
-    nextStatusRef.current = "refusée";
-    await updateDemande(currentRow.id, { status: nextStatusRef.current, decisionDate: new Date() });
+  const handleRefuserDemande = () => {
+    setDecisionSheetType("Refus");
   }
 
-  const handleAcceptDemande = async () => {
-    try{
-    nextStatusRef.current = "EnCours";
-    if( currentRow.categorieDemandeur == undefined)
-      throw Error("Vous devez d'abord renseigner la catégorie du demandeur");
+  const handleAcceptDemande = () => {
+    if (currentRow.categorieDemandeur == undefined) {
+      toast({ title: 'Echec', description: "Vous devez d'abord renseigner la catégorie du demandeur", variant: 'destructive' });
+      return;
+    }
+    setDecisionSheetType("Approbation");
+  }
 
-    openConfirmDialog(
-      "Ajouter un aide ?",
-      "Souhaitez-vous ajouter une aide maintenant ?",
-      handleAddAide,
-      { confirmText: "Oui", cancelBtnText: "Annuler" }
-    );
-    const firstTresorier: User | undefined = users.length > 0 ? users[0] : undefined;
-    await updateDemande(currentRow.id, { decisionDate: new Date(), status: nextStatusRef.current, ...(firstTresorier && { acteur: { id: firstTresorier.id } }), });
-    }catch(error:any){
-       toast({ title: 'Echec', description: error.message, variant: 'destructive' });
+  const handleAjournerDemande = () => {
+    setDecisionSheetType("Ajournement");
+  }
+
+  const handleSubmitDecision = async ({ type, motivation }: { type: DecisionType; motivation: string }) => {
+    const decision = await createDecision({
+      demandeId: currentRow.id,
+      type,
+      motivation,
+      acteurId: userId!,
+    });
+
+    if (type === "Approbation") {
+      const firstTresorier: User | undefined = users.length > 0 ? users[0] : undefined;
+      if (firstTresorier) {
+        await updateDemande(currentRow.id, { acteur: { id: firstTresorier.id } });
+      }
+      if (decision?.id) {
+        setPendingDecisionId(decision.id);
+        setOpenAide('add');
+      }
     }
   }
 
@@ -268,13 +285,6 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const handleConfirmedStatusChange = async () => {
     if (nextStatusRef.current) {
       await updateDemande(currentRow.id, { status: nextStatusRef.current });
-    }
-    nextStatusRef.current = null;
-  };
-
-  const handleAddAide = async () => {
-    if (nextStatusRef.current) {
-      setOpenAide('add');
     }
     nextStatusRef.current = null;
   };
@@ -407,11 +417,17 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
             setOpenTelegramSheet={setOpenTelegramSheet}
             handleAbandonnerDemande={handleAbandonnerDemande}
             handleSubmitToComite={handleSubmitToComite}
+            handleAjournerDemande={handleAjournerDemande}
             onRapportAdded={onRapportAdded}
             onVisitDone={onVisitDone}
           />
         </div>
       )}
+      <DecisionSheet
+        type={decisionSheetType}
+        onOpenChange={(open) => !open && setDecisionSheetType(null)}
+        onSubmit={handleSubmitDecision}
+      />
       <NoteSuiviSheet
         open={openNoteSheet}
         onOpenChange={setOpenNoteSheet}
