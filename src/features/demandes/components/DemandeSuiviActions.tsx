@@ -80,7 +80,7 @@ import { useAides } from '@/features/aides/context/aides-context';
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                {currentRow.status === 'en_pre_commision' && (
+                {['en_pre_commision', 'en_visite'].includes(currentRow.status) && (
                   <>
                     <DropdownMenuLabel>Décision</DropdownMenuLabel>
                     <DropdownMenuItem onClick={handleSubmitToComite}>
