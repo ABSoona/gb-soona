@@ -57,11 +57,14 @@ interface Props {
   showDemandeSearch?: boolean;
   forContactId?: number;
   forDemandeId?: number;
+  // Decision de comite (Approbation) a laquelle rattacher l'aide creee -
+  // voir aides-context.tsx / ComiteDecisionsTimeline.
+  decisionId?: number;
   onSuccess?: () => void;
 }
 
 
-export function AidesActionDialog({ currentRow, open, onOpenChange, showContactSearch = true, showDemandeSearch = true, forContactId, forDemandeId,  onSuccess}: Props) {
+export function AidesActionDialog({ currentRow, open, onOpenChange, showContactSearch = true, showDemandeSearch = true, forContactId, forDemandeId, decisionId, onSuccess }: Props) {
 
 
   const { createAide, updateAide, refetch, isSubmitting } = useAideService({ skipQuery: true });
@@ -149,8 +152,9 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       demande: { id: Number(demandeId) },
       reetudier: values.reetudier,
       status: "EnCours",
-      acteurAlertSent : defaultFormValues.acteurAlertSent
-      
+      acteurAlertSent : defaultFormValues.acteurAlertSent,
+      ...(decisionId && !isEdit ? { decision: { id: decisionId } } : {}),
+
     };
 
     if (

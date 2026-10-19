@@ -13,21 +13,25 @@ interface Props {
   onSuccess?: () => void;
 
 }
-export function AidesDialogs({ showContactSearch = true, forContactId, forDemandeId, showDemandeSearch = true,onSuccess}: Props) {
-  const { openAide: open, setOpenAide: setOpen, currentRow, setCurrentRow } = useAides()
+export function AidesDialogs({ showContactSearch = true, forContactId, forDemandeId, showDemandeSearch = true, onSuccess }: Props) {
+  const { openAide: open, setOpenAide: setOpen, currentRow, setCurrentRow, pendingDecisionId, setPendingDecisionId } = useAides()
   return (
     <>
       <AidesActionDialog
         key='aide-add'
         open={open === 'add'}
-        onOpenChange={() => setOpen('add')}
+        onOpenChange={(state) => {
+          setOpen('add')
+          if (!state) {
+            setPendingDecisionId(null)
+          }
+        }}
         showContactSearch={showContactSearch}
         forContactId={forContactId}
         forDemandeId={forDemandeId}
         showDemandeSearch={showDemandeSearch}
+        decisionId={pendingDecisionId ?? undefined}
         onSuccess={onSuccess}
-  
-     
       />
 
 

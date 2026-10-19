@@ -11,6 +11,10 @@ interface AidesContextType {
   setCurrentRow: React.Dispatch<React.SetStateAction<Aide | null>>
   setRefetchAides: (fn: () => void) => void
   triggerRefetchAides: () => void
+  // Decision de comite (Approbation) a laquelle rattacher la prochaine aide
+  // creee via la sheet "add" partagee - voir aides-dialogs.tsx.
+  pendingDecisionId: number | null
+  setPendingDecisionId: React.Dispatch<React.SetStateAction<number | null>>
 }
 
 const AidesContext = React.createContext<AidesContextType | null>(null)
@@ -23,6 +27,7 @@ export default function AidesProvider({ children }: Props) {
   const [openAide, setOpenAide] = useDialogState<AidesDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Aide | null>(null)
   const [refetchFn, setRefetchFn] = useState<(() => void) | null>(null)
+  const [pendingDecisionId, setPendingDecisionId] = useState<number | null>(null)
 
   const setRefetchAides = useCallback((fn: () => void) => {
     setRefetchFn(() => fn)
@@ -41,7 +46,9 @@ export default function AidesProvider({ children }: Props) {
       currentRow,
       setCurrentRow,
       setRefetchAides,
-      triggerRefetchAides
+      triggerRefetchAides,
+      pendingDecisionId,
+      setPendingDecisionId
     }}>
       {children}
     </AidesContext.Provider>

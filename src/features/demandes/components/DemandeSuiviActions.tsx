@@ -9,11 +9,12 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-  import { Plus, CheckCircle, PauseCircle, PhoneMissed, PhoneCall, StickyNote, UserCheck, FilePlus2, MapPin, ExternalLink, RefreshCwOff, ChevronDown, Send } from 'lucide-react';
+  import { Plus, CheckCircle, PauseCircle, PhoneMissed, PhoneCall, StickyNote, UserCheck, FilePlus2, MapPin, ExternalLink, RefreshCwOff, ChevronDown, Send, CalendarClock } from 'lucide-react';
   import { TabsContent } from '@radix-ui/react-tabs';
   import { Button } from '@/components/ui/button';
   import { DemandeActivityTimeline } from './DemandeActivityTimeline';
   import { DemandeStatusHistoryTimeline } from './DemandeStatusHistoryTimeline';
+  import { ComiteDecisionsTimeline } from './ComiteDecisionsTimeline';
   import { VisiteList } from '@/features/visites/components/visite-cads-list';
   import { Demande, DemandeStatus } from '@/model/demande/Demande';
   import { Visite } from '@/model/visite/Visite';
@@ -37,6 +38,7 @@ import { useAides } from '@/features/aides/context/aides-context';
     setOpenTelegramSheet: (open: boolean) => void;
     handleAbandonnerDemande: () => void;
     handleSubmitToComite: () => void;
+    handleAjournerDemande: () => void;
     onRapportAdded: () => void;
     onVisitDone: () => void;
   }
@@ -59,6 +61,7 @@ import { useAides } from '@/features/aides/context/aides-context';
     handleAbandonnerDemande,
     setOpenTelegramSheet,
     handleSubmitToComite,
+    handleAjournerDemande,
     onRapportAdded,
     onVisitDone,
   }: Props) {
@@ -97,6 +100,10 @@ import { useAides } from '@/features/aides/context/aides-context';
                     <DropdownMenuItem onClick={handleRefuserDemande}>
                       <PauseCircle className="mr-2 h-4 w-4" />
                       Rejeter la demande
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleAjournerDemande}>
+                      <CalendarClock className="mr-2 h-4 w-4" />
+                      Ajourner la demande
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setOpenTelegramSheet(true)}>
                       <Send  className="mr-2 h-4 w-4" />
@@ -148,9 +155,10 @@ import { useAides } from '@/features/aides/context/aides-context';
         </CardHeader>
         <CardContent className="space-y-2 max-h-[600px] overflow-y-auto pr-2">
           <Tabs defaultValue="Activites" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsList className="grid w-full grid-cols-4 mb-6">
               <TabsTrigger value="Activites">Activités</TabsTrigger>
               <TabsTrigger value="Visites">Visites</TabsTrigger>
+              <TabsTrigger value="Comite">Comité</TabsTrigger>
               <TabsTrigger value="Historique">Historique</TabsTrigger>
             </TabsList>
             <TabsContent value="Activites">
@@ -158,6 +166,9 @@ import { useAides } from '@/features/aides/context/aides-context';
             </TabsContent>
             <TabsContent value="Visites">
               <VisiteList demandeId={currentRow.id} onRapportAdded={onRapportAdded} onVisitDone={onVisitDone}/>
+            </TabsContent>
+            <TabsContent value="Comite">
+              <ComiteDecisionsTimeline demandeId={currentRow.id} />
             </TabsContent>
             <TabsContent value="Historique">
               <DemandeStatusHistoryTimeline history={currentRow.demandeStatusHistories ?? []} />
