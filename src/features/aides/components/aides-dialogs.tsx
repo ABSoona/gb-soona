@@ -9,9 +9,11 @@ interface Props {
   showContactSearch?: boolean;
   forContactId?: number;
   forDemandeId?: number;
-  showDemandeSearch?: boolean
+  showDemandeSearch?: boolean,
+  onSuccess?: () => void;
+
 }
-export function AidesDialogs({ showContactSearch = true, forContactId, forDemandeId, showDemandeSearch = true }: Props) {
+export function AidesDialogs({ showContactSearch = true, forContactId, forDemandeId, showDemandeSearch = true, onSuccess }: Props) {
   const { openAide: open, setOpenAide: setOpen, currentRow, setCurrentRow, pendingDecisionId, setPendingDecisionId } = useAides()
   return (
     <>
@@ -29,6 +31,7 @@ export function AidesDialogs({ showContactSearch = true, forContactId, forDemand
         forDemandeId={forDemandeId}
         showDemandeSearch={showDemandeSearch}
         decisionId={pendingDecisionId ?? undefined}
+        onSuccess={onSuccess}
       />
 
 

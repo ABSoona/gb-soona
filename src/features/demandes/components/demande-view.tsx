@@ -184,6 +184,12 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
     setDecisionSheetType("Ajournement");
   }
 
+  // Memorise la decision d'approbation en cours pour pouvoir re-rattacher
+  // chaque aide ajoutee via la boucle "ajouter une autre aide ?" (voir
+  // handleAskAgainAide) - pendingDecisionId est remis a null des que la
+  // sheet d'ajout se ferme, donc pas fiable seul pour le 2e tour.
+  const lastApprovalDecisionIdRef = useRef<number | null>(null);
+
   const handleSubmitDecision = async ({ type, motivation }: { type: DecisionType; motivation: string }) => {
     const decision = await createDecision({
       demandeId: currentRow.id,
@@ -198,10 +204,25 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         await updateDemande(currentRow.id, { acteur: { id: firstTresorier.id } });
       }
       if (decision?.id) {
+        lastApprovalDecisionIdRef.current = decision.id;
         setPendingDecisionId(decision.id);
         setOpenAide('add');
       }
     }
+  }
+
+  const handleAskAgainAide = async () => {
+    openConfirmDialog(
+      "Ajouter une autre aide ?",
+      "Souhaitez-vous ajouter une autre aide ?",
+      () => {
+        if (lastApprovalDecisionIdRef.current) {
+          setPendingDecisionId(lastApprovalDecisionIdRef.current);
+        }
+        setOpenAide('add');
+      },
+      { confirmText: "Oui", cancelBtnText: "Annuler" }
+    );
   }
 
   const handleSubmitNote = async ({ titre, message }: { titre: string; message: string }) => {
@@ -643,7 +664,9 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         </div>
       </div>
       {ConfirmDialogComponent}
-      <AidesDialogs showContactSearch={false} forContactId={currentRow.contact.id} forDemandeId={currentRow.id} showDemandeSearch={false} />
+      <AidesDialogs showContactSearch={false} forContactId={currentRow.contact.id} forDemandeId={currentRow.id} showDemandeSearch={false} 
+      onSuccess={handleAskAgainAide}
+     />
     </div>
   )
 }

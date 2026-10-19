@@ -19,6 +19,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
   import { Demande, DemandeStatus } from '@/model/demande/Demande';
   import { Visite } from '@/model/visite/Visite';
   import { useState, useRef } from 'react';
+import { useAides } from '@/features/aides/context/aides-context';
   
   interface Props {
     currentRow: Demande;
@@ -53,6 +54,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     handleSuccessContact,
     setOpenNoteSheet,
     handleOpenAssigSheet,
+
     handleDocsRequest,
     handleOpenVisiteSheet,
     setOpenShareFicheVisite: setOpenShareDemande,
@@ -64,6 +66,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
     onVisitDone,
   }: Props) {
     if (!currentRow) return null;
+     
   
     return (
       <Card className="h-full">
@@ -141,6 +144,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
                   <RefreshCwOff className="mr-2 h-4 w-4" />
                   Abandonner la demande
                 </DropdownMenuItem>
+                
                 <DropdownMenuItem onClick={() => setOpenNoteSheet(true)}>
                   <StickyNote className="mr-2 h-4 w-4" />
                   Ajouter une Note de suivi

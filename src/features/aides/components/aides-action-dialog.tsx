@@ -60,10 +60,11 @@ interface Props {
   // Decision de comite (Approbation) a laquelle rattacher l'aide creee -
   // voir aides-context.tsx / ComiteDecisionsTimeline.
   decisionId?: number;
+  onSuccess?: () => void;
 }
 
 
-export function AidesActionDialog({ currentRow, open, onOpenChange, showContactSearch = true, showDemandeSearch = true, forContactId, forDemandeId, decisionId }: Props) {
+export function AidesActionDialog({ currentRow, open, onOpenChange, showContactSearch = true, showDemandeSearch = true, forContactId, forDemandeId, decisionId, onSuccess }: Props) {
 
 
   const { createAide, updateAide, refetch, isSubmitting } = useAideService({ skipQuery: true });
@@ -172,7 +173,11 @@ export function AidesActionDialog({ currentRow, open, onOpenChange, showContactS
       } else {
         await createAide(aidePayload);
         toast({ title: 'Nouvelle aide créée avec succès !' });
+        if ( onSuccess) {
+          onSuccess();
+        }
       }
+     
     /*   if (demandeId && !values.reetudier && values.frequence === 'UneFois')
         await updateDemande(Number(demandeId), { status: "clôturée" }); */
       triggerRefetchAides();
