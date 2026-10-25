@@ -10,9 +10,17 @@ interface EntretienSuiviSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: {message: string }) => Promise<void>;
+  title?: string;
+  placeholder?: string;
 }
 
-export const EntretienSuiviSheet: React.FC<EntretienSuiviSheetProps> = ({ open, onOpenChange, onSubmit }) => {
+export const EntretienSuiviSheet: React.FC<EntretienSuiviSheetProps> = ({
+  open,
+  onOpenChange,
+  onSubmit,
+  title = "Synthèse de l’échange",
+  placeholder = "Ecrire ce qu’il faut retenir de l'entretien avec le bénéficiaire ",
+}) => {
 
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,13 +39,13 @@ export const EntretienSuiviSheet: React.FC<EntretienSuiviSheetProps> = ({ open, 
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="space-y-4 p-6">
         <SheetHeader>
-          <SheetTitle>Synthèse de l’échange</SheetTitle>
+          <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
 
         <div className="space-y-4">
-     
+
           <Textarea
-            placeholder="Ecrire ce qu’il faut retenir de l'entretien avec le bénéficiaire "
+            placeholder={placeholder}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={15}

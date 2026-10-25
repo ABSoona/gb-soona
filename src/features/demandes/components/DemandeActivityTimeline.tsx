@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { DemandeActivity } from "@/model/demande/Demande";
 import { useMutation } from "@apollo/client";
 import {
-  Ban, CircleCheckBig, ClockAlert, FilePlus2, Gavel, HeartHandshake, MapPin,
+  Ban, CircleCheckBig, ClockAlert, FilePlus2, Gavel, HeartHandshake, Mail, MapPin,
   MoreVertical, Pencil, PhoneCall, PhoneMissed, RefreshCw, RefreshCwOff,
   StickyNote, Trash,
   UploadCloud,
@@ -35,6 +35,7 @@ const getIconForType = (type: string) => {
     case "refuse": return <Ban className="h-4 w-4 inline mr-2" />;
     case "userAssign": return <UserPlus className="h-4 w-4 inline mr-2" />;
     case "comiteDecision": return <Gavel className="h-4 w-4 inline mr-2" />;
+    case "relanceEcrite": return <Mail className="h-4 w-4 inline mr-2" />;
     default: return null;
   }
 };

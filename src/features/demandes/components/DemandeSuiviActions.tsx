@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-  import { Plus, CheckCircle, PauseCircle, PhoneMissed, PhoneCall, StickyNote, UserCheck, FilePlus2, MapPin, ExternalLink, RefreshCwOff, ChevronDown, Send, CalendarClock } from 'lucide-react';
+  import { Plus, CheckCircle, PauseCircle, PhoneMissed, PhoneCall, Mail, StickyNote, UserCheck, FilePlus2, MapPin, ExternalLink, RefreshCwOff, ChevronDown, Send, CalendarClock } from 'lucide-react';
   import { TabsContent } from '@radix-ui/react-tabs';
   import { Button } from '@/components/ui/button';
   import { DemandeActivityTimeline } from './DemandeActivityTimeline';
@@ -30,6 +30,7 @@ import { useAides } from '@/features/aides/context/aides-context';
     handleRefuserDemande: () => void;
     handleEchecContact: () => void;
     handleSuccessContact: (open :boolean) => void;
+    setOpenRelanceSheet: (open: boolean) => void;
     setOpenNoteSheet: (open: boolean) => void;
     handleOpenAssigSheet: () => void;
     handleDocsRequest: () => void;
@@ -52,6 +53,7 @@ import { useAides } from '@/features/aides/context/aides-context';
     handleRefuserDemande,
     handleEchecContact,
     handleSuccessContact,
+    setOpenRelanceSheet,
     setOpenNoteSheet,
     handleOpenAssigSheet,
 
@@ -121,7 +123,11 @@ import { useAides } from '@/features/aides/context/aides-context';
                   <PhoneCall className="mr-2 h-4 w-4" />
                   Entretien avec le bénéficiaire
                 </DropdownMenuItem>
-                
+                <DropdownMenuItem onClick={() => setOpenRelanceSheet(true)}>
+                  <Mail className="mr-2 h-4 w-4" />
+                  Relance écrite
+                </DropdownMenuItem>
+
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem onClick={handleOpenAssigSheet}>

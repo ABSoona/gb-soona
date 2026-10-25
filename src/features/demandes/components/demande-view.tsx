@@ -73,6 +73,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
   const { createDemandeActivity, updateDemande } = useDemandeService({ where: { id: { equals: currentRow.id } }, skipQuery: true });
   const [openNoteSheet, setOpenNoteSheet] = useState(false);
   const [openEntretienSheet, setOpenEntretienSheet] = useState(false);
+  const [openRelanceSheet, setOpenRelanceSheet] = useState(false);
   const [openShareFicheVisite, setOpenShareFicheVisite] = useState(false);
   const [openTelegramSheet, setOpenTelegramSheet] = useState(false);
 
@@ -239,6 +240,15 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       titre: "Entretien avec le bénéficiaire",
       message: message,
       typeField: "priseContactReussie", // ici très important
+      demandeId: currentRow.id,
+      userId: userId!,
+    });
+  };
+  const handleSubmitRelance = async ({ message }: { message: string }) => {
+    await createDemandeActivity({
+      titre: "Relance écrite",
+      message: message,
+      typeField: "relanceEcrite",
       demandeId: currentRow.id,
       userId: userId!,
     });
@@ -430,6 +440,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
             handleRefuserDemande={handleRefuserDemande}
             handleEchecContact={handleEchecContact}
             handleSuccessContact={setOpenEntretienSheet}
+            setOpenRelanceSheet={setOpenRelanceSheet}
             setOpenNoteSheet={setOpenNoteSheet}
             handleOpenAssigSheet={handleOpenAssigSheet}
             handleDocsRequest={handleDocsRequest}
@@ -459,6 +470,13 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         open={openEntretienSheet}
         onOpenChange={setOpenEntretienSheet}
         onSubmit={handleSubmitEntretien}
+      />
+      <EntretienSuiviSheet
+        open={openRelanceSheet}
+        onOpenChange={setOpenRelanceSheet}
+        onSubmit={handleSubmitRelance}
+        title="Relance écrite"
+        placeholder="Ecrire le contenu de la relance envoyée au bénéficiaire"
       />
       <FicheVisiteShareSheet
         open={openShareFicheVisite}
