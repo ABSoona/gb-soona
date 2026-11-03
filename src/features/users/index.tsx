@@ -30,7 +30,7 @@ export default function Users() {
               <IconUsers className="h-6 w-6 text-primary" />
               Utilisateurs</h2>
             <p className='text-muted-foreground'>
-              Vous pouvez gérer ici les accès à GBSoona
+              Vous pouvez gérer ici les accès à Mizana
             </p>
           </div>
           <UsersPrimaryButtons />

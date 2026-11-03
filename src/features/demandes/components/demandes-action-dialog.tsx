@@ -138,7 +138,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
   }, [currentRow?.id]);
 
   // Charge une seule fois la composition existante (ou, a defaut, pre-remplit
-  // une ligne unique avec le montant global actuel — on ne perd rien).
+  // une ligne unique avec le montant global actuel - on ne perd rien).
   useEffect(() => {
     if (!isEdit || autreChargesLoading || chargesSeededRef.current) return;
     chargesSeededRef.current = true;
@@ -306,7 +306,7 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
 
         // 🔥 L'historisation doit figer la situation telle qu'elle était AVANT
         // cette mise à jour (currentRow, chargé avant l'édition), pas les
-        // nouvelles valeurs qu'on est en train d'enregistrer — sinon
+        // nouvelles valeurs qu'on est en train d'enregistrer - sinon
         // l'historique ne fait que dupliquer l'état courant.
         if (historiser) {
           setIsHistorizing(true);

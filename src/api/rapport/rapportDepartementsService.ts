@@ -49,7 +49,7 @@ const dansLaPeriode = (dateIso: string | null, debut: Date, fin: Date): boolean 
 
 // Même définition "backlog" que le tableau rectificatif mensuel : une
 // demande sans historique de statut n'a jamais changé depuis sa création
-// (donc son statut actuel est celui qu'elle a toujours eu — les imports en
+// (donc son statut actuel est celui qu'elle a toujours eu - les imports en
 // masse fixent parfois le statut final directement, sans jamais passer par
 // un changement tracé). Si ce statut n'est pas "recue", elle ne compte
 // jamais dans le backlog, même sans historique.
