@@ -80,7 +80,7 @@ export function useAideService(variables?: any) {
 
   return {
     // 🔥 Retombe sur le resultat precedent pendant qu'une nouvelle requete est
-    // en vol (recherche/filtre/page) au lieu de vider la liste — voir
+    // en vol (recherche/filtre/page) au lieu de vider la liste - voir
     // demandeService.ts pour le meme fix (evite de demonter le toolbar).
     aides: data?.aides ?? previousData?.aides ?? [],
     total: data?.meta?.count ?? previousData?.meta?.count ?? 0,

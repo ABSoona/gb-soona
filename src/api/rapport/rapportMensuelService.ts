@@ -77,7 +77,7 @@ type BacklogDemande = {
   // meme si elle n'a pas d'historique.
   jamaisRecue: boolean;
   // Date a laquelle la demande quitte le "backlog" (premier changement de
-  // statut OU deuxieme activite, la premiere des deux a survenir — la
+  // statut OU deuxieme activite, la premiere des deux a survenir - la
   // premiere activite est toujours la creation automatique "Demande
   // Reçue"). `null` si elle n'en est jamais sortie a ce jour.
   sortieBacklogDate: Date | null;
@@ -249,7 +249,7 @@ export function useRapportMensuelService() {
       });
 
       // Backlog moyen du mois : moyenne du backlog figé (demandes déjà
-      // créées et toujours "vierges" — statut recue, aucune activité
+      // créées et toujours "vierges" - statut recue, aucune activité
       // au-delà de la création) mesuré à la fin de chaque jour du mois.
       // Un instantané unique en fin de mois peut masquer un pic survenu
       // en cours de mois ; la moyenne journalière est plus représentative.
