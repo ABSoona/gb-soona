@@ -6,6 +6,7 @@ export interface OrganizationSettings {
   rna: string;
   email: string;
   telephone: string;
+  exigerVisitesRealiseesComite: boolean;
 }
 
 export async function getOrganizationSettings(): Promise<OrganizationSettings> {

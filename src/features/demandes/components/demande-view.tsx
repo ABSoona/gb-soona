@@ -361,11 +361,13 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
         async () => {
           if (pendingStatusUpdate.current) {
 
+            pendingStatusUpdate.current = false;
+            // Le refus du controle avant comite est deja affiche par
+            // useDemandeService : on ferme simplement la confirmation.
             await updateDemande(currentRow.id, {
               status: "en_commision",
 
-            });
-            pendingStatusUpdate.current = false;
+            }).catch(() => {});
           }
         },
         { confirmText: "Confirmer", cancelBtnText: "Annuler", destructive: false }
@@ -378,7 +380,9 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
       "Soumettre au comité ?",
       "Souhaitez-vous faire passer cette demande en \"En comité\" pour qu'elle soit examinée lors du prochain comité ?",
       async () => {
-        await updateDemande(currentRow.id, { status: "en_commision" });
+        // Le refus du controle avant comite est deja affiche par
+        // useDemandeService : on ferme simplement la confirmation.
+        await updateDemande(currentRow.id, { status: "en_commision" }).catch(() => {});
       },
       { confirmText: "Confirmer", cancelBtnText: "Annuler" }
     );

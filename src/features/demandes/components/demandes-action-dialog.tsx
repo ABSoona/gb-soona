@@ -27,6 +27,7 @@ import { toast } from '@/hooks/use-toast';
 import { Demande, demandeSchema, situationFamilleTypes, situationTypes } from '@/model/demande/Demande';
 import { handleServerError } from '@/utils/handle-server-error';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ApolloError } from '@apollo/client';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useDemandes } from '../context/demandes-context';
@@ -392,6 +393,9 @@ export function DemandesActionDialog({ currentRow, open, onOpenChange,refetch }:
       form.reset();
 
     } catch (error : any) {
+        // Erreur GraphQL (ex. controle avant comite) deja affichee par
+        // useDemandeService : on garde le volet ouvert pour completer.
+        if (error instanceof ApolloError) return;
         handleServerError(error);
       toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
 
