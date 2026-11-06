@@ -6,6 +6,7 @@ import {
 } from '@/api/organizationSettings/organizationSettingsService';
 import AppLayout from '@/components/layout/app-layout';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -22,6 +23,7 @@ export default function OrganizationSettingsPage() {
   const [rna, setRna] = useState('');
   const [email, setEmail] = useState('');
   const [telephone, setTelephone] = useState('');
+  const [exigerVisitesRealiseesComite, setExigerVisitesRealiseesComite] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -32,6 +34,7 @@ export default function OrganizationSettingsPage() {
         setRna(settings.rna ?? '');
         setEmail(settings.email ?? '');
         setTelephone(settings.telephone ?? '');
+        setExigerVisitesRealiseesComite(settings.exigerVisitesRealiseesComite ?? true);
       } catch (e) {
         handleServerError(e);
       } finally {
@@ -43,8 +46,8 @@ export default function OrganizationSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await updateOrganizationSettings({ nom, adresse, rna, email, telephone });
-      toast({ title: 'Coordonnées enregistrées' });
+      await updateOrganizationSettings({ nom, adresse, rna, email, telephone, exigerVisitesRealiseesComite });
+      toast({ title: 'Paramètres enregistrés' });
     } catch (e) {
       handleServerError(e);
     } finally {
@@ -91,6 +94,25 @@ export default function OrganizationSettingsPage() {
           <div className="space-y-1.5">
             <Label>Téléphone</Label>
             <Input value={telephone} onChange={(e) => setTelephone(e.target.value)} />
+          </div>
+
+          <div className="space-y-3 border-t pt-4">
+            <h3 className="font-semibold">Contrôles avant passage en comité</h3>
+            <p className="text-sm text-muted-foreground">
+              Le code postal et la date de naissance du bénéficiaire, la catégorie du demandeur et le
+              nombre de personnes du foyer sont toujours exigés.
+            </p>
+            <div className="flex items-start gap-2">
+              <Checkbox
+                id="exigerVisitesRealiseesComite"
+                checked={exigerVisitesRealiseesComite}
+                onCheckedChange={(checked) => setExigerVisitesRealiseesComite(checked === true)}
+              />
+              <Label htmlFor="exigerVisitesRealiseesComite" className="font-normal leading-snug">
+                Exiger au moins une visite et que toutes les visites de la demande soient réalisées
+                (les visites annulées sont ignorées)
+              </Label>
+            </div>
           </div>
 
           <div className="flex justify-end">
