@@ -69,7 +69,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
 
   const suiviDdemandeur = documents.filter((doc: Document) => doc.typeDocument?.rattachement === "Demande");
   const userId = getUserId();
-  const { handleFileUpload, handleDelete } = useDocumentActions({ demande: { id: currentRow.id } });
+  const { handleFileUpload, handleDelete, handleDeleteMany } = useDocumentActions({ demande: { id: currentRow.id } });
   const { createDemandeActivity, updateDemande } = useDemandeService({ where: { id: { equals: currentRow.id } }, skipQuery: true });
   const [openNoteSheet, setOpenNoteSheet] = useState(false);
   const [openEntretienSheet, setOpenEntretienSheet] = useState(false);
@@ -678,6 +678,7 @@ export function DemandeView({ currentRow, showContact = true, showAides = true, 
                     contactId={currentRow?.contact.id}
                     onUpload={handleFileUpload}
                     onDelete={handleDelete}
+                    onDeleteMany={handleDeleteMany}
                   />
                 )}
               </CardContent>

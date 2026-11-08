@@ -15,12 +15,22 @@ export function ExportCacButton<TData>({ table }: Props<TData>) {
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExport = async () => {
+    // Seuls les versements versés figurent dans l'export comptable (le back
+    // ignore les autres) : sans ce filtre, une sélection "A verser" ou une
+    // période à venir aboutissait à un 404 affiché "Ressource non trouvée".
     const versementIds = table
       .getFilteredRowModel()
-      .rows.map((row) => (row.original as unknown as Versement).id);
+      .rows.map((row) => row.original as unknown as Versement)
+      .filter((versement) => versement.status === 'Verse')
+      .map((versement) => versement.id);
 
     if (versementIds.length === 0) {
-      toast({ title: 'Aucun versement à exporter pour ces filtres', variant: 'destructive' });
+      toast({
+        title: 'Aucun versement versé à exporter',
+        description:
+          "L'export comptable ne contient que les versements au statut « Versé ». Vérifiez les filtres actifs (statut, période, trésorier).",
+        variant: 'destructive',
+      });
       return;
     }
 
