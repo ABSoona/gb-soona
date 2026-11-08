@@ -33,6 +33,7 @@ export interface ActivityReportData {
     periodeLabel: string
     priseEnCharge: ActivityReportStats
     traitement: ActivityReportStats
+    justificatifs: ActivityReportStats
   }
 }
 
