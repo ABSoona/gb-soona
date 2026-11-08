@@ -199,12 +199,13 @@ export default function RapportActivite() {
               <h2 className='text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-2'>
                 Délais ({data.delais.periodeLabel})
               </h2>
-              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
                 <DelaiCard titre='Délai de prise en charge moyen' stats={data.delais.priseEnCharge} />
                 <DelaiCard titre='Délai de traitement moyen' stats={data.delais.traitement} />
+                <DelaiCard titre='Délai moyen de réception des justificatifs' stats={data.delais.justificatifs} />
               </div>
               <p className='mt-2 text-xs text-muted-foreground'>
-                Délai de prise en charge : entre la réception et la première prise de contact avec le bénéficiaire. Délai de traitement : entre la réception et le premier passage en statut « En cours » ou « Refusée ». Calculés sur une fenêtre glissante de 3 mois pour rester statistiquement significatifs.
+                Délai de prise en charge : entre la réception et la première prise de contact avec le bénéficiaire. Délai de traitement : entre la réception et le premier passage en statut « En cours » ou « Refusée ». Réception des justificatifs : entre chaque passage en « Attente justificatifs » (relances comprises) et le premier document ajouté à la demande ensuite (par le bénéficiaire ou l'équipe), chaque passage comptant pour une mesure. Calculés sur une fenêtre glissante de 3 mois pour rester statistiquement significatifs.
               </p>
             </section>
 
