@@ -155,11 +155,24 @@ export function useDocumentService(variables?: any) {
     }
   };
 
+  // Suppression groupee : une mutation par document, puis un seul refetch.
+  // Renvoie le nombre d'echecs pour que l'appelant puisse le signaler.
+  const deleteDocuments = async (documentIds: string[]) => {
+    const results = await Promise.allSettled(
+      documentIds.map((id) => deleteDocumentMutation({ variables: { where: { id } } }))
+    );
+    await refetch();
+    const failures = results.filter((r) => r.status === 'rejected');
+    failures.forEach((r) => console.error("Erreur dans deleteDocuments", (r as PromiseRejectedResult).reason));
+    return failures.length;
+  };
+
   return {
     documents: data?.documents || [],
     loading,
     createAndUploadDocument,
     deleteDocument,
+    deleteDocuments,
     updateDocument,
     refetchDocuments: refetch,
   };

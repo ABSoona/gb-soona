@@ -50,7 +50,7 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
   const { demandes, refetch: refetchDemandes, loading: loadingDemandes } = useDemandeService({ where: { contact: { id: currentRow.id } } });
 
   const { documents }:{ documents: Document[] } = useDocumentService({ where: { contact: { id: currentRow.id }, } }) ;
-  const { handleFileUpload, handleDelete } = useDocumentActions({ contact: { id: currentRow.id } });
+  const { handleFileUpload, handleDelete, handleDeleteMany } = useDocumentActions({ contact: { id: currentRow.id } });
   const { typeDocuments }: { typeDocuments: TypeDocument[] } = useTypeDocumentService();
   const typeDocumentsContact = typeDocuments.filter((e) => (e.rattachement == "Contact" && e.internalCode !== 'unknown_contact'))
   const typeDocumentUnknown = typeDocuments.filter((e) => (e.rattachement == "Contact" && e.internalCode == 'unknown_contact'))[0]
@@ -178,7 +178,7 @@ export function ContactView({ currentRow, showDetailIn = detailOpenOption.page }
                 />
             </CardHeader>
             <CardContent>
-              <DocumentsManager attachement={'Contact'} contactId={currentRow.id} documents={documents.filter((e)=>(e.typeDocument.rattachement=='Contact'))} onUpload={handleFileUpload} onDelete={handleDelete} />
+              <DocumentsManager attachement={'Contact'} contactId={currentRow.id} documents={documents.filter((e)=>(e.typeDocument.rattachement=='Contact'))} onUpload={handleFileUpload} onDelete={handleDelete} onDeleteMany={handleDeleteMany} />
             </CardContent>
           </Card>
         </div>

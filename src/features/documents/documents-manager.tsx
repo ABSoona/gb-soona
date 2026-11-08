@@ -28,6 +28,9 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { AvatarFallback } from '@radix-ui/react-avatar';
 import { Spinner } from '@/components/ui/spinner';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ConfirmDialog } from '@/components/confirm-dialog';
+import { cn } from '@/lib/utils';
 
 
 
@@ -39,13 +42,19 @@ interface Props {
   nbColumns?: number;
   onUpload?: (contactId: number, file: File, typeId: number, demandeId: number) => Promise<void>;
   onDelete: (docId: string) => Promise<void>;
+  // Action groupee sur la selection ; a defaut, onDelete est appele pour
+  // chaque document selectionne.
+  onDeleteMany?: (docIds: string[]) => Promise<void>;
   deleteLabel?: string;
   attachement?: AttachmentType
 
 
 }
 
-export function DocumentsManager({ contactId, documents, nbColumns, onUpload, onDelete, deleteLabel = 'Supprimer', attachement }: Props) {
+export function DocumentsManager({ contactId, documents, nbColumns, onUpload, onDelete, onDeleteMany, deleteLabel = 'Supprimer', attachement }: Props) {
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [confirmBulkOpen, setConfirmBulkOpen] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [document, setDocument] = useState<Document | null>(null);
   const [previewType, setPreviewType] = useState<string | null>(null);
@@ -80,7 +89,35 @@ export function DocumentsManager({ contactId, documents, nbColumns, onUpload, on
     if (documents && documents.length >= 0) {
       setIsLoadingDocuments(false);
     }
+    // Oublie les documents selectionnes qui ont disparu (supprimes, refetch).
+    setSelectedIds((prev) => {
+      const ids = new Set((documents ?? []).map((d) => d.id));
+      const next = new Set([...prev].filter((id) => ids.has(id)));
+      return next.size === prev.size ? prev : next;
+    });
   }, [documents]);
+
+  const toggleSelected = (docId: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(docId)) next.delete(docId);
+      else next.add(docId);
+      return next;
+    });
+  };
+
+  const handleBulkDelete = async () => {
+    const ids = [...selectedIds];
+    setIsBulkDeleting(true);
+    try {
+      if (onDeleteMany) await onDeleteMany(ids);
+      else await Promise.all(ids.map((id) => onDelete(id)));
+      setSelectedIds(new Set());
+    } finally {
+      setIsBulkDeleting(false);
+      setConfirmBulkOpen(false);
+    }
+  };
    // 🔥 Spinner pendant le chargement
    if (!documents) {
     return (
@@ -123,16 +160,57 @@ export function DocumentsManager({ contactId, documents, nbColumns, onUpload, on
     <>
       {/* Document Grid */}
       <div className="space-y-6">
+        {selectedIds.size > 0 && (
+          <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/50 px-3 py-2 text-sm">
+            <span className="font-medium">
+              {selectedIds.size} document{selectedIds.size > 1 ? 's' : ''} sélectionné{selectedIds.size > 1 ? 's' : ''}
+            </span>
+            {selectedIds.size < documents.length && (
+              <Button
+                variant="link"
+                size="sm"
+                className="h-auto p-0"
+                onClick={() => setSelectedIds(new Set(documents.map((d) => d.id)))}
+              >
+                Tout sélectionner
+              </Button>
+            )}
+            <div className="ml-auto flex gap-2">
+              <Button variant="ghost" size="sm" onClick={() => setSelectedIds(new Set())}>
+                Annuler
+              </Button>
+              <Button variant="destructive" size="sm" onClick={() => setConfirmBulkOpen(true)}>
+                <IconTrash size={16} />
+                {deleteLabel} ({selectedIds.size})
+              </Button>
+            </div>
+          </div>
+        )}
         <div className={className}>
           {documents.map((doc) => (
             <div
               key={doc.id}
-              className="border rounded-lg p-4 flex flex-col items-center bg-white shadow hover:shadow-lg transition relative cursor-pointer"
+              className={cn(
+                "group border rounded-lg p-4 flex flex-col items-center bg-white shadow hover:shadow-lg transition relative cursor-pointer",
+                selectedIds.has(doc.id) && "ring-2 ring-primary"
+              )}
               onClick={() => handlePreview(doc)}
             >
+              <Checkbox
+                aria-label="Sélectionner le document"
+                checked={selectedIds.has(doc.id)}
+                onCheckedChange={() => toggleSelected(doc.id)}
+                onClick={(e) => e.stopPropagation()}
+                className={cn(
+                  "absolute top-3 left-3 bg-white transition-opacity",
+                  selectedIds.size > 0 || selectedIds.has(doc.id)
+                    ? "opacity-100"
+                    : "opacity-40 group-hover:opacity-100"
+                )}
+              />
               {isUnread(doc) && (
                 <span
-                  className="absolute top-2 left-2 h-2.5 w-2.5 rounded-full bg-red-500"
+                  className="absolute top-3 left-9 h-2.5 w-2.5 rounded-full bg-red-500"
                   title="Déposé par le bénéficiaire, non consulté"
                 />
               )}
@@ -212,6 +290,18 @@ export function DocumentsManager({ contactId, documents, nbColumns, onUpload, on
           ))}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmBulkOpen}
+        onOpenChange={setConfirmBulkOpen}
+        title={`${deleteLabel} ${selectedIds.size} document${selectedIds.size > 1 ? 's' : ''} ?`}
+        desc="Cette action s'applique à tous les documents sélectionnés."
+        confirmText={deleteLabel}
+        cancelBtnText="Annuler"
+        destructive
+        isLoading={isBulkDeleting}
+        handleConfirm={handleBulkDelete}
+      />
 
       {/* ✅ Sheet Preview */}
       <DocumentPreviewSheet
