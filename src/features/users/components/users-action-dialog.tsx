@@ -49,6 +49,13 @@ const formSchema = z
     adresseRue: z.string().optional(),
     adresseCodePostal: z.string().optional(),
     adresseVille: z.string().optional(),
+    telephone: z
+      .string()
+      .trim()
+      .regex(/^$|^(?:(?:\+|00)33\s?|0)[1-9](?:[\s.-]?\d{2}){4}$/, {
+        message: 'Numéro invalide (ex : 06 12 34 56 78 ou +33 6 12 34 56 78).',
+      })
+      .optional(),
     hasAccess: z.boolean(),
     superieurId : z.string().optional()
   })
@@ -122,6 +129,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
         password: '',
         confirmPassword: '',
         superieurId : currentRow?.superieur?.id,
+        telephone: currentRow?.telephone ?? "",
         isEdit,
       }
       : {
@@ -155,6 +163,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
       adresseRue: values.adresseRue,
       adresseCodePostal: values.adresseCodePostal,
       adresseVille: values.adresseVille,
+      telephone: values.telephone || null,
       hasAccess: values.hasAccess,
       superieur : values.superieurId?{id:values.superieurId}:undefined,
       ...(password ? { password: password } : {}),
@@ -259,6 +268,27 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                       <Input
                         placeholder='john.doe@gmail.com'
                         className='col-span-4'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='telephone'
+                render={({ field }) => (
+                  <FormItem className='space-y-1'>
+                    <FormLabel>
+                      Téléphone
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type='tel'
+                        placeholder='06 12 34 56 78'
+                        className='col-span-4'
+                        autoComplete='off'
                         {...field}
                       />
                     </FormControl>

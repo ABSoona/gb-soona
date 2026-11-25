@@ -36,6 +36,7 @@ const userSchemaWithoutHearchi = z.object({
   adresseCodePostal : z.string().optional(),
   adresseRue : z.string().optional(),
   adresseVille :z.string().optional(),
+  telephone: z.string().nullish(),
   hasAccess:z.boolean().optional()
   
 
@@ -62,6 +63,7 @@ export const userSchema = z.object({
   adresseCodePostal : z.string().optional(),
   adresseRue : z.string().optional(),
   adresseVille :z.string().optional(),
+  telephone: z.string().nullish(),
   hasAccess:z.boolean().optional()
 
 

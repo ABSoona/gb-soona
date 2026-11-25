@@ -15,6 +15,7 @@ export const USER_FIELDS = gql`
     adresseCodePostal
     adresseRue
     adresseVille
+    telephone
     token
     hasAccess
     superieur {
@@ -31,6 +32,7 @@ export const USER_FIELDS = gql`
       adresseCodePostal
       adresseRue
       adresseVille
+      telephone
     }
     subordonnes {
       id
@@ -46,6 +48,7 @@ export const USER_FIELDS = gql`
       adresseCodePostal
       adresseRue
       adresseVille
+      telephone
     }
   }
 `;
